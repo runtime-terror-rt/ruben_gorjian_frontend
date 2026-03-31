@@ -39,6 +39,10 @@
     "resend": "^6.5.2",
     "socket.io-client": "4.8.3",
     "stripe": "^20.0.0",
+<<<<<<< HEAD
+=======
+    "tailwindcss-animate": "^1.0.7",
+>>>>>>> 1481ac94701442bff06c3a5237848e67723f65c9
     "zustand": "5.0.9"
   },
   "devDependencies": {

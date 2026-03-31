@@ -1,7 +1,11 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+<<<<<<< HEAD
 import { poppins, stack_sans_notch } from "./fonts";
+=======
+import { poppins, stack_sans_notch, sora } from "./fonts";
+>>>>>>> 1481ac94701442bff06c3a5237848e67723f65c9
 import SmoothScroller from "@/components/SmoothScroller";
 import MetaPixel from "@/components/MetaPixel";
 import "./globals.css";
@@ -29,7 +33,15 @@ export default function RootLayout({
       </head>
 
       <body
+<<<<<<< HEAD
         className={`${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950`}
+=======
+<<<<<<< HEAD
+        className={`${stack_sans_notch.variable} ${poppins.variable} ${sora.variable} ${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950 px-2 sm:px-0`}
+=======
+        className={`${stack_sans_notch.variable} ${poppins.variable} ${sora.variable} ${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950`}
+>>>>>>> 8ab9bb6 (updated)
+>>>>>>> 1481ac94701442bff06c3a5237848e67723f65c9
       >
         <ErrorBoundary>
           <SessionProvider>
