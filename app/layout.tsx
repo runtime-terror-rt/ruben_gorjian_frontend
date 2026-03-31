@@ -29,7 +29,11 @@ export default function RootLayout({
       </head>
 
       <body
+<<<<<<< HEAD
         className={`${stack_sans_notch.variable} ${poppins.variable} ${sora.variable} ${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950 px-2 sm:px-0`}
+=======
+        className={`${stack_sans_notch.variable} ${poppins.variable} ${sora.variable} ${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950`}
+>>>>>>> 8ab9bb6 (updated)
       >
         <ErrorBoundary>
           <SessionProvider>

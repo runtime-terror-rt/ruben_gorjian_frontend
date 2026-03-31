@@ -1,0 +1,131 @@
+
+> talexia@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.1s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/76) ...
+  Generating static pages using 11 workers (19/76) 
+  Generating static pages using 11 workers (38/76) 
+  Generating static pages using 11 workers (57/76) 
+✓ Generating static pages using 11 workers (76/76) in 484.2ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /admin
+├ ○ /admin/login
+├ ○ /admin/media
+├ ○ /admin/posts
+├ ○ /admin/settings
+├ ○ /admin/submissions
+├ ○ /admin/subscriptions
+├ ○ /admin/users
+├ ƒ /admin/users/[id]
+├ ƒ /api-data-disclosure
+├ ƒ /api/admin/calendars
+├ ƒ /api/admin/publishing-routing/global
+├ ƒ /api/admin/subscriptions
+├ ƒ /api/admin/upload-post/health
+├ ƒ /api/admin/users
+├ ƒ /api/admin/users/[id]
+├ ƒ /api/admin/users/[id]/audit-logs
+├ ƒ /api/admin/users/[id]/block
+├ ƒ /api/admin/users/[id]/cancel-subscription
+├ ƒ /api/admin/users/[id]/connected-platforms
+├ ƒ /api/admin/users/[id]/delete-with-password
+├ ƒ /api/admin/users/[id]/invoices
+├ ƒ /api/admin/users/[id]/media
+├ ƒ /api/admin/users/[id]/media/[mediaId]
+├ ƒ /api/admin/users/[id]/media/upload-url
+├ ƒ /api/admin/users/[id]/posts
+├ ƒ /api/admin/users/[id]/posts/[postId]/approve
+├ ƒ /api/admin/users/[id]/posts/import-google-sheet
+├ ƒ /api/admin/users/[id]/publishing-routing
+├ ƒ /api/admin/users/[id]/refresh-subscription
+├ ƒ /api/admin/users/[id]/resend-verification
+├ ƒ /api/admin/users/[id]/reset-password
+├ ƒ /api/admin/users/[id]/scheduled-items
+├ ƒ /api/admin/users/[id]/unblock
+├ ƒ /api/admin/users/[id]/upload
+├ ƒ /api/auth/admin-login
+├ ƒ /api/auth/google
+├ ƒ /api/auth/google/callback
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/me
+├ ƒ /api/auth/resend-verification
+├ ƒ /api/auth/signup
+├ ƒ /api/auth/verify-email
+├ ƒ /api/billing/checkout
+├ ƒ /api/billing/invoices
+├ ƒ /api/billing/plans
+├ ƒ /api/billing/portal
+├ ƒ /api/billing/summary
+├ ƒ /api/billing/sync
+├ ƒ /api/brand-profiles
+├ ƒ /api/brand-profiles/files
+├ ƒ /api/contact
+├ ƒ /api/dashboard/overview
+├ ƒ /api/newsletter
+├ ƒ /api/onboarding/calendar
+├ ƒ /api/onboarding/complete
+├ ƒ /api/onboarding/full-management
+├ ƒ /api/onboarding/full-management/draft
+├ ƒ /api/onboarding/visual
+├ ƒ /api/onboarding/visual/draft
+├ ƒ /api/posts
+├ ƒ /api/posts/[postId]
+├ ƒ /api/posts/[postId]/publish
+├ ƒ /api/posts/calendar
+├ ƒ /api/posts/statistics
+├ ƒ /api/social
+├ ƒ /api/social/connect
+├ ƒ /api/social/disconnect
+├ ƒ /api/submissions
+├ ƒ /api/submissions/[...path]
+├ ƒ /api/uploads/asset
+├ ƒ /api/uploads/assets
+├ ƒ /api/uploads/presign
+├ ƒ /api/user/settings
+├ ƒ /api/visits/config
+├ ƒ /api/visits/schedule
+├ ○ /billing/cancel
+├ ○ /billing/success
+├ ○ /contact
+├ ƒ /content-disclaimer
+├ ƒ /cookie-policy
+├ ○ /dashboard
+├ ○ /dashboard/billing
+├ ○ /dashboard/calendar
+├ ○ /dashboard/media
+├ ○ /dashboard/schedule-visit
+├ ○ /dashboard/settings
+├ ○ /dashboard/social
+├ ○ /dashboard/submissions
+├ ƒ /data-usage
+├ ○ /faq
+├ ○ /login
+├ ○ /onboarding
+├ ○ /onboarding/calendar
+├ ○ /onboarding/full-management
+├ ○ /onboarding/visual
+├ ○ /pricing
+├ ƒ /pricing/[category]
+├ ƒ /privacy-policy
+├ ƒ /refund-policy
+├ ○ /signup
+├ ƒ /terms-conditions
+└ ○ /verify
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
