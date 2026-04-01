@@ -24,16 +24,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Check if user is authenticated
-  const isAuthenticated = !!session;
+  // const isAuthenticated = !!session;
 
   // Handle auth redirect - keep existing logic
-  useEffect(() => {
+  /* useEffect(() => {
     if (sessionLoading) return;
 
     if (!isAuthenticated) {
       router.replace("/login");
     }
-  }, [sessionLoading, isAuthenticated, router]);
+  }, [sessionLoading, isAuthenticated, router]); */
 
   // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
   useEffect(() => {
@@ -91,7 +91,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [isMobileSidebarOpen]);
 
   // Show loading state
-  if (sessionLoading || !isHydrated) {
+  if (!isHydrated) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950">
         <div className="flex flex-col items-center gap-3">
@@ -103,9 +103,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   // Show nothing while redirecting non-authenticated users
-  if (!isAuthenticated) {
-    return null;
-  }
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   return (
     <div className="min-h-screen bg-slate-950">

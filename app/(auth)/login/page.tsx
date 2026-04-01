@@ -35,7 +35,7 @@ function LoginPageInner() {
       }
 
       setSuccess("Logged in. Redirecting...");
-      const destination = body?.onboardingCompleted ? redirect : "/onboarding";
+      const destination = redirect;
       window.location.href = destination;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unable to login.";
