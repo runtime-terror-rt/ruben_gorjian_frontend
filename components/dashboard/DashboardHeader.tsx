@@ -34,7 +34,7 @@ export function DashboardHeader({
   isCollapsed,
 }: DashboardHeaderProps) {
   const router = useRouter();
-  const { session } = useSessionContext();
+  const { session, refresh } = useSessionContext();
 
   const handleLogout = async () => {
     try {
@@ -44,6 +44,7 @@ export function DashboardHeader({
       });
 
       if (res.ok) {
+        await refresh();
         router.push("/login");
       }
     } catch (error) {
