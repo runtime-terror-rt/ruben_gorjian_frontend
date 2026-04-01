@@ -35,7 +35,9 @@ function LoginPageInner() {
       }
 
       setSuccess("Logged in. Redirecting...");
-      const destination = redirect;
+      const role = body?.role || body?.user?.role;
+      const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+      const destination = (isAdmin && redirect === "/dashboard") ? "/admin" : redirect;
       window.location.href = destination;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unable to login.";
