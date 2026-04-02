@@ -6,7 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Facebook, Unlink } from "lucide-react";
+import { Unlink } from "lucide-react";
+import { FaFacebook } from "react-icons/fa";
 import { SocialAccount } from "@/hooks/use-social-accounts";
 
 interface ConnectedAccountsListProps {
@@ -23,9 +24,9 @@ export function ConnectedAccountsList({
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case "FACEBOOK":
-        return Facebook;
+        return FaFacebook;
       default:
-        return Facebook;
+        return FaFacebook;
     }
   };
 

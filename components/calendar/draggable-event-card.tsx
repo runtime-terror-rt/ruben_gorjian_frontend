@@ -6,7 +6,7 @@ import { useDrag, useDrop } from "react-dnd";
 import { StatusPill } from "./status-pill";
 import dayjs from "dayjs";
 import clsx from "clsx";
-import { Instagram, Facebook, Linkedin } from "lucide-react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { buildStorageUrl } from "@/lib/storage-utils";
 
 type CalendarPost = {
@@ -50,9 +50,9 @@ import { getEnvVarWithDefault } from "@/lib/env-utils";
 const STORAGE_BASE_URL = getEnvVarWithDefault("NEXT_PUBLIC_STORAGE_BASE_URL", "");
 
 const platformIcons = {
-  INSTAGRAM: Instagram,
-  FACEBOOK: Facebook,
-  LINKEDIN: Linkedin,
+  INSTAGRAM: FaInstagram,
+  FACEBOOK: FaFacebook,
+  LINKEDIN: FaLinkedin,
 };
 
 export function DraggableEventCard({
