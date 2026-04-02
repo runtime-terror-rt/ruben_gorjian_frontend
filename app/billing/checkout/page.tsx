@@ -284,7 +284,7 @@ function CheckoutContent() {
                 </div>
               )}
             </CardContent>
-            <CardFooter>
+            {/* <CardFooter>
               <Button 
                 className="w-full rounded-full bg-lime-500 py-6 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02]"
                 disabled={loading}
@@ -302,7 +302,7 @@ function CheckoutContent() {
                   </>
                 )}
               </Button>
-            </CardFooter>
+            </CardFooter> */}
             <div className="pb-6 text-center">
               <div className="flex items-center justify-center gap-2 grayscale opacity-50">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-4" />
