@@ -30,7 +30,7 @@ type AdminHeaderProps = {
 
 export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
   const router = useRouter();
-  const { session } = useSessionContext();
+  const { session, refresh } = useSessionContext();
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = async () => {
@@ -41,6 +41,10 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
       });
 
       if (res.ok) {
+<<<<<<< HEAD
+=======
+        await refresh();
+>>>>>>> ee05f1cd9411774b8fef4de3fd5187968d25bdcb
         router.push("/admin/login");
       }
     } catch (error) {
