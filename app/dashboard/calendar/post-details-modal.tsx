@@ -12,9 +12,6 @@ import { buildStorageUrl } from "@/lib/storage-utils";
 
 dayjs.extend(relativeTime);
 import {
-  Instagram,
-  Facebook,
-  Linkedin,
   Edit2,
   X,
   Calendar as CalendarIcon,
@@ -23,6 +20,11 @@ import {
   FileText,
   AlertCircle,
 } from "lucide-react";
+import {
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin,
+} from "react-icons/fa";
 import Image from "next/image";
 
 import { getEnvVarWithDefault } from "@/lib/env-utils";

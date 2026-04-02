@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   Check,
-  Facebook,
-  Instagram,
-  Linkedin,
 } from "lucide-react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { useSessionContext } from "@/context/SessionContext";
 import { OnboardingHeaderNav } from "@/components/onboarding/OnboardingHeaderNav";
 import { Button } from "@/components/ui/button";
@@ -318,9 +316,9 @@ export default function FullManagementOnboardingPage() {
   }
 
   const platformOptions = [
-    { value: "INSTAGRAM", label: "Instagram", icon: Instagram },
-    { value: "FACEBOOK", label: "Facebook", icon: Facebook },
-    { value: "LINKEDIN", label: "LinkedIn", icon: Linkedin },
+    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
+    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
+    { value: "LINKEDIN", label: "LinkedIn", icon: FaLinkedin },
   ];
 
   return (

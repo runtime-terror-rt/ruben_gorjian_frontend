@@ -5,14 +5,8 @@ import Image from "next/image";
 import { useDrag } from "react-dnd";
 import dayjs from "dayjs";
 import clsx from "clsx";
-import {
-  Instagram,
-  Facebook,
-  Linkedin,
-  Copy,
-  Eye,
-  Trash2,
-} from "lucide-react";
+import { Copy, Eye, Trash2 } from "lucide-react";
+import { FaInstagram, FaFacebook, FaLinkedin } from "react-icons/fa";
 import type { Dayjs } from "dayjs";
 import { buildStorageUrl } from "@/lib/storage-utils";
 
@@ -59,9 +53,9 @@ const STORAGE_BASE_URL = getEnvVarWithDefault(
 );
 
 const platformIcons = {
-  INSTAGRAM: Instagram,
-  FACEBOOK: Facebook,
-  LINKEDIN: Linkedin,
+  INSTAGRAM: FaInstagram,
+  FACEBOOK: FaFacebook,
+  LINKEDIN: FaLinkedin,
 };
 
 const platformColors = {

@@ -15,7 +15,6 @@ import {
   Camera,
   CameraIcon,
   ImageDown,
-  Instagram,
   MessageCircle,
 } from "lucide-react";
 import { getPlanByLookupKey } from "@/lib/pricing-catalog";
@@ -23,6 +22,7 @@ import { PLAN_KEYS, type PlanKey } from "@/lib/pricing-comparison";
 import { persistPlanSelection } from "@/lib/plan-selection";
 import { useUiStore } from "@/store/uiStore";
 import { Tooltip } from "react-tooltip";
+import {ScanFace} from 'lucide-react'
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -111,7 +111,7 @@ export default function HomePage() {
         "Set it and forget it. Your posts go live automatically, exactly when they should, even during your busiest dinner rushes.",
     },
     {
-      icon: <Instagram className="w-6 h-6 text-white" />,
+      icon: <ScanFace className="w-6 h-6 text-white" />,
       title: "Multi-Platform Presence",
       description:
         "Reach your customers everywhere they scroll. Instagram, Facebook, LinkedIn and TikTok, all handled in one place.",
