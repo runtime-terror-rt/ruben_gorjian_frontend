@@ -99,7 +99,12 @@ function CheckoutContent() {
     const subtotal = planPrice + platformPrice + videoPrice;
     
     let discount = 0;
-    if (isCouponApplied && appliedCoupon) {
+    // FINAL SAFETY CHECK: Strict plan code-level enforcement
+    const isActuallyApplicable = !!(appliedCoupon && 
+      appliedCoupon.applicablePlans && 
+      appliedCoupon.applicablePlans.includes(planCode));
+
+    if (isCouponApplied && appliedCoupon && isActuallyApplicable) {
       const val = appliedCoupon.discountValue;
       const type = appliedCoupon.discountType;
       
@@ -123,7 +128,8 @@ function CheckoutContent() {
       tax,
       total,
       isYearly: billingCycle === "yearly",
-      isFounder
+      isFounder,
+      isActuallyApplicable
     };
   }, [planCode, billingCycle, addonPlatformQty, videoSessionHours, isCouponApplied, appliedCoupon, session]);
 
@@ -139,7 +145,10 @@ function CheckoutContent() {
     const coupon = availableCoupons.find(c => c.code === code);
     
     if (coupon) {
-      if (coupon.applicablePlans && !coupon.applicablePlans.includes(planCode)) {
+      // STRICT VALIDATION: Check if the plan is explicitly on the allowed list
+      const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode);
+      
+      if (!isApplicable) {
         setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode]} plan.`);
         return;
       }
@@ -169,7 +178,9 @@ function CheckoutContent() {
 
       if (fallbacks[code]) {
         const fb = fallbacks[code];
-        if (fb.applicablePlans && !fb.applicablePlans.includes(planCode)) {
+        const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode);
+        
+        if (!isApplicable) {
           setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode]} plan.`);
           return;
         }
@@ -407,15 +418,20 @@ function CheckoutContent() {
                   </Button>
                 </div>
                 
-                {isCouponApplied && (
-                  <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400">
+                {isCouponApplied && appliedCoupon && appliedCoupon.applicablePlans?.includes(planCode) && (
+                  <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
                     <Check className="h-4 w-4" />
                     <div>
-                      <span className="font-bold">{appliedCoupon?.code || couponCode}</span> applied: {appliedCoupon?.description || "Discount applied successfully"}
+                      <span className="font-bold">{appliedCoupon.code}</span> applied: {appliedCoupon.description || "Discount applied successfully"}
                     </div>
                   </div>
                 )}
-                {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+                {error && (
+                  <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-400 animate-in shake-in-1">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>{error}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -494,7 +510,7 @@ function CheckoutContent() {
                 </div>
 
                 {/* Coupon */}
-                {isCouponApplied && (
+                {isCouponApplied && calculation.isActuallyApplicable && (
                   <div className="flex justify-between items-center bg-lime-400/5 p-3 rounded-lg border border-lime-400/10">
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1.5 text-lime-400 font-semibold">
