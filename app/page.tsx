@@ -202,34 +202,11 @@ export default function HomePage() {
       },
     });
     if (!isAuthenticated) {
-      router.push(`/signup?plan=${plan.lookupKey}`);
+      router.push(`/signup?plan=${plan.lookupKey}&cycle=${billingCycle}`);
       return;
     }
-    try {
-      const origin = window.location.origin;
-      const res = await fetch("/api/billing/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          planCode: plan.lookupKey,
-          billingCycle,
-          successUrl: `${origin}/billing/success`,
-          cancelUrl: `${origin}/billing/cancel`,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.error?.includes("already subscribed"))
-          router.push("/dashboard");
-        else alert(data.error || "Unable to start checkout");
-        return;
-      }
-      if (data.checkoutUrl) window.location.assign(data.checkoutUrl);
-      else if (data.redirectUrl) window.location.assign(data.redirectUrl);
-    } catch {
-      alert("Failed to connect to checkout. Please try again.");
-    }
+    // Redirect to checkout page so user can add addons and coupons
+    router.push(`/billing/checkout?plan=${plan.lookupKey}&cycle=${billingCycle}`);
   };
 
   return (

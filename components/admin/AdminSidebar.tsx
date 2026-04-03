@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ExternalLink,
   BookOpen,
+  Tag,
 } from "lucide-react";
 
 type NavItem = {
@@ -49,6 +50,11 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Subscriptions",
         href: "/admin/subscriptions",
         icon: CreditCard,
+      },
+      {
+        label: "Coupons",
+        href: "/admin/coupons",
+        icon: Tag,
       },
       {
         label: "Posts",
