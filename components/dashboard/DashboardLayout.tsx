@@ -26,14 +26,26 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Check if user is authenticated
   // const isAuthenticated = !!session;
 
-  // Handle auth redirect - keep existing logic
-  /* useEffect(() => {
+  // Handle auth and subscription redirect
+  useEffect(() => {
     if (sessionLoading) return;
 
-    if (!isAuthenticated) {
+    // Not authenticated
+    if (!session) {
       router.replace("/login");
+      return;
     }
-  }, [sessionLoading, isAuthenticated, router]); */
+
+    // No active subscription
+    const hasActiveSubscription = session.subscription?.planCode && session.subscription?.status === "ACTIVE";
+    const isPricingPage = pathname === "/pricing";
+    const isCheckoutPage = pathname.startsWith("/billing/checkout");
+    const isVerifyPage = pathname.startsWith("/verify");
+
+    if (!hasActiveSubscription && !isPricingPage && !isCheckoutPage && !isVerifyPage) {
+      router.replace("/pricing");
+    }
+  }, [session, sessionLoading, pathname, router]);
 
   // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
   useEffect(() => {

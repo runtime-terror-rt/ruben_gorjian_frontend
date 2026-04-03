@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiGet } from "@/lib/api";
 import { RefreshCw, Calendar, FileText } from "lucide-react";
+import { useSessionContext } from "@/context/SessionContext";
 
 type PostStatistics = {
   totalPosts: number;
@@ -17,11 +18,17 @@ type PostStatistics = {
 };
 
 export default function DashboardPage() {
+  const { session } = useSessionContext();
   const [stats, setStats] = useState<PostStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
+    if (!session?.subscription?.planCode) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     try {
@@ -34,7 +41,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     load();
@@ -64,17 +71,6 @@ export default function DashboardPage() {
           Refresh
         </Button>
       </div>
-
-      {/* {error && (
-        <Card className="border-amber-500/50 bg-amber-500/10">
-          <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-amber-200">{error}</p>
-            <Button variant="outline" size="sm" onClick={load}>
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
-      )} */}
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-5">
         <MetricCard
