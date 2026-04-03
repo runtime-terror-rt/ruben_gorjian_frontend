@@ -37,15 +37,36 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
 
     // No active subscription
-    const hasActiveSubscription = session.subscription?.planCode && session.subscription?.status === "ACTIVE";
+    const hasActiveSubscription = session.subscription?.planCode && 
+      (session.subscription?.status === "ACTIVE" || session.subscription?.status === "TRIALING");
     const isPricingPage = pathname === "/pricing";
     const isCheckoutPage = pathname.startsWith("/billing/checkout");
     const isVerifyPage = pathname.startsWith("/verify");
+    const isOnboardingPage = pathname.startsWith("/onboarding");
 
-    if (!hasActiveSubscription && !isPricingPage && !isCheckoutPage && !isVerifyPage) {
+    // No active subscription - go to pricing
+    if (!hasActiveSubscription && !isPricingPage && !isCheckoutPage && !isVerifyPage && !isOnboardingPage) {
       router.replace("/pricing");
+      return;
+    }
+
+    // No active subscription but onboarding not finished - go to onboarding
+    if (hasActiveSubscription && !session.onboardingCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
+      router.replace("/onboarding");
     }
   }, [session, sessionLoading, pathname, router]);
+
+  // Derived authorization state for cleaner rendering
+  const hasActiveSubscription = session?.subscription?.planCode && 
+    (session?.subscription?.status === "ACTIVE" || session?.subscription?.status === "TRIALING");
+  
+  const isAuthorized = !!session && (
+    pathname === "/pricing" || 
+    pathname.startsWith("/billing/checkout") || 
+    pathname.startsWith("/verify") || 
+    pathname.startsWith("/onboarding") || 
+    (hasActiveSubscription && session.onboardingCompleted)
+  );
 
   // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
   useEffect(() => {
@@ -102,8 +123,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [isMobileSidebarOpen]);
 
-  // Show loading state
-  if (!isHydrated) {
+  // Show loading state while checking permissions or hydrating
+  if (!isHydrated || sessionLoading || !isAuthorized) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950">
         <div className="flex flex-col items-center gap-3">

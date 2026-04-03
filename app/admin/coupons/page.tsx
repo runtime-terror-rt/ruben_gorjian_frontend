@@ -154,6 +154,8 @@ export default function AdminCouponsPage() {
     onSuccess: () => {
       toast({ title: "Coupon updated successfully" });
       setEditingCoupon(null);
+      setIsCreateDialogOpen(false);
+      resetForm();
       queryClient.invalidateQueries({ queryKey: ["admin-coupons"] });
     },
     onError: (err: any) => {
@@ -380,9 +382,9 @@ export default function AdminCouponsPage() {
             setEditingCoupon(null);
             setIsCreateDialogOpen(true);
           }}
-          className="bg-lime-500 hover:bg-lime-400 text-slate-950 font-bold gap-2"
+          className="bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-slate-950 font-bold gap-2 px-6 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-105 active:scale-95"
         >
-          <Plus className="h-4 w-4" /> Create Coupon
+          <Plus className="h-5 w-5" /> Create Coupon
         </Button>
       </div>
 
@@ -541,10 +543,12 @@ export default function AdminCouponsPage() {
                   id="expiry"
                   type="datetime-local"
                   className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
-                  value={formData.expiresAt ? formData.expiresAt.slice(0, 16) : ""}
+                  // Helper: Convert ISO string to YYYY-MM-DDTHH:MM for datetime-local input
+                  value={formData.expiresAt ? new Date(formData.expiresAt).toLocaleString('sv-SE').replace(' ', 'T').slice(0, 16) : ""}
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val) {
+                      // Save back as UTC ISO string
                       setFormData({ ...formData, expiresAt: new Date(val).toISOString() });
                     }
                   }}
@@ -606,11 +610,17 @@ export default function AdminCouponsPage() {
               </Button>
               <Button 
                 type="submit" 
-                className="bg-lime-500 hover:bg-lime-400 text-slate-950 font-bold"
+                className="bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-slate-950 font-bold px-8 shadow-[0_0_20px_rgba(132,204,22,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                {(createMutation.isPending || updateMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingCoupon ? "Update Coupon" : "Create Coupon"}
+                {(createMutation.isPending || updateMutation.isPending) ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : editingCoupon ? (
+                  <Tag className="mr-2 h-4 w-4" />
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
+                {editingCoupon ? "Save Changes" : "Confirm Creation"}
               </Button>
             </DialogFooter>
           </form>
