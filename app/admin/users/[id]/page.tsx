@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSessionContext } from "@/context/SessionContext";
-import { apiGet, apiPatch, apiPost, apiPut } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,10 +61,65 @@ type AdminUser = {
   }>;
 };
 
+type Profile = {
+  userId: string;
+  fullName: string | null;
+  businessName: string | null;
+  website: string | null;
+  industry: string | null;
+  timezone: string | null;
+  bio: string | null;
+  avatarStorageKey: string | null;
+  avatarContentType: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type BrandProfile = {
+  userId: string;
+  industry: string | null;
+  productTypes: string | null;
+  businessType: string | null;
+  tone: string | null;
+  audience: string | null;
+  competitors: string | null;
+  ctaPreferences: string | null;
+  hashtagPreferences: string | null;
+  website: string | null;
+  socials: {
+    facebook?: string;
+    linkedin?: string;
+    instagram?: string;
+    twitter?: string;
+    tiktok?: string;
+  } | null;
+  fullManagementOnboardingData: {
+    industry?: string;
+    allowCtas?: string;
+    salesModel?: string[];
+    websiteUrl?: string;
+    facebookUrl?: string;
+    linkedinUrl?: string;
+    businessName?: string;
+    instagramUrl?: string;
+    outlineFrame?: string;
+    targetAudience?: string[];
+    brandPersonality?: string[];
+    platformsToManage?: string[];
+    imageUsagePermission?: string;
+    postingAccessGranted?: string;
+    postingTimePreference?: string[];
+    visualStylePreference?: string;
+    postingFrequencyPreference?: string;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type AdminUserDetailResponse = {
   user: AdminUser;
-  profile: Record<string, unknown> | null;
-  brandProfile: Record<string, unknown> | null;
+  profile: Profile | null;
+  brandProfile: BrandProfile | null;
   subscriptions: AdminUser["subscriptions"];
   posts: Array<{
     id: string;
@@ -129,7 +184,6 @@ type ConfirmAction =
   | { type: "block" }
   | { type: "unblock" }
   | { type: "cancel" }
-  | { type: "deleteWithPassword" }
   | null;
 
 type TabKey = "overview" | "subscription" | "scheduled" | "post-as-user" | "billing" | "logs";
@@ -384,12 +438,9 @@ export default function AdminUserDetailPage() {
     },
   });
 
-  const deleteUserWithPasswordMutation = useMutation({
-    mutationFn: (adminPassword: string) =>
-      apiPost<AdminUser, { adminPassword: string }>(
-        `/api/admin/users/${params.id}/delete-with-password`,
-        { adminPassword },
-      ),
+  const deleteUserMutation = useMutation({
+    mutationFn: () =>
+      apiDelete(`/api/admin/users/${params.id}`),
     onSuccess: () => {
       toast({ title: "User deleted" });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
@@ -447,16 +498,8 @@ export default function AdminUserDetailPage() {
 
   function handleConfirmAction() {
     if (!confirmAction) return;
-    if (confirmAction.type === "deleteWithPassword") {
-      if (!adminPassword) {
-        toast({
-          title: "Password required",
-          description: "Please enter your admin password",
-          variant: "destructive",
-        });
-        return;
-      }
-      deleteUserWithPasswordMutation.mutate(adminPassword);
+    if (confirmAction.type === "delete") {
+      deleteUserMutation.mutate();
     }
     if (confirmAction.type === "block") {
       blockUserMutation.mutate();
@@ -577,7 +620,7 @@ export default function AdminUserDetailPage() {
           <Button
             variant="outline"
             className="border-red-400/60 text-red-200 hover:bg-red-500/10"
-            onClick={() => setConfirmAction({ type: "deleteWithPassword" })}
+            onClick={() => setConfirmAction({ type: "delete" })}
           >
             Delete
           </Button>
@@ -692,74 +735,203 @@ export default function AdminUserDetailPage() {
       ) : (
         <div className="space-y-6">
           {activeTab === "overview" && (
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 text-sm text-slate-300">
-                  <div className="flex justify-between">
-                    <span>Name</span>
-                    <span>{user.name ?? "—"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Status</span>
-                    <span>{user.status}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Role</span>
-                    <span>{user.role}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Verified</span>
-                    <span>{user.emailVerified ? "Yes" : "No"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Created</span>
-                    <span>{formatDate(user.createdAt)}</span>
-                  </div>
-                  {user.blockedReason && (
-                    <div className="rounded-md border border-slate-800 bg-slate-950/50 p-3 text-xs text-slate-300">
-                      Block reason: {user.blockedReason}
+            <div className="grid gap-6">
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Account Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-slate-300">
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Name</span>
+                      <span>{user.name ?? "—"}</span>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Update</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <Label htmlFor="edit-name">Name</Label>
-                    <Input
-                      id="edit-name"
-                      value={editName}
-                      onChange={(event) => setEditName(event.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="edit-role">Role</Label>
-                    <Select
-                      id="edit-role"
-                      value={editRole}
-                      onChange={(event) =>
-                        setEditRole(event.target.value as typeof editRole)
-                      }
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Status</span>
+                      <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"} className="h-5">
+                        {user.status}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Role</span>
+                      <Badge variant="outline" className="h-5">{user.role}</Badge>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Email Verified</span>
+                      <span>{user.emailVerified ? (
+                        <span className="flex items-center gap-1 text-lime-400">
+                          Yes <span className="text-[10px] bg-lime-400/20 px-1 rounded">✔</span>
+                        </span>
+                      ) : "No"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Created At</span>
+                      <span>{formatDate(user.createdAt)}</span>
+                    </div>
+                    {user.blockedReason && (
+                      <div className="mt-4 rounded-md border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-200">
+                        <span className="font-semibold block mb-1">Block reason:</span>
+                        {user.blockedReason}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Quick Update</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-name">Display Name</Label>
+                      <Input
+                        id="edit-name"
+                        value={editName}
+                        onChange={(event) => setEditName(event.target.value)}
+                        placeholder="Public name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-role">User Role</Label>
+                      <Select
+                        id="edit-role"
+                        value={editRole}
+                        onChange={(event) =>
+                          setEditRole(event.target.value as typeof editRole)
+                        }
+                      >
+                        <option value="USER">User (Standard)</option>
+                        <option value="ADMIN">Admin</option>
+                        <option value="SUPER_ADMIN">Super Admin</option>
+                      </Select>
+                    </div>
+                    <Button
+                      onClick={() => updateUserMutation.mutate()}
+                      disabled={updateUserMutation.isPending}
+                      className="w-full"
                     >
-                      <option value="USER">User</option>
-                      <option value="ADMIN">Admin</option>
-                      <option value="SUPER_ADMIN">Super Admin</option>
-                    </Select>
-                  </div>
-                  <Button
-                    onClick={() => updateUserMutation.mutate()}
-                    disabled={updateUserMutation.isPending}
-                  >
-                    Save Changes
-                  </Button>
-                </CardContent>
-              </Card>
+                      {updateUserMutation.isPending ? "Updating..." : "Save Changes"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Personal Profile</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-slate-300">
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Full Name</span>
+                      <span>{userQuery.data.profile?.fullName ?? "—"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Business Name</span>
+                      <span>{userQuery.data.profile?.businessName ?? "—"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Industry</span>
+                      <span className="capitalize">{userQuery.data.profile?.industry?.toLowerCase().replace("_", " ") ?? "—"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Website</span>
+                      {userQuery.data.profile?.website ? (
+                        <a href={userQuery.data.profile.website} target="_blank" rel="noreferrer" className="text-lime-400 hover:underline">
+                          Visit Site ↗
+                        </a>
+                      ) : "—"}
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Timezone</span>
+                      <span>{userQuery.data.profile?.timezone ?? "—"}</span>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-slate-500 block mb-1">Bio</span>
+                      <p className="p-3 rounded bg-slate-950/40 border border-white/5 italic text-slate-400">
+                        {userQuery.data.profile?.bio ?? "No bio provided."}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Brand Identity</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-slate-300">
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Target Audience</span>
+                      <span>{userQuery.data.brandProfile?.audience ?? "—"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">Tone of Voice</span>
+                      <span className="capitalize">{userQuery.data.brandProfile?.tone?.toLowerCase() ?? "—"}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-white/5 pb-2">
+                      <span className="text-slate-500">CTA Preferences</span>
+                      <span>{userQuery.data.brandProfile?.ctaPreferences ?? "—"}</span>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-slate-500 block mb-2">Social Profiles</span>
+                      <div className="flex flex-wrap gap-2">
+                        {userQuery.data.brandProfile?.socials?.facebook && (
+                          <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.facebook} target="_blank" rel="noreferrer">Facebook</a></Badge>
+                        )}
+                        {userQuery.data.brandProfile?.socials?.instagram && (
+                          <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.instagram} target="_blank" rel="noreferrer">Instagram</a></Badge>
+                        )}
+                        {userQuery.data.brandProfile?.socials?.linkedin && (
+                          <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></Badge>
+                        )}
+                        {(!userQuery.data.brandProfile?.socials || Object.keys(userQuery.data.brandProfile.socials).length === 0) && (
+                          <span className="text-slate-600">No social links</span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {userQuery.data.brandProfile?.fullManagementOnboardingData && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Onboarding Details (Full Management)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-sm text-slate-300">
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Visual Style</span>
+                      <span className="font-medium text-white">{userQuery.data.brandProfile.fullManagementOnboardingData.visualStylePreference ?? "—"}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Frequency</span>
+                      <span className="font-medium text-white">{userQuery.data.brandProfile.fullManagementOnboardingData.postingFrequencyPreference ?? "—"}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Platforms</span>
+                      <div className="flex flex-wrap gap-1">
+                        {userQuery.data.brandProfile.fullManagementOnboardingData.platformsToManage?.map(p => (
+                          <Badge key={p} variant="outline" className="text-[10px] h-4">{p}</Badge>
+                        )) ?? "—"}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Brand Personality</span>
+                      <div className="flex flex-wrap gap-1">
+                        {userQuery.data.brandProfile.fullManagementOnboardingData.brandPersonality?.map(p => (
+                          <Badge key={p} variant="secondary" className="text-[10px] h-4">{p}</Badge>
+                        )) ?? "—"}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Posting Access</span>
+                      <Badge variant={userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted === "YES" ? "default" : "outline"} className="h-4 text-[10px]">
+                        {userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted ?? "—"}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <Card>
                 <CardHeader>
                   <CardTitle>Posting Channel</CardTitle>
@@ -1134,14 +1306,14 @@ export default function AdminUserDetailPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {confirmAction?.type === "deleteWithPassword" && "Delete User"}
+              {confirmAction?.type === "delete" && "Delete User"}
               {confirmAction?.type === "block" && "Block User"}
               {confirmAction?.type === "unblock" && "Unblock User"}
               {confirmAction?.type === "cancel" && "Cancel Subscription"}
             </DialogTitle>
             <DialogDescription>
-              {confirmAction?.type === "deleteWithPassword" &&
-                "This will soft-delete the user account. You must enter your admin password to confirm."}
+              {confirmAction?.type === "delete" &&
+                "This will permanently delete the user account and all associated data."}
               {confirmAction?.type === "block" &&
                 "Blocked users cannot sign in or access the API."}
               {confirmAction?.type === "unblock" &&
@@ -1158,18 +1330,6 @@ export default function AdminUserDetailPage() {
                 value={blockReason}
                 onChange={(event) => setBlockReason(event.target.value)}
                 placeholder="Reason for blocking"
-              />
-            </div>
-          )}
-          {confirmAction?.type === "deleteWithPassword" && (
-            <div>
-              <Label htmlFor="admin-password">Admin Password (Required)</Label>
-              <Input
-                id="admin-password"
-                type="password"
-                value={adminPassword}
-                onChange={(event) => setAdminPassword(event.target.value)}
-                placeholder="Enter your admin password"
               />
             </div>
           )}
@@ -1191,12 +1351,11 @@ export default function AdminUserDetailPage() {
             <Button
               onClick={handleConfirmAction}
               disabled={
-                (confirmAction?.type === "block" && !blockReason) ||
-                (confirmAction?.type === "deleteWithPassword" && !adminPassword)
+                (confirmAction?.type === "block" && !blockReason)
               }
               variant="default"
               className={
-                confirmAction?.type === "deleteWithPassword"
+                confirmAction?.type === "delete"
                   ? "bg-red-600 hover:bg-red-700 text-white"
                   : ""
               }

@@ -12,7 +12,7 @@ import {
   RowSelectionState,
 } from "@tanstack/react-table";
 import { useSessionContext } from "@/context/SessionContext";
-import { apiGet, apiPatch, apiPost } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,7 +97,6 @@ type ConfirmAction =
   | { type: "block"; user: AdminUser }
   | { type: "unblock"; user: AdminUser }
   | { type: "cancel"; user: AdminUser }
-  | { type: "deleteWithPassword"; user: AdminUser }
   | null;
 
 type EditState = {
@@ -111,6 +110,7 @@ type CreateState = {
   open: boolean;
   name: string;
   email: string;
+  password?: string;
   role: "USER" | "ADMIN" | "SUPER_ADMIN";
   planCode: string;
   sendVerification: boolean;
@@ -137,10 +137,9 @@ export default function AdminUsersPage() {
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
   const [blockReason, setBlockReason] = useState("");
   const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(true);
-  const [adminPassword, setAdminPassword] = useState("");
   const [editState, setEditState] = useState<EditState>({
     open: false,
     user: null,
@@ -151,6 +150,7 @@ export default function AdminUsersPage() {
     open: false,
     name: "",
     email: "",
+    password: "",
     role: "USER",
     planCode: "",
     sendVerification: true,
@@ -186,11 +186,11 @@ export default function AdminUsersPage() {
   });
 
   const createUserMutation = useMutation({
-    mutationFn: (payload: { name?: string; email: string; role: string; planCode?: string; sendVerification: boolean }) =>
+    mutationFn: (payload: { name?: string; email: string; password?: string; role: string; planCode?: string; sendVerification: boolean }) =>
       apiPost<AdminUser, typeof payload>("/api/admin/users", payload),
     onSuccess: () => {
       toast({ title: "User created" });
-      setCreateState({ open: false, name: "", email: "", role: "USER", planCode: "", sendVerification: true });
+      setCreateState({ open: false, name: "", email: "", password: "", role: "USER", planCode: "", sendVerification: true });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (err: Error) => {
@@ -214,13 +214,12 @@ export default function AdminUsersPage() {
     },
   });
 
-  const deleteUserWithPasswordMutation = useMutation({
-    mutationFn: (payload: { id: string; adminPassword: string }) =>
-      apiPost<AdminUser, { adminPassword: string }>(`/api/admin/users/${payload.id}/delete-with-password`, { adminPassword: payload.adminPassword }),
+  const deleteUserMutation = useMutation({
+    mutationFn: (id: string) => apiDelete(`/api/admin/users/${id}`),
     onSuccess: () => {
       toast({ title: "User deleted" });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      setAdminPassword("");
+      setConfirmAction(null);
     },
     onError: (err: Error) => {
       toast({ title: "Unable to delete user", description: err.message, variant: "destructive" });
@@ -451,7 +450,7 @@ export default function AdminUsersPage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => setConfirmAction({ type: "deleteWithPassword", user })}
+                  onClick={() => setConfirmAction({ type: "delete", user })}
                   className="text-red-300"
                 >
                   Delete
@@ -505,15 +504,7 @@ export default function AdminUsersPage() {
   function handleConfirmAction() {
     if (!confirmAction) return;
     if (confirmAction.type === "delete") {
-      // This should not be reached anymore
-      return;
-    }
-    if (confirmAction.type === "deleteWithPassword") {
-      if (!adminPassword) {
-        toast({ title: "Password required", description: "Please enter your admin password", variant: "destructive" });
-        return;
-      }
-      deleteUserWithPasswordMutation.mutate({ id: confirmAction.user.id, adminPassword });
+      deleteUserMutation.mutate(confirmAction.user.id);
     }
     if (confirmAction.type === "block") {
       blockUserMutation.mutate({ id: confirmAction.user.id, reason: blockReason });
@@ -807,6 +798,16 @@ export default function AdminUsersPage() {
                 ))}
               </Select>
             </div>
+            <div>
+              <Label htmlFor="create-password">Initial Password (optional)</Label>
+              <Input
+                id="create-password"
+                type="password"
+                value={createState.password}
+                onChange={(event) => setCreateState((prev) => ({ ...prev, password: event.target.value }))}
+                placeholder="Secure password"
+              />
+            </div>
             <label className="flex items-center gap-2 text-sm text-slate-200">
               <Checkbox
                 checked={createState.sendVerification}
@@ -826,6 +827,7 @@ export default function AdminUsersPage() {
                 createUserMutation.mutate({
                   name: createState.name || undefined,
                   email: createState.email,
+                  password: createState.password || undefined,
                   role: createState.role,
                   planCode: createState.planCode || undefined,
                   sendVerification: createState.sendVerification,
@@ -899,13 +901,13 @@ export default function AdminUsersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {confirmAction?.type === "deleteWithPassword" && "Delete User"}
+              {confirmAction?.type === "delete" && "Delete User"}
               {confirmAction?.type === "block" && "Block User"}
               {confirmAction?.type === "unblock" && "Unblock User"}
               {confirmAction?.type === "cancel" && "Cancel Subscription"}
             </DialogTitle>
             <DialogDescription>
-              {confirmAction?.type === "deleteWithPassword" && "This will soft-delete the user account. You must enter your admin password to confirm."}
+              {confirmAction?.type === "delete" && "This will permanently delete the user account and all associated data."}
               {confirmAction?.type === "block" && "Blocked users cannot sign in or access the API."}
               {confirmAction?.type === "unblock" && "Restore access for this account."}
               {confirmAction?.type === "cancel" && "Manage Stripe cancellation settings."}
@@ -919,18 +921,6 @@ export default function AdminUsersPage() {
                 value={blockReason}
                 onChange={(event) => setBlockReason(event.target.value)}
                 placeholder="Reason for blocking"
-              />
-            </div>
-          )}
-          {confirmAction?.type === "deleteWithPassword" && (
-            <div>
-              <Label htmlFor="admin-password">Admin Password (Required)</Label>
-              <Input
-                id="admin-password"
-                type="password"
-                value={adminPassword}
-                onChange={(event) => setAdminPassword(event.target.value)}
-                placeholder="Enter your admin password"
               />
             </div>
           )}
@@ -950,11 +940,10 @@ export default function AdminUsersPage() {
             <Button
               onClick={handleConfirmAction}
               disabled={
-                (confirmAction?.type === "block" && !blockReason) ||
-                (confirmAction?.type === "deleteWithPassword" && !adminPassword)
+                (confirmAction?.type === "block" && !blockReason)
               }
               variant="default"
-              className={confirmAction?.type === "deleteWithPassword" ? "bg-red-600 hover:bg-red-700 text-white" : ""}
+              className={confirmAction?.type === "delete" ? "bg-red-600 hover:bg-red-700 text-white" : ""}
             >
               Confirm
             </Button>
