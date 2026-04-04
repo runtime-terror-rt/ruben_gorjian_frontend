@@ -26,9 +26,14 @@ async function apiRequest<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
+  const headers = new Headers(options.headers);
+  // Bypass ngrok warning page for free accounts
+  headers.set("ngrok-skip-browser-warning", "true");
+
   const res = await fetch(buildUrl(path), {
     credentials: "include",
     ...options,
+    headers,
   });
 
   const contentType = res.headers.get("content-type") || "";
