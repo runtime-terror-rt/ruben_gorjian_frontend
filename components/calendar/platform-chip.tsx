@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { Instagram, Facebook, Linkedin } from "lucide-react";
+import type { IconType } from "react-icons";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import clsx from "clsx";
 
 type Platform = "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
@@ -11,10 +12,10 @@ interface PlatformChipProps {
   className?: string;
 }
 
-const platformIcons: Record<Platform, typeof Instagram> = {
-  INSTAGRAM: Instagram,
-  FACEBOOK: Facebook,
-  LINKEDIN: Linkedin,
+const platformIcons: Record<Platform, IconType> = {
+  INSTAGRAM: FaInstagram,
+  FACEBOOK: FaFacebook,
+  LINKEDIN: FaLinkedin,
 };
 
 const platformColors: Record<Platform, string> = {

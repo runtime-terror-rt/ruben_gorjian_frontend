@@ -32,6 +32,8 @@ function SignupPageInner() {
     const planSelection = getPlanSelection(searchParams);
     const pendingPlanCode = planSelection?.planCode || null;
 
+  
+
     // If no plan selected, redirect to pricing
     if (!pendingPlanCode) {
       setError("Please select a plan to continue.");
@@ -74,7 +76,7 @@ function SignupPageInner() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl border border-primary text-primary p-6 shadow-xl">
-        <h1 className="text-2xl font-semibold sora">Create account</h1>
+        <h1 className="text-2xl font-semibold sora ">Create account</h1>
         <p className="mt-2 text-sm">
           Create your account. We&apos;ll send you an email to verify before you
           pick a plan.

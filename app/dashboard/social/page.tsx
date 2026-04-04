@@ -11,13 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Unlink, ExternalLink } from "lucide-react";
 import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  Unlink,
-  ExternalLink,
-} from "lucide-react";
+  FaFacebook as Facebook,
+  FaInstagram as Instagram,
+  FaLinkedin as Linkedin,
+} from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialAccount {

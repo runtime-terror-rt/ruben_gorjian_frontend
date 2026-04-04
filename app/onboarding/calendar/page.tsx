@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Instagram, Facebook, Linkedin, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import type { IconType } from "react-icons";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 // Force dynamic rendering since this page uses client-side hooks and session context
 export const dynamic = "force-dynamic";
@@ -161,11 +163,11 @@ export default function CalendarOnboardingPage() {
   const platformOptions: Array<{
     value: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
     label: string;
-    icon: typeof Instagram;
+    icon: IconType;
   }> = [
-    { value: "INSTAGRAM", label: "Instagram", icon: Instagram },
-    { value: "FACEBOOK", label: "Facebook", icon: Facebook },
-    { value: "LINKEDIN", label: "LinkedIn", icon: Linkedin },
+    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
+    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
+    { value: "LINKEDIN", label: "LinkedIn", icon: FaLinkedin },
   ];
 
   return (

@@ -34,7 +34,11 @@ export function DashboardHeader({
   isCollapsed,
 }: DashboardHeaderProps) {
   const router = useRouter();
+<<<<<<< HEAD
   const { session } = useSessionContext();
+=======
+  const { session, refresh } = useSessionContext();
+>>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
 
   const handleLogout = async () => {
     try {
@@ -44,6 +48,10 @@ export function DashboardHeader({
       });
 
       if (res.ok) {
+<<<<<<< HEAD
+=======
+        await refresh();
+>>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
         router.push("/login");
       }
     } catch (error) {

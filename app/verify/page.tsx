@@ -12,7 +12,7 @@ function VerifyPageInner() {
   const { session, refresh, loading: sessionLoading } = useSessionContext();
 
   // Get returnTo from query, or check sessionStorage (from signup), or use default
-  let returnTo = getReturnToFromQuery(searchParams, "/onboarding");
+  let returnTo = getReturnToFromQuery(searchParams, "/pricing");
   if (returnTo === "/dashboard" && typeof window !== "undefined") {
     const stored = sessionStorage.getItem("signup_return_to");
     if (stored) {
@@ -137,14 +137,14 @@ function VerifyPageInner() {
                 window.location.href = data.checkoutUrl;
               } else {
                 console.error("[Verify] Checkout failed:", data);
-                // Fallback: redirect to onboarding router which will handle it
-                window.location.href = "/onboarding";
+                // Fallback: redirect to pricing
+                window.location.href = "/pricing";
               }
             })
             .catch((err) => {
               console.error("[Verify] Checkout error:", err);
-              // Fallback: redirect to onboarding router
-              window.location.href = "/onboarding";
+              // Fallback: redirect to pricing
+              window.location.href = "/pricing";
             });
           return;
         }
@@ -170,6 +170,7 @@ function VerifyPageInner() {
         }
       }
 
+      /* 
       // Case 3: Use plan selection to determine onboarding route
       if (planCodeToUse && !planCategoryToUse) {
         // Try to get route from plan code
@@ -182,6 +183,7 @@ function VerifyPageInner() {
           return;
         }
       }
+      */
 
       // Case 4: User has no plan → redirect to pricing
       if (!planCategoryToUse && !planCodeToUse) {
@@ -190,9 +192,9 @@ function VerifyPageInner() {
         return;
       }
 
-      // Case 5: Fallback - route to onboarding router which will handle edge cases
-      console.log("[Verify] Fallback: routing to onboarding router");
-      window.location.href = "/onboarding";
+      // Case 5: Fallback - route to pricing page
+      console.log("[Verify] Fallback: routing to pricing page");
+      window.location.href = "/pricing";
     }
 
     routeAfterVerification();
