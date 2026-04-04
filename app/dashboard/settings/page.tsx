@@ -262,8 +262,8 @@ export default function SettingsPage() {
           </p>
         </div>
         <Button
-          variant="secondary"
-          className="rounded-full px-4 py-2"
+          variant="ghost"
+          className="rounded-full px-4 py-2 text-white/60 hover:text-white"
           onClick={() => {
             setForm(initialForm);
             setMessage(null);
@@ -314,12 +314,12 @@ export default function SettingsPage() {
                 />
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={avatarUploading || avatarRemoving}
-                  className="rounded-full"
+                  className="rounded-full border-slate-700 text-slate-200 hover:bg-slate-800"
                 >
-                  <Camera className="mr-2 h-4 w-4" />
+                  <Camera className="mr-2.5 h-4 w-4 text-lime-400" />
                   {avatarUploading ? "Uploading..." : "Upload photo"}
                 </Button>
                 <Button
@@ -331,10 +331,10 @@ export default function SettingsPage() {
                     avatarUploading ||
                     (!settings?.profile.avatar.storageKey && !avatarPreviewUrl)
                   }
-                  className="rounded-full text-red-300 hover:text-red-200"
+                  className="rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
                 >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {avatarRemoving ? "Removing..." : "Remove"}
+                  <Trash2 className="mr-2.5 h-4 w-4" />
+                  {avatarRemoving ? "Removing..." : "Remove photo"}
                 </Button>
               </div>
             </div>

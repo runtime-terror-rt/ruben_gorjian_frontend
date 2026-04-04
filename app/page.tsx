@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import Navbar from "@/components/navbar";
 import heroImage from "@/components/assets/new_img.png";
@@ -23,6 +24,7 @@ import { persistPlanSelection } from "@/lib/plan-selection";
 import { useUiStore } from "@/store/uiStore";
 import { Tooltip } from "react-tooltip";
 import {ScanFace} from 'lucide-react'
+import { Button } from "@/components/ui/button";
 
 type BillingCycle = "monthly" | "yearly";
 
@@ -230,19 +232,23 @@ export default function HomePage() {
               You Approve the plan. <br />
               We Run Your Social Media Postings. <br />
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href="/pricing"
-                className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-600"
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Button
+                asChild
+                size="lg"
+                variant="shiny"
+                className="rounded-full px-8"
               >
-                Signup
-              </Link>
-              <Link
-                href="/contact"
-                className="rounded-full border border-[#cfd3df] bg-white px-6 py-3 text-sm font-semibold text-[#222535] transition hover:bg-[#f6f7fb]"
+                <Link href="/pricing">Signup</Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-full px-8"
               >
-                Contact Us
-              </Link>
+                <Link href="/contact">Contact Us</Link>
+              </Button>
             </div>
           </div>
           <div>
@@ -373,12 +379,9 @@ export default function HomePage() {
                 What each Talexia plan includes
               </h2>
             </div>
-            <Link
-              href="/pricing"
-              className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white"
-            >
-              View full pricing
-            </Link>
+            <Button asChild variant="outline" className="rounded-full">
+              <Link href="/pricing">View full pricing</Link>
+            </Button>
           </div>
           <div className="mt-6 overflow-x-auto">
             <table className="w-full min-w-[760px] border-collapse text-left text-sm">
@@ -429,19 +432,13 @@ export default function HomePage() {
             Talexia centralizes your workflow from brand profile to scheduled
             posts, so teams can deliver consistent output for every client.
           </p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/pricing"
-              className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white"
-            >
-              Choose your plan
-            </Link>
-            <a
-              href="/contact"
-              className="rounded-full border border-[#d2d6e2] bg-white px-6 py-3 text-sm font-semibold text-[#232738]"
-            >
-              Talk to sales
-            </a>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
+            <Button asChild size="lg" variant="shiny" className="rounded-full px-8">
+              <Link href="/pricing">Choose your plan</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full px-8">
+              <a href="/contact">Talk to sales</a>
+            </Button>
           </div>
         </div>
       </section>
@@ -487,29 +484,33 @@ export default function HomePage() {
       <section className="px-4 pb-16">
         <div className="space-y-10">
           <div className="mx-auto flex w-full max-w-4xl flex-row flex-wrap items-center justify-center gap-4 rounded-2xl p-4">
-            <div className="inline-flex rounded-full bg-primary p-1">
-              <button
+            <div className="inline-flex rounded-full bg-primary p-1.5 shadow-inner">
+              <Button
                 type="button"
+                variant={billingCycle === "monthly" ? "secondary" : "ghost"}
                 onClick={() => setBillingCycle("monthly")}
-                className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                  billingCycle === "monthly"
-                    ? "bg-white text-[#111827]"
-                    : "text-white/80"
-                }`}
+                className={cn(
+                  "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
+                  billingCycle === "monthly" 
+                    ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
+                    : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                )}
               >
                 Monthly
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant={billingCycle === "yearly" ? "secondary" : "ghost"}
                 onClick={() => setBillingCycle("yearly")}
-                className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                  billingCycle === "yearly"
-                    ? "bg-white text-[#111827]"
-                    : "text-white/80"
-                }`}
+                className={cn(
+                  "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
+                  billingCycle === "yearly" 
+                    ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
+                    : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                )}
               >
                 Yearly
-              </button>
+              </Button>
             </div>
           </div>
           <div
@@ -543,17 +544,14 @@ export default function HomePage() {
                       {formatPrice(displayPrice)}
                     </p>
                     <p className="mt-2 text-xs text-[#6c6f7d]">{billingNote}</p>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => handleSelectPlan(key)}
-                      className={`mt-5 w-full rounded-full px-4 py-2.5 text-sm font-semibold transition ${
-                        isHighlighted
-                          ? "bg-primary text-white hover:bg-primary/80"
-                          : "bg-[#1b2030] text-white hover:bg-[#121722]"
-                      }`}
+                      variant={isHighlighted ? "shiny" : "outline"}
+                      className="mt-5 w-full rounded-full"
                     >
                       {plan.ctaLabel}
-                    </button>
+                    </Button>
                     <ul className="mt-5 space-y-2">
                       {plan.features.map((feature, idx) => (
                         <li
@@ -609,9 +607,9 @@ export default function HomePage() {
                   key={index}
                   className="w-full md:w-1/2 space-y-5 rounded-xl border border-primary p-6 text-center"
                 >
-                  <button className="w-full rounded-lg bg-primary p-4 text-center text-2xl font-bold uppercase text-white font-sora">
+                   <div className="w-full rounded-lg bg-primary p-4 text-center text-2xl font-bold uppercase text-white font-sora shadow-lg">
                     {item.title}
-                  </button>
+                  </div>
                   <p className="text-xl font-bold font-sora">{item.price}</p>
                   <ul className="list-inside list-style-none text-left">
                     {item.features.map((feature, index) => (
@@ -624,15 +622,17 @@ export default function HomePage() {
               ))}
             </div>
             <div className="mt-4 space-y-2 px-6 pb-6 text-center mx-auto">
-              <button
-                className="bg-primary rounded-lg px-4 py-2 text-white text-2xl font-bold font-sora"
+              <Button
+                size="lg"
+                variant="shiny"
+                className="rounded-xl px-8 py-8 text-2xl font-bold font-sora h-auto"
                 onClick={() => {
                   window.location.href =
                     "https://rgp.17hats.com/p#/lcf/vgbbgkzhtwtrvdpzdxdnvpxcszpwwbkk";
                 }}
               >
                 Book a Production Consultation
-              </button>
+              </Button>
               <p className="text-sm text-[#55596a] font-semibold ">
                 Limited availability per month. Secure your date 4 weeks in
                 advance
