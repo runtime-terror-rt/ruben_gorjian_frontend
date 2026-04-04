@@ -23,21 +23,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Check if user is authenticated
-<<<<<<< HEAD
-  const isAuthenticated = !!session;
-
-  // Handle auth redirect - keep existing logic
-  useEffect(() => {
-    if (sessionLoading) return;
-
-    if (!isAuthenticated) {
-      router.replace("/login");
-    }
-  }, [sessionLoading, isAuthenticated, router]);
-=======
-  // const isAuthenticated = !!session;
-
   // Handle auth and subscription redirect
   useEffect(() => {
     if (sessionLoading) return;
@@ -62,7 +47,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       return;
     }
 
-    // No active subscription but onboarding not finished - go to onboarding
+    // Active subscription but onboarding not finished - go to onboarding
     if (hasActiveSubscription && !session.onboardingCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
       router.replace("/onboarding");
     }
@@ -79,9 +64,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     pathname.startsWith("/onboarding") || 
     (hasActiveSubscription && session.onboardingCompleted)
   );
->>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
 
-  // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
+  // Load sidebar collapsed state from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
     queueMicrotask(() => {
@@ -106,7 +90,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     setIsMobileSidebarOpen((prev) => !prev);
   };
 
-  // Close mobile sidebar on route change (defer setState to avoid sync setState in effect)
+  // Close mobile sidebar on route change
   useEffect(() => {
     queueMicrotask(() => setIsMobileSidebarOpen(false));
   }, [pathname]);
@@ -136,13 +120,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [isMobileSidebarOpen]);
 
-<<<<<<< HEAD
-  // Show loading state
-  if (sessionLoading || !isHydrated) {
-=======
   // Show loading state while checking permissions or hydrating
   if (!isHydrated || sessionLoading || !isAuthorized) {
->>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950">
         <div className="flex flex-col items-center gap-3">
@@ -154,15 +133,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   // Show nothing while redirecting non-authenticated users
-<<<<<<< HEAD
-  if (!isAuthenticated) {
+  if (!session) {
     return null;
   }
-=======
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
->>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -189,7 +162,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         isCollapsed={isSidebarCollapsed}
       />
 
-      {/* Main Content — page scrolls normally (trackpad/mouse wheel) */}
+      {/* Main Content — page scrolls normally */}
       <main
         className={cn(
           "min-h-[calc(100vh-4rem)] transition-[padding] duration-300",
