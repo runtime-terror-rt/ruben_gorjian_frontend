@@ -249,34 +249,37 @@ function PricingPageContent() {
               and LinkedIn.
             </p>
 
-            <div className="mx-auto mt-8 flex w-full max-w-4xl flex-row items-center justify-center gap-4 rounded-2xl p-4">
-              <div className="inline-flex rounded-full bg-primary p-1.5 shadow-inner">
-                <Button
+            <div className="mx-auto mt-8 flex w-full max-w-4xl flex-row items-center justify-center">
+              <div className="inline-flex items-center rounded-full border-2 border-primary bg-primary p-1 gap-1 shadow-lg">
+                <button
                   type="button"
                   onClick={() => setBillingCycle("monthly")}
-                  variant={billingCycle === "monthly" ? "secondary" : "ghost"}
                   className={cn(
-                    "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
-                    billingCycle === "monthly" 
-                      ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
-                      : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                    "rounded-full px-7 py-2 text-sm font-bold transition-all duration-300 select-none",
+                    billingCycle === "monthly"
+                      ? "bg-white text-primary shadow-md"
+                      : "bg-transparent text-white hover:bg-white/10"
                   )}
                 >
                   Monthly
-                </Button>
-                <Button
+                </button>
+                <button
                   type="button"
                   onClick={() => setBillingCycle("yearly")}
-                  variant={billingCycle === "yearly" ? "secondary" : "ghost"}
                   className={cn(
-                    "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
-                    billingCycle === "yearly" 
-                      ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
-                      : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                    "rounded-full px-7 py-2 text-sm font-bold transition-all duration-300 select-none",
+                    billingCycle === "yearly"
+                      ? "bg-white text-primary shadow-md"
+                      : "bg-transparent text-white hover:bg-white/10"
                   )}
                 >
                   Yearly
-                </Button>
+                  {billingCycle !== "yearly" && (
+                    <span className="ml-2 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      Save 20%
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
             <p className="mt-3 text-xs font-medium text-secondary">
@@ -315,13 +318,16 @@ function PricingPageContent() {
                     {formatPrice(displayPrice)}
                   </p>
                   <p className="mt-2 text-xs text-[#6c6f7d]">{billingNote}</p>
-                  <Button
+                  <button
                     onClick={() => handleSelectPlan(key)}
-                    variant={isHighlighted ? "shiny" : "outline"}
-                    className="mt-5 w-full rounded-full"
+                    className={`mt-5 w-full rounded-full px-4 py-3 text-sm font-bold transition-all duration-200 ${
+                      isHighlighted
+                        ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-primary text-white hover:bg-primary/85 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]"
+                    }`}
                   >
                     {plan.ctaLabel}
-                  </Button>
+                  </button>
                   <ul className="mt-5 space-y-2">
                     {plan.features.map((feature, idx) => (
                       <li

@@ -14,6 +14,7 @@ import {
   ExternalLink,
   BookOpen,
   Tag,
+  ShieldCheck,
 } from "lucide-react";
 
 type NavItem = {
@@ -55,6 +56,11 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Coupons",
         href: "/admin/coupons",
         icon: Tag,
+      },
+      {
+        label: "Admins",
+        href: "/admin/virtual-admins",
+        icon: ShieldCheck,
       },
       {
         label: "Posts",
