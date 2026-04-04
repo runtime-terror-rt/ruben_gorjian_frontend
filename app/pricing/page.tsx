@@ -21,6 +21,8 @@ import { getPlanByLookupKey } from "@/lib/pricing-catalog";
 import { persistPlanSelection } from "@/lib/plan-selection";
 import { useUiStore } from "@/store/uiStore";
 import { Tooltip } from "react-tooltip";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "talexia_pricing_master";
 
@@ -247,28 +249,34 @@ function PricingPageContent() {
               and LinkedIn.
             </p>
 
-            <div className="mx-auto mt-8 flex w-full max-w-4xl gap-4 rounded-2xl p-4 flex-row items-center justify-center">
-              <div className="inline-flex rounded-full bg-primary p-1">
-                <button
+            <div className="mx-auto mt-8 flex w-full max-w-4xl flex-row items-center justify-center gap-4 rounded-2xl p-4">
+              <div className="inline-flex rounded-full bg-primary p-1.5 shadow-inner">
+                <Button
+                  type="button"
                   onClick={() => setBillingCycle("monthly")}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                    billingCycle === "monthly"
-                      ? "bg-white text-[#111827]"
-                      : "text-white/80"
-                  }`}
+                  variant={billingCycle === "monthly" ? "secondary" : "ghost"}
+                  className={cn(
+                    "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
+                    billingCycle === "monthly" 
+                      ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
+                      : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                  )}
                 >
                   Monthly
-                </button>
-                <button
+                </Button>
+                <Button
+                  type="button"
                   onClick={() => setBillingCycle("yearly")}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                    billingCycle === "yearly"
-                      ? "bg-white text-[#111827]"
-                      : "text-white/80"
-                  }`}
+                  variant={billingCycle === "yearly" ? "secondary" : "ghost"}
+                  className={cn(
+                    "rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300",
+                    billingCycle === "yearly" 
+                      ? "bg-slate-50 text-primary shadow-lg shadow-black/5 scale-[1.02]" 
+                      : "bg-transparent text-white/70 hover:text-white hover:bg-white/5"
+                  )}
                 >
                   Yearly
-                </button>
+                </Button>
               </div>
             </div>
             <p className="mt-3 text-xs font-medium text-secondary">
@@ -307,17 +315,13 @@ function PricingPageContent() {
                     {formatPrice(displayPrice)}
                   </p>
                   <p className="mt-2 text-xs text-[#6c6f7d]">{billingNote}</p>
-                  <button
+                  <Button
                     onClick={() => handleSelectPlan(key)}
-                    className={`mt-5 w-full rounded-full px-4 py-2.5 text-sm font-semibold transition ${
-                      isHighlighted
-                        ? "bg-primary text-white hover:bg-primary/80"
-                        : // ? "bg-[#ff5a3d] text-white hover:bg-[#e84d31]"
-                          "bg-[#1b2030] text-white hover:bg-[#121722]"
-                    }`}
+                    variant={isHighlighted ? "shiny" : "outline"}
+                    className="mt-5 w-full rounded-full"
                   >
                     {plan.ctaLabel}
-                  </button>
+                  </Button>
                   <ul className="mt-5 space-y-2">
                     {plan.features.map((feature, idx) => (
                       <li

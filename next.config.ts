@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     // Ensure Turbopack treats this folder as the workspace root
     root: __dirname,
   },
+  experimental: {
+    workerThreads: true,
+  },
   images: {
     remotePatterns: [
       {
