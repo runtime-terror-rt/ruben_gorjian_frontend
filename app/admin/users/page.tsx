@@ -442,12 +442,12 @@ export default function AdminUsersPage() {
                     Block/Suspend
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => resendVerificationMutation.mutate(user.id)}>
+                {/* <DropdownMenuItem onClick={() => resendVerificationMutation.mutate(user.id)}>
                   Resend Verification
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setConfirmAction({ type: "cancel", user })}>
+                </DropdownMenuItem> */}
+                {/* <DropdownMenuItem onClick={() => setConfirmAction({ type: "cancel", user })}>
                   Cancel Subscription
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "delete", user })}
@@ -557,7 +557,7 @@ export default function AdminUsersPage() {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={() => setCreateState((prev) => ({ ...prev, open: true }))}>Create User</Button>
+          {/* <Button onClick={() => setCreateState((prev) => ({ ...prev, open: true }))}>Create User</Button> */}
         </div>
       </div>
 
@@ -571,7 +571,7 @@ export default function AdminUsersPage() {
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value, page: 1 }))}
           />
         </div>
-        <div>
+        {/* <div>
           <Label htmlFor="role">Role</Label>
           <Select
             id="role"
@@ -583,7 +583,7 @@ export default function AdminUsersPage() {
             <option value="ADMIN">Admin</option>
             <option value="SUPER_ADMIN">Super Admin</option>
           </Select>
-        </div>
+        </div> */}
         <div>
           <Label htmlFor="status">Account Status</Label>
           <Select
