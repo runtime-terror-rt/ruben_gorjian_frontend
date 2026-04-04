@@ -21,6 +21,8 @@ import { getPlanByLookupKey } from "@/lib/pricing-catalog";
 import { persistPlanSelection } from "@/lib/plan-selection";
 import { useUiStore } from "@/store/uiStore";
 import { Tooltip } from "react-tooltip";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "talexia_pricing_master";
 
@@ -247,27 +249,36 @@ function PricingPageContent() {
               and LinkedIn.
             </p>
 
-            <div className="mx-auto mt-8 flex w-full max-w-4xl gap-4 rounded-2xl p-4 flex-row items-center justify-center">
-              <div className="inline-flex rounded-full bg-primary p-1">
+            <div className="mx-auto mt-8 flex w-full max-w-4xl flex-row items-center justify-center">
+              <div className="inline-flex items-center rounded-full border-2 border-primary bg-primary p-1 gap-1 shadow-lg">
                 <button
+                  type="button"
                   onClick={() => setBillingCycle("monthly")}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+                  className={cn(
+                    "rounded-full px-7 py-2 text-sm font-bold transition-all duration-300 select-none",
                     billingCycle === "monthly"
-                      ? "bg-white text-[#111827]"
-                      : "text-white/80"
-                  }`}
+                      ? "bg-white text-primary shadow-md"
+                      : "bg-transparent text-white hover:bg-white/10"
+                  )}
                 >
                   Monthly
                 </button>
                 <button
+                  type="button"
                   onClick={() => setBillingCycle("yearly")}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+                  className={cn(
+                    "rounded-full px-7 py-2 text-sm font-bold transition-all duration-300 select-none",
                     billingCycle === "yearly"
-                      ? "bg-white text-[#111827]"
-                      : "text-white/80"
-                  }`}
+                      ? "bg-white text-primary shadow-md"
+                      : "bg-transparent text-white hover:bg-white/10"
+                  )}
                 >
                   Yearly
+                  {billingCycle !== "yearly" && (
+                    <span className="ml-2 rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      Save 20%
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
@@ -309,11 +320,10 @@ function PricingPageContent() {
                   <p className="mt-2 text-xs text-[#6c6f7d]">{billingNote}</p>
                   <button
                     onClick={() => handleSelectPlan(key)}
-                    className={`mt-5 w-full rounded-full px-4 py-2.5 text-sm font-semibold transition ${
+                    className={`mt-5 w-full rounded-full px-4 py-3 text-sm font-bold transition-all duration-200 ${
                       isHighlighted
-                        ? "bg-primary text-white hover:bg-primary/80"
-                        : // ? "bg-[#ff5a3d] text-white hover:bg-[#e84d31]"
-                          "bg-[#1b2030] text-white hover:bg-[#121722]"
+                        ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-primary text-white hover:bg-primary/85 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]"
                     }`}
                   >
                     {plan.ctaLabel}
