@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState, useCallback, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertCircle,
   Check,
+  RefreshCw,
 } from "lucide-react";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { useSessionContext } from "@/context/SessionContext";
 import { OnboardingHeaderNav } from "@/components/onboarding/OnboardingHeaderNav";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { normalizeUrl } from "@/lib/url-utils";
+import { SiTiktok } from "react-icons/si";
+import clsx from "clsx";
 
 type Section = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -29,14 +33,22 @@ const sections = [
 
 export const dynamic = "force-dynamic";
 
-export default function FullManagementOnboardingPage() {
+function FullManagementOnboardingInner() {
   const { session, loading: sessionLoading, refresh } = useSessionContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const handledQueryKeyRef = useRef<string | null>(null);
+  const refetchRetryIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const queryKey = searchParams.toString();
 
   const [currentSection, setCurrentSection] = useState<Section>(1);
   const [submitting, setSubmitting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
+  const [connectedAccounts, setConnectedAccounts] = useState<string[]>([]);
+  const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     businessName: "",
@@ -44,7 +56,7 @@ export default function FullManagementOnboardingPage() {
     instagramUrl: "",
     facebookUrl: "",
     linkedinUrl: "",
-    platformsToManage: [] as ("INSTAGRAM" | "FACEBOOK" | "LINKEDIN")[],
+    platformsToManage: [] as ("INSTAGRAM" | "FACEBOOK")[],
     postingAccessGranted: "" as "YES" | "WILL_GRANT_AFTER" | "",
 
     industry: "" as
@@ -101,6 +113,33 @@ export default function FullManagementOnboardingPage() {
     )[],
   });
 
+  const fetchConnectedAccounts = useCallback(async () => {
+    try {
+      const accountsRes = await fetch("/api/social-media/platform/my-links", {
+        credentials: "include",
+      });
+      if (accountsRes.ok) {
+        const accountsData = await accountsRes.json();
+        // Updated to include .data property, matching dashboard logic
+        const raw = Array.isArray(accountsData) 
+          ? accountsData 
+          : accountsData.links || accountsData.accounts || accountsData.data || [];
+        const platforms = raw.map((a: any) => a.platform?.toUpperCase());
+        setConnectedAccounts(platforms);
+      }
+    } catch (err) {
+      console.error("Failed to fetch connected accounts:", err);
+    }
+  }, []);
+
+  const handleManualRefresh = async () => {
+    setRefreshing(true);
+    await fetchConnectedAccounts();
+    await refresh();
+    setRefreshing(false);
+    toast({ title: "Refreshed", description: "Checked for new social connections" });
+  };
+
   useEffect(() => {
     if (sessionLoading) return;
     if (!session) {
@@ -123,6 +162,8 @@ export default function FullManagementOnboardingPage() {
 
     async function load() {
       try {
+        await fetchConnectedAccounts();
+
         const res = await fetch("/api/onboarding/full-management", {
           cache: "no-store",
           credentials: "include",
@@ -168,9 +209,76 @@ export default function FullManagementOnboardingPage() {
         setDraftReady(true);
       }
     }
-
     load();
-  }, [session, sessionLoading, router]);
+  }, [session, sessionLoading, router, fetchConnectedAccounts]);
+
+  useEffect(() => {
+    if (handledQueryKeyRef.current === queryKey) return;
+    handledQueryKeyRef.current = queryKey;
+
+    const errorParam = searchParams.get("error");
+    const successParam = searchParams.get("success");
+    const platformParam = searchParams.get("platform");
+
+    if (errorParam) {
+      toast({
+        title: "Connection failed",
+        description: "Unable to connect account",
+        variant: "destructive",
+      });
+      window.history.replaceState({}, "", "/onboarding/full-management");
+    } else if (successParam) {
+      const message = platformParam ? `Connected ${platformParam.toLowerCase()}` : "Account connected";
+      toast({ title: "Success", description: message });
+      
+      fetchConnectedAccounts();
+      refresh();
+      
+      if (refetchRetryIdRef.current) clearTimeout(refetchRetryIdRef.current);
+      refetchRetryIdRef.current = setTimeout(async () => {
+        refetchRetryIdRef.current = null;
+        fetchConnectedAccounts();
+        await refresh();
+      }, 2000);
+      
+      window.history.replaceState({}, "", "/onboarding/full-management");
+    }
+  }, [queryKey, searchParams, toast, fetchConnectedAccounts, refresh]);
+
+  useEffect(() => {
+    return () => {
+      if (refetchRetryIdRef.current) clearTimeout(refetchRetryIdRef.current);
+    };
+  }, []);
+
+  const connectPlatform = async (platform: string) => {
+    setConnectingPlatform(platform);
+    try {
+      const response = await fetch("/api/social-media/platform/connect-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ 
+          platform: platform.toLowerCase(),
+          redirectUrl: `${window.location.origin}/onboarding/full-management`,
+          showCalendar: false 
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
+      if (connectUrl) {
+        window.location.href = connectUrl;
+      } else {
+        setError("No connect URL returned from server.");
+      }
+    } catch (err) {
+      console.error("Connection error:", err);
+      setError("Failed to start connection process.");
+    } finally {
+      setConnectingPlatform(null);
+    }
+  };
 
   useEffect(() => {
     if (!draftReady || submitting || !session) return;
@@ -220,6 +328,18 @@ export default function FullManagementOnboardingPage() {
     return () => window.clearTimeout(timer);
   }, [form, currentSection, draftReady, session, submitting]);
 
+  useEffect(() => {
+    // Auto-select connected accounts for management if none are selected
+    if (connectedAccounts.length > 0 && form.platformsToManage.length === 0) {
+      const initial = connectedAccounts.filter((p) =>
+        ["INSTAGRAM", "FACEBOOK"].includes(p),
+      ) as ("INSTAGRAM" | "FACEBOOK")[];
+      if (initial.length > 0) {
+        setForm((f) => ({ ...f, platformsToManage: initial }));
+      }
+    }
+  }, [connectedAccounts, form.platformsToManage.length]);
+
   const handleSubmit = async () => {
     setError(null);
     const normalizedWebsiteUrl = normalizeUrl(form.websiteUrl);
@@ -229,8 +349,10 @@ export default function FullManagementOnboardingPage() {
         return setError("Business name is required.");
       if (!normalizedWebsiteUrl)
         return setError("Valid website URL is required.");
+      if (connectedAccounts.length === 0)
+        return setError("Please connect at least one social media account.");
       if (form.platformsToManage.length === 0)
-        return setError("Select at least one platform.");
+        return setError("Please select at least one connected platform to manage (vía the 'Manage' checkbox).");
       if (!form.postingAccessGranted)
         return setError("Specify posting access status.");
     }
@@ -307,6 +429,12 @@ export default function FullManagementOnboardingPage() {
     }
   };
 
+  const platformOptions = [
+    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
+    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
+    { value: "TIKTOK", label: "TikTok", icon: SiTiktok },
+  ];
+
   if (sessionLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
@@ -314,12 +442,6 @@ export default function FullManagementOnboardingPage() {
       </div>
     );
   }
-
-  const platformOptions = [
-    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
-    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
-    { value: "LINKEDIN", label: "LinkedIn", icon: FaLinkedin },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-slate-900">
@@ -365,10 +487,24 @@ export default function FullManagementOnboardingPage() {
               </div>
             </aside>
 
-            <div className="md:col-span-2 px-6 py-8">
-              <h1 className="text-2xl font-semibold text-white">
-                {sections.find((s) => s.id === currentSection)?.title}
-              </h1>
+            <div className="md:col-span-2 px-6 py-8 flex flex-col min-h-[500px]">
+              <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-semibold text-white">
+                  {sections.find((s) => s.id === currentSection)?.title}
+                </h1>
+                {currentSection === 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleManualRefresh}
+                    disabled={refreshing}
+                    className="text-slate-400 hover:text-white gap-2"
+                  >
+                    <RefreshCw className={clsx("h-3.5 w-3.5", refreshing && "animate-spin")} />
+                    Refresh
+                  </Button>
+                )}
+              </div>
 
               {error ? (
                 <div className="mt-4 rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-xs text-red-100 flex items-center gap-2">
@@ -377,7 +513,7 @@ export default function FullManagementOnboardingPage() {
                 </div>
               ) : null}
 
-              <div className="mt-6 space-y-6">
+              <div className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[70vh]">
                 {currentSection === 1 ? (
                   <>
                     <div className="space-y-2">
@@ -432,60 +568,78 @@ export default function FullManagementOnboardingPage() {
                         }
                         placeholder="facebook.com/your-page"
                       />
-                      <Input
-                        value={form.linkedinUrl}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            linkedinUrl: e.target.value,
-                          }))
-                        }
-                        placeholder="linkedin.com/company/your-page"
-                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
-                        Platforms to Manage{" "}
-                        <span className="text-red-400">*</span>
+                        Connect Platforms to Manage <span className="text-red-400">*</span>
                       </Label>
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {platformOptions.map((option) => {
                           const Icon = option.icon;
-                          const platformValue = option.value as
-                            | "INSTAGRAM"
-                            | "FACEBOOK"
-                            | "LINKEDIN";
+                          const isConnected = connectedAccounts.includes(option.value);
                           return (
-                            <label
+                            <div
                               key={option.value}
-                              className="flex items-center space-x-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer"
+                              className="flex items-center justify-between p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
                             >
-                              <Checkbox
-                                checked={form.platformsToManage.includes(
-                                  platformValue,
-                                )}
-                                onCheckedChange={() =>
-                                  setForm((f) => ({
-                                    ...f,
-                                    platformsToManage:
-                                      f.platformsToManage.includes(
-                                        platformValue,
-                                      )
-                                        ? f.platformsToManage.filter(
-                                            (p) => p !== platformValue,
-                                          )
-                                        : [
-                                            ...f.platformsToManage,
-                                            platformValue,
-                                          ],
-                                  }))
-                                }
-                              />
-                              <Icon className="h-5 w-5 text-slate-300" />
-                              <span className="text-sm text-slate-200">
-                                {option.label}
-                              </span>
-                            </label>
+                              <div className="flex items-center space-x-3">
+                                <div className={clsx(
+                                  "p-2 rounded-lg text-white",
+                                  option.value === "FACEBOOK" && "bg-blue-600",
+                                  option.value === "INSTAGRAM" && "bg-gradient-to-r from-pink-500 to-orange-400",
+                                  option.value === "TIKTOK" && "bg-black border border-slate-700"
+                                )}>
+                                  <Icon className="h-5 w-5" />
+                                </div>
+                                <div>
+                                  <span className="text-sm font-medium text-slate-200 block">
+                                    {option.label}
+                                  </span>
+                                  <span className={clsx(
+                                    "text-[10px] block",
+                                    isConnected ? "text-lime-400" : "text-slate-400"
+                                  )}>
+                                    {isConnected ? "Connected successfully" : "Not connected yet"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {isConnected ? (
+                                <div className="flex items-center gap-3">
+                                  <label className="flex items-center gap-2 cursor-pointer group">
+                                    <Checkbox
+                                      checked={form.platformsToManage.includes(option.value as any)}
+                                      onCheckedChange={(checked: boolean) =>
+                                        setForm((f) => ({
+                                          ...f,
+                                          platformsToManage: checked
+                                            ? [...f.platformsToManage, option.value as any]
+                                            : f.platformsToManage.filter((p) => p !== option.value),
+                                        }))
+                                      }
+                                      className="border-lime-400 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-900"
+                                    />
+                                    <span className="text-xs text-slate-300 group-hover:text-white transition-colors">
+                                      Manage
+                                    </span>
+                                  </label>
+                                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-xs font-medium">
+                                    <Check className="h-3 w-3" />
+                                    Connected
+                                  </div>
+                                </div>
+                              ) : (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  onClick={() => connectPlatform(option.value)}
+                                  disabled={connectingPlatform === option.value}
+                                  className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs h-8"
+                                >
+                                  {connectingPlatform === option.value ? "Connecting..." : "Connect"}
+                                </Button>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -522,7 +676,8 @@ export default function FullManagementOnboardingPage() {
                   </>
                 ) : null}
 
-                {currentSection === 2 ? (
+                {/* (Sections 2-6 content here...) */}
+                {currentSection === 2 && (
                   <>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
@@ -592,9 +747,9 @@ export default function FullManagementOnboardingPage() {
                       ))}
                     </div>
                   </>
-                ) : null}
+                )}
 
-                {currentSection === 3 ? (
+                {currentSection === 3 && (
                   <>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
@@ -654,9 +809,9 @@ export default function FullManagementOnboardingPage() {
                       />
                     </div>
                   </>
-                ) : null}
+                )}
 
-                {currentSection === 4 ? (
+                {currentSection === 4 && (
                   <>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
@@ -729,9 +884,9 @@ export default function FullManagementOnboardingPage() {
                       ))}
                     </div>
                   </>
-                ) : null}
+                )}
 
-                {currentSection === 5 ? (
+                {currentSection === 5 && (
                   <div className="space-y-2">
                     <Label className="text-sm font-semibold text-slate-300">
                       Allow CTAs? <span className="text-red-400">*</span>
@@ -753,9 +908,9 @@ export default function FullManagementOnboardingPage() {
                       </label>
                     ))}
                   </div>
-                ) : null}
+                )}
 
-                {currentSection === 6 ? (
+                {currentSection === 6 && (
                   <>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
@@ -773,45 +928,49 @@ export default function FullManagementOnboardingPage() {
                       >
                         <option value="">Select frequency</option>
                         <option value="DAILY">Daily</option>
-                        <option value="WEEKLY_3">3x weekly</option>
-                        <option value="WEEKLY_5">5x weekly</option>
-                        <option value="WEEKLY_7">7x weekly</option>
+                        <option value="WEEKLY_3">3 times a week</option>
+                        <option value="WEEKLY_5">5 times a week</option>
+                        <option value="WEEKLY_7">7 times a week</option>
                         <option value="FORTNIGHTLY">Fortnightly</option>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
-                        Preferred Post Times (Optional)
+                        Preferred Posting Times (Optional)
                       </Label>
-                      {(
-                        ["MORNING", "AFTERNOON", "EVENING", "NIGHT"] as const
-                      ).map((opt) => (
-                        <label
-                          key={opt}
-                          className="flex items-center gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer"
-                        >
-                          <Checkbox
-                            checked={form.postingTimePreference.includes(opt)}
-                            onCheckedChange={(checked: boolean) =>
-                              setForm((f) => ({
-                                ...f,
-                                postingTimePreference: checked
-                                  ? [...f.postingTimePreference, opt]
-                                  : f.postingTimePreference.filter(
-                                      (x) => x !== opt,
-                                    ),
-                              }))
-                            }
-                          />
-                          <span className="text-sm text-slate-200">{opt}</span>
-                        </label>
-                      ))}
+                      <div className="grid grid-cols-2 gap-3">
+                        {(["MORNING", "AFTERNOON", "EVENING", "NIGHT"] as const).map(
+                          (time) => (
+                            <label
+                              key={time}
+                              className="flex items-center gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer"
+                            >
+                              <Checkbox
+                                checked={form.postingTimePreference.includes(time)}
+                                onCheckedChange={(checked: boolean) =>
+                                  setForm((f) => ({
+                                    ...f,
+                                    postingTimePreference: checked
+                                      ? [...f.postingTimePreference, time]
+                                      : f.postingTimePreference.filter(
+                                          (t) => t !== time,
+                                        ),
+                                  }))
+                                }
+                              />
+                              <span className="text-sm text-slate-200">
+                                {time.charAt(0) + time.slice(1).toLowerCase()}
+                              </span>
+                            </label>
+                          ),
+                        )}
+                      </div>
                     </div>
                   </>
-                ) : null}
+                )}
               </div>
 
-              <div className="flex justify-between pt-6 mt-6 border-t border-slate-800">
+              <div className="flex justify-between pt-6 mt-auto border-t border-slate-800">
                 {currentSection > 1 ? (
                   <Button
                     type="button"
@@ -828,7 +987,7 @@ export default function FullManagementOnboardingPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="bg-lime-400 text-slate-900 hover:bg-lime-300"
+                  className="bg-lime-400 text-slate-900 hover:bg-lime-300 px-8 py-2 rounded-xl font-bold transition-all hover:scale-105 active:scale-95"
                 >
                   {submitting
                     ? "Saving..."
@@ -842,5 +1001,17 @@ export default function FullManagementOnboardingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function FullManagementOnboardingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+        <p className="text-slate-300">Loading...</p>
+      </div>
+    }>
+      <FullManagementOnboardingInner />
+    </Suspense>
   );
 }

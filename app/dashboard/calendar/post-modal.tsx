@@ -14,6 +14,11 @@ import {
 import dayjs from "dayjs";
 import clsx from "clsx";
 
+import { getEnvVarWithDefault } from "@/lib/env-utils";
+import { buildStorageUrl } from "@/lib/storage-utils";
+
+const STORAGE_BASE_URL = getEnvVarWithDefault("NEXT_PUBLIC_STORAGE_BASE_URL", "");
+
 interface PostModalProps {
   open: boolean;
   onClose: () => void;
@@ -87,7 +92,7 @@ export default function PostModal({
     () =>
       socialAccounts
         .filter((acc) => selectedAccounts.includes(acc.id))
-        .some((acc) => acc.platform === "INSTAGRAM"),
+        .some((acc) => acc.platform === "INSTAGRAM" || acc.platform === "TIKTOK"),
     [selectedAccounts, socialAccounts]
   );
 
@@ -99,7 +104,7 @@ export default function PostModal({
     [selectedAccounts, socialAccounts]
   );
 
-  // Instagram allows only one media file; Facebook (and LinkedIn) support multiple
+  // Instagram allows only one media file; Facebook supports multiple
   const allowsMultipleMedia = useMemo(
     () => !requiresMedia && (hasFacebook || assets.length > 1),
     [assets.length, hasFacebook, requiresMedia]
@@ -154,12 +159,12 @@ export default function PostModal({
     if (!account) return;
 
     if (
-      account.platform === "INSTAGRAM" &&
+      (account.platform === "INSTAGRAM" || account.platform === "TIKTOK") &&
       assetIds.length === 0 &&
       !assets.length
     ) {
       setError(
-        "Please upload media first before selecting Instagram. Instagram requires media attachments."
+        `Please upload media first before selecting ${account.platform === "INSTAGRAM" ? "Instagram" : "TikTok"}. ${account.platform === "INSTAGRAM" ? "Instagram" : "TikTok"} requires media attachments.`
       );
       return;
     }
@@ -195,11 +200,11 @@ export default function PostModal({
     if (requiresMedia && assetIds.length === 0) {
       if (assets.length > 0) {
         setError(
-          "Please select which asset to use for this post. Instagram requires one image or video."
+          "Please select which asset to use for this post. Selective platforms (IG/TikTok) require media."
         );
       } else {
         setError(
-          "Instagram requires media. Please upload and select an asset before scheduling for Instagram."
+          "Instagram and TikTok require media. Please upload and select an asset before scheduling."
         );
       }
       return;
@@ -207,9 +212,27 @@ export default function PostModal({
 
     if (requiresMedia && assetIds.length > 1) {
       setError(
-        "Instagram only supports a single media file. Please select only one asset when posting to Instagram."
+        "Instagram and TikTok only support a single media file. Please select only one asset."
       );
       return;
+    }
+
+    // TikTok specific: Video only
+    const hasTikTok = socialAccounts
+      .filter((acc) => selectedAccounts.includes(acc.id))
+      .some((acc) => acc.platform === "TIKTOK");
+    
+    if (hasTikTok) {
+      const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
+      const hasNonVideo = selectedAssets.some(a => {
+        // Simple extension check or we could use a metadata field if available
+        const key = a.storageKey.toLowerCase();
+        return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+      });
+      if (hasNonVideo) {
+        setError("TikTok only supports video uploads. Please remove any images.");
+        return;
+      }
     }
     setSubmitting(true);
     setError(null);
@@ -233,8 +256,92 @@ export default function PostModal({
         ...(hashtags.length > 0 ? { hashtags } : {}),
       });
       onClose();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handlePublishNow = async () => {
+    if (!caption.trim()) {
+      setError("Please add a caption");
+      return;
+    }
+    if (selectedAccounts.length === 0) {
+      setError("Select at least one social account");
+      return;
+    }
+    if (requiresMedia && assetIds.length === 0) {
+      setError("Instagram and TikTok require media to publish.");
+      return;
+    }
+
+    // TikTok specific: Video only
+    const hasTikTok = socialAccounts
+      .filter((acc) => selectedAccounts.includes(acc.id))
+      .some((acc) => acc.platform === "TIKTOK");
+    
+    if (hasTikTok) {
+      const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
+      const hasNonVideo = selectedAssets.some(a => {
+        const key = a.storageKey.toLowerCase();
+        return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+      });
+      if (hasNonVideo) {
+        setError("TikTok only supports video uploads. Please remove any images.");
+        return;
+      }
+    }
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      const hashtags = normalizeHashtags(hashtagsInput);
+      const fullCaption = hashtags.length > 0 ? `${caption.trim()}\n\n${hashtags.join(" ")}` : caption.trim();
+
+      // We publish per account using the user's provided API structure
+      for (const accountId of selectedAccounts) {
+        const account = socialAccounts.find((a) => a.id === accountId);
+        if (!account) continue;
+
+        const isFacebook = account.platform === "FACEBOOK";
+        const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
+        
+        // Build payload based on user's API spec
+        const payload: any = {
+          username: account.displayName || account.id, // Using displayName as per user's examples
+          platform: account.platform.toLowerCase(),
+          title: fullCaption,
+          asyncUpload: true,
+        };
+
+        if (selectedAssets.length > 0) {
+          if (isFacebook && selectedAssets.length > 1) {
+            payload.mediaUrls = selectedAssets.map(a => buildStorageUrl(STORAGE_BASE_URL, a.storageKey));
+          } else {
+            payload.mediaUrl = buildStorageUrl(STORAGE_BASE_URL, selectedAssets[0].storageKey);
+          }
+        }
+
+        const endpoint = account.platform === "TIKTOK" 
+          ? "/api/tiktok/publish-now" // TikTok specific as per user spec
+          : "/api/social-media/publish-now";
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.message || `Failed to publish to ${account.platform}`);
+        }
+      }
+
+      onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create post");
+      setError(err instanceof Error ? err.message : "Failed to publish post");
     } finally {
       setSubmitting(false);
     }
@@ -342,7 +449,7 @@ export default function PostModal({
             <label className="text-sm text-slate-300">
               Media{" "}
               {requiresMedia && (
-                <span className="text-amber-400">(required for Instagram)</span>
+                <span className="text-amber-400">(required for Instagram/TikTok)</span>
               )}
             </label>
             {requiresMedia && !storageConfigured && (
@@ -368,7 +475,7 @@ export default function PostModal({
                 )}
                 {assets.length === 0 && !uploading && assetIds.length === 0 && (
                   <span>
-                    Attach an image or video when targeting Instagram.
+                    Attach an image or video when targeting Instagram or TikTok.
                   </span>
                 )}
                 {assetIds.length > 0 &&
@@ -394,7 +501,7 @@ export default function PostModal({
                   {requiresMedia && assetIds.length > 1 && (
                     <div className="text-xs text-amber-400">
                       Instagram only supports one media file. Select a single
-                      asset for Instagram, or post to Facebook/LinkedIn for
+                      asset for Instagram, or post to Facebook for
                       multiple.
                     </div>
                   )}
@@ -501,20 +608,14 @@ export default function PostModal({
                   </div>
                 )}
                 {socialAccounts.map((acc) => {
-                  const isInstagram = acc.platform === "INSTAGRAM";
-                  const canSelectInstagram =
-                    assetIds.length > 0 || assets.length > 0;
-                  const isDisabled = isInstagram && !canSelectInstagram;
+                  const needsMedia = acc.platform === "INSTAGRAM" || acc.platform === "TIKTOK";
+                  const canSelect = assetIds.length > 0 || assets.length > 0;
+                  const isDisabled = needsMedia && !canSelect;
 
                   return (
                     <label
                       key={acc.id}
-                      className={clsx(
-                        "flex items-center gap-2 text-sm text-slate-200",
-                        isDisabled
-                          ? "opacity-50 cursor-not-allowed"
-                          : "cursor-pointer"
-                      )}
+                      className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
                       title={
                         isDisabled
                           ? "Upload media first to select Instagram"
@@ -523,10 +624,9 @@ export default function PostModal({
                     >
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-lime-400"
+                        className="h-4 w-4 accent-lime-400 cursor-pointer"
                         checked={selectedAccounts.includes(acc.id)}
                         onChange={() => toggleAccount(acc.id)}
-                        disabled={isDisabled}
                       />
                       <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
                         {acc.platform}
@@ -574,6 +674,15 @@ export default function PostModal({
                 ? "Update"
                 : "Schedule"}
           </Button>
+          {!isEditing && (
+            <Button
+              onClick={handlePublishNow}
+              disabled={submitting}
+              className="bg-sky-500 text-white hover:bg-sky-400"
+            >
+              {submitting ? "Publishing..." : "Publish Now"}
+            </Button>
+          )}
         </div>
       </div>
     </div>

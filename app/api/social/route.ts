@@ -7,7 +7,7 @@ export async function GET() {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
 
-    const res = await fetch(`${getBackendUrl()}/social`, {
+    const res = await fetch(`${getBackendUrl()}/api/social`, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       credentials: "include",
     });
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const cookieHeader = cookieStore.toString();
     const body = await request.json();
 
-    const res = await fetch(`${getBackendUrl()}/social/connect`, {
+    const res = await fetch(`${getBackendUrl()}/api/social/connect`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

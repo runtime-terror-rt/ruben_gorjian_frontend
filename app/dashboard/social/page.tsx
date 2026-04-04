@@ -15,13 +15,13 @@ import { Unlink, ExternalLink } from "lucide-react";
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
-  FaLinkedin as Linkedin,
 } from "react-icons/fa";
+import { SiTiktok as Tiktok } from "react-icons/si";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
   displayName?: string | null;
   externalAccountId?: string | null;
   createdAt?: string;
@@ -54,19 +54,30 @@ function SocialPageInner() {
   // Fetch once on mount; keep this outside dependencies so changes to toast don't retrigger repeatedly
   const fetchAccounts = useCallback(async () => {
     try {
-      const response = await fetch("/api/social", {
+      const response = await fetch("/api/social-media/platform/my-links", {
         credentials: "include",
       });
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(
-          err.error || `HTTP ${response.status}: ${response.statusText}`,
+          err.error || `HTTP ${response.status}: ${response.statusText}`
         );
       }
 
       const data = await response.json();
-      setAccounts(data.accounts || []);
+      const rawAccounts = Array.isArray(data) 
+        ? data 
+        : data.links || data.accounts || data.data || [];
+        
+      const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
+        id: acc.id || acc._id || acc.platform,
+        platform: acc.platform?.toUpperCase(),
+        displayName: acc.username || acc.displayName || acc.platform,
+        externalAccountId: acc.externalAccountId || acc.username || "",
+        createdAt: acc.createdAt,
+      }));
+      setAccounts(mappedAccounts);
     } catch (error: unknown) {
       const message =
         error instanceof Error
@@ -158,32 +169,31 @@ function SocialPageInner() {
     setConnectingPlatform(platform);
     setConnectErrors((prev) => ({ ...prev, [platform]: undefined }));
     try {
-      const response = await fetch("/api/social/connect", {
+      const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ platform }),
+        body: JSON.stringify({ 
+          platform: platform.toLowerCase(),
+          redirectUrl: `${window.location.origin}/dashboard/social`,
+          showCalendar: false 
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         const raw: string = data?.error || `HTTP ${response.status}: ${response.statusText}`;
-        // Map known codes / message patterns to user-friendly text
-        let message = raw;
-        if (data?.code === "ROUTING_MODE_INCOMPATIBLE") {
-          message = data.error || "This platform is currently unavailable. Contact your admin.";
-        } else if (raw.toLowerCase().includes("platform connection limit")) {
-          message = "You've reached your plan's platform limit. Upgrade to connect more accounts.";
-        }
-        throw Object.assign(new Error(message), { status: response.status, raw });
+        throw new Error(raw);
       }
 
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error("No connect URL returned from server.");
-      }
+        const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
+
+        if (connectUrl) {
+          window.location.href = connectUrl;
+        } else {
+          throw new Error("No connect URL returned from server.");
+        }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to connect account";
@@ -200,11 +210,11 @@ function SocialPageInner() {
 
   const disconnectAccount = async (accountId: string) => {
     try {
-      const response = await fetch("/api/social/disconnect", {
+      const response = await fetch("/api/social-media/platform/disconnect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ socialAccountId: accountId }),
+        body: JSON.stringify({ accountId }),
       });
 
       if (!response.ok) {
@@ -226,7 +236,7 @@ function SocialPageInner() {
 
   const facebookAccount = accounts.find((acc) => acc.platform === "FACEBOOK");
   const instagramAccount = accounts.find((acc) => acc.platform === "INSTAGRAM");
-  const linkedinAccount = accounts.find((acc) => acc.platform === "LINKEDIN");
+  const tiktokAccount = accounts.find((acc) => acc.platform === "TIKTOK");
 
   if (loading) {
     return (
@@ -300,7 +310,7 @@ function SocialPageInner() {
                       facebookAccount.externalAccountId ||
                       "facebook-page"}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-lime-400">
                     Connected{" "}
                     {facebookAccount.createdAt
                       ? new Date(facebookAccount.createdAt).toLocaleDateString()
@@ -384,7 +394,7 @@ function SocialPageInner() {
                       instagramAccount.externalAccountId ||
                       "instagram-account"}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-lime-400">
                     Connected{" "}
                     {instagramAccount.createdAt
                       ? new Date(
@@ -435,18 +445,19 @@ function SocialPageInner() {
           </CardContent>
         </Card>
 
+
         <Card
-          className={`border-slate-800 bg-slate-900/60 ${linkedinAccount ? "border-lime-300/40" : ""}`}
+          className={`border-slate-800 bg-slate-900/60 ${tiktokAccount ? "border-lime-300/40" : ""}`}
         >
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-slate-700 text-white">
-                <Linkedin className="h-5 w-5" />
+              <div className="p-2 rounded-lg bg-black text-white border border-slate-700">
+                <Tiktok className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-white">LinkedIn</CardTitle>
+                <CardTitle className="text-white">TikTok</CardTitle>
               </div>
-              {linkedinAccount && (
+              {tiktokAccount && (
                 <Badge
                   variant="secondary"
                   className="bg-lime-300/20 text-lime-200 border-lime-300/40"
@@ -454,25 +465,22 @@ function SocialPageInner() {
                   Connected
                 </Badge>
               )}
-              {isUploadPostAccount(linkedinAccount) && (
-                <Badge variant="outline">via Upload-Post</Badge>
-              )}
             </div>
           </CardHeader>
           <CardContent>
-            {linkedinAccount ? (
+            {tiktokAccount ? (
               <div className="space-y-4">
                 <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
                   <p className="text-sm font-medium text-white">
                     @
-                    {linkedinAccount.displayName ||
-                      linkedinAccount.externalAccountId ||
-                      "linkedin-account"}
+                    {tiktokAccount.displayName ||
+                      tiktokAccount.externalAccountId ||
+                      "tiktok-account"}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-lime-400">
                     Connected{" "}
-                    {linkedinAccount.createdAt
-                      ? new Date(linkedinAccount.createdAt).toLocaleDateString()
+                    {tiktokAccount.createdAt
+                      ? new Date(tiktokAccount.createdAt).toLocaleDateString()
                       : "just now"}
                   </p>
                 </div>
@@ -480,38 +488,30 @@ function SocialPageInner() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => disconnectAccount(linkedinAccount.id)}
+                    onClick={() => disconnectAccount(tiktokAccount.id)}
                     className="flex-1 border-slate-700 text-slate-300 hover:bg-slate-800"
                   >
                     <Unlink className="h-4 w-4 mr-2" />
                     Disconnect
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-400 hover:text-white"
-                    title="View on LinkedIn"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {connectErrors.LINKEDIN && (
+                {connectErrors.TIKTOK && (
                   <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-                    {connectErrors.LINKEDIN}
+                    {connectErrors.TIKTOK}
                   </div>
                 )}
                 <p className="text-sm text-slate-400">
-                  Connect LinkedIn to publish to your profile or company page
+                  Connect TikTok to schedule and post videos
                 </p>
                 <Button
-                  onClick={() => connectPlatform("LINKEDIN")}
-                  disabled={connectingPlatform === "LINKEDIN"}
-                  className="w-full bg-slate-700 hover:bg-slate-600 text-white"
+                  onClick={() => connectPlatform("TIKTOK" as any)}
+                  disabled={connectingPlatform === ("TIKTOK" as any)}
+                  className="w-full bg-black hover:bg-slate-900 text-white border border-slate-700"
                 >
-                  {connectingPlatform === "LINKEDIN" ? "Connecting..." : "Connect LinkedIn"}
+                  {connectingPlatform === ("TIKTOK" as any) ? "Connecting..." : "Connect TikTok"}
                 </Button>
               </div>
             )}
@@ -519,7 +519,7 @@ function SocialPageInner() {
         </Card>
       </div>
 
-      {(facebookAccount || instagramAccount || linkedinAccount) && (
+      {(facebookAccount || instagramAccount || tiktokAccount) && (
         <Card className="border-slate-800 bg-slate-900/60">
           <CardHeader>
             <CardTitle className="text-white">Connected Accounts</CardTitle>
@@ -542,7 +542,7 @@ function SocialPageInner() {
                           facebookAccount.externalAccountId ||
                           "facebook-page"}
                       </p>
-                      <p className="text-xs text-slate-400">Facebook Page</p>
+                      <p className="text-xs text-lime-400">Facebook Page</p>
                     </div>
                   </div>
                   <Button
@@ -569,7 +569,7 @@ function SocialPageInner() {
                           instagramAccount.externalAccountId ||
                           "instagram-account"}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-lime-400">
                         Instagram Business
                       </p>
                     </div>
@@ -585,26 +585,26 @@ function SocialPageInner() {
                 </div>
               )}
 
-              {linkedinAccount && (
+              {tiktokAccount && (
                 <div className="flex items-center justify-between p-3 border border-slate-700 rounded-lg bg-slate-800/30">
                   <div className="flex items-center space-x-3">
-                    <div className="p-1.5 rounded bg-slate-700 text-white">
-                      <Linkedin className="h-4 w-4" />
+                    <div className="p-1.5 rounded bg-black text-white border border-slate-700">
+                      <Tiktok className="h-4 w-4" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">
                         @
-                        {linkedinAccount.displayName ||
-                          linkedinAccount.externalAccountId ||
-                          "linkedin-account"}
+                        {tiktokAccount.displayName ||
+                          tiktokAccount.externalAccountId ||
+                          "tiktok-account"}
                       </p>
-                      <p className="text-xs text-slate-400">LinkedIn</p>
+                      <p className="text-xs text-lime-400">TikTok</p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => disconnectAccount(linkedinAccount.id)}
+                    onClick={() => disconnectAccount(tiktokAccount.id)}
                     className="text-slate-400 hover:text-white"
                   >
                     <Unlink className="h-4 w-4" />
