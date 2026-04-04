@@ -25,7 +25,8 @@ import {
   CreditCard,
   Zap
 } from "lucide-react";
-import dynamic from "next/dynamic";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { useSessionContext } from "@/context/SessionContext";
 
 // Dynamically import Recharts components to avoid SSR/Hydration issues
@@ -1015,7 +1016,7 @@ export default function AdminPage() {
                     <tr key={user.id} className="hover:bg-slate-800/40">
                       <td className="px-3 py-3">
                         <div className="font-semibold text-white flex items-center gap-2">
-                          {user.email}
+                          {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : user.email}
                           {user.emailVerified ? (
                             <CheckCircle2 className="h-4 w-4 text-lime-300" />
                           ) : (
@@ -1103,7 +1104,13 @@ export default function AdminPage() {
                             ))
                           )}
                         </div>
-                        <div className="mt-3">
+                        <div className="mt-3 flex gap-2">
+                          <Link href={`/admin/users/${user.id}/calendar`}>
+                            <Button variant="outline" size="sm" className="h-8 border-slate-700 text-xs text-slate-300 hover:bg-slate-800">
+                              <CalendarDays className="h-4 w-4 mr-2" />
+                              View Calendar
+                            </Button>
+                          </Link>
                           <button
                             onClick={() => resetPassword(user.id)}
                             disabled={resettingUserId === user.id}
@@ -1145,7 +1152,7 @@ export default function AdminPage() {
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <p className="text-sm font-semibold text-white">
-                        {sub.userEmail}
+                        {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : sub.userEmail}
                       </p>
                       <p className="text-xs text-slate-400">{sub.userId}</p>
                     </div>
@@ -1212,7 +1219,7 @@ export default function AdminPage() {
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <div>
                       <p className="text-sm font-semibold text-white">
-                        {calendar.userEmail}
+                        {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : calendar.userEmail}
                       </p>
                       <p className="text-xs text-slate-400">{calendar.userId}</p>
                     </div>
@@ -1253,9 +1260,22 @@ export default function AdminPage() {
                               )}
                             </div>
                           ))}
+                          {post.targets.length === 0 && (
+                            <span className="text-xs text-slate-400">
+                              No targets
+                            </span>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <Link href={`/admin/users/${calendar.userId}/calendar`}>
+                              <Button variant="outline" size="sm" className="h-8 border-lime-400/30 text-xs text-lime-400 hover:bg-lime-400/10">
+                                <CalendarDays className="h-3.5 w-3.5 mr-1" />
+                                Interactive Calendar
+                              </Button>
+                            </Link>
+                          </div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                     {calendar.posts.length === 0 && (
                       <div className="text-sm text-slate-400 rounded-lg border border-dashed border-slate-800 p-6 text-center">
                         No posts for this user.

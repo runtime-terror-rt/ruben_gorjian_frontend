@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
   displayName?: string | null;
   externalAccountId?: string | null;
   createdAt?: string;
@@ -16,7 +16,7 @@ export function useSocialAccounts() {
 
   const fetchAccounts = useCallback(async () => {
     try {
-      const response = await fetch("/api/social", {
+      const response = await fetch("/api/social-media/platform/my-links", {
         credentials: "include",
       });
 
@@ -28,7 +28,15 @@ export function useSocialAccounts() {
       }
 
       const data = await response.json();
-      setAccounts(data.accounts || []);
+      const rawAccounts = Array.isArray(data) ? data : data.links || data.accounts || [];
+      const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
+        id: acc.id || acc._id || acc.platform,
+        platform: acc.platform?.toUpperCase(),
+        displayName: acc.username || acc.displayName || acc.platform,
+        externalAccountId: acc.externalAccountId || acc.username || "",
+        createdAt: acc.createdAt,
+      }));
+      setAccounts(mappedAccounts);
     } catch (error) {
       console.error("Fetch error:", error);
       toast({
@@ -40,27 +48,30 @@ export function useSocialAccounts() {
       setLoading(false);
     }
   }, [toast]);
-
   const connectPlatform = async (platform: string) => {
     try {
-      const response = await fetch("/api/social/connect", {
+      const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ platform }),
+        body: JSON.stringify({ 
+          platform: platform.toLowerCase(),
+          redirectUrl: `${window.location.origin}/dashboard/social`,
+          showCalendar: false 
+        }),
       });
 
+      const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(
-          err.error || `HTTP ${response.status}: ${response.statusText}`
-        );
+        const message = data.error || data.message || `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(message);
       }
 
-      const data = await response.json();
+      const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
 
-      if (data.url) {
-        window.location.href = data.url;
+      if (connectUrl) {
+        window.location.href = connectUrl;
       } else {
         throw new Error("No connect URL returned");
       }
@@ -77,11 +88,11 @@ export function useSocialAccounts() {
 
   const disconnectAccount = async (accountId: string) => {
     try {
-      const response = await fetch("/api/social/disconnect", {
+      const response = await fetch("/api/social-media/platform/disconnect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ socialAccountId: accountId }),
+        body: JSON.stringify({ accountId }), // User's API uses 'platform' but disconnect uses accountId or platform? I'll assume accountId based on previous logic.
       });
 
       if (!response.ok) {

@@ -39,7 +39,7 @@ interface Post {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
     status: "PENDING" | "SCHEDULED" | "POSTED" | "FAILED";
     errorMessage?: string | null;
     externalPostId?: string | null;
@@ -53,7 +53,7 @@ interface Post {
 
 interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
   displayName: string;
   externalAccountId: string;
 }
@@ -88,6 +88,9 @@ interface CalendarContextType {
   // Data refresh
   refreshData: () => Promise<void>;
 
+  // Admin / Impersonation
+  targetUserId?: string;
+
   // Timezone info (optional, added dynamically)
   timezone?: string;
   timezoneAbbr?: string;
@@ -102,6 +105,8 @@ interface CreatePostData {
   assetId?: string;
   assetIds?: string[];
   hashtags?: string[];
+  userId?: string; // For admin
+  adminReason?: string; // For admin
 }
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
@@ -139,7 +144,13 @@ function getDateRange(display: string, referenceDate?: string, tz?: string) {
   }
 }
 
-export function CalendarProvider({ children }: { children: ReactNode }) {
+export function CalendarProvider({
+  children,
+  targetUserId,
+}: {
+  children: ReactNode;
+  targetUserId?: string;
+}) {
   const {
     timezone: userTimezone,
     timezoneAbbr,
@@ -273,15 +284,21 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         ? dayjs.tz(endDate, userTimezone).endOf("day").utc()
         : dayjs(endDate).endOf("day");
 
-      const response = await fetch(
-        `/api/posts/calendar?startDate=${rangeStart.toISOString()}&endDate=${rangeEnd.toISOString()}`,
-        { credentials: "include" }
-      );
+      // Use the scheduler API and pass targetUserId if it exists
+      let url = `/api/scheduler/posts?startDate=${rangeStart.toISOString()}&endDate=${rangeEnd.toISOString()}`;
+      if (targetUserId) {
+        url += `&userId=${targetUserId}`;
+      }
+
+      const response = await fetch(url, { credentials: "include" });
 
       if (response.ok) {
         const data = await response.json();
+        // The new scheduler API might return posts differently, check if it's data.posts or data
+        const rawPosts = Array.isArray(data) ? data : data.posts || [];
+        
         // Convert post dates from UTC to user timezone for display
-        const postsWithTimezone = (data.posts || []).map((post: Post) => ({
+        const postsWithTimezone = rawPosts.map((post: Post) => ({
           ...post,
           scheduledFor: post.scheduledFor
             ? fromUTC(post.scheduledFor, userTimezone).toISOString()
@@ -294,14 +311,29 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [startDate, endDate, userTimezone, timezoneLoading]);
+  }, [startDate, endDate, userTimezone, timezoneLoading, targetUserId]);
 
   const fetchSocialAccounts = useCallback(async () => {
     try {
-      const response = await fetch("/api/social", { credentials: "include" });
+      // User provided endpoint: api/social-media/platform/my-links
+      const response = await fetch("/api/social-media/platform/my-links", {
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
-        setSocialAccounts(data.accounts || []);
+        // Assuming the data format might be { success: true, links: [...] } or just an array
+        const rawAccounts = Array.isArray(data) 
+          ? data 
+          : data.links || data.accounts || data.data || [];
+        
+        const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
+          id: acc.id || acc._id || acc.platform,
+          platform: acc.platform?.toUpperCase(),
+          displayName: acc.username || acc.displayName || acc.platform,
+          externalAccountId: acc.externalAccountId || acc.username || "",
+        }));
+        
+        setSocialAccounts(mappedAccounts);
       }
     } catch (error) {
       console.error("Failed to fetch social accounts:", error);
@@ -317,10 +349,11 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         // Convert scheduledFor from user timezone to UTC
         const payload = {
           ...data,
-          scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone),
+          scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString(),
+          ...(targetUserId ? { userId: targetUserId, adminReason: "Created from admin dashboard" } : {}),
         };
 
-        const response = await fetch("/api/posts", {
+        const response = await fetch("/api/scheduler/posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -338,7 +371,7 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    [fetchPosts, userTimezone]
+    [fetchPosts, userTimezone, targetUserId]
   );
 
   const updatePost = useCallback(
@@ -351,12 +384,13 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         const payload = {
           ...data,
           ...(data.scheduledFor
-            ? { scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone) }
+            ? { scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString() }
             : {}),
+          ...(targetUserId ? { userId: targetUserId, adminReason: data.adminReason || "Updated from admin dashboard" } : {}),
         };
 
-        const response = await fetch(`/api/posts/${id}`, {
-          method: "PUT",
+        const response = await fetch(`/api/scheduler/posts/${id}`, {
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(payload),
@@ -373,13 +407,13 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    [fetchPosts, userTimezone]
+    [fetchPosts, userTimezone, targetUserId]
   );
 
   const deletePost = useCallback(
     async (id: string) => {
       try {
-        const response = await fetch(`/api/posts/${id}`, {
+        const response = await fetch(`/api/scheduler/posts/${id}`, {
           method: "DELETE",
           credentials: "include",
         });
@@ -519,6 +553,7 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     movePost,
     publishPost,
     refreshData,
+    targetUserId,
     // Add timezone info to context
     timezone: userTimezone,
     timezoneAbbr,

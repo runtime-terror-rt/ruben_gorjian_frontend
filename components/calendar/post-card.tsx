@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import clsx from "clsx";
 import { useState } from "react";
 import { buildStorageUrl } from "@/lib/storage-utils";
+import { useSessionContext } from "@/context/SessionContext";
 
 type CalendarPost = {
   id: string;
@@ -22,7 +23,7 @@ type CalendarPost = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
     status: string;
     errorMessage?: string | null;
     socialAccount?: { displayName: string };
@@ -50,6 +51,8 @@ export function PostCard({
   onPublish,
   compact = false,
 }: PostCardProps) {
+  const { session } = useSessionContext();
+  const isAdmin = session?.role === "ADMIN";
   const [showActions, setShowActions] = useState(false);
   const mediaUrl = post.asset?.storageKey
     ? buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey)
@@ -185,7 +188,7 @@ export function PostCard({
                 Publish
               </Button>
             )}
-            {onDelete && (
+            {isAdmin && onDelete && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -330,7 +333,7 @@ export function PostCard({
               Publish Now
             </Button>
           )}
-          {onDelete && (
+          {isAdmin && onDelete && (
             <Button
               variant="ghost"
               size="sm"
