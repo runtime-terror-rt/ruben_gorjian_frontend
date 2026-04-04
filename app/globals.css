@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 :root {
+  --font-poppins: "Poppins", "sans-serif";
+  --font-stack_sans_notch: "Stack Sans Notch", "sans-serif";
+  --font-sora: "Sora", "sans-serif";
   --color-accent: #d25ffd;
   --color-primary: #1e2248;
   --color-secondary: #55596a;
@@ -12,7 +15,7 @@ body {
   font-family:
     system-ui,
     -apple-system,
-    "Poppins",
+    "poppins",
     sans-serif;
   /* Hide scrollbar for Chrome, Safari and Opera */
   scrollbar-width: none; /* Firefox */
@@ -39,8 +42,7 @@ html::-webkit-scrollbar {
 
 @layer base {
   * {
-    @apply border-slate-800/40 outline-slate-500/50;
-    font-family: var(--font-poppins);
+    @apply border-slate-800/40 outline-slate-500/50 font-poppins;
   }
   button {
     @apply px-4 py-2;

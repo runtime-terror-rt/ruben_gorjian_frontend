@@ -23,6 +23,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Check if user is authenticated
+  // const isAuthenticated = !!session;
+
   // Handle auth and subscription redirect
   useEffect(() => {
     if (sessionLoading) return;
@@ -47,7 +50,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       return;
     }
 
-    // Active subscription but onboarding not finished - go to onboarding
+    // No active subscription but onboarding not finished - go to onboarding
     if (hasActiveSubscription && !session.onboardingCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
       router.replace("/onboarding");
     }
@@ -65,7 +68,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     (hasActiveSubscription && session.onboardingCompleted)
   );
 
-  // Load sidebar collapsed state from localStorage
+  // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
   useEffect(() => {
     const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
     queueMicrotask(() => {
@@ -90,7 +93,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     setIsMobileSidebarOpen((prev) => !prev);
   };
 
-  // Close mobile sidebar on route change
+  // Close mobile sidebar on route change (defer setState to avoid sync setState in effect)
   useEffect(() => {
     queueMicrotask(() => setIsMobileSidebarOpen(false));
   }, [pathname]);
@@ -133,9 +136,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   // Show nothing while redirecting non-authenticated users
-  if (!session) {
-    return null;
-  }
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -162,7 +165,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         isCollapsed={isSidebarCollapsed}
       />
 
-      {/* Main Content — page scrolls normally */}
+      {/* Main Content — page scrolls normally (trackpad/mouse wheel) */}
       <main
         className={cn(
           "min-h-[calc(100vh-4rem)] transition-[padding] duration-300",
