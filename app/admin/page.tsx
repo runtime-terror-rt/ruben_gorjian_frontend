@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useSessionContext } from "@/context/SessionContext";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 // Dynamically import Recharts components to avoid SSR/Hydration issues
 const ResponsiveContainer = dynamic(() => import("recharts").then(mod => mod.ResponsiveContainer), { ssr: false });
@@ -1259,6 +1261,20 @@ export default function AdminPage() {
                               )}
                             </div>
                           ))}
+                          {post.targets.length === 0 && (
+                            <span className="text-xs text-slate-400">
+                              No targets
+                            </span>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <Link href={`/admin/users/${calendar.userId}/calendar`}>
+                              <Button variant="outline" size="sm" className="h-8 border-lime-400/30 text-xs text-lime-400 hover:bg-lime-400/10">
+                                <CalendarDays className="h-3.5 w-3.5 mr-1" />
+                                Interactive Calendar
+                              </Button>
+                            </Link>
+                          </div>
+                          </div>
                         </div>
                       ))}
                     {calendar.posts.length === 0 && (
