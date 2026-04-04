@@ -158,21 +158,36 @@ export default function ScheduleVisitPage() {
               <p className="text-sm text-lime-300">{message}</p>
             ) : null}
 
-            <div className="flex flex-wrap gap-3">
-              <Button type="submit" disabled={submitting || loadingConfig}>
+            <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-slate-800/50">
+              <Button 
+                type="submit" 
+                variant="shiny"
+                disabled={submitting || loadingConfig}
+                className="rounded-full px-8"
+              >
                 {submitting ? "Scheduling..." : "Schedule Visit"}
               </Button>
               {bookingUrl ? (
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="outline"
+                  className="rounded-full px-8"
                   onClick={() =>
                     window.open(bookingUrl, "_blank", "noopener,noreferrer")
                   }
                 >
                   Open Calendly
                 </Button>
-              ) : null}
+              ) : (
+                 <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded-full px-8 opacity-50 cursor-not-allowed"
+                    disabled
+                  >
+                    Open Calendly
+                  </Button>
+              )}
             </div>
           </form>
         </CardContent>
