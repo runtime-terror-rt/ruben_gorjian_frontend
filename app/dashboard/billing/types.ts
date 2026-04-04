@@ -24,6 +24,14 @@ export type Plan = {
     visualsUsed: number;
     platformsUsed: number;
   };
+  scheduledChange?: {
+    targetPlanCode: string;
+    targetBillingCycle: "monthly" | "yearly";
+    effectiveAt: string;
+    message?: string;
+    scheduleId?: string;
+  } | null;
+  cancelAtPeriodEnd?: boolean;
 };
 
 export type InvoiceStatus = "paid" | "open" | "void" | "uncollectible";
