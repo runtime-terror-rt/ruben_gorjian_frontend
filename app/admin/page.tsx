@@ -25,9 +25,10 @@ import {
   CreditCard,
   Zap
 } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useSessionContext } from "@/context/SessionContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useSessionContext } from "@/context/SessionContext";
 
 // Dynamically import Recharts components to avoid SSR/Hydration issues
 const ResponsiveContainer = dynamic(() => import("recharts").then(mod => mod.ResponsiveContainer), { ssr: false });
