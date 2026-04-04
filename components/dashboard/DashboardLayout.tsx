@@ -24,6 +24,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Check if user is authenticated
+<<<<<<< HEAD
+  const isAuthenticated = !!session;
+
+  // Handle auth redirect - keep existing logic
+  useEffect(() => {
+    if (sessionLoading) return;
+
+    if (!isAuthenticated) {
+      router.replace("/login");
+    }
+  }, [sessionLoading, isAuthenticated, router]);
+=======
   // const isAuthenticated = !!session;
 
   // Handle auth and subscription redirect
@@ -67,6 +79,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     pathname.startsWith("/onboarding") || 
     (hasActiveSubscription && session.onboardingCompleted)
   );
+>>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
 
   // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)
   useEffect(() => {
@@ -123,8 +136,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     };
   }, [isMobileSidebarOpen]);
 
+<<<<<<< HEAD
+  // Show loading state
+  if (sessionLoading || !isHydrated) {
+=======
   // Show loading state while checking permissions or hydrating
   if (!isHydrated || sessionLoading || !isAuthorized) {
+>>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950">
         <div className="flex flex-col items-center gap-3">
@@ -136,9 +154,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   // Show nothing while redirecting non-authenticated users
+<<<<<<< HEAD
+  if (!isAuthenticated) {
+    return null;
+  }
+=======
   // if (!isAuthenticated) {
   //   return null;
   // }
+>>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
 
   return (
     <div className="min-h-screen bg-slate-950">
