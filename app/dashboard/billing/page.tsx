@@ -774,8 +774,8 @@ export default function BillingPage() {
             <PlanDetail
               label="Platforms"
               value={
-                (plan.platformLimit || 0) + (plan.addonPlatformQty || 0) > 0
-                  ? `${(plan.platformLimit || 0) + (plan.addonPlatformQty || 0)} platform${((plan.platformLimit || 0) + (plan.addonPlatformQty || 0)) > 1 ? "s" : ""}`
+                ((plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)) > 0
+                  ? `${(plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)} platform${((plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)) > 1 ? "s" : ""}`
                   : "—"
               }
             />
