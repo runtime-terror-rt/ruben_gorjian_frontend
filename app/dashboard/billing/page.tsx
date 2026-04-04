@@ -546,15 +546,15 @@ export default function BillingPage() {
                 </div>
               )}
 
-              {plan && !plan.cancelAtPeriodEnd && !plan.scheduledChange && (
-                <div className="flex justify-end pt-2">
-                  <button
-                    type="button"
-                    className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-red-400 transition-colors"
+              {plan && !plan.cancelAtPeriodEnd && (
+                <div className="flex justify-start pt-2">
+                  <Button
+                    variant="ghost"
+                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     onClick={() => setConfirmCancelSub(true)}
                   >
                     Cancel Subscription
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -774,8 +774,8 @@ export default function BillingPage() {
             <PlanDetail
               label="Platforms"
               value={
-                (plan.platformLimit || 0) + (plan.addonPlatformQty || 0) > 0
-                  ? `${(plan.platformLimit || 0) + (plan.addonPlatformQty || 0)} platform${((plan.platformLimit || 0) + (plan.addonPlatformQty || 0)) > 1 ? "s" : ""}`
+                (plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0) > 0
+                  ? `${(plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)} platform${((plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)) > 1 ? "s" : ""}`
                   : "—"
               }
             />

@@ -35,13 +35,9 @@ function LoginPageInner() {
       }
 
       setSuccess("Logged in. Redirecting...");
-<<<<<<< HEAD
-      const destination = body?.onboardingCompleted ? redirect : "/onboarding";
-=======
       const role = body?.role || body?.user?.role;
       const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
       const destination = (isAdmin && redirect === "/dashboard") ? "/admin" : redirect;
->>>>>>> 425a6cc1977abf7b9a8f573720c862e7da1f5de3
       window.location.href = destination;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unable to login.";
