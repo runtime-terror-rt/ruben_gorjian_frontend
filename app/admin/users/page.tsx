@@ -59,7 +59,10 @@ type AdminUser = {
   createdAt: string;
   emailVerified: boolean;
   emailVerifiedAt: string | null;
+  blockedAt: string | null;
   blockedReason: string | null;
+  deletedAt: string | null;
+  onboardingCompleted: boolean;
   connectedPlatformsCount: number;
   scheduledPostsCount: number;
   subscriptions: Array<{
@@ -70,6 +73,8 @@ type AdminUser = {
     currentPeriodEnd: string | null;
     cancelAtPeriodEnd: boolean;
     createdAt: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
   }>;
   socialPlatforms: string[];
 };
@@ -317,14 +322,29 @@ export default function AdminUsersPage() {
           ),
       },
       {
+        accessorKey: "onboardingCompleted",
+        header: "Onboarding",
+        cell: ({ row }) =>
+          row.original.onboardingCompleted ? (
+            <Badge variant="outline" className="text-lime-400 border-lime-400/30">Done</Badge>
+          ) : (
+            <Badge variant="outline" className="text-orange-400 border-orange-400/30">Pending</Badge>
+          ),
+      },
+      {
         accessorKey: "subscriptions",
         header: "Subscription Plan",
         cell: ({ row }) => {
           const sub = row.original.subscriptions[0];
           return sub ? (
-            <Badge variant="outline" className="text-xs">
-              {sub.planCode}
-            </Badge>
+            <div className="flex flex-col gap-1">
+              <Badge variant="outline" className="text-xs w-fit">
+                {sub.planCode}
+              </Badge>
+              {sub.priceType && (
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider">{sub.priceType}</span>
+              )}
+            </div>
           ) : (
             <span className="text-xs text-slate-400">—</span>
           );
@@ -697,7 +717,7 @@ export default function AdminUsersPage() {
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell 
-                    className="text-slate-600"
+                    className="text-slate-300"
                     key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
