@@ -108,6 +108,11 @@ export default function FullManagementOnboardingPage() {
       return;
     }
 
+    if (session.role === "ADMIN" || session.role === "SUPER_ADMIN") {
+      router.push("/admin");
+      return;
+    }
+
     const planCategory = session.subscription?.planCategory;
     const isFullPlan =
       planCategory === "FULL_MANAGEMENT" ||

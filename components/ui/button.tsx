@@ -10,10 +10,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 hover:opacity-95 active:scale-[0.98]",
+          "relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 hover:opacity-95 active:scale-[0.98] after:absolute after:inset-0 after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full after:pointer-events-none",
 
         shiny:
-          "relative overflow-hidden bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 text-white shadow-lg shadow-purple-500/40 hover:shadow-pink-500/50 active:scale-[0.98]",
+          "relative overflow-hidden bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 text-white shadow-lg shadow-purple-500/40 hover:shadow-pink-500/50 active:scale-[0.98] after:absolute after:inset-0 after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full after:pointer-events-none",
 
         outline:
           "border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:border-primary/30 dark:border-white/10 dark:text-white/80 dark:hover:bg-white/5",
@@ -87,9 +87,6 @@ function Button({
       {...props}
     >
       {props.children}
-      {(variant === "shiny" || variant === "default") && (
-        <span className="absolute inset-0 pointer-events-none block h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-1000" />
-      )}
     </Comp>
   )
 }

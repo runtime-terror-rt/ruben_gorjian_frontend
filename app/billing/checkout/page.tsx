@@ -94,7 +94,7 @@ function CheckoutContent() {
 
     const planPrice = basePrice * discountMultiplier * cycleMultiplier * founderMultiplier;
     const platformPrice = (addonPlatformQty * ADDON_PRICES.platform) * cycleMultiplier;
-    const videoPrice = (videoSessionHours * ADDON_PRICES.videoHour) * cycleMultiplier;
+    const videoPrice = (videoSessionHours * ADDON_PRICES.videoHour); // FIXED: Video sessions are NOT per month, they are quantity-based per year/month.
     
     const subtotal = planPrice + platformPrice + videoPrice;
     
@@ -243,7 +243,7 @@ function CheckoutContent() {
   };
 
   return (
-    <div className="container max-w-5xl py-10">
+    <div className="container max-w-5xl mx-auto py-10">
       <Button 
         variant="ghost" 
         size="sm" 
@@ -333,12 +333,12 @@ function CheckoutContent() {
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Optional Add-ons</h3>
                 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-3 transition hover:border-slate-700">
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-4 transition hover:border-slate-700">
                     <div className="flex items-center justify-between">
-                      <Label className="text-white font-medium">Extra Platforms</Label>
+                      <Label className="text-white font-medium"> Platforms</Label>
                       <span className="text-xs text-lime-400">+${ADDON_PRICES.platform.toFixed(2)} ea/mo</span>
                     </div>
-                    <p className="text-xs text-slate-500">Additional social accounts for your plan.</p>
+                    {/* <p className="text-xs text-slate-500">Additional social accounts for your plan.</p> */}
                     <div className="flex items-center gap-3">
                       <Button 
                         variant="outline" 
@@ -364,11 +364,11 @@ function CheckoutContent() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Video className="h-4 w-4 text-slate-400" />
-                        <Label className="text-white font-medium">Extra Video Sessions</Label>
+                        <Label className="text-white font-medium"> Video Sessions</Label>
                       </div>
                       <span className="text-xs text-lime-400">+${ADDON_PRICES.videoHour.toFixed(2)} each</span>
                     </div>
-                    <p className="text-xs text-slate-500">Additional vertical video sessions (15-20s).</p>
+                    {/* <p className="text-xs text-slate-500">Additional vertical video sessions (15-20s).</p> */}
                     <div className="flex items-center gap-3">
                       <Button 
                         variant="outline" 

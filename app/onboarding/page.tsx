@@ -37,6 +37,14 @@ function OnboardingRouterContent() {
       const subscriptionStatus = session.subscription?.status;
       const planCategory = session.subscription?.planCategory;
       const pendingPlanCode = session.pendingPlanCode;
+      const role = session.role;
+
+      // ROLE SECURITY: Admins and Super Admins should NEVER see onboarding
+      if (role === "ADMIN" || role === "SUPER_ADMIN") {
+        console.log("[OnboardingRouter] Admin role detected, redirecting to /admin");
+        router.push("/admin");
+        return;
+      }
 
       // Log plan resolution for debugging
       console.log("[OnboardingRouter] Plan resolution:", {
