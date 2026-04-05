@@ -111,7 +111,7 @@ function StatusBadge({ status }: { status: SubmissionStatus }) {
   return (
     <Badge
       variant="outline"
-      className="text-amber-400 border-amber-400/50 bg-amber-400/10"
+      className="text-white border-amber-400/50 bg-amber-400/10"
     >
       Pending
     </Badge>
@@ -135,7 +135,8 @@ export default function SupportSystemPage() {
   // State
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<Submission | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -161,13 +162,15 @@ export default function SupportSystemPage() {
         { status: payload.status },
       ),
     onSuccess: (_, variables) => {
-      toast.success(`Status updated to ${variables.status}`, { position: "top-right" });
+      toast.success(`Status updated to ${variables.status}`, {
+        position: "top-right",
+      });
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
     },
     onError: (err: Error) => {
       toast.error("Failed to update status", {
         description: err.message,
-        position: "top-right"
+        position: "top-right",
       });
     },
   });
@@ -230,7 +233,7 @@ export default function SupportSystemPage() {
             <Badge
               key={i}
               variant="outline"
-              className="text-[10px] h-5 bg-slate-800/30 font-light border-slate-700/50"
+              className="text-[10px] h-5 bg-slate-800/30 text-white/40 font-light border-slate-700/50"
             >
               {i}
             </Badge>
@@ -258,53 +261,61 @@ export default function SupportSystemPage() {
         </div>
       ),
     },
-    {
-      id: "toggleStatus",
-      header: "Toggle Status",
-      cell: ({ row }) => {
-        const sub = row.original;
-        const isResolved = sub.status === "RESOLVED";
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className={`h-7 px-3 text-[10px] font-bold rounded-full border-slate-800 transition-all ${
-                isResolved
-                  ? "bg-lime-500/10 text-lime-400 border-lime-500/20 hover:bg-slate-800"
-                  : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white"
-              }`}
-              onClick={() =>
-                statusMutation.mutate({
-                  id: sub.id,
-                  status: isResolved ? "PENDING" : "RESOLVED",
-                })
-              }
-              disabled={statusMutation.isPending}
-            >
-              {isResolved ? "RESOLVED" : "MARK AS DONE"}
-            </Button>
-          </div>
-        );
-      },
-    },
+    // {
+    //   id: "toggleStatus",
+    //   header: "Toggle Status",
+    //   cell: ({ row }) => {
+    //     const sub = row.original;
+    //     const isResolved = sub.status === "RESOLVED";
+    //     return (
+    //       <div className="flex items-center gap-2">
+    //         <Button
+    //           variant="outline"
+    //           size="sm"
+    //           className={`h-7 px-3 text-[10px] font-bold rounded-full border-slate-800 transition-all ${
+    //             isResolved
+    //               ? "bg-lime-500/10 text-lime-400 border-lime-500/20 hover:bg-slate-800"
+    //               : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white"
+    //           }`}
+    //           onClick={() =>
+    //             statusMutation.mutate({
+    //               id: sub.id,
+    //               status: isResolved ? "PENDING" : "RESOLVED",
+    //             })
+    //           }
+    //           disabled={statusMutation.isPending}
+    //         >
+    //           {isResolved ? "RESOLVED" : "MARK AS DONE"}
+    //         </Button>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       id: "actions",
       header: "Action",
       cell: ({ row }) => {
         const sub = row.original;
         return (
-          <div className="flex justify-end pr-2">
+          <div className="flex justify-start pr-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg">
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+                >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl rounded-xl p-1">
-                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-2 py-1.5">Action Menu</DropdownMenuLabel>
+              <DropdownMenuContent
+                align="end"
+                className="w-48 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl rounded-xl p-1"
+              >
+                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-2 py-1.5">
+                  Action Menu
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-slate-800" />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => {
                     setSelectedSubmission(sub);
                     setIsDetailsOpen(true);
@@ -313,7 +324,7 @@ export default function SupportSystemPage() {
                 >
                   <Eye className="mr-2 h-4 w-4" /> View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => {
                     setSelectedSubmission(sub);
                     setIsStatusOpen(true);
