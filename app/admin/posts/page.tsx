@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { FileText, Trash2, Eye, Calendar, User, MoreHorizontal, RefreshCcw } from "lucide-react";
+import { FileText, Trash2, Eye, Calendar, User, MoreHorizontal, RefreshCcw, Send } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Table, 
@@ -44,13 +44,18 @@ type AdminPost = {
   };
   user?: {
     id: string;
-    name: string;
+    name: string | null;
+    fullName: string | null;
     email: string;
   };
   targets: Array<{
     id: string;
     platform: string;
     status: string;
+    socialAccount?: {
+      id: string;
+      displayName: string;
+    };
   }>;
 };
 
@@ -143,7 +148,9 @@ export default function AdminPostsPage() {
         caption: post.caption || "",
         scheduledFor: post.scheduledFor,
         assetId: post.asset?.id,
-        socialAccountIds: post.targets.map((t) => t.id), // This might need mapping to social account IDs
+        socialAccountIds: post.targets
+          .map((t) => t.socialAccount?.id)
+          .filter(Boolean) as string[],
       });
       setEditModalOpen(true);
     } catch (err) {
@@ -159,10 +166,14 @@ export default function AdminPostsPage() {
         credentials: "include",
         body: JSON.stringify({ 
           data: JSON.stringify({
-            caption: payload.caption,
-            scheduledAt: toUTC(dayjs(payload.scheduledFor), "UTC").toISOString(), // or appropriate timezone
+            caption: payload.caption || ".",
+            scheduledAt: toUTC(dayjs(payload.scheduledFor), "UTC").toISOString(),
             userId: posts.find(p => p.id === editingPost.id)?.user?.id,
-            adminReason: "Modified by Administrator"
+            adminReason: "Modified by Administrator",
+            assetIds: payload.assetIds || (payload.assetId ? [payload.assetId] : []),
+            hashtags: payload.hashtags || [],
+            platforms: payload.platforms,
+            socialAccountIds: payload.socialAccountIds
           })
         }),
       });
@@ -177,6 +188,28 @@ export default function AdminPostsPage() {
       }
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const handlePublishPost = async (id: string) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/posts/${id}/publish`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        toast({ title: "Success", description: "Publication triggered successfully" });
+        fetchPosts();
+      } else {
+        const data = await res.json();
+        throw new Error(data.error || data.message || "Failed to publish post");
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -287,8 +320,10 @@ export default function AdminPostsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-slate-200">{post.user?.name || "Unknown"}</span>
-                          <span className="text-xs text-slate-500">{post.user?.email}</span>
+                      <span className="text-sm font-medium text-slate-200">
+                        {post.user?.fullName || post.user?.name || "Unknown User"}
+                      </span>
+                      <span className="text-xs text-slate-500">{post.user?.email || "No email"}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -333,6 +368,15 @@ export default function AdminPostsPage() {
                               <Calendar className="h-4 w-4 mr-2" />
                               Edit Post
                             </DropdownMenuItem>
+                            {post.status !== "POSTED" && (
+                              <DropdownMenuItem 
+                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-lime-400"
+                                onClick={() => handlePublishPost(post.id)}
+                              >
+                                <Send className="h-4 w-4 mr-2" />
+                                Publish Now
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem 
                               className="text-rose-400 hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer"
                               onClick={() => handleDeletePost(post.id)}
@@ -370,6 +414,7 @@ export default function AdminPostsPage() {
         onCreate={handleSavePost}
         onUpload={uploadFile as any}
         uploading={uploading}
+        isAdmin={true}
       />
     </div>
   );

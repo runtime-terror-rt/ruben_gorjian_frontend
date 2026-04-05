@@ -6,10 +6,15 @@ import { CalendarItem } from "./calendar-item";
 import dayjs, { Dayjs } from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import clsx from "clsx";
+import { useCalendar } from "@/app/dashboard/calendar/calendar-context";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type CalendarPost = {
   id: string;
@@ -59,11 +64,12 @@ export const CalendarColumn = memo<CalendarColumnProps>(
     onDragEnd,
     onDayClick,
   }) => {
+    const { timezone: userTimezone } = useCalendar();
     const [showAll, setShowAll] = useState(false);
 
     const postList = useMemo(() => {
       return posts.filter((post) => {
-        const pDate = dayjs(post.scheduledFor);
+        const pDate = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
         const check =
           display === "day"
             ? pDate.format("YYYY-MM-DD HH:mm") ===
@@ -74,7 +80,7 @@ export const CalendarColumn = memo<CalendarColumnProps>(
               : pDate.isSame(getDate, "day");
         return check;
       });
-    }, [posts, display, getDate]);
+    }, [posts, display, getDate, userTimezone]);
 
     // Allow current day in month view and current hour in day/week views.
     // Only block dates that are strictly in the past.

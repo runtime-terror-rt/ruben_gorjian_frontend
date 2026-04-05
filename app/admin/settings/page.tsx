@@ -130,7 +130,7 @@ export default function AdminSettingsPage() {
   });
 
   const changePasswordMutation = useMutation({
-    mutationFn: (payload: any) => apiPost<{ success: boolean; message: string }>("/auth/change-password", payload),
+    mutationFn: (payload: any) => apiPost<{ success: boolean; message: string }>("/api/auth/change-password", payload),
     onSuccess: (data) => {
       toast.success("Password secured", {
         description: data.message || "Your password has been updated successfully.",
