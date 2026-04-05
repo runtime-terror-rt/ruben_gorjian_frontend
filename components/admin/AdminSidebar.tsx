@@ -15,6 +15,7 @@ import {
   BookOpen,
   Tag,
   ShieldCheck,
+  MessageSquare,
 } from "lucide-react";
 
 type NavItem = {
@@ -76,6 +77,11 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Submissions",
         href: "/admin/submissions",
         icon: FileText,
+      },
+      {
+        label: "Support System",
+        href: "/admin/support-system",
+        icon: MessageSquare,
       },
     ],
   },
