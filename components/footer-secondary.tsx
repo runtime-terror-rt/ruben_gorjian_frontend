@@ -5,6 +5,8 @@ import Image from "next/image";
 import { FormEvent, useState } from "react";
 import logo from "@/components/assets/talexia_ai_logo.png";
 import { Facebook, Instagram, Linkedin, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 export default function FooterSecondary() {
   const year = new Date().getFullYear();
@@ -13,32 +15,72 @@ export default function FooterSecondary() {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [message, setMessage] = useState("");
+  const newsletterMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const res = await fetch("/api/contact/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
 
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Subscription failed");
+      }
+
+      return data;
+    },
+
+    onSuccess: () => {
+      toast.success("Subscribed successfully!");
+      setEmail("");
+    },
+
+    onError: (error: any) => {
+      toast.error(error.message || "Unable to subscribe");
+    },
+  });
   const linkClass = "text-sm text-white transition hover:text-white/80";
+
+  // async function handleNewsletterSubmit(e: FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
+  //   setMessage("");
+  //   setStatus("loading");
+  //   try {
+  //     const res = await fetch("/api/newsletter", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email: email.trim() }),
+  //     });
+  //     const data = await res.json().catch(() => ({}));
+  //     if (!res.ok) {
+  //       setStatus("error");
+  //       setMessage(data?.error ?? "Something went wrong. Please try again.");
+  //       return;
+  //     }
+  //     setStatus("success");
+  //     setEmail("");
+  //     setMessage("You’re subscribed. We’ll be in touch.");
+  //   } catch {
+  //     setStatus("error");
+  //     setMessage("Unable to subscribe. Please try again.");
+  //   }
+  // }
 
   async function handleNewsletterSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setMessage("");
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setStatus("error");
-        setMessage(data?.error ?? "Something went wrong. Please try again.");
-        return;
-      }
-      setStatus("success");
-      setEmail("");
-      setMessage("You’re subscribed. We’ll be in touch.");
-    } catch {
-      setStatus("error");
-      setMessage("Unable to subscribe. Please try again.");
+
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      toast.error("Email is required");
+      return;
     }
+
+    newsletterMutation.mutate(trimmedEmail);
   }
 
   return (
@@ -91,10 +133,18 @@ export default function FooterSecondary() {
                 />
                 <button
                   type="submit"
-                  disabled={status === "loading"}
+                  disabled={newsletterMutation.isPending}
                   className="flex w-1/3 items-center justify-center gap-2 rounded-lg rounded-l-none bg-white px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-white/95 disabled:opacity-70"
                 >
-                  {status === "loading" ? (
+                  {/* {status === "loading" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Subscribing…
+                    </>
+                  ) : (
+                    "Subscribe"
+                  )} */}
+                  {newsletterMutation.isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       Subscribing…
