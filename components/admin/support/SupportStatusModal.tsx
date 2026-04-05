@@ -63,7 +63,7 @@ export function SupportStatusModal({
 
   const statuses: { value: SubmissionStatus; label: string; icon: any; color: string }[] = [
     { value: "PENDING", label: "Pending", icon: Clock, color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
-    { value: "REPLIED", label: "Replied", icon: Mail, color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
+    // { value: "REPLIED", label: "Replied", icon: Mail, color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
     { value: "RESOLVED", label: "Resolved", icon: CheckCircle2, color: "text-lime-400 bg-lime-400/10 border-lime-400/20" },
   ];
 

@@ -355,7 +355,7 @@ export default function AdminManagementPage() {
         const admin = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               variant="outline"
               size="sm"
               className="h-8 w-8 p-0 border-slate-800 text-slate-400 hover:text-lime-400 hover:border-lime-400/50"
@@ -365,7 +365,7 @@ export default function AdminManagementPage() {
               }}
             >
               <Eye className="h-4 w-4" />
-            </Button>
+            </Button> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">

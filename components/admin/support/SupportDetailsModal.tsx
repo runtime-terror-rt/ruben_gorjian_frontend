@@ -290,14 +290,14 @@ export function SupportDetailsModal({
                 <Button variant="outline" className="border-slate-800" onClick={() => onOpenChange(false)}>
                   Close Details
                 </Button>
-                <Button 
+                {/* <Button 
                   variant={submission.status === "RESOLVED" ? "secondary" : "default"}
                   className={submission.status === "RESOLVED" ? "" : "bg-lime-500 hover:bg-lime-600 text-slate-900"}
                   onClick={toggleStatus}
                   disabled={statusMutation.isPending}
                 >
                   {statusMutation.isPending ? "Updating..." : submission.status === "RESOLVED" ? "Mark as Pending" : "Mark as Resolved"}
-                </Button>
+                </Button> */}
               </div>
             </DialogFooter>
           </div>
