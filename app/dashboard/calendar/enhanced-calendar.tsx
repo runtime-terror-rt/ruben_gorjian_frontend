@@ -72,7 +72,7 @@ function HourDropZone({
     };
     targets: Array<{
       id: string;
-      platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+      platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
       status: string;
       errorMessage?: string | null;
     }>;
@@ -890,6 +890,7 @@ export default function EnhancedCalendar() {
             id: acc.id,
             platform: acc.platform,
             displayName: acc.displayName || acc.externalAccountId || acc.id,
+            externalAccountId: acc.externalAccountId,
           }))}
           onCreate={handleCreatePost}
           onUpload={uploadFile}
@@ -904,6 +905,7 @@ export default function EnhancedCalendar() {
           }}
           postId={viewingPostId}
           onEdit={handleEditPost}
+          onDelete={useCalendar().deletePost}
           posts={posts}
           loading={loading}
         />

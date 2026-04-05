@@ -8,7 +8,8 @@ async function proxyRequest(request: NextRequest, { params }: { params: Promise<
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
     const path = pathSegments.join("/");
-    const url = `${getBackendUrl()}/api/social-media/${path}`;
+    const query = request.nextUrl.search;
+    const url = `${getBackendUrl()}/api/social-media/${path}${query}`;
     
     console.log(`Proxying ${request.method} to: ${url}`);
     

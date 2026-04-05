@@ -294,11 +294,13 @@ export function CalendarProvider({
 
       if (response.ok) {
         const data = await response.json();
-        // The new scheduler API might return posts differently, check if it's data.posts or data
-        const rawPosts = Array.isArray(data) ? data : data.posts || [];
+        // The new scheduler API returns posts in 'items' array
+        const rawPosts = Array.isArray(data) 
+          ? data 
+          : (data.items || data.posts || []);
         
         // Convert post dates from UTC to user timezone for display
-        const postsWithTimezone = rawPosts.map((post: Post) => ({
+        const postsWithTimezone = rawPosts.map((post: any) => ({
           ...post,
           scheduledFor: post.scheduledFor
             ? fromUTC(post.scheduledFor, userTimezone).toISOString()
@@ -315,8 +317,11 @@ export function CalendarProvider({
 
   const fetchSocialAccounts = useCallback(async () => {
     try {
-      // User provided endpoint: api/social-media/platform/my-links
-      const response = await fetch("/api/social-media/platform/my-links", {
+      let url = "/api/social-media/platform/my-links";
+      if (targetUserId) {
+        url += `?userId=${targetUserId}`;
+      }
+      const response = await fetch(url, {
         credentials: "include",
       });
       if (response.ok) {
@@ -349,15 +354,17 @@ export function CalendarProvider({
         // Convert scheduledFor from user timezone to UTC
         const payload = {
           ...data,
-          scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString(),
+          scheduledAt: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString(),
           ...(targetUserId ? { userId: targetUserId, adminReason: "Created from admin dashboard" } : {}),
         };
+        // Remove scheduledFor if it exists in data to avoid confusion
+        if ('scheduledFor' in payload) delete (payload as any).scheduledFor;
 
         const response = await fetch("/api/scheduler/posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ data: JSON.stringify(payload) }),
         });
 
         if (response.ok) {
@@ -384,16 +391,17 @@ export function CalendarProvider({
         const payload = {
           ...data,
           ...(data.scheduledFor
-            ? { scheduledFor: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString() }
+            ? { scheduledAt: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString() }
             : {}),
           ...(targetUserId ? { userId: targetUserId, adminReason: data.adminReason || "Updated from admin dashboard" } : {}),
         };
+        if ('scheduledFor' in payload) delete (payload as any).scheduledFor;
 
         const response = await fetch(`/api/scheduler/posts/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify(payload),
+          body: JSON.stringify({ data: JSON.stringify(payload) }),
         });
 
         if (response.ok) {

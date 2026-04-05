@@ -25,7 +25,7 @@ type CalendarPost = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
     status: string;
     errorMessage?: string | null;
   }>;
