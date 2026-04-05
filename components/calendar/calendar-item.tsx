@@ -6,9 +6,10 @@ import { useDrag } from "react-dnd";
 import dayjs from "dayjs";
 import clsx from "clsx";
 import { Copy, Eye, Trash2 } from "lucide-react";
-import { FaInstagram, FaFacebook, FaLinkedin } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaLinkedin, FaTiktok } from "react-icons/fa";
 import type { Dayjs } from "dayjs";
 import { buildStorageUrl } from "@/lib/storage-utils";
+import { useSessionContext } from "@/context/SessionContext";
 
 type CalendarPost = {
   id: string;
@@ -24,7 +25,7 @@ type CalendarPost = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
     status: string;
     errorMessage?: string | null;
     socialAccount?: {
@@ -56,12 +57,14 @@ const platformIcons = {
   INSTAGRAM: FaInstagram,
   FACEBOOK: FaFacebook,
   LINKEDIN: FaLinkedin,
+  TIKTOK: FaTiktok,
 };
 
 const platformColors = {
   INSTAGRAM: "text-pink-500",
   FACEBOOK: "text-blue-500",
   LINKEDIN: "text-blue-600",
+  TIKTOK: "text-white",
 };
 
 export const CalendarItem = memo<CalendarItemProps>(
@@ -114,6 +117,9 @@ export const CalendarItem = memo<CalendarItemProps>(
       POSTED: "bg-emerald-600",
       FAILED: "bg-rose-600",
     }[post.status];
+
+    const { session } = useSessionContext();
+    const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
 
     return (
       <div
@@ -195,41 +201,43 @@ export const CalendarItem = memo<CalendarItemProps>(
             {dayjs(post.scheduledFor).format("HH:mm")}
           </span>
 
-          {/* Hover actions */}
-          <div className="hidden group-hover:flex items-center gap-0.5 flex-shrink-0 ml-auto">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDuplicate();
-              }}
-              className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
-              title="Duplicate"
-            >
-              <Copy className="h-3.5 w-3.5" />
-            </button>
-            {onPublish && post.status !== "POSTED" && (
+          {/* Hover actions - Restricted to Admin */}
+          {isAdmin && (
+            <div className="hidden group-hover:flex items-center gap-0.5 flex-shrink-0 ml-auto">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPublish?.();
+                  onDuplicate();
                 }}
                 className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
-                title="Publish now"
+                title="Duplicate"
               >
-                <Eye className="h-3.5 w-3.5" />
+                <Copy className="h-3.5 w-3.5" />
               </button>
-            )}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              className="p-1.5 rounded-md hover:bg-slate-600/50 hover:text-rose-400 text-slate-400 transition-colors"
-              title="Delete"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
+              {onPublish && post.status !== "POSTED" && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPublish?.();
+                  }}
+                  className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
+                  title="Publish now"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                </button>
+              )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+                className="p-1.5 rounded-md hover:bg-slate-600/50 hover:text-rose-400 text-slate-400 transition-colors"
+                title="Delete"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

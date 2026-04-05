@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/calendar/status-pill";
 import { useTimezone } from "@/hooks/use-timezone";
 import { useScrollPropagation } from "@/hooks/use-scroll-propagation";
+import { useSessionContext } from "@/context/SessionContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import clsx from "clsx";
@@ -19,11 +20,13 @@ import {
   Hash,
   FileText,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
   FaLinkedin as Linkedin,
+  FaTiktok as Tiktok,
 } from "react-icons/fa";
 import Image from "next/image";
 
@@ -35,12 +38,14 @@ const platformIcons = {
   INSTAGRAM: Instagram,
   FACEBOOK: Facebook,
   LINKEDIN: Linkedin,
+  TIKTOK: Tiktok,
 };
 
 const platformColors = {
   INSTAGRAM: "text-pink-500",
   FACEBOOK: "text-blue-500",
   LINKEDIN: "text-blue-600",
+  TIKTOK: "text-white",
 };
 
 type PostDetails = {
@@ -57,7 +62,7 @@ type PostDetails = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
     status: "PENDING" | "SCHEDULED" | "POSTED" | "FAILED";
     errorMessage?: string | null;
     externalPostId?: string | null;
@@ -76,6 +81,7 @@ interface PostDetailsModalProps {
   onClose: () => void;
   postId: string | null;
   onEdit: (postId: string) => void;
+  onDelete?: (postId: string) => Promise<void>;
   posts: PostDetails[];
   loading?: boolean;
 }
@@ -85,10 +91,14 @@ export default function PostDetailsModal({
   onClose,
   postId,
   onEdit,
+  onDelete,
   posts,
   loading = false,
 }: PostDetailsModalProps) {
   const { timezoneAbbr } = useTimezone();
+  const { session } = useSessionContext();
+  const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const scrollHandlers = useScrollPropagation({ scrollWindowAtBoundary: true });
 
@@ -106,6 +116,21 @@ export default function PostDetailsModal({
     }
   };
 
+  const handleDelete = async () => {
+    if (!postId || !onDelete) return;
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    
+    setIsDeleting(true);
+    try {
+      await onDelete(postId);
+      onClose();
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const mediaUrl = post?.asset?.storageKey
     ? buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey)
     : null;
@@ -115,26 +140,7 @@ export default function PostDetailsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 overflow-hidden">
-      <style jsx>{`
-        @keyframes modalFade {
-          from {
-            opacity: 0;
-            transform: translateY(8px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        @keyframes overlayFade {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-      `}</style>
+      {/* ... (styles and overlay) */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm overscroll-none"
         style={{ animation: "overlayFade 180ms ease-out" }}
@@ -162,13 +168,7 @@ export default function PostDetailsModal({
           </Button>
         </div>
 
-        {/* 
-          Scroll container with proper constraints:
-          - min-h-0 is critical for flex-1 + overflow to work properly
-          - overscroll-contain prevents scroll chaining to background
-          - Hidden scrollbars for cleaner UI while maintaining scroll functionality
-          - -webkit-overflow-scrolling: touch for smooth iOS scrolling
-        */}
+        {/* Scroll container */}
         <div
           className="flex-1 overflow-y-auto px-5 py-4 space-y-4 min-h-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           style={{ WebkitOverflowScrolling: "touch" }}
@@ -270,34 +270,6 @@ export default function PostDetailsModal({
                   </div>
                 )}
 
-              {/* Short Description */}
-              {post.shortDescription && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-slate-300">
-                    <FileText className="h-4 w-4" />
-                    <span className="font-medium">Description</span>
-                  </div>
-                  <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                    <p className="text-sm text-slate-200">
-                      {post.shortDescription}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* CTA */}
-              {post.cta && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-slate-300">
-                    <FileText className="h-4 w-4" />
-                    <span className="font-medium">Call to Action</span>
-                  </div>
-                  <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                    <p className="text-sm text-slate-200">{post.cta}</p>
-                  </div>
-                </div>
-              )}
-
               {/* Scheduled Time */}
               {scheduledDate && (
                 <div className="space-y-2">
@@ -320,7 +292,7 @@ export default function PostDetailsModal({
               {/* Platforms */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-slate-300">
-                  <CalendarIcon className="h-4 w-4" color="red" />
+                  <CalendarIcon className="h-4 w-4" color="#fbbf24" />
                   <span className="font-medium">Platforms</span>
                 </div>
                 <div className="space-y-2">
@@ -376,11 +348,6 @@ export default function PostDetailsModal({
                               </p>
                             </div>
                           )}
-                          {target.externalPostId && (
-                            <p className="text-xs text-slate-500 mt-1">
-                              External ID: {target.externalPostId}
-                            </p>
-                          )}
                         </div>
                       );
                     })
@@ -401,13 +368,27 @@ export default function PostDetailsModal({
             >
               Close
             </Button>
-            <Button
-              onClick={handleEdit}
-              className="bg-lime-400 text-slate-900 hover:bg-lime-300"
-            >
-              <Edit2 className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
+            
+            {isAdmin && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="border-rose-500/50 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+                <Button
+                  onClick={handleEdit}
+                  className="bg-lime-400 text-slate-900 hover:bg-lime-300"
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+              </>
+            )}
           </div>
         )}
       </div>

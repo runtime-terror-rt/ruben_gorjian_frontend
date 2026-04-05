@@ -23,7 +23,7 @@ interface PostModalProps {
   open: boolean;
   onClose: () => void;
   initialDate: dayjs.Dayjs | null;
-  socialAccounts: Array<{ id: string; platform: string; displayName: string }>;
+  socialAccounts: Array<{ id: string; platform: string; displayName: string; externalAccountId?: string }>;
   onCreate: (payload: {
     caption: string;
     scheduledFor: Date;
@@ -155,6 +155,7 @@ export default function PostModal({
   }, [open]);
 
   const toggleAccount = (id: string) => {
+    if (isEditing) return; // Prevent changing accounts during edit
     const account = socialAccounts.find((acc) => acc.id === id);
     if (!account) return;
 
@@ -303,12 +304,24 @@ export default function PostModal({
         const account = socialAccounts.find((a) => a.id === accountId);
         if (!account) continue;
 
+        // Resolve technical username for Upload-Post
+        // Prefer externalAccountId (stripping prefix) or raw username
+        let technicalUsername = account.displayName || account.id;
+        
+        if (account.externalAccountId) {
+          if (account.externalAccountId.startsWith("upload-post:")) {
+            technicalUsername = account.externalAccountId.replace("upload-post:", "");
+          } else {
+            technicalUsername = account.externalAccountId;
+          }
+        }
+
         const isFacebook = account.platform === "FACEBOOK";
         const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
         
         // Build payload based on user's API spec
         const payload: any = {
-          username: account.displayName || account.id, // Using displayName as per user's examples
+          username: technicalUsername,
           platform: account.platform.toLowerCase(),
           title: fullCaption,
           asyncUpload: true,
@@ -463,8 +476,12 @@ export default function PostModal({
                 type="file"
                 accept="image/*,video/*"
                 multiple
+                disabled={isEditing}
                 onChange={(e) => handleFiles(e.target.files)}
-                className="text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700"
+                className={clsx(
+                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                  isEditing && "opacity-50 cursor-not-allowed"
+                )}
               />
               <div className="mt-2 text-xs text-slate-400">
                 {uploading && <span>Uploading...</span>}
@@ -522,7 +539,9 @@ export default function PostModal({
                             name="asset"
                             value={asset.id}
                             checked={isSelected}
+                            disabled={isEditing}
                             onChange={() => {
+                              if (isEditing) return;
                               if (allowsMultipleMedia) {
                                 // Toggle selection for checkboxes
                                 setAssetIds((prev) =>
@@ -624,8 +643,12 @@ export default function PostModal({
                     >
                       <input
                         type="checkbox"
-                        className="h-4 w-4 accent-lime-400 cursor-pointer"
+                        className={clsx(
+                          "h-4 w-4 accent-lime-400",
+                          (isEditing || isDisabled) ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                        )}
                         checked={selectedAccounts.includes(acc.id)}
+                        disabled={isEditing || isDisabled}
                         onChange={() => toggleAccount(acc.id)}
                       />
                       <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
