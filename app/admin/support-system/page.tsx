@@ -28,7 +28,7 @@ import {
 } from "@tanstack/react-table";
 
 import { apiGet, apiPatch } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Select } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SupportDetailsModal } from "@/components/admin/support/SupportDetailsModal";
+import { SupportStatusModal } from "@/components/admin/support/SupportStatusModal";
 
 // --- Types ---
 
@@ -122,15 +131,13 @@ function formatDate(dateStr: string | null) {
 
 export default function SupportSystemPage() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
   // State
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [selectedSubmissionId, setSelectedSubmissionId] = useState<
-    string | null
-  >(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     id: false,
     source: false,
@@ -154,14 +161,13 @@ export default function SupportSystemPage() {
         { status: payload.status },
       ),
     onSuccess: (_, variables) => {
-      toast({ title: `Status updated to ${variables.status}` });
+      toast.success(`Status updated to ${variables.status}`, { position: "top-right" });
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
     },
     onError: (err: Error) => {
-      toast({
-        title: "Failed to update status",
+      toast.error("Failed to update status", {
         description: err.message,
-        variant: "destructive",
+        position: "top-right"
       });
     },
   });
@@ -284,22 +290,40 @@ export default function SupportSystemPage() {
     },
     {
       id: "actions",
+      header: "Action",
       cell: ({ row }) => {
         const sub = row.original;
         return (
           <div className="flex justify-end pr-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 hover:bg-slate-800 text-lime-400"
-              onClick={() => {
-                setSelectedSubmissionId(sub.id);
-                setIsDetailsOpen(true);
-              }}
-            >
-              <Eye className="h-4 w-4" />
-              <span className="sr-only">View Details</span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl rounded-xl p-1">
+                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-2 py-1.5">Action Menu</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-slate-800" />
+                <DropdownMenuItem 
+                  onClick={() => {
+                    setSelectedSubmission(sub);
+                    setIsDetailsOpen(true);
+                  }}
+                  className="rounded-lg focus:bg-slate-800 focus:text-lime-400"
+                >
+                  <Eye className="mr-2 h-4 w-4" /> View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => {
+                    setSelectedSubmission(sub);
+                    setIsStatusOpen(true);
+                  }}
+                  className="rounded-lg focus:bg-slate-800 focus:text-lime-400"
+                >
+                  <Clock className="mr-2 h-4 w-4" /> View Status
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         );
       },
@@ -536,9 +560,15 @@ export default function SupportSystemPage() {
       </Card>
 
       <SupportDetailsModal
-        submissionId={selectedSubmissionId}
+        submissionId={selectedSubmission?.id || null}
         open={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
+      />
+
+      <SupportStatusModal
+        submission={selectedSubmission}
+        open={isStatusOpen}
+        onOpenChange={setIsStatusOpen}
       />
     </div>
   );

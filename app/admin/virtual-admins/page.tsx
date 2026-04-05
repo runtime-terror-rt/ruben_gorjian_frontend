@@ -36,6 +36,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Select } from "@/components/ui/select";
@@ -56,7 +57,8 @@ import {
   UserX,
   UserCheck,
   Search,
-  Filter
+  Filter,
+  Eye,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -125,7 +127,9 @@ export default function AdminManagementPage() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isAdminDetailsOpen, setIsAdminDetailsOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<AdminItem | null>(null);
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminItem | null>(null);
   const [editingAdmin, setEditingAdmin] = useState<AdminItem | null>(null);
 
   const [formData, setFormData] = useState<CreateAdminPayload>({
@@ -346,44 +350,65 @@ export default function AdminManagementPage() {
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const admin = row.original;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleEdit(admin)}>
-                <User className="mr-2 h-4 w-4" /> Edit Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => statusMutation.mutate({ 
-                  id: admin.id, 
-                  status: admin.status === "ACTIVE" ? "BLOCKED" : "ACTIVE" 
-                })}
-                className={admin.status === "ACTIVE" ? "text-amber-400" : "text-lime-400"}
-              >
-                {admin.status === "ACTIVE" ? (
-                  <><UserX className="mr-2 h-4 w-4" /> Block Admin</>
-                ) : (
-                  <><UserCheck className="mr-2 h-4 w-4" /> Activate Admin</>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => {
-                  setAdminToDelete(admin);
-                  setIsDeleteDialogOpen(true);
-                }}
-                className="text-red-400 focus:text-red-400"
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Delete admin
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 w-8 p-0 border-slate-800 text-slate-400 hover:text-lime-400 hover:border-lime-400/50"
+              onClick={() => {
+                setSelectedAdmin(admin);
+                setIsAdminDetailsOpen(true);
+              }}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => {
+                  setSelectedAdmin(admin);
+                  setIsAdminDetailsOpen(true);
+                }}>
+                  <Eye className="mr-2 h-4 w-4" /> View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleEdit(admin)}>
+                  <User className="mr-2 h-4 w-4" /> Edit Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => statusMutation.mutate({
+                    id: admin.id,
+                    status: admin.status === "ACTIVE" ? "BLOCKED" : "ACTIVE"
+                  })}
+                  className={admin.status === "ACTIVE" ? "text-amber-400" : "text-lime-400"}
+                >
+                  {admin.status === "ACTIVE" ? (
+                    <><UserX className="mr-2 h-4 w-4" /> Block Admin</>
+                  ) : (
+                    <><UserCheck className="mr-2 h-4 w-4" /> Activate Admin</>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setAdminToDelete(admin);
+                    setIsDeleteDialogOpen(true);
+                  }}
+                  className="text-red-400 focus:text-red-400"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete admin
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     },
@@ -657,6 +682,81 @@ export default function AdminManagementPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAdminDetailsOpen} onOpenChange={setIsAdminDetailsOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-slate-950 border-slate-800 text-slate-200 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-lime-400" />
+          <DialogHeader className="pt-6 px-6">
+            <DialogTitle className="text-xl font-black text-white tracking-tight flex items-center gap-3">
+              <ShieldCheck className="h-6 w-6 text-lime-400" />
+              Administrator Details
+            </DialogTitle>
+          </DialogHeader>
+          
+          {selectedAdmin && (
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+                <div className="h-14 w-14 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 text-2xl font-black text-lime-400">
+                  {selectedAdmin.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">{selectedAdmin.name}</h3>
+                  <p className="text-sm text-slate-500 font-medium">{selectedAdmin.email}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Access Level</p>
+                  <Badge variant="outline" className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1">
+                    {selectedAdmin.role}
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Current Status</p>
+                  <Badge variant="outline" className={cn(
+                    "px-3 py-1",
+                    selectedAdmin.status === "ACTIVE" ? "bg-lime-500/10 text-lime-400 border-lime-400/20" : "bg-red-500/10 text-red-400 border-red-500/20"
+                  )}>
+                    {selectedAdmin.status}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                  <Shield className="h-3 w-3 text-lime-400" /> Active Permissions
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedAdmin.permissions?.map(perm => (
+                    <Badge key={perm} variant="secondary" className="bg-slate-900 text-slate-300 border-slate-800 text-[10px]">
+                      {perm.split("_").map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(" ")}
+                    </Badge>
+                  ))}
+                  {(!selectedAdmin.permissions || selectedAdmin.permissions.length === 0) && (
+                    <p className="text-xs text-slate-600 italic">No special permissions granted.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-800 flex justify-between text-[10px] text-slate-600 font-mono">
+                <span>Created: {format(new Date(selectedAdmin.createdAt), "yyyy-MM-dd HH:mm")}</span>
+                <span>Last Updated: {format(new Date(selectedAdmin.updatedAt), "yyyy-MM-dd HH:mm")}</span>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter className="bg-slate-900/50 p-4 border-t border-slate-800">
+            <Button 
+              variant="secondary" 
+              onClick={() => setIsAdminDetailsOpen(false)}
+              className="w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-white"
+            >
+              Close Record
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

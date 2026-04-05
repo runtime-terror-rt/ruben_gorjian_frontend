@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body
         className={`${stack_sans_notch.variable} ${poppins.variable} ${sora.variable} ${stack_sans_notch.className} ${poppins.className} min-h-screen antialiased bg-slate-950 px-2 sm:px-0`}
       >
+        <Toaster position="top-right" expand={false} richColors />
         <ErrorBoundary>
           <SessionProvider>
             <QueryProvider>

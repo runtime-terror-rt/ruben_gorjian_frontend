@@ -17,12 +17,14 @@ import {
   ShieldCheck,
   MessageSquare,
 } from "lucide-react";
+import { useSessionContext } from "@/context/SessionContext";
 
 type NavItem = {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
+  permission?: string;
 };
 
 type NavSection = {
@@ -34,9 +36,10 @@ const NAV_SECTIONS: NavSection[] = [
   {
     items: [
       {
-        label: "Dashboard",
+        label: "Overview",
         href: "/admin",
         icon: LayoutDashboard,
+        permission: "OVERVIEW",
       },
     ],
   },
@@ -47,41 +50,49 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Users",
         href: "/admin/users",
         icon: Users,
+        permission: "USER_MANAGE",
       },
       {
         label: "Subscriptions",
         href: "/admin/subscriptions",
         icon: CreditCard,
+        permission: "SUBSCRIPTION_MANAGE",
       },
       {
         label: "Coupons",
         href: "/admin/coupons",
         icon: Tag,
+        permission: "COUPON_MANAGE",
       },
       {
         label: "Admins",
         href: "/admin/virtual-admins",
         icon: ShieldCheck,
+        permission: "VIRTUAL_ADMIN_MANAGE",
       },
       {
         label: "Posts",
         href: "/admin/posts",
         icon: FileText,
+        permission: "POST_MANAGE",
       },
       {
         label: "Media",
         href: "/admin/media",
         icon: ImageIcon,
+        permission: "POST_MANAGE",
       },
       {
         label: "Submissions",
         href: "/admin/submissions",
         icon: FileText,
+        permission: "SCHEDULE_MANAGE",
       },
       {
         label: "Support System",
         href: "/admin/support-system",
         icon: MessageSquare,
+        permission: "POST_MANAGE",
       },
     ],
   },
@@ -92,6 +103,7 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Settings",
         href: "/admin/settings",
         icon: Settings,
+        permission: "PROFILE",
       },
     ],
   },
@@ -114,6 +126,21 @@ export function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { session } = useSessionContext();
+
+  const userPermissions = session?.permissions || [];
+  const isSuperAdmin = session?.role === "SUPER_ADMIN";
+
+  const hasPermission = (permission?: string) => {
+    if (!permission) return true;
+    if (isSuperAdmin) return true;
+    return userPermissions.includes(permission);
+  };
+
+  const filteredSections = NAV_SECTIONS.map(section => ({
+    ...section,
+    items: section.items.filter(item => hasPermission(item.permission))
+  })).filter(section => section.items.length > 0);
 
   const isActive = (href: string) => {
     if (href === "/admin") {
@@ -172,7 +199,7 @@ export function AdminSidebar({
 
             {/* Navigation — min-h-0 so flex item can shrink and scroll */}
             <nav className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-6">
-              {NAV_SECTIONS.map((section, idx) => (
+              {filteredSections.map((section, idx) => (
                 <div key={idx}>
                   {section.title && (
                     <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -282,7 +309,7 @@ export function AdminSidebar({
 
       {/* Navigation — min-h-0 so flex item can shrink and scroll */}
       <nav className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-6">
-        {NAV_SECTIONS.map((section, idx) => (
+        {filteredSections.map((section, idx) => (
           <div key={idx}>
             {section.title && !isCollapsed && (
               <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
