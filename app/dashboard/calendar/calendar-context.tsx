@@ -303,7 +303,7 @@ export function CalendarProvider({
         const postsWithTimezone = rawPosts.map((post: any) => ({
           ...post,
           scheduledFor: post.scheduledFor
-            ? fromUTC(post.scheduledFor, userTimezone).toISOString()
+            ? fromUTC(post.scheduledFor, userTimezone).format("YYYY-MM-DD HH:mm:ss")
             : post.scheduledFor,
         }));
         setPosts(postsWithTimezone);
@@ -387,9 +387,9 @@ export function CalendarProvider({
         if (!userTimezone) {
           throw new Error("Timezone not ready. Please try again.");
         }
-        // Convert scheduledFor from user timezone to UTC if provided
         const payload = {
           ...data,
+          caption: data.caption || ".",
           ...(data.scheduledFor
             ? { scheduledAt: toUTC(dayjs(data.scheduledFor), userTimezone).toISOString() }
             : {}),

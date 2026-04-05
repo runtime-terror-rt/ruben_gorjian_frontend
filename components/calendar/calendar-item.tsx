@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useDrag } from "react-dnd";
 import dayjs from "dayjs";
 import clsx from "clsx";
-import { Copy, Eye, Trash2 } from "lucide-react";
+import { Copy, Send, Trash2, AlertCircle, Edit2 } from "lucide-react";
 import { FaInstagram, FaFacebook, FaLinkedin, FaTiktok } from "react-icons/fa";
 import type { Dayjs } from "dayjs";
 import { buildStorageUrl } from "@/lib/storage-utils";
@@ -120,6 +120,8 @@ export const CalendarItem = memo<CalendarItemProps>(
 
     const { session } = useSessionContext();
     const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
+    const needsMedia = platforms.some(p => p === "INSTAGRAM" || p === "TIKTOK");
+    const isMissingContent = needsMedia && !post.asset && (!post.caption || post.caption.trim() === "");
 
     return (
       <div
@@ -163,11 +165,21 @@ export const CalendarItem = memo<CalendarItemProps>(
                 }}
               />
             ) : (
-              <div className="w-9 h-9 rounded-[6px] bg-slate-700 flex items-center justify-center">
-                {PrimaryIcon && (
-                  <PrimaryIcon
-                    className={clsx("h-4 w-4", platformColors[primaryPlatform])}
-                  />
+              <div 
+                className={clsx(
+                  "w-9 h-9 rounded-[6px] flex items-center justify-center",
+                  isMissingContent ? "bg-amber-500/20 border border-amber-500/50" : "bg-slate-700"
+                )}
+                title={isMissingContent ? "Missing content" : undefined}
+              >
+                {isMissingContent ? (
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                ) : (
+                  PrimaryIcon && (
+                    <PrimaryIcon
+                      className={clsx("h-4 w-4", platformColors[primaryPlatform])}
+                    />
+                  )
                 )}
               </div>
             )}
@@ -201,9 +213,19 @@ export const CalendarItem = memo<CalendarItemProps>(
             {dayjs(post.scheduledFor).format("HH:mm")}
           </span>
 
-          {/* Hover actions - Restricted to Admin */}
-          {isAdmin && (
-            <div className="hidden group-hover:flex items-center gap-0.5 flex-shrink-0 ml-auto">
+          {/* Hover actions */}
+          <div className="hidden group-hover:flex items-center gap-0.5 flex-shrink-0 ml-auto">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+              className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
+              title="Edit post"
+            >
+              <Edit2 className="h-4 w-4 text-slate-300 hover:text-white" />
+            </button>
+            {isAdmin && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -214,30 +236,30 @@ export const CalendarItem = memo<CalendarItemProps>(
               >
                 <Copy className="h-3.5 w-3.5" />
               </button>
-              {onPublish && post.status !== "POSTED" && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPublish?.();
-                  }}
-                  className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
-                  title="Publish now"
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                </button>
-              )}
+            )}
+            {isAdmin && onPublish && post.status !== "POSTED" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete();
+                  onPublish?.();
                 }}
-                className="p-1.5 rounded-md hover:bg-slate-600/50 hover:text-rose-400 text-slate-400 transition-colors"
-                title="Delete"
+                className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
+                title={isMissingContent ? "Publishing without content may fail" : "Publish now"}
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Send className="h-3.5 w-3.5 text-lime-400" />
               </button>
-            </div>
-          )}
+            )}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              className="p-1.5 rounded-md hover:bg-slate-600/50 hover:text-rose-400 text-slate-400 transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     );

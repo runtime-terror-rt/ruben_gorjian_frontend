@@ -9,10 +9,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useCalendar } from "./calendar-context";
 import { useUpload } from "@/hooks/use-upload";
 import { useScrollPropagation } from "@/hooks/use-scroll-propagation";
+import { useSessionContext } from "@/context/SessionContext";
 import dayjs, { Dayjs } from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import {
   ChevronLeft,
   ChevronRight,
@@ -33,6 +36,8 @@ import PostDetailsModal from "./post-details-modal";
 dayjs.extend(isoWeek);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const isTouchDevice = typeof window !== "undefined" && "ontouchstart" in window;
 
@@ -156,9 +161,9 @@ function WeekView({
   onEdit: (postId: string) => void;
   onDragEnd: (postId: string, newDate: Date) => void;
 }) {
-  const { posts, startDate, deletePost, duplicatePost, publishPost } =
+  const { posts, startDate, deletePost, duplicatePost, publishPost, timezone: userTimezone } =
     useCalendar();
-  const weekStart = dayjs(startDate).startOf("isoWeek");
+  const weekStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("isoWeek") : dayjs(startDate).startOf("isoWeek");
 
   const localizedDays = useMemo(() => {
     const days = [];
@@ -404,8 +409,9 @@ function DayView({
     deletePost,
     duplicatePost,
     publishPost,
+    timezone: userTimezone,
   } = useCalendar();
-  const selectedDate = dayjs(startDate);
+  const selectedDate = userTimezone ? dayjs.tz(startDate, userTimezone) : dayjs(startDate);
   const scrollHandlers = useScrollPropagation();
 
   // Group posts by hour for timeline display
@@ -539,6 +545,8 @@ export default function EnhancedCalendar() {
     updatePost,
     movePost,
   } = useCalendar();
+  const { session } = useSessionContext();
+  const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
   const [modalOpen, setModalOpen] = useState(false);
   const [modalDate, setModalDate] = useState<Dayjs | null>(null);
   const [editingPost, setEditingPost] = useState<{
@@ -895,6 +903,7 @@ export default function EnhancedCalendar() {
           onCreate={handleCreatePost}
           onUpload={uploadFile}
           uploading={uploading}
+          isAdmin={isAdmin}
         />
 
         <PostDetailsModal

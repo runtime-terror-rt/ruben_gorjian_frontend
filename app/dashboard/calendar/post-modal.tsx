@@ -44,6 +44,7 @@ interface PostModalProps {
     socialAccountIds: string[];
     hashtags?: string[];
   } | null;
+  isAdmin?: boolean;
 }
 
 type UploadedAsset = { id: string; storageKey: string; name?: string };
@@ -57,6 +58,7 @@ export default function PostModal({
   onUpload,
   uploading = false,
   editingPost,
+  isAdmin = false,
 }: PostModalProps) {
   const [caption, setCaption] = useState("");
   const [datetime, setDatetime] = useState("");
@@ -117,7 +119,7 @@ export default function PostModal({
 
   useEffect(() => {
     if (editingPost) {
-      setCaption(editingPost.caption);
+      setCaption(editingPost.caption === "." ? "" : (editingPost.caption || ""));
       // Convert from UTC to user timezone for display
       const scheduledDate = fromUTC(editingPost.scheduledFor, userTimezone);
       setDatetime(formatForDateTimeLocal(scheduledDate, userTimezone));
@@ -155,21 +157,10 @@ export default function PostModal({
   }, [open]);
 
   const toggleAccount = (id: string) => {
-    if (isEditing) return; // Prevent changing accounts during edit
     const account = socialAccounts.find((acc) => acc.id === id);
     if (!account) return;
 
-    if (
-      (account.platform === "INSTAGRAM" || account.platform === "TIKTOK") &&
-      assetIds.length === 0 &&
-      !assets.length
-    ) {
-      setError(
-        `Please upload media first before selecting ${account.platform === "INSTAGRAM" ? "Instagram" : "TikTok"}. ${account.platform === "INSTAGRAM" ? "Instagram" : "TikTok"} requires media attachments.`
-      );
-      return;
-    }
-
+    // Users can now change platforms even during editing
     setSelectedAccounts((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
@@ -190,27 +181,13 @@ export default function PostModal({
       return;
     }
 
-    if (!caption.trim()) {
-      setError("Please add a caption");
-      return;
-    }
+    // Caption is optional for initial user scheduling
     if (selectedAccounts.length === 0) {
       setError("Select at least one social account");
       return;
     }
-    if (requiresMedia && assetIds.length === 0) {
-      if (assets.length > 0) {
-        setError(
-          "Please select which asset to use for this post. Selective platforms (IG/TikTok) require media."
-        );
-      } else {
-        setError(
-          "Instagram and TikTok require media. Please upload and select an asset before scheduling."
-        );
-      }
-      return;
-    }
-
+    // Media is now optional for scheduling as per user request.
+    // The admin will review and add media later if missing.
     if (requiresMedia && assetIds.length > 1) {
       setError(
         "Instagram and TikTok only support a single media file. Please select only one asset."
@@ -249,7 +226,8 @@ export default function PostModal({
       // Parse datetime-local input and convert to UTC
       const scheduledDate = parseDateTimeLocal(datetime, userTimezone);
       await onCreate({
-        caption: caption.trim(),
+        // If caption is empty, use a small placeholder to satisfy backend requirements.
+        caption: caption.trim() || ".",
         scheduledFor: scheduledDate,
         socialAccountIds: selectedAccounts,
         platforms,
@@ -462,7 +440,7 @@ export default function PostModal({
             <label className="text-sm text-slate-300">
               Media{" "}
               {requiresMedia && (
-                <span className="text-amber-400">(required for Instagram/TikTok)</span>
+                <span className="text-amber-400/70">(Optional for scheduling)</span>
               )}
             </label>
             {requiresMedia && !storageConfigured && (
@@ -492,7 +470,7 @@ export default function PostModal({
                 )}
                 {assets.length === 0 && !uploading && assetIds.length === 0 && (
                   <span>
-                    Attach an image or video when targeting Instagram or TikTok.
+                    Optional: Attach an image or video. Admin can add media later before posting.
                   </span>
                 )}
                 {assetIds.length > 0 &&
@@ -585,7 +563,7 @@ export default function PostModal({
           <MarkdownEditor
             value={caption}
             onChange={setCaption}
-            placeholder="Write your caption in Markdown..."
+            placeholder="Write your caption in Markdown... (Optional for scheduling)"
             rows={6}
           />
 
@@ -627,28 +605,20 @@ export default function PostModal({
                   </div>
                 )}
                 {socialAccounts.map((acc) => {
-                  const needsMedia = acc.platform === "INSTAGRAM" || acc.platform === "TIKTOK";
-                  const canSelect = assetIds.length > 0 || assets.length > 0;
-                  const isDisabled = needsMedia && !canSelect;
+                  const isSelected = selectedAccounts.includes(acc.id);
 
                   return (
                     <label
                       key={acc.id}
                       className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
-                      title={
-                        isDisabled
-                          ? "Upload media first to select Instagram"
-                          : undefined
-                      }
                     >
                       <input
                         type="checkbox"
                         className={clsx(
                           "h-4 w-4 accent-lime-400",
-                          (isEditing || isDisabled) ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                          "cursor-pointer"
                         )}
-                        checked={selectedAccounts.includes(acc.id)}
-                        disabled={isEditing || isDisabled}
+                        checked={isSelected}
                         onChange={() => toggleAccount(acc.id)}
                       />
                       <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
@@ -657,11 +627,6 @@ export default function PostModal({
                       <span className="truncate text-sm text-slate-100">
                         {acc.displayName || acc.id}
                       </span>
-                      {isDisabled && (
-                        <span className="text-xs text-amber-400">
-                          (media required)
-                        </span>
-                      )}
                     </label>
                   );
                 })}
@@ -697,7 +662,7 @@ export default function PostModal({
                 ? "Update"
                 : "Schedule"}
           </Button>
-          {!isEditing && (
+          {!isEditing && isAdmin && (
             <Button
               onClick={handlePublishNow}
               disabled={submitting}
