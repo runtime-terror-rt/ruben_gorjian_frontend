@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     }
 
     const response = await fetch(
-      `${backendBase.replace(/\/$/, "")}/api/contact-submissions/newsletter`,
+      `${backendBase.replace(/\/$/, "")}/api/contact/newsletter`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
