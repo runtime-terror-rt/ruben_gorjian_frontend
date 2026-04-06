@@ -1,20 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiPatch } from "@/lib/api";
 import { toast } from "sonner";
-import { CheckCircle2, Clock, Mail, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Loader2, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SubmissionStatus = "PENDING" | "REPLIED" | "RESOLVED";
@@ -35,13 +34,9 @@ export function SupportStatusModal({
   onOpenChange,
 }: SupportStatusModalProps) {
   const queryClient = useQueryClient();
-  const [selectedStatus, setSelectedStatus] = useState<SubmissionStatus | null>(null);
-
-  useEffect(() => {
-    if (submission) {
-      setSelectedStatus(submission.status);
-    }
-  }, [submission]);
+  const [selectedStatus, setSelectedStatus] = useState<SubmissionStatus | null>(
+    () => submission?.status ?? null,
+  );
 
   const statusMutation = useMutation({
     mutationFn: (status: SubmissionStatus) => 
@@ -61,10 +56,25 @@ export function SupportStatusModal({
     }
   });
 
-  const statuses: { value: SubmissionStatus; label: string; icon: any; color: string }[] = [
-    { value: "PENDING", label: "Pending", icon: Clock, color: "text-amber-400 bg-amber-400/10 border-amber-400/20" },
-    // { value: "REPLIED", label: "Replied", icon: Mail, color: "text-blue-400 bg-blue-400/10 border-blue-400/20" },
-    { value: "RESOLVED", label: "Resolved", icon: CheckCircle2, color: "text-lime-400 bg-lime-400/10 border-lime-400/20" },
+  const statuses: Array<{
+    value: SubmissionStatus;
+    label: string;
+    icon: LucideIcon;
+    color: string;
+  }> = [
+    {
+      value: "PENDING",
+      label: "Pending",
+      icon: Clock,
+      color:
+        "text-white bg-orange-500 border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]",
+    },
+    {
+      value: "RESOLVED",
+      label: "Resolved",
+      icon: CheckCircle2,
+      color: "text-lime-400 bg-lime-400/10 border-lime-400/20",
+    },
   ];
 
   return (
@@ -116,7 +126,12 @@ export function SupportStatusModal({
           </Button>
           <Button
             onClick={() => selectedStatus && statusMutation.mutate(selectedStatus)}
-            disabled={statusMutation.isPending || selectedStatus === submission?.status}
+            disabled={
+              statusMutation.isPending ||
+              !submission ||
+              !selectedStatus ||
+              selectedStatus === submission.status
+            }
             className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-8 h-11 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)]"
           >
             {statusMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}

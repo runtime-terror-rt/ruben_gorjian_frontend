@@ -494,7 +494,7 @@ export default function BillingPage() {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Billing</p>
                   <p className="text-sm font-semibold text-slate-200 capitalize">
-                    {currentPlanDisplay?.interval}ly
+                    {currentPlanDisplay?.interval === "year" ? "Yearly" : "Monthly"}
                   </p>
                 </div>
               </div>
