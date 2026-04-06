@@ -172,6 +172,7 @@ export default function AdminPage() {
   const [selectedMonth, setSelectedMonth] = useState("All");
   const [activityData, setActivityData] = useState<any>(null);
   const [activityLoading, setActivityLoading] = useState(false);
+  const [activityPage, setActivityPage] = useState(1);
 
   const dataWithColors = useMemo(() => {
     return (revenueData?.plans || []).map((p: any, i: number) => ({
@@ -276,14 +277,19 @@ export default function AdminPage() {
     loadData();
     loadOverviewStats();
     loadRevenueData();
-    loadActivityData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.role, selectedYear, selectedMonth]);
 
-  async function loadActivityData() {
+  useEffect(() => {
+    if (!session || (session.role !== "ADMIN" && session.role !== "SUPER_ADMIN")) return;
+    loadActivityData(activityPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.role, activityPage]);
+
+  async function loadActivityData(page = 1) {
     setActivityLoading(true);
     try {
-      const res = await fetch("/api/admin/overview/activity?page=1&limit=10", {
+      const res = await fetch(`/api/admin/overview/activity?page=${page}&limit=10`, {
         cache: "no-store",
         credentials: "include",
       });
@@ -818,25 +824,22 @@ export default function AdminPage() {
               <div>
                 <h4 className="text-base font-black text-white tracking-tight">Recent Platform Activity</h4>
                 <p className="text-[11px] text-slate-500 font-semibold">
-                  {activityData?.total ? `${activityData.total} total events` : "Live event feed"}
+                  {activityData?.total
+                    ? `${activityData.total} total events · Page ${activityPage} of ${activityData.totalPages ?? 1}`
+                    : "Live event feed"}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {activityData?.totalPages && activityData.totalPages > 1 && (
-                <span className="hidden sm:inline text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 py-1 rounded-full border border-slate-700 bg-slate-800">
-                  Page {activityData.page} / {activityData.totalPages}
-                </span>
-              )}
-              <button
-                onClick={loadActivityData}
-                disabled={activityLoading}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/50 text-[11px] font-black text-slate-300 uppercase tracking-widest hover:border-lime-400/40 hover:text-lime-400 hover:bg-lime-400/5 transition-all disabled:opacity-50"
-              >
-                <RefreshCcw className={`h-3.5 w-3.5 ${activityLoading ? "animate-spin" : ""}`} />
-                Refresh
-              </button>
-            </div>
+            {/* Refresh only in header */}
+            <button
+              onClick={() => loadActivityData(activityPage)}
+              disabled={activityLoading}
+              title="Refresh activity"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/50 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:border-lime-400/40 hover:text-lime-400 hover:bg-lime-400/5 transition-all disabled:opacity-50"
+            >
+              <RefreshCcw className={`h-3.5 w-3.5 ${activityLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
           </div>
 
           {/* Loading Skeleton */}
@@ -950,6 +953,64 @@ export default function AdminPage() {
                   <p className="text-xs text-slate-600 mt-1">Events will appear here as users join and subscribe.</p>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* ── Pagination Footer ── */}
+          {activityData && activityData.totalPages > 1 && (
+            <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+              {/* Left: results info */}
+              <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
+                Showing page{" "}
+                <span className="text-slate-300 font-black">{activityPage}</span>
+                {" "}of{" "}
+                <span className="text-slate-300 font-black">{activityData.totalPages}</span>
+                {" "}·{" "}
+                <span className="text-slate-300 font-black">{activityData.total}</span> total events
+              </p>
+
+              {/* Center: page number pills */}
+              <div className="flex items-center gap-1">
+                {Array.from({ length: activityData.totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    onClick={() => setActivityPage(pg)}
+                    disabled={activityLoading}
+                    className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
+                      pg === activityPage
+                        ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
+                        : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
+                    } disabled:cursor-not-allowed`}
+                  >
+                    {pg}
+                  </button>
+                ))}
+              </div>
+
+              {/* Right: Prev / Next */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setActivityPage(p => Math.max(1, p - 1))}
+                  disabled={activityLoading || activityPage <= 1}
+                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
+                >
+                  <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Previous
+                </button>
+                <button
+                  onClick={() => setActivityPage(p => p + 1)}
+                  disabled={activityLoading || !activityData?.hasNextPage}
+                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                  Next Page
+                  <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
         </div>
