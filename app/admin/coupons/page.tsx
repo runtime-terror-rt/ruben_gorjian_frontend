@@ -311,6 +311,7 @@ export default function AdminCouponsPage() {
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const coupon = row.original;
         return (

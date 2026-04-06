@@ -110,8 +110,7 @@ function StatusBadge({ status }: { status: SubmissionStatus }) {
   }
   return (
     <Badge
-      variant="outline"
-      className="text-white border-amber-400/50 bg-amber-400/10"
+      className="bg-orange-500 text-white border-none font-bold px-3 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
     >
       Pending
     </Badge>
