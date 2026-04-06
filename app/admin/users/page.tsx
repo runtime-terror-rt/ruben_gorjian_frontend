@@ -27,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Eye, User, UserCheck, UserX, Trash2, ChevronDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -337,7 +338,7 @@ export default function AdminUsersPage() {
           const sub = row.original.subscriptions[0];
           return sub ? (
             <div className="flex flex-col gap-1">
-              <Badge variant="outline" className="text-xs w-fit">
+              <Badge variant="outline" className="text-[10px] w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-300">
                 {sub.planCode}
               </Badge>
               {sub.priceType && (
@@ -429,31 +430,27 @@ export default function AdminUsersPage() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => router.push(`/admin/users/${user.id}`)}>
-                  View Details
+                  <Eye className="mr-2 h-4 w-4" /> View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleEdit(user)}>Edit</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleEdit(user)}>
+                  <User className="mr-2 h-4 w-4" /> Edit Profile
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {user.status === "BLOCKED" ? (
-                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "unblock", user })}>
-                    Unblock
+                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "unblock", user })} className="text-lime-400">
+                    <UserCheck className="mr-2 h-4 w-4" /> Unblock User
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })}>
-                    Block/Suspend
+                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })} className="text-amber-400">
+                    <UserX className="mr-2 h-4 w-4" /> Block/Suspend
                   </DropdownMenuItem>
                 )}
-                {/* <DropdownMenuItem onClick={() => resendVerificationMutation.mutate(user.id)}>
-                  Resend Verification
-                </DropdownMenuItem> */}
-                {/* <DropdownMenuItem onClick={() => setConfirmAction({ type: "cancel", user })}>
-                  Cancel Subscription
-                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "delete", user })}
-                  className="text-red-300"
+                  className="text-red-400 focus:text-red-400"
                 >
-                  Delete
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete User
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -586,78 +583,73 @@ export default function AdminUsersPage() {
         </div> */}
         <div>
           <Label htmlFor="status">Account Status</Label>
-          <Select
-            id="status"
-            value={filters.status}
-            onChange={(event) => setFilters((prev) => ({ ...prev, status: event.target.value, page: 1 }))}
-          >
-            <option value="">All</option>
-            <option value="ACTIVE">Active</option>
-            <option value="BLOCKED">Blocked</option>
-            <option value="DELETED">Deleted</option>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="founder">Founder Status</Label>
-          <Select
-            id="founder"
-            value={filters.founder}
-            onChange={(event) => setFilters((prev) => ({ ...prev, founder: event.target.value, page: 1 }))}
-          >
-            <option value="">All</option>
-            <option value="true">Founders</option>
-            <option value="false">Non-founders</option>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button id="status" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+                {filters.status === "" ? "All" : filters.status === "ACTIVE" ? "Active" : filters.status === "BLOCKED" ? "Blocked" : "Deleted"} 
+                <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, status: "", page: 1 }))}>All</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, status: "ACTIVE", page: 1 }))}>Active</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, status: "BLOCKED", page: 1 }))}>Blocked</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, status: "DELETED", page: 1 }))}>Deleted</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div>
           <Label htmlFor="plan">Subscription Plan</Label>
-          <Select
-            id="plan"
-            value={filters.plan}
-            onChange={(event) => setFilters((prev) => ({ ...prev, plan: event.target.value, page: 1 }))}
-          >
-            <option value="">All</option>
-            {(plansQuery.data ?? []).map((plan) => (
-              <option key={plan.code} value={plan.code}>
-                {plan.name}
-              </option>
-            ))}
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button id="plan" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+                {filters.plan === "" ? "All Plans" : (plansQuery.data?.find(p => p.code === filters.plan)?.name || filters.plan)} 
+                <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0">
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, plan: "", page: 1 }))}>All Plans</DropdownMenuItem>
+              {(plansQuery.data ?? []).map((plan) => (
+                <DropdownMenuItem key={plan.code} onClick={() => setFilters((prev) => ({ ...prev, plan: plan.code, page: 1 }))}>
+                  {plan.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div>
           <Label htmlFor="subscriptionStatus">Sub Status</Label>
-          <Select
-            id="subscriptionStatus"
-            value={filters.subscriptionStatus}
-            onChange={(event) => setFilters((prev) => ({ ...prev, subscriptionStatus: event.target.value, page: 1 }))}
-          >
-            <option value="">All</option>
-            <option value="ACTIVE">Active</option>
-            <option value="TRIALING">Trialing</option>
-            <option value="PAST_DUE">Past Due</option>
-            <option value="CANCELED">Cancelled</option>
-            <option value="INCOMPLETE">Incomplete</option>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+                {filters.subscriptionStatus === "" ? "All" : filters.subscriptionStatus} 
+                <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "", page: 1 }))}>All</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "ACTIVE", page: 1 }))}>ACTIVE</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "TRIALING", page: 1 }))}>TRIALING</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "PAST_DUE", page: 1 }))}>PAST_DUE</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "CANCELED", page: 1 }))}>CANCELED</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, subscriptionStatus: "INCOMPLETE", page: 1 }))}>INCOMPLETE</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div>
           <Label htmlFor="sort">Sort By</Label>
-          <Select
-            id="sort"
-            value={`${filters.sortBy}:${filters.sortDir}`}
-            onChange={(event) => {
-              const [sortBy, sortDir] = event.target.value.split(":");
-              setFilters((prev) => ({ ...prev, sortBy, sortDir, page: 1 }));
-            }}
-          >
-            <option value="createdAt:desc">Newest First</option>
-            <option value="createdAt:asc">Oldest First</option>
-            <option value="founder:desc">Founders First</option>
-            <option value="founder:asc">Non-founders First</option>
-            <option value="plan:asc">Plan (A-Z)</option>
-            <option value="plan:desc">Plan (Z-A)</option>
-            <option value="periodEnd:asc">Period End (Soonest)</option>
-            <option value="periodEnd:desc">Period End (Latest)</option>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button id="sort" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+                {filters.sortBy === "createdAt" && filters.sortDir === "desc" ? "Newest First" : "Oldest First"} 
+                <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[var(--radix-dropdown-menu-trigger-width)]">
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, sortBy: "createdAt", sortDir: "desc", page: 1 }))}>Newest First</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilters((prev) => ({ ...prev, sortBy: "createdAt", sortDir: "asc", page: 1 }))}>Oldest First</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -667,15 +659,13 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="rounded-lg border border-slate-800 bg-slate-900/40">
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/30 overflow-hidden backdrop-blur-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-slate-800/30">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="hover:bg-transparent border-slate-800">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}
-                  className="text-slate-300"
-                  >
+                  <TableHead key={header.id} className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -705,10 +695,10 @@ export default function AdminUsersPage() {
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className="border-slate-800 hover:bg-slate-800/20 transition-all group">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell 
-                    className="text-slate-300"
+                    className="py-5 font-medium group-hover:text-white transition-colors"
                     key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
@@ -718,27 +708,63 @@ export default function AdminUsersPage() {
         </Table>
       </div>
 
-      <div className="mt-6 flex items-center justify-between text-sm text-slate-400">
-        <div>
-          Showing {users.length} of {total} users (Page {filters.page} of {totalPages})
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            disabled={filters.page <= 1}
-            onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            disabled={filters.page >= totalPages}
-            onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+            {/* ── Pagination Footer ── */}
+            {totalPages > 0 && (
+              <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-950/20">
+                
+                {/* Left: results info */}
+                <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
+                  Showing page{" "}
+                  <span className="text-slate-300 font-black">{filters.page}</span>
+                  {" "}of{" "}
+                  <span className="text-slate-300 font-black">{totalPages}</span>
+                  {" "}·{" "}
+                  <span className="text-slate-300 font-black">{total}</span> total users
+                </p>
+
+                {/* Center: page number pills */}
+                <div className="flex items-center gap-3">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                    <button
+                      key={pg}
+                      onClick={() => setFilters(prev => ({ ...prev, page: pg }))}
+                      disabled={usersQuery.isLoading}
+                      className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
+                        pg === filters.page
+                          ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
+                          : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
+                      } disabled:cursor-not-allowed`}
+                    >
+                      {pg}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right: Prev / Next */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+                    disabled={usersQuery.isLoading || filters.page <= 1}
+                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
+                  >
+                    <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
+                    disabled={usersQuery.isLoading || filters.page >= totalPages}
+                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
+                  >
+                    Next Page
+                    <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
 
       {/* Create User Dialog */}
       <Dialog open={createState.open} onOpenChange={(open) => setCreateState((prev) => ({ ...prev, open }))}>
