@@ -32,7 +32,7 @@ type NavSection = {
   items: NavItem[];
 };
 
-const NAV_SECTIONS: NavSection[] = [
+export const NAV_SECTIONS: NavSection[] = [
   {
     items: [
       {
@@ -92,7 +92,7 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Support System",
         href: "/admin/support-system",
         icon: MessageSquare,
-        permission: "POST_MANAGE",
+        permission: "SUPPORT",           // ✅ fixed: was incorrectly "POST_MANAGE"
       },
     ],
   },
@@ -126,21 +126,30 @@ export function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { session } = useSessionContext();
+  const { session, loading: sessionLoading } = useSessionContext();
 
-  const userPermissions = session?.permissions || [];
+  const userPermissions: string[] = session?.permissions ?? [];
   const isSuperAdmin = session?.role === "SUPER_ADMIN";
 
-  const hasPermission = (permission?: string) => {
+  /**
+   * Permission check:
+   * - No permission key on item → always visible
+   * - Everyone (ADMIN and SUPER_ADMIN) → item is visible ONLY if its
+   *   permission string exists in their permissions[] from /auth/me
+   */
+  const hasPermission = (permission?: string): boolean => {
     if (!permission) return true;
-    if (isSuperAdmin) return true;
     return userPermissions.includes(permission);
   };
 
-  const filteredSections = NAV_SECTIONS.map(section => ({
-    ...section,
-    items: section.items.filter(item => hasPermission(item.permission))
-  })).filter(section => section.items.length > 0);
+  // Only show nav items the current user has permission for.
+  // During session loading we pass an empty list so nothing flickers.
+  const filteredSections = sessionLoading
+    ? []
+    : NAV_SECTIONS.map(section => ({
+        ...section,
+        items: section.items.filter(item => hasPermission(item.permission)),
+      })).filter(section => section.items.length > 0);
 
   const isActive = (href: string) => {
     if (href === "/admin") {
@@ -248,6 +257,26 @@ export function AdminSidebar({
                 <span>Documentation</span>
                 <ExternalLink className="h-3 w-3 ml-auto" />
               </a>
+              {/* Role badge */}
+              <div className={`mt-2 mx-1 flex items-center gap-2 px-3 py-2 rounded-xl ${
+                isSuperAdmin
+                  ? "bg-amber-400/10 border border-amber-400/20"
+                  : "bg-slate-800/60 border border-slate-700/50"
+              }`}>
+                <div className={`h-2 w-2 rounded-full flex-shrink-0 ${
+                  isSuperAdmin ? "bg-amber-400" : "bg-lime-400"
+                }`} />
+                <div className="min-w-0">
+                  <p className={`text-[10px] font-black uppercase tracking-widest truncate ${
+                    isSuperAdmin ? "text-amber-300" : "text-lime-300"
+                  }`}>
+                    {isSuperAdmin ? "Super Admin" : "Admin"}
+                  </p>
+                  <p className="text-[9px] text-slate-500 font-semibold">
+                    {isSuperAdmin ? "Full Access" : `${userPermissions.length} permissions`}
+                  </p>
+                </div>
+              </div>
               <div className="mt-2 px-3 text-xs text-slate-500">
                 Version 1.0.0
               </div>
