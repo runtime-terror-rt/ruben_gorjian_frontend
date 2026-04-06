@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useSessionContext } from "@/context/SessionContext";
 import {
   useReactTable,
   getCoreRowModel,
@@ -72,6 +73,7 @@ const PERMISSIONS = [
   "SCHEDULE_MANAGE",
   "POST_MANAGE",
   "COUPON_MANAGE",
+  "SUPPORT",
   "VIRTUAL_ADMIN_MANAGE",
   "PROFILE"
 ];
@@ -111,6 +113,7 @@ export default function AdminManagementPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { session, refresh: refreshSession } = useSessionContext();
 
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -166,7 +169,7 @@ export default function AdminManagementPage() {
     },
     onError: (err: any) => {
       toast({ 
-        title: "Onboarding Failed", 
+        title: "Failed", 
         description: err.message || "Unable to create administrator account.", 
         variant: "destructive" 
       });
@@ -182,7 +185,7 @@ export default function AdminManagementPage() {
       };
       return apiPatch<any, any>(`/api/admin/virtual-admins/${payload.id}`, updateData);
     },
-    onSuccess: () => {
+    onSuccess: async (_, variables) => {
       toast({ 
         title: "Profile Updated", 
         description: "Administrative permissions and role have been saved."
@@ -191,6 +194,11 @@ export default function AdminManagementPage() {
       setIsDialogOpen(false);
       resetForm();
       queryClient.invalidateQueries({ queryKey: ["admin-virtual-admins"] });
+      // If the updated admin is the current logged-in user,
+      // refresh the session so the sidebar updates immediately.
+      if (session?.id && variables.id === session.id) {
+        await refreshSession();
+      }
     },
     onError: (err: any) => {
       toast({ 
@@ -509,30 +517,60 @@ export default function AdminManagementPage() {
               </TableBody>
             </Table>
 
-            {data?.totalPages && data.totalPages > 1 && (
-              <div className="flex items-center justify-between px-6 py-6 border-t border-slate-800 bg-slate-950/20">
-                <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">
-                  Showing page {data.page} of {data.totalPages}
-                </div>
+            {/* ── Pagination Footer ── */}
+            {data && data.totalPages > 0 && (
+              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6">
+                
+                {/* Left: results info */}
+                <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
+                  Showing page{" "}
+                  <span className="text-slate-300 font-black">{page}</span>
+                  {" "}of{" "}
+                  <span className="text-slate-300 font-black">{data.totalPages}</span>
+                  {" "}·{" "}
+                  <span className="text-slate-300 font-black">{data.total}</span> total admins
+                </p>
+
+                {/* Center: page number pills */}
                 <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-9 rounded-lg border-slate-800 bg-slate-900 text-slate-400 hover:text-white transition-all"
-                    disabled={page === 1}
-                    onClick={() => setPage(p => p - 1)}
+                  {Array.from({ length: data.totalPages }, (_, i) => i + 1).map((pg) => (
+                    <button
+                      key={pg}
+                      onClick={() => setPage(pg)}
+                      disabled={isLoading}
+                      className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
+                        pg === page
+                          ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
+                          : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
+                      } disabled:cursor-not-allowed`}
+                    >
+                      {pg}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Right: Prev / Next */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={isLoading || page <= 1}
+                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
                   >
-                    <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-9 rounded-lg border-slate-800 bg-slate-900 text-slate-400 hover:text-white transition-all"
-                    disabled={page === data.totalPages}
+                    <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Previous
+                  </button>
+                  <button
                     onClick={() => setPage(p => p + 1)}
+                    disabled={isLoading || page >= data.totalPages}
+                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
                   >
-                    Next <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
+                    Next Page
+                    <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             )}
@@ -545,7 +583,7 @@ export default function AdminManagementPage() {
           <div className="absolute top-0 left-0 w-full h-1 bg-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.5)]" />
           <DialogHeader className="pt-6 px-6 pb-2">
             <DialogTitle className="text-2xl font-black text-white tracking-tight">
-              {editingAdmin ? "Edit Administrator" : "Onboard New Admin"}
+              {editingAdmin ? "Edit Administrator" : "Create New Admin"}
             </DialogTitle>
             <DialogDescription className="text-slate-500 font-medium text-sm">
               {editingAdmin 
@@ -553,7 +591,7 @@ export default function AdminManagementPage() {
                 : "Create a new administrative user with specific access controls."}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-6 p-6 overflow-y-auto max-h-[70vh]">
+          <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <div className="grid gap-6">
               <div className="space-y-4">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Identity Details</h4>
@@ -678,7 +716,7 @@ export default function AdminManagementPage() {
                 ) : (
                   <UserCheck className="mr-2 h-4 w-4" />
                 )}
-                {editingAdmin ? "Save Account Changes" : "Confirm Onboarding"}
+                {editingAdmin ? "Save Account Changes" : "Confirm"}
               </Button>
             </DialogFooter>
           </form>

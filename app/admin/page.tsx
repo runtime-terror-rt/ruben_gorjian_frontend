@@ -971,7 +971,7 @@ export default function AdminPage() {
               </p>
 
               {/* Center: page number pills */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-3">
                 {Array.from({ length: activityData.totalPages }, (_, i) => i + 1).map((pg) => (
                   <button
                     key={pg}
