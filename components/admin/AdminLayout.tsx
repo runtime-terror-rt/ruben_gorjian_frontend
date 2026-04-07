@@ -23,8 +23,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Check admin access
-  const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
+  // Check admin access - trim and capitalize for robustness
+  const role = session?.role?.trim()?.toUpperCase();
+  const isSuperAdmin = role === "SUPER_ADMIN";
+  const isAdmin = role === "ADMIN" || isSuperAdmin;
   const isOnLoginPage = pathname === "/admin/login";
 
   // Redirect if not admin (but skip if already on login page to prevent loop)
@@ -37,13 +39,19 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       return;
     }
 
-    if (isAdmin && !isOnLoginPage) {
+    // Redirect admins away from login page if they are already authenticated
+    if (isAdmin && isOnLoginPage) {
+      router.replace("/admin");
+      return;
+    }
+
+    if (isAdmin && !isOnLoginPage && !isSuperAdmin) {
       // Find what permission the current route requires
       const userPermissions = session?.permissions || [];
       let requiredPermission: string | undefined;
 
       for (const section of NAV_SECTIONS) {
-        // Find exact or partial match for active route (e.g., /admin/users or /admin/users/123)
+        // Find exact or partial match for active route
         const activeItem = section.items.find(item => 
           item.href !== "/admin" && pathname.startsWith(item.href) || 
           item.href === "/admin" && pathname === "/admin"
@@ -56,6 +64,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
       // If route requires a permission and user doesn't have it
       if (requiredPermission && !userPermissions.includes(requiredPermission)) {
+        console.warn(`[AdminLayout] Resource restricted: Missing permission "${requiredPermission}" for ${pathname}`);
+        
         // Find the first route they DO have access to
         let firstAccessibleRoute: string | null = null;
         for (const section of NAV_SECTIONS) {
@@ -67,14 +77,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         }
 
         if (firstAccessibleRoute && firstAccessibleRoute !== pathname) {
+          console.log(`[AdminLayout] Redirecting to first accessible route: ${firstAccessibleRoute}`);
           router.replace(firstAccessibleRoute);
         } else if (!firstAccessibleRoute) {
-          // If they have basically no permissions, force them out
-          router.replace("/admin/login");
+          // If they have basically no permissions, do NOT redirect back to login (prevents loop)
+          // Just let the dashboard render whatever it can
+          console.warn("[AdminLayout] No authorized admin routes found for user.");
         }
       }
     }
-  }, [sessionLoading, isAdmin, isOnLoginPage, router, pathname, session?.permissions]);
+  }, [sessionLoading, role, session?.permissions, isOnLoginPage, router, pathname, isSuperAdmin, isAdmin]);
 
   // Load sidebar collapsed state from localStorage (run once on mount / hydration)
   useEffect(() => {
