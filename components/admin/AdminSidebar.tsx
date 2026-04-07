@@ -138,6 +138,7 @@ export function AdminSidebar({
    *   permission string exists in their permissions[] from /auth/me
    */
   const hasPermission = (permission?: string): boolean => {
+    if (isSuperAdmin) return true;
     if (!permission) return true;
     return userPermissions.includes(permission);
   };
