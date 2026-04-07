@@ -129,8 +129,7 @@ export function AdminSidebar({
   const { session, loading: sessionLoading } = useSessionContext();
 
   const userPermissions: string[] = session?.permissions ?? [];
-  const role = session?.role?.trim()?.toUpperCase();
-  const isSuperAdmin = role === "SUPER_ADMIN";
+  const isSuperAdmin = session?.role === "SUPER_ADMIN";
 
   /**
    * Permission check:
