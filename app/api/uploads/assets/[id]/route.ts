@@ -8,10 +8,10 @@ const BACKEND_URL =
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -32,7 +32,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error(`Asset ${params.id} DELETE Error:`, error);
+    console.error(`Asset ${id} DELETE Error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

@@ -27,6 +27,7 @@ type EnhancedDelivery = {
 type EnhancedDeliveryViewerProps = {
   submissionId: string;
   triggerLabel?: string;
+  isAdmin?: boolean;
 };
 
 type SignedUrlResponse = {
@@ -48,7 +49,7 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enhanced Delivery" }: EnhancedDeliveryViewerProps) {
+export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enhanced Delivery", isAdmin = false }: EnhancedDeliveryViewerProps) {
   const [open, setOpen] = useState(false);
   const [deliveries, setDeliveries] = useState<EnhancedDelivery[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,8 @@ export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enha
     setLoading(true);
     setError(null);
     try {
-      const res = await apiGet<{ deliveries: EnhancedDelivery[] }>(`/api/submissions/${submissionId}/enhanced-deliveries`);
+      const basePath = isAdmin ? `/api/admin/submissions/${submissionId}` : `/api/submissions/${submissionId}`;
+      const res = await apiGet<{ deliveries: EnhancedDelivery[] }>(`${basePath}/enhanced-deliveries`);
       setDeliveries(res.deliveries);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to load enhanced delivery.";
@@ -77,7 +79,8 @@ export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enha
   };
 
   const getSignedUrl = async (deliveryId: string, fileId: string) => {
-    return apiGet<SignedUrlResponse>(`/api/submissions/${submissionId}/enhanced-deliveries/${deliveryId}/files/${fileId}/download`);
+    const basePath = isAdmin ? `/api/admin/submissions/${submissionId}` : `/api/submissions/${submissionId}`;
+    return apiGet<SignedUrlResponse>(`${basePath}/enhanced-deliveries/${deliveryId}/files/${fileId}/download`);
   };
 
   const handlePreview = async (deliveryId: string, file: EnhancedDeliveryFile) => {
