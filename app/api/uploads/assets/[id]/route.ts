@@ -1,25 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-
-const BACKEND_URL =
-  process.env.BACKEND_API_URL ||
-  process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-  "http://localhost:4000";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const { id } = await params;
+    const headers = await getBackendHeaders();
 
-    const res = await fetch(`${BACKEND_URL}/uploads/assets/${id}`, {
+    const res = await fetch(`${getBackendUrl()}/uploads/assets/${id}`, {
       method: "DELETE",
-      headers: {
-        ...(token ? { Cookie: `token=${token}` } : {}),
-      },
+      headers,
     });
 
     if (!res.ok) {
@@ -32,7 +24,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error(`Asset ${id} DELETE Error:`, error);
+    console.error("Asset DELETE Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
