@@ -1,8 +1,6 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:latest
     container_name: "Talexia-Web"
     env_file:
       - .env
