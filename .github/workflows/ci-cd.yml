@@ -5,7 +5,7 @@ on:
     branches: [dev]
   pull_request:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   ci-check:
@@ -82,7 +82,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            mkdir -p ~/talexia/backend
+            mkdir -p ~/talexia/frontend
 
       # 📦 Copy docker-compose
       - name: Copy Compose File to Server
@@ -92,7 +92,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           source: "docker-compose.yml"
-          target: "~/talexia/backend"
+          target: "~/talexia/frontend"
           overwrite: true
 
       # 🚀 Deploy
@@ -103,7 +103,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            cd ~/talexia/backend
+            cd ~/talexia/frontend
 
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
