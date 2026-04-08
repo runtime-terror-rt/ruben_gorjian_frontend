@@ -1,27 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-
-const BACKEND_URL =
-  process.env.BACKEND_API_URL ||
-  process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-  "http://localhost:4000";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const headers = await getBackendHeaders();
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/sessions/${id}`, {
+    const res = await fetch(`${getBackendUrl()}/scheduler/sessions/${id}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Cookie: `token=${token}` } : {}),
-      },
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -29,7 +20,7 @@ export async function PATCH(
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
-    console.error(`Scheduler Session ${params.id} PATCH Error:`, error);
+    console.error("Scheduler Session PATCH Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

@@ -8,10 +8,10 @@ const BACKEND_URL =
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -26,7 +26,7 @@ export async function GET(
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
-    console.error(`Scheduler Post ${params.id} GET Error:`, error);
+    console.error(`Scheduler Post ${id} GET Error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -36,10 +36,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
@@ -57,7 +57,7 @@ export async function PATCH(
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
-    console.error(`Scheduler Post ${params.id} PATCH Error:`, error);
+    console.error(`Scheduler Post ${id} PATCH Error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
@@ -67,10 +67,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -85,7 +85,7 @@ export async function DELETE(
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
-    console.error(`Scheduler Post ${params.id} DELETE Error:`, error);
+    console.error(`Scheduler Post ${id} DELETE Error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
