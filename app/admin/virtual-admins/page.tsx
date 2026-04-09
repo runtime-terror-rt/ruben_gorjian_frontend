@@ -60,6 +60,7 @@ import {
   Search,
   Filter,
   Eye,
+  EyeOff,
   ChevronDown,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -143,6 +144,7 @@ export default function AdminManagementPage() {
     role: "ADMIN",
     permissions: [],
   });
+  const [showPasswordToggle, setShowPasswordToggle] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-virtual-admins", page, statusFilter, debouncedSearch],
@@ -746,19 +748,29 @@ export default function AdminManagementPage() {
 
                 {!editingAdmin && (
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                      <Key className="h-3 w-3" /> Temporary Password
-                    </Label>
-                    <Input
-                      type="password"
-                      placeholder="Minimum 8 characters"
-                      className="bg-slate-900 border-slate-800 text-white rounded-xl h-11 focus:ring-lime-400"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPasswordToggle ? "text" : "password"}
+                        placeholder="Minimum 8 characters"
+                        className="bg-slate-900 border-slate-800 text-white rounded-xl h-11 focus:ring-lime-400 pr-10"
+                        value={formData.password}
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                        onClick={() => setShowPasswordToggle(!showPasswordToggle)}
+                      >
+                        {showPasswordToggle ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
