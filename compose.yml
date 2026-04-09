@@ -1,7 +1,7 @@
 services:
   web:
     image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:latest
-    container_name: "Talexia-Web"
+    container_name: "Talexia-Frontend"
     env_file:
       - .env
     ports:
