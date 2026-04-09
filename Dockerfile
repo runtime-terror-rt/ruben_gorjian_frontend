@@ -8,12 +8,10 @@ RUN npm ci
 
 COPY . .
 
-# Disable telemetry (optional)
 ENV NEXT_TELEMETRY_DISABLED=1
-
 RUN npm run build
 
-# Stage 2: Production
+# Stage 2: Production (SUPER SLIM)
 FROM node:24-alpine AS runner
 
 WORKDIR /app
@@ -21,16 +19,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy only required files
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+# Copy standalone output ONLY
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-
-# (Optional but recommended)
-# If using next.config.js
-COPY --from=builder /app/next.config.ts ./
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server.js"]

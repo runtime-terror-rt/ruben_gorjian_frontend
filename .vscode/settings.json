@@ -4,6 +4,8 @@
         "buildcache",
         "buildx",
         "Buildx",
-        "talexia"
+        "talexia",
+        "turbopack",
+        "Turbopack"
     ]
 }
