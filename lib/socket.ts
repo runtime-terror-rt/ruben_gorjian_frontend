@@ -3,7 +3,7 @@ import { getEnvVar } from "@/lib/env-utils";
 
 const SOCKET_URL =
   getEnvVar("NEXT_PUBLIC_SOCKET_URL") ||
-  getEnvVar("NEXT_PUBLIC_API_URL") ||
+  getEnvVar("API_URL") ||
   undefined;
 
 export function createSocket(token?: string): Socket {
