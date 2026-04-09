@@ -12,7 +12,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Stage 2: Production (SUPER SLIM)
-# Stage 2: Production (SUPER SLIM)
 FROM node:24-alpine AS runner
 
 WORKDIR /app
@@ -20,9 +19,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy standalone output ONLY
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
 # Copy standalone output ONLY
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
