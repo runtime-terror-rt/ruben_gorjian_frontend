@@ -1,0 +1,9 @@
+services:
+  web:
+    image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:latest
+    container_name: "Talexia-Web"
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    restart: unless-stopped
