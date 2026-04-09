@@ -25,8 +25,8 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
   }, []);
 
   const handleGoogleLogin = async () => {
-console.log(process.env.BACKEND_API_URL, process.env.NEXT_PUBLIC_BACKEND_API_URL)
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+console.log(process.env.BACKEND_API_URL, process.env.ANOTHER_BACKEND_API_URL)
+    const clientId = process.env.GOOGLE_CLIENT_ID;
 
     console.log("🚀 ~ google-login-button.tsx:31 ~ handleGoogleLogin ~ clientId:", clientId)
 
