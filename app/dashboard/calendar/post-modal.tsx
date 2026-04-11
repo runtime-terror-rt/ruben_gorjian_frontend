@@ -26,7 +26,7 @@ interface PostModalProps {
   socialAccounts: Array<{ id: string; platform: string; displayName: string; externalAccountId?: string }>;
   onCreate: (payload: {
     caption: string;
-    scheduledFor: Date;
+    scheduledFor: string;
     socialAccountIds: string[];
     platforms: string[];
     assetId?: string;
@@ -175,8 +175,10 @@ export default function PostModal({
     }
 
     // Validate past dates
-    const selectedDate = dayjs(datetime);
-    if (selectedDate.isBefore(dayjs(), "minute")) {
+    const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
+    const selectedDate = userTimezone ? dayjs.tz(datetime, userTimezone) : dayjs(datetime);
+    
+    if (selectedDate.isBefore(now, "minute")) {
       setError(
         "Cannot schedule posts in the past. Please select a future date and time."
       );
@@ -225,12 +227,10 @@ export default function PostModal({
         )
       );
       const hashtags = normalizeHashtags(hashtagsInput);
-      // Parse datetime-local input and convert to UTC
-      const scheduledDate = parseDateTimeLocal(datetime, userTimezone);
       await onCreate({
         // If caption is empty, use a small placeholder to satisfy backend requirements.
         caption: caption.trim() || ".",
-        scheduledFor: scheduledDate,
+        scheduledFor: datetime,
         socialAccountIds: selectedAccounts,
         platforms,
         ...(assetIds.length > 0 ? { assetIds } : {}),
@@ -269,10 +269,9 @@ export default function PostModal({
               .map((acc) => acc.platform)
           )
         );
-        const scheduledDate = parseDateTimeLocal(datetime, userTimezone);
         await onPublish({
           caption: caption.trim() || ".",
-          scheduledFor: scheduledDate,
+          scheduledFor: datetime,
           socialAccountIds: selectedAccounts,
           platforms,
           ...(assetIds.length > 0 ? { assetIds } : {}),
@@ -487,11 +486,9 @@ export default function PostModal({
                 type="file"
                 accept="image/*,video/*"
                 multiple
-                disabled={isEditing && !isAdmin}
                 onChange={(e) => handleFiles(e.target.files)}
                 className={clsx(
-                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
-                  isEditing && !isAdmin && "opacity-50 cursor-not-allowed"
+                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700"
                 )}
               />
               <div className="mt-2 text-xs text-slate-400">
@@ -550,9 +547,7 @@ export default function PostModal({
                             name="asset"
                             value={asset.id}
                             checked={isSelected}
-                            disabled={isEditing && !isAdmin}
                             onChange={() => {
-                              if (isEditing && !isAdmin) return;
                               if (allowsMultipleMedia) {
                                 // Toggle selection for checkboxes
                                 setAssetIds((prev) =>
