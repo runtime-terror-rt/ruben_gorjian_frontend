@@ -246,8 +246,8 @@ export default function DashboardPage() {
               value={overview?.plan.platformLimit}
             />
             <FeatureBox label="Posts" value={overview?.plan.postQuota} />
-            <FeatureBox label="Support" value="24/7 Premium" />
             <FeatureBox label="Video" value="Enabled" />
+            <FeatureBox label="Days Left" value={overview?.plan.daysLeft} />
           </div>
         </div>
 
