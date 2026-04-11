@@ -5,8 +5,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const headers = await getBackendHeaders();
     headers["Content-Type"] = "application/json";
