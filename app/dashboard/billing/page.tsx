@@ -621,7 +621,7 @@ export default function BillingPage() {
             </div>
           )}
           {plansExpanded && (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               {allPlans
                 .filter((p) => p.category === "FULL_MANAGEMENT") // Only show main management plans
                 .map((catalogPlan) => {
