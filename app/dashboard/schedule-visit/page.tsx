@@ -28,6 +28,7 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiGet, apiPost, apiPatch } from "@/lib/api";
 import { useSessionContext } from "@/context/SessionContext";
+import { useSocket } from "@/app/providers/SocketProvider";
 import { useTimezone } from "@/hooks/use-timezone";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -39,6 +40,8 @@ type Session = {
   id: string;
   scheduleType: "PHOTO_SESSION" | "VIDEO_SESSION";
   scheduledAt: string;
+  scheduledFor?: string; // Added to fix TS error
+  date?: string; // Added for completeness
   status: string;
   schedulerStatus: string;
   session?: {
@@ -57,6 +60,7 @@ export default function ScheduleVisitPage() {
   const { toast } = useToast();
   const { session: userSession } = useSessionContext();
   const { timezone: userTimezone } = useTimezone();
+  const { socket } = useSocket();
   const isAdmin = userSession?.role === "ADMIN" || userSession?.role === "SUPER_ADMIN";
 
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -66,7 +70,7 @@ export default function ScheduleVisitPage() {
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [duration, setDuration] = useState(60);
-  
+
   // Admin only fields
   const [targetUserId, setTargetUserId] = useState("");
   const [adminReason, setAdminReason] = useState("");
@@ -95,10 +99,42 @@ export default function ScheduleVisitPage() {
     fetchSessions();
   }, [fetchSessions]);
 
+  useEffect(() => {
+    if (!socket) return;
+    const handleRefresh = () => {
+      fetchSessions();
+    };
+    socket.on("session:created", handleRefresh);
+    socket.on("session:updated", handleRefresh);
+    socket.on("session:deleted", handleRefresh);
+    socket.on("session:status_changed", handleRefresh);
+    return () => {
+      socket.off("session:created", handleRefresh);
+      socket.off("session:updated", handleRefresh);
+      socket.off("session:deleted", handleRefresh);
+      socket.off("session:status_changed", handleRefresh);
+    };
+  }, [socket, fetchSessions]);
+
   const blockedDates = useMemo(() => {
-    return sessions
+    const dates = sessions
       .filter(s => s.status !== "CANCELLED" && s.status !== "REJECTED")
-      .map(s => dayjs(s.scheduledAt || (s as any).scheduledFor).tz(userTimezone).format("YYYY-MM-DD"));
+      .map(s => {
+        const d = s.scheduledAt || s.scheduledFor || s.date;
+        if (!d) return null;
+
+        // IMPORTANT: We must interpret the saved UTC timestamp in the user's photoshoot timezone
+        // directly. Using split('T')[0] on a UTC string can result in the wrong local date.
+        try {
+          return dayjs.tz(d, userTimezone).format("YYYY-MM-DD");
+        } catch (err) {
+          // Fallback if timezone conversion fails
+          return dayjs(d).format("YYYY-MM-DD");
+        }
+      })
+      .filter(Boolean) as string[];
+
+    return Array.from(new Set(dates)); // Remove duplicates
   }, [sessions, userTimezone]);
 
   const calendarDays = useMemo(() => {
@@ -139,7 +175,7 @@ export default function ScheduleVisitPage() {
     setTitle(session.session?.title || session.sessionTitle || "");
     setNotes(session.session?.notes || session.sessionNotes || "");
     setDuration(session.session?.durationMinutes || session.sessionDurationMinutes || 60);
-    
+
     // Scroll to form
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -157,10 +193,11 @@ export default function ScheduleVisitPage() {
 
     if (isDayBlocked(selectedDate)) {
       toast({
-        title: "Date Unavailable",
-        description: "This date is already booked. Please choose another day.",
+        title: "Date Already Taken",
+        description: "This date was just booked by another user. Please select a different date.",
         variant: "destructive",
       });
+      fetchSessions(); // Refresh list to be sure
       return;
     }
 
@@ -195,9 +232,7 @@ export default function ScheduleVisitPage() {
         if (adminReason.trim()) payload.adminReason = adminReason.trim();
       }
 
-      const requestBody = {
-        data: JSON.stringify(payload)
-      };
+      const requestBody = payload;
 
       let res;
       if (editingSession) {
@@ -212,7 +247,8 @@ export default function ScheduleVisitPage() {
       });
 
       resetForm();
-      fetchSessions();
+      // Wait for sessions to be refreshed before allowing another submission
+      await fetchSessions();
     } catch (err: any) {
       toast({
         title: "Error",
@@ -224,12 +260,18 @@ export default function ScheduleVisitPage() {
     }
   };
 
-  const isDayBlocked = (day: dayjs.Dayjs) => {
+  const isDayBlocked = (day: dayjs.Dayjs | null) => {
+    if (!day) return false;
+    const dateStr = day.format("YYYY-MM-DD");
+
     // If we are editing, the current session's day is not blocked for us
-    if (editingSession && dayjs(editingSession.scheduledAt).isSame(day, "day")) {
-      return false;
+    if (editingSession) {
+      const scheduledVal = editingSession.scheduledAt || editingSession.scheduledFor || (editingSession as any).date;
+      const editingDate = dayjs.tz(scheduledVal, userTimezone).format("YYYY-MM-DD");
+      if (editingDate === dateStr) return false;
     }
-    return blockedDates.includes(day.format("YYYY-MM-DD"));
+
+    return blockedDates.includes(dateStr);
   };
 
   const isDayInPast = (day: dayjs.Dayjs) => {
@@ -238,7 +280,7 @@ export default function ScheduleVisitPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col gap-2"
@@ -272,9 +314,9 @@ export default function ScheduleVisitPage() {
                   <CardTitle className="text-xl font-bold text-white">Select Date</CardTitle>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={handlePrevMonth}
                     className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white h-9 w-9 rounded-lg"
                   >
@@ -283,9 +325,9 @@ export default function ScheduleVisitPage() {
                   <span className="text-white font-semibold min-w-[120px] text-center">
                     {currentDate.format("MMMM YYYY")}
                   </span>
-                  <Button 
-                    variant="outline" 
-                    size="icon" 
+                  <Button
+                    variant="outline"
+                    size="icon"
                     onClick={handleNextMonth}
                     className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white h-9 w-9 rounded-lg"
                   >
@@ -302,7 +344,7 @@ export default function ScheduleVisitPage() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="grid grid-cols-7 gap-2">
                 {calendarDays.map((day, idx) => {
                   const isCurrentMonth = day.isSame(currentDate, "month");
@@ -389,7 +431,7 @@ export default function ScheduleVisitPage() {
               ) : (
                 <div className="divide-y divide-slate-800/50">
                   {sessions.map((s) => (
-                    <div 
+                    <div
                       key={s.id}
                       className={clsx(
                         "group flex items-center justify-between p-4 transition-all duration-300",
@@ -446,8 +488,8 @@ export default function ScheduleVisitPage() {
                                 }}
                                 className={clsx(
                                   "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
-                                  s.status === status 
-                                    ? "bg-lime-400 text-slate-900" 
+                                  s.status === status
+                                    ? "bg-lime-400 text-slate-900"
                                     : "text-slate-500 hover:text-white hover:bg-slate-700"
                                 )}
                               >
@@ -456,9 +498,9 @@ export default function ScheduleVisitPage() {
                             ))}
                           </div>
                         )}
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleEditSession(s)}
                           className="h-9 text-slate-400 hover:text-lime-400 hover:bg-lime-400/10 font-bold"
                         >
@@ -490,9 +532,9 @@ export default function ScheduleVisitPage() {
                   </p>
                 </div>
                 {editingSession && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={resetForm}
                     className="text-slate-500 hover:text-white"
                   >
@@ -511,8 +553,8 @@ export default function ScheduleVisitPage() {
                       onClick={() => setSessionType("PHOTO_SESSION")}
                       className={clsx(
                         "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
-                        sessionType === "PHOTO_SESSION" 
-                          ? "bg-lime-400/10 border-lime-400 text-white" 
+                        sessionType === "PHOTO_SESSION"
+                          ? "bg-lime-400/10 border-lime-400 text-white"
                           : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300"
                       )}
                     >
@@ -524,8 +566,8 @@ export default function ScheduleVisitPage() {
                       onClick={() => setSessionType("VIDEO_SESSION")}
                       className={clsx(
                         "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
-                        sessionType === "VIDEO_SESSION" 
-                          ? "bg-lime-400/10 border-lime-400 text-white" 
+                        sessionType === "VIDEO_SESSION"
+                          ? "bg-lime-400/10 border-lime-400 text-white"
                           : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300"
                       )}
                     >
@@ -593,7 +635,7 @@ export default function ScheduleVisitPage() {
                   </div>
 
                   {isAdmin && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       className="pt-4 space-y-4 border-t border-slate-800 mt-4"
@@ -602,7 +644,7 @@ export default function ScheduleVisitPage() {
                         <ShieldCheck className="h-4 w-4" />
                         <span className="text-[10px] font-black uppercase tracking-widest">Admin Controls</span>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="userId" className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]">
                           Client User ID (Optional)
@@ -634,13 +676,13 @@ export default function ScheduleVisitPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting || !selectedDate}
+                  disabled={submitting || !selectedDate || isDayBlocked(selectedDate)}
                   className={clsx(
                     "w-full h-14 text-lg font-black tracking-widest uppercase transition-all duration-500 rounded-2xl",
-                    selectedDate 
-                      ? (editingSession 
-                          ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
-                          : "bg-lime-400 hover:bg-lime-300 text-slate-900 shadow-[0_10px_30px_rgba(163,230,53,0.3)]")
+                    selectedDate && !isDayBlocked(selectedDate)
+                      ? (editingSession
+                        ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
+                        : "bg-lime-400 hover:bg-lime-300 text-slate-900 shadow-[0_10px_30px_rgba(163,230,53,0.3)]")
                       : "bg-slate-800 text-slate-500 cursor-not-allowed"
                   )}
                 >
@@ -648,6 +690,8 @@ export default function ScheduleVisitPage() {
                     <span className="flex items-center gap-3">
                       <Loader2 className="h-5 w-5 animate-spin" /> {editingSession ? "Updating..." : "Scheduling..."}
                     </span>
+                  ) : isDayBlocked(selectedDate) ? (
+                    "Already Booked"
                   ) : editingSession ? (
                     "Update Session"
                   ) : selectedDate ? (
@@ -656,7 +700,7 @@ export default function ScheduleVisitPage() {
                     "Select a Date to Continue"
                   )}
                 </Button>
-                
+
                 <p className="text-[10px] text-center text-slate-500 uppercase tracking-[0.2em] font-bold">
                   All sessions are reviewed by our team
                 </p>
