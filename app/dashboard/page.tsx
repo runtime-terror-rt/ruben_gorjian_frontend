@@ -253,36 +253,85 @@ export default function DashboardPage() {
 
         {/* RIGHT CARD - PIE CHART */}
         <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white flex flex-col items-center justify-center">
-          <h3 className="text-lg font-semibold mb-2">Subscription Progress</h3>
+          <h3 className="text-lg font-semibold mb-4">Subscription Progress</h3>
 
-          {/* PIE */}
-          <div className="w-40 h-40 relative">
+          {/* DONUT WRAPPER */}
+          <div className="relative w-44 h-44">
+            {/* OUTER RING */}
             <div
-              className="w-full h-full rounded-full"
-              
+              className="absolute inset-0 rounded-full"
               style={{
                 background: `conic-gradient(
-    #ef4444 0% ${progress?.usedPercent || 0}%,
-    #22c55e ${progress?.usedPercent || 0}% ${100}%
-  )`,
+          #ef4444 0% ${progress?.usedPercent || 0}%,
+          #22c55e ${progress?.usedPercent || 0}% 100%
+        )`,
               }}
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold">
-                {progress?.remainingPercent ?? 0}%
-              </span>
+
+            {/* INNER CUT (THIS MAKES IT CENTER-FILLED DONUT LOOK) */}
+            <div className="absolute inset-[14px] rounded-full bg-[#0B0F19] flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-white">
+                  {progress?.usedPercent ?? 0}%
+                </p>
+                <p className="text-xs text-slate-400">Used</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-between w-full mt-4 text-sm text-slate-400">
+          {/* LABELS */}
+          <div className="flex justify-between w-full mt-5 text-sm text-slate-400">
             <span>Used: {progress?.usedPercent}%</span>
             <span>Remaining: {progress?.remainingPercent}%</span>
           </div>
         </div>
       </div>
 
+      {/* Usage Metrics - NEW UI */}
+      <Section title="Usage Metrics">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/20">
+            <p className="text-xs text-slate-400">Posts</p>
+            <p className="text-2xl font-bold text-white">
+              {overview?.usage.postsUsed} / {overview?.usage.postsRemaining}
+            </p>
+          </div>
+
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-pink-500/10 to-pink-500/5 border border-pink-500/20">
+            <p className="text-xs text-slate-400">Visuals</p>
+            <p className="text-2xl font-bold text-white">
+              {overview?.usage.visualsUsed} /{" "}
+              {overview?.usage.visualsRemaining ?? "∞"}
+            </p>
+          </div>
+
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
+            <p className="text-xs text-slate-400">Platforms</p>
+            <p className="text-2xl font-bold text-white">
+              {overview?.usage.platformsUsed} /{" "}
+              {overview?.usage.platformsRemaining}
+            </p>
+          </div>
+
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
+            <p className="text-xs text-slate-400">Bonus Visuals</p>
+            <p className="text-2xl font-bold text-white">
+              {overview?.usage.visualsBonus}
+            </p>
+          </div>
+
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20">
+            <p className="text-xs text-slate-400">Period</p>
+            <p className="text-sm font-semibold text-white">
+              {new Date(overview?.usage.periodStart || "").toLocaleDateString()}{" "}
+              → {new Date(overview?.usage.periodEnd || "").toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+      </Section>
+
       {/* Plan Details */}
-      <Section title="Plan Details">
+      {/* <Section title="Plan Details">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <MetricCard
             label="Plan Code"
@@ -353,76 +402,84 @@ export default function DashboardPage() {
             loading={isLoading}
           />
         </div>
-      </Section>
+      </Section> */}
 
-      {/* Usage Details */}
-      <Section title="Usage Metrics">
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <MetricCard
-            label="Posts Used"
-            value={overview?.usage.postsUsed}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Posts Remaining"
-            value={overview?.usage.postsRemaining}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Visuals Used"
-            value={overview?.usage.visualsUsed}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Visuals Remaining"
-            value={overview?.usage.visualsRemaining ?? "Unlimited"}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Visuals Bonus"
-            value={overview?.usage.visualsBonus}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Platforms Used"
-            value={overview?.usage.platformsUsed}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Platforms Remaining"
-            value={overview?.usage.platformsRemaining}
-            loading={isLoading}
-          />
+      {/* ================= PIPELINE + UPCOMING ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* PIPELINE */}
+        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
+          <h2 className="text-white font-semibold mb-4">Post Pipeline</h2>
+
+          <div className="space-y-2">
+            {Object.entries(pipelineData).map(([key, val]) => (
+              <div
+                key={key}
+                className="flex justify-between items-center p-2 rounded bg-slate-900/40"
+              >
+                <span className="text-xs text-slate-400">{key}</span>
+                <span className="text-white font-semibold">
+                  {val as number}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </Section>
 
-      {/* Social Accounts */}
+        {/* UPCOMING */}
+        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
+          <h2 className="text-white font-semibold mb-4">Upcoming Posts</h2>
+
+          <div className="space-y-3">
+            {upcomingData.map((p) => (
+              <div key={p.postId} className="p-3 rounded-lg bg-slate-900/40">
+                <p className="text-sm text-white">{p.postId}</p>
+                <p className="text-xs text-slate-400">
+                  {new Date(p.scheduledFor).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Social Accounts - NEW UI */}
       <Section title="Social Accounts">
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <MetricCard
-            label="Connected Total"
-            value={overview?.socialAccounts.connectedTotal}
-            loading={isLoading}
-          />
-          <MetricCard
-            label="Expiring Soon"
-            value={overview?.socialAccounts.expiringSoon}
-            loading={isLoading}
-          />
-          {overview?.socialAccounts.byPlatform &&
-            Object.entries(overview.socialAccounts.byPlatform).map(
-              ([platform, count]) => (
-                <MetricCard
-                  key={platform}
-                  label={`${platform}`}
-                  value={count}
-                  loading={isLoading}
-                />
-              ),
-            )}
+        <div className="flex flex-col gap-4">
+          {/* Top Summary Bar */}
+          <div className="rounded-2xl p-5 bg-slate-900/40 border border-slate-800 flex justify-between items-center">
+            <div>
+              <p className="text-xs text-slate-400">Total Connected</p>
+              <p className="text-2xl font-bold text-white">
+                {overview?.socialAccounts.connectedTotal}
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-xs text-slate-400">Expiring Soon</p>
+              <p className="text-xl font-bold text-red-400">
+                {overview?.socialAccounts.expiringSoon}
+              </p>
+            </div>
+          </div>
+
+          {/* Platform Pills */}
+          <div className="flex flex-wrap gap-3">
+            {overview?.socialAccounts.byPlatform &&
+              Object.entries(overview.socialAccounts.byPlatform).map(
+                ([platform, count]) => (
+                  <div
+                    key={platform}
+                    className="px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-sm text-white flex items-center gap-2"
+                  >
+                    <span className="capitalize">{platform}</span>
+                    <span className="text-xs text-slate-400">•</span>
+                    <span className="font-bold">{count}</span>
+                  </div>
+                ),
+              )}
+          </div>
         </div>
       </Section>
-
       {/* Alerts */}
       <Section title={`System Alerts (${alertsData.length})`}>
         {alertsData.length === 0 ? (
@@ -444,56 +501,6 @@ export default function DashboardPage() {
                 <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                   {a.type}
                 </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* Pipeline */}
-      <Section title="Post Pipeline">
-        {Object.keys(pipelineData).length === 0 ? (
-          <p className="text-sm text-slate-400">No data available</p>
-        ) : (
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
-            {Object.entries(pipelineData).map(([key, val]) => (
-              <div
-                key={key}
-                className="rounded-lg border border-slate-800 bg-slate-900 p-4 text-center hover:border-slate-700 transition"
-              >
-                <p className="text-xs text-slate-400 capitalize">{key}</p>
-                <p className="text-xl font-semibold text-white mt-1">
-                  {val as number}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* Upcoming */}
-      <Section title="Upcoming Posts">
-        {upcomingData.length === 0 ? (
-          <p className="text-sm text-slate-400">No data available</p>
-        ) : (
-          <div className="space-y-3">
-            {upcomingData.map((p) => (
-              <div
-                key={p.postId}
-                className="flex flex-col gap-1 rounded-lg border border-slate-800 bg-slate-900 p-4 hover:bg-slate-800/40 transition"
-              >
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-white">{p.postId}</p>
-                  <span className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    {p.status}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400">
-                  Scheduled: {new Date(p.scheduledFor).toLocaleString()}
-                </p>
-                <p className="text-xs text-slate-500">
-                  Platforms: {p.targets.map((t) => t.platform).join(", ")}
-                </p>
               </div>
             ))}
           </div>
@@ -524,6 +531,20 @@ export default function DashboardPage() {
           </div>
         )}
       </Section>
+
+      {/* ================= INSIGHTS STRIP ================= */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MiniStat label="Posts Used" value={overview?.usage.postsUsed} />
+        <MiniStat
+          label="Remaining Posts"
+          value={overview?.usage.postsRemaining}
+        />
+        <MiniStat label="Platforms" value={overview?.usage.platformsUsed} />
+        <MiniStat
+          label="Connected Accounts"
+          value={overview?.socialAccounts.connectedTotal}
+        />
+      </div>
 
       {/* Links */}
       <div className="flex flex-wrap gap-2 text-sm text-slate-400">
@@ -565,21 +586,14 @@ function Section({
   );
 }
 
-function MetricCard({
-  label,
-  value,
-  loading,
-}: {
-  label: string;
-  value: string | number | undefined;
-  loading: boolean;
-}) {
+function MetricCard({ label, value, loading }: any) {
   return (
-    <Card className="overflow-hidden border border-slate-800/80 bg-slate-900/50 hover:border-lime-400/30 transition-all">
-      <CardContent className="p-4 sm:p-5 flex flex-col justify-center space-y-1.5">
+    <Card className="border-slate-800 bg-slate-900/50 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all rounded-2xl">
+      <CardContent className="p-4 flex flex-col space-y-2">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
           {label}
         </p>
+
         {loading ? (
           <div className="h-5 w-1/2 animate-pulse rounded bg-slate-800/80" />
         ) : (
@@ -597,6 +611,14 @@ function FeatureBox({ label, value }: any) {
     <div className="bg-slate-800/40 rounded-lg p-3">
       <p className="text-[10px] text-slate-400">{label}</p>
       <p className="text-sm font-semibold text-white">{value ?? 0}</p>
+    </div>
+  );
+}
+function MiniStat({ label, value }: any) {
+  return (
+    <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-4">
+      <p className="text-xs text-slate-400">{label}</p>
+      <p className="text-lg font-bold text-white mt-1">{value ?? 0}</p>
     </div>
   );
 }
