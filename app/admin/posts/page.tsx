@@ -155,17 +155,27 @@ export default function AdminPostsPage() {
     const handleStatus = () => {
       fetchPosts();
     };
+    socket.on("post:created", handleStatus);
     socket.on("post:status_changed", handleStatus);
     socket.on("post:updated", handleStatus);
     socket.on("post:deleted", handleStatus);
     socket.on("post:failed", handleStatus);
     socket.on("post:published", handleStatus);
+    socket.on("session:created", handleStatus);
+    socket.on("session:updated", handleStatus);
+    socket.on("session:deleted", handleStatus);
+    socket.on("session:status_changed", handleStatus);
     return () => {
+      socket.off("post:created", handleStatus);
       socket.off("post:status_changed", handleStatus);
       socket.off("post:updated", handleStatus);
       socket.off("post:deleted", handleStatus);
       socket.off("post:failed", handleStatus);
       socket.off("post:published", handleStatus);
+      socket.off("session:created", handleStatus);
+      socket.off("session:updated", handleStatus);
+      socket.off("session:deleted", handleStatus);
+      socket.off("session:status_changed", handleStatus);
     };
   }, [socket, fetchPosts]);
 
@@ -493,7 +503,8 @@ export default function AdminPostsPage() {
             <TableHeader className="bg-slate-950/50">
               <TableRow className="border-slate-800 hover:bg-transparent">
                 <TableHead className="w-[80px]">Media</TableHead>
-                <TableHead>Caption</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Caption / Title</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Platform</TableHead>
                 <TableHead>Status</TableHead>
@@ -554,12 +565,34 @@ export default function AdminPostsPage() {
                           )}
                         </div>
                       </TableCell>
+                      <TableCell>
+                        {post.scheduleType === "PHOTO_SESSION" ? (
+                          <Badge className="bg-lime-400/10 text-lime-400 border-lime-400/20 gap-1">
+                            <Calendar className="h-3 w-3" /> Photo
+                          </Badge>
+                        ) : post.scheduleType === "VIDEO_SESSION" ? (
+                          <Badge className="bg-indigo-400/10 text-indigo-400 border-indigo-400/20 gap-1">
+                            <Clock className="h-3 w-3" /> Video
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-slate-800 text-slate-400 border-slate-700 gap-1">
+                            <FileText className="h-3 w-3" /> Post
+                          </Badge>
+                        )}
+                      </TableCell>
                       <TableCell className="max-w-xs">
-                        <div className="line-clamp-2 text-sm text-slate-200">
-                          {post.caption || (
-                            <span className="text-slate-500 italic">
-                              No caption
-                            </span>
+                        <div className="flex flex-col gap-0.5">
+                          <div className="line-clamp-2 text-sm text-slate-200 font-medium">
+                            {post.session?.title || post.sessionTitle || post.caption || (
+                              <span className="text-slate-500 italic">
+                                No caption
+                              </span>
+                            )}
+                          </div>
+                          {(post.session?.notes || post.sessionNotes) && (
+                             <span className="text-[10px] text-slate-500 line-clamp-1 italic">
+                               Ref: {post.session?.notes || post.sessionNotes}
+                             </span>
                           )}
                         </div>
                       </TableCell>
