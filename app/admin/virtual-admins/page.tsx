@@ -42,11 +42,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ShieldCheck, 
-  Plus, 
-  MoreHorizontal, 
-  Trash2, 
+import {
+  ShieldCheck,
+  Plus,
+  MoreHorizontal,
+  Trash2,
   UserPlus,
   Key,
   Mail,
@@ -76,7 +76,7 @@ const PERMISSIONS = [
   "COUPON_MANAGE",
   "SUPPORT",
   "VIRTUAL_ADMIN_MANAGE",
-  "PROFILE"
+  "PROFILE",
 ];
 
 const ROLES = ["ADMIN", "SUPER_ADMIN"];
@@ -124,7 +124,7 @@ export default function AdminManagementPage() {
   useMemo(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
-      setPage(1); 
+      setPage(1);
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -153,43 +153,52 @@ export default function AdminManagementPage() {
       });
       if (statusFilter !== "ALL") params.append("status", statusFilter);
       if (debouncedSearch) params.append("search", debouncedSearch);
-      return apiGet<AdminsResponse>(`/api/admin/virtual-admins?${params.toString()}`);
+      return apiGet<AdminsResponse>(
+        `/api/admin/virtual-admins?${params.toString()}`,
+      );
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: (payload: CreateAdminPayload) => apiPost<any, CreateAdminPayload>("/api/admin/virtual-admins", payload),
+    mutationFn: (payload: CreateAdminPayload) =>
+      apiPost<any, CreateAdminPayload>("/api/admin/virtual-admins", payload),
     onSuccess: () => {
-      toast({ 
-        title: "Admin Onboarded", 
-        description: `Successfully created account for ${formData.email}`
+      toast({
+        title: "Admin Onboarded",
+        description: `Successfully created account for ${formData.email}`,
       });
       setIsDialogOpen(false);
       queryClient.invalidateQueries({ queryKey: ["admin-virtual-admins"] });
       resetForm();
     },
     onError: (err: any) => {
-      toast({ 
-        title: "Failed", 
-        description: err.message || "Unable to create administrator account.", 
-        variant: "destructive" 
+      toast({
+        title: "Failed",
+        description: err.message || "Unable to create administrator account.",
+        variant: "destructive",
       });
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: (payload: { id: string; data: Partial<CreateAdminPayload> }) => {
+    mutationFn: (payload: {
+      id: string;
+      data: Partial<CreateAdminPayload>;
+    }) => {
       const updateData = {
         name: payload.data.name,
         role: payload.data.role,
-        replacePermissions: payload.data.permissions
+        replacePermissions: payload.data.permissions,
       };
-      return apiPatch<any, any>(`/api/admin/virtual-admins/${payload.id}`, updateData);
+      return apiPatch<any, any>(
+        `/api/admin/virtual-admins/${payload.id}`,
+        updateData,
+      );
     },
     onSuccess: async (_, variables) => {
-      toast({ 
-        title: "Profile Updated", 
-        description: "Administrative permissions and role have been saved."
+      toast({
+        title: "Profile Updated",
+        description: "Administrative permissions and role have been saved.",
       });
       setEditingAdmin(null);
       setIsDialogOpen(false);
@@ -202,51 +211,55 @@ export default function AdminManagementPage() {
       }
     },
     onError: (err: any) => {
-      toast({ 
-        title: "Update Failed", 
-        description: err.message || "Failed to save profile changes.", 
-        variant: "destructive" 
+      toast({
+        title: "Update Failed",
+        description: err.message || "Failed to save profile changes.",
+        variant: "destructive",
       });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiDelete<any>(`/api/admin/virtual-admins/${id}`),
+    mutationFn: (id: string) =>
+      apiDelete<any>(`/api/admin/virtual-admins/${id}`),
     onSuccess: () => {
-      toast({ 
-        title: "Access Revoked", 
+      toast({
+        title: "Access Revoked",
         description: "Admin account has been permanently removed.",
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsDialogOpen(false);
       setAdminToDelete(null);
       queryClient.invalidateQueries({ queryKey: ["admin-virtual-admins"] });
     },
     onError: (err: any) => {
-      toast({ 
-        title: "Deletion Failed", 
-        description: err.message || "Unable to revoke administrative access.", 
-        variant: "destructive" 
+      toast({
+        title: "Deletion Failed",
+        description: err.message || "Unable to revoke administrative access.",
+        variant: "destructive",
       });
     },
   });
 
   const statusMutation = useMutation({
-    mutationFn: (payload: { id: string; status: string }) => 
-      apiPatch<any, { status: string }>(`/api/admin/virtual-admins/${payload.id}/status`, { status: payload.status }),
+    mutationFn: (payload: { id: string; status: string }) =>
+      apiPatch<any, { status: string }>(
+        `/api/admin/virtual-admins/${payload.id}/status`,
+        { status: payload.status },
+      ),
     onSuccess: (_, variables) => {
       const isBlocked = variables.status === "BLOCKED";
-      toast({ 
-        title: isBlocked ? "Admin Blocked" : "Admin Activated", 
-        description: `Personnel status changed to ${variables.status.toLowerCase()}.`
+      toast({
+        title: isBlocked ? "Admin Blocked" : "Admin Activated",
+        description: `Personnel status changed to ${variables.status.toLowerCase()}.`,
       });
       queryClient.invalidateQueries({ queryKey: ["admin-virtual-admins"] });
     },
     onError: (err: any) => {
-      toast({ 
-        title: "Status Update Failed", 
-        description: err.message || "Could not change administrator status.", 
-        variant: "destructive" 
+      toast({
+        title: "Status Update Failed",
+        description: err.message || "Could not change administrator status.",
+        variant: "destructive",
       });
     },
   });
@@ -282,10 +295,13 @@ export default function AdminManagementPage() {
   };
 
   const togglePermission = (perm: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const has = prev.permissions.includes(perm);
       if (has) {
-        return { ...prev, permissions: prev.permissions.filter(p => p !== perm) };
+        return {
+          ...prev,
+          permissions: prev.permissions.filter((p) => p !== perm),
+        };
       } else {
         return { ...prev, permissions: [...prev.permissions, perm] };
       }
@@ -301,10 +317,16 @@ export default function AdminManagementPage() {
         return (
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 text-lime-400 font-bold overflow-hidden">
-              {admin.name ? admin.name.charAt(0).toUpperCase() : <User className="h-5 w-5" />}
+              {admin.name ? (
+                admin.name.charAt(0).toUpperCase()
+              ) : (
+                <User className="h-5 w-5" />
+              )}
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-white">{admin.name || "N/A"}</span>
+              <span className="text-sm font-semibold text-white">
+                {admin.name || "N/A"}
+              </span>
               <span className="text-xs text-slate-500">{admin.email}</span>
             </div>
           </div>
@@ -317,11 +339,13 @@ export default function AdminManagementPage() {
       cell: ({ row }) => {
         const role = row.original.role;
         return (
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={cn(
               "font-bold tracking-wider",
-              role === "SUPER_ADMIN" ? "bg-purple-500/20 text-purple-300 border-purple-500/40" : "bg-sky-500/20 text-sky-300 border-sky-500/40"
+              role === "SUPER_ADMIN"
+                ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
+                : "bg-sky-500/20 text-sky-300 border-sky-500/40",
             )}
           >
             {role.replace("_", " ")}
@@ -335,11 +359,12 @@ export default function AdminManagementPage() {
       cell: ({ row }) => {
         const status = row.original.status;
         return (
-          <Badge 
+          <Badge
             className={cn(
               "capitalize",
-              status === "ACTIVE" ? "bg-lime-500/10 text-lime-400 border-lime-400/20" : 
-              "bg-red-500/10 text-red-400 border-red-500/20"
+              status === "ACTIVE"
+                ? "bg-lime-500/10 text-lime-400 border-lime-400/20"
+                : "bg-red-500/10 text-red-400 border-red-500/20",
             )}
             variant="outline"
           >
@@ -377,16 +402,24 @@ export default function AdminManagementPage() {
             </Button> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl">
+              <DropdownMenuContent
+                align="end"
+                className="w-52 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl"
+              >
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => {
-                  setSelectedAdmin(admin);
-                  setIsAdminDetailsOpen(true);
-                }}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedAdmin(admin);
+                    setIsAdminDetailsOpen(true);
+                  }}
+                >
                   <Eye className="mr-2 h-4 w-4" /> View Details
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleEdit(admin)}>
@@ -394,16 +427,26 @@ export default function AdminManagementPage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => statusMutation.mutate({
-                    id: admin.id,
-                    status: admin.status === "ACTIVE" ? "BLOCKED" : "ACTIVE"
-                  })}
-                  className={admin.status === "ACTIVE" ? "text-amber-400" : "text-lime-400"}
+                  onClick={() =>
+                    statusMutation.mutate({
+                      id: admin.id,
+                      status: admin.status === "ACTIVE" ? "BLOCKED" : "ACTIVE",
+                    })
+                  }
+                  className={
+                    admin.status === "ACTIVE"
+                      ? "text-amber-400"
+                      : "text-lime-400"
+                  }
                 >
                   {admin.status === "ACTIVE" ? (
-                    <><UserX className="mr-2 h-4 w-4" /> Block Admin</>
+                    <>
+                      <UserX className="mr-2 h-4 w-4" /> Block Admin
+                    </>
                   ) : (
-                    <><UserCheck className="mr-2 h-4 w-4" /> Activate Admin</>
+                    <>
+                      <UserCheck className="mr-2 h-4 w-4" /> Activate Admin
+                    </>
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -441,7 +484,7 @@ export default function AdminManagementPage() {
             Manage your team, roles, and fine-grained access permissions.
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => {
             resetForm();
             setEditingAdmin(null);
@@ -456,8 +499,8 @@ export default function AdminManagementPage() {
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         <div className="relative flex-1 group">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-lime-400 transition-colors" />
-          <Input 
-            placeholder="Search admins by name or email..." 
+          <Input
+            placeholder="Search admins by name or email..."
             className="pl-10 h-12 bg-slate-900/50 border-slate-800 text-white rounded-xl focus:ring-lime-400"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -467,15 +510,31 @@ export default function AdminManagementPage() {
           <Filter className="h-4 w-4 text-slate-500 hidden sm:block" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-12 w-40 justify-between bg-slate-900 border-slate-800 text-white rounded-xl px-3 hover:bg-slate-800 focus:ring-1 focus:ring-lime-400 transition-colors">
-                {statusFilter === "ALL" ? "All Status" : statusFilter === "ACTIVE" ? "Active" : "Blocked"} 
+              <Button
+                variant="outline"
+                className="h-12 w-40 justify-between bg-slate-900 border-slate-800 text-white rounded-xl px-3 hover:bg-slate-800 focus:ring-1 focus:ring-lime-400 transition-colors"
+              >
+                {statusFilter === "ALL"
+                  ? "All Status"
+                  : statusFilter === "ACTIVE"
+                    ? "Active"
+                    : "Blocked"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[var(--radix-dropdown-menu-trigger-width)]">
-              <DropdownMenuItem onClick={() => setStatusFilter("ALL")}>All Status</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("ACTIVE")}>Active</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("BLOCKED")}>Blocked</DropdownMenuItem>
+            <DropdownMenuContent
+              align="end"
+              className="w-[var(--radix-dropdown-menu-trigger-width)]"
+            >
+              <DropdownMenuItem onClick={() => setStatusFilter("ALL")}>
+                All Status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("ACTIVE")}>
+                Active
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("BLOCKED")}>
+                Blocked
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -485,17 +544,30 @@ export default function AdminManagementPage() {
         {isLoading ? (
           <div className="flex h-80 flex-col items-center justify-center gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-lime-400" />
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">Loading Personnel...</p>
+            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+              Loading Personnel...
+            </p>
           </div>
         ) : (
           <>
             <Table>
               <TableHeader className="bg-slate-800/30">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-slate-800">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="hover:bg-transparent border-slate-800"
+                  >
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      <TableHead
+                        key={header.id}
+                        className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -504,17 +576,29 @@ export default function AdminManagementPage() {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border-slate-800 hover:bg-slate-800/20 transition-all group">
+                    <TableRow
+                      key={row.id}
+                      className="border-slate-800 hover:bg-slate-800/20 transition-all group"
+                    >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="py-5 font-medium group-hover:text-white transition-colors">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <TableCell
+                          key={cell.id}
+                          className="py-5 font-medium group-hover:text-white transition-colors"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-40 text-center text-slate-500 font-medium">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-40 text-center text-slate-500 font-medium"
+                    >
                       No matching administrators found.
                     </TableCell>
                   </TableRow>
@@ -525,55 +609,80 @@ export default function AdminManagementPage() {
             {/* ── Pagination Footer ── */}
             {data && data.totalPages > 0 && (
               <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6">
-                
                 {/* Left: results info */}
                 <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
                   Showing page{" "}
-                  <span className="text-slate-300 font-black">{page}</span>
-                  {" "}of{" "}
-                  <span className="text-slate-300 font-black">{data.totalPages}</span>
-                  {" "}·{" "}
-                  <span className="text-slate-300 font-black">{data.total}</span> total admins
+                  <span className="text-slate-300 font-black">{page}</span> of{" "}
+                  <span className="text-slate-300 font-black">
+                    {data.totalPages}
+                  </span>{" "}
+                  ·{" "}
+                  <span className="text-slate-300 font-black">
+                    {data.total}
+                  </span>{" "}
+                  total admins
                 </p>
 
                 {/* Center: page number pills */}
                 <div className="flex items-center gap-3">
-                  {Array.from({ length: data.totalPages }, (_, i) => i + 1).map((pg) => (
-                    <button
-                      key={pg}
-                      onClick={() => setPage(pg)}
-                      disabled={isLoading}
-                      className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
-                        pg === page
-                          ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
-                          : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
-                      } disabled:cursor-not-allowed`}
-                    >
-                      {pg}
-                    </button>
-                  ))}
+                  {Array.from({ length: data.totalPages }, (_, i) => i + 1).map(
+                    (pg) => (
+                      <button
+                        key={pg}
+                        onClick={() => setPage(pg)}
+                        disabled={isLoading}
+                        className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
+                          pg === page
+                            ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
+                            : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
+                        } disabled:cursor-not-allowed`}
+                      >
+                        {pg}
+                      </button>
+                    ),
+                  )}
                 </div>
 
                 {/* Right: Prev / Next */}
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={isLoading || page <= 1}
                     className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
                   >
-                    <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    <svg
+                      className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 19l-7-7 7-7"
+                      />
                     </svg>
                     Previous
                   </button>
                   <button
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setPage((p) => p + 1)}
                     disabled={isLoading || page >= data.totalPages}
                     className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
                   >
                     Next Page
-                    <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    <svg
+                      className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -591,25 +700,29 @@ export default function AdminManagementPage() {
               {editingAdmin ? "Edit Administrator" : "Create New Admin"}
             </DialogTitle>
             <DialogDescription className="text-slate-500 font-medium text-sm">
-              {editingAdmin 
-                ? "Update security roles and access permissions for this admin." 
+              {editingAdmin
+                ? "Update security roles and access permissions for this admin."
                 : "Create a new administrative user with specific access controls."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <div className="grid gap-6">
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Identity Details</h4>
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  Identity Details
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
                       <User className="h-3 w-3" /> Full Name
                     </Label>
-                    <Input 
+                    <Input
                       placeholder="e.g. John Doe"
                       className="bg-slate-900 border-slate-800 text-white rounded-xl h-11 focus:ring-lime-400"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -617,29 +730,33 @@ export default function AdminManagementPage() {
                     <Label className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
                       <Mail className="h-3 w-3" /> Email Address
                     </Label>
-                    <Input 
+                    <Input
                       type="email"
                       placeholder="email@talexia.ai"
                       className="bg-slate-900 border-slate-800 text-white rounded-xl h-11 focus:ring-lime-400"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       required
                       disabled={!!editingAdmin}
                     />
                   </div>
                 </div>
-                
+
                 {!editingAdmin && (
                   <div className="space-y-2">
                     <Label className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
                       <Key className="h-3 w-3" /> Temporary Password
                     </Label>
-                    <Input 
+                    <Input
                       type="password"
                       placeholder="Minimum 8 characters"
                       className="bg-slate-900 border-slate-800 text-white rounded-xl h-11 focus:ring-lime-400"
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -647,22 +764,38 @@ export default function AdminManagementPage() {
               </div>
 
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Role & Authority</h4>
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  Role & Authority
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
                   {ROLES.map((role) => (
                     <button
                       key={role}
                       type="button"
-                      onClick={() => setFormData({...formData, role})}
+                      onClick={() => setFormData({ ...formData, role })}
                       className={cn(
                         "p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all group",
-                        formData.role === role 
-                          ? "bg-lime-400/10 border-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
-                          : "bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50"
+                        formData.role === role
+                          ? "bg-lime-400/10 border-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                          : "bg-slate-900 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50",
                       )}
                     >
-                      <Shield className={cn("h-6 w-6 transition-colors", formData.role === role ? "text-lime-400" : "text-slate-600 group-hover:text-slate-400")} />
-                      <span className={cn("text-xs font-black uppercase tracking-widest", formData.role === role ? "text-lime-400" : "text-slate-500")}>
+                      <Shield
+                        className={cn(
+                          "h-6 w-6 transition-colors",
+                          formData.role === role
+                            ? "text-lime-400"
+                            : "text-slate-600 group-hover:text-slate-400",
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "text-xs font-black uppercase tracking-widest",
+                          formData.role === role
+                            ? "text-lime-400"
+                            : "text-slate-500",
+                        )}
+                      >
                         {role.replace("_", " ")}
                       </span>
                     </button>
@@ -672,29 +805,47 @@ export default function AdminManagementPage() {
 
               <div className="space-y-4 bg-slate-900/50 p-6 rounded-3xl border border-slate-800/60">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Access Permissions</h4>
-                  <button 
-                    type="button" 
-                    onClick={() => setFormData(prev => ({...prev, permissions: prev.permissions.length === PERMISSIONS.length ? [] : [...PERMISSIONS]}))}
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                    Access Permissions
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        permissions:
+                          prev.permissions.length === PERMISSIONS.length
+                            ? []
+                            : [...PERMISSIONS],
+                      }))
+                    }
                     className="text-[10px] font-bold text-lime-400 hover:underline"
                   >
-                    {formData.permissions.length === PERMISSIONS.length ? "Deselect All" : "Select All"}
+                    {formData.permissions.length === PERMISSIONS.length
+                      ? "Deselect All"
+                      : "Select All"}
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
                   {PERMISSIONS.map((perm) => (
-                    <div key={perm} className="flex items-center space-x-3 group justify-between sm:justify-start">
-                      <Checkbox 
-                        id={`perm-${perm}`} 
+                    <div
+                      key={perm}
+                      className="flex items-center space-x-3 group justify-between sm:justify-start"
+                    >
+                      <Checkbox
+                        id={`perm-${perm}`}
                         checked={formData.permissions.includes(perm)}
                         onCheckedChange={() => togglePermission(perm)}
                         className="h-5 w-5 border-slate-700 data-[state=checked]:bg-lime-500 data-[state=checked]:border-lime-500 shadow-sm"
                       />
-                      <label 
+                      <label
                         htmlFor={`perm-${perm}`}
                         className="text-xs font-semibold text-slate-400 cursor-pointer group-hover:text-white transition-colors"
                       >
-                        {perm.split("_").map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(" ")}
+                        {perm
+                          .split("_")
+                          .map((s) => s.charAt(0) + s.slice(1).toLowerCase())
+                          .join(" ")}
                       </label>
                     </div>
                   ))}
@@ -703,20 +854,20 @@ export default function AdminManagementPage() {
             </div>
 
             <DialogFooter className="pt-4 flex flex-col-reverse sm:flex-row gap-3">
-              <Button 
-                type="button" 
-                variant="ghost" 
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => setIsDialogOpen(false)}
                 className="text-slate-500 hover:text-white hover:bg-slate-900 rounded-xl"
               >
                 Dismiss
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-10 h-12 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                {(createMutation.isPending || updateMutation.isPending) ? (
+                {createMutation.isPending || updateMutation.isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <UserCheck className="mr-2 h-4 w-4" />
@@ -737,7 +888,7 @@ export default function AdminManagementPage() {
               Administrator Details
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedAdmin && (
             <div className="p-6 space-y-6">
               <div className="flex items-center gap-4 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
@@ -745,24 +896,40 @@ export default function AdminManagementPage() {
                   {selectedAdmin.name?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">{selectedAdmin.name}</h3>
-                  <p className="text-sm text-slate-500 font-medium">{selectedAdmin.email}</p>
+                  <h3 className="text-lg font-bold text-white">
+                    {selectedAdmin.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 font-medium">
+                    {selectedAdmin.email}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Access Level</p>
-                  <Badge variant="outline" className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Access Level
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className="bg-sky-500/10 text-sky-400 border-sky-500/20 px-3 py-1"
+                  >
                     {selectedAdmin.role}
                   </Badge>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Current Status</p>
-                  <Badge variant="outline" className={cn(
-                    "px-3 py-1",
-                    selectedAdmin.status === "ACTIVE" ? "bg-lime-500/10 text-lime-400 border-lime-400/20" : "bg-red-500/10 text-red-400 border-red-500/20"
-                  )}>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    Current Status
+                  </p>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "px-3 py-1",
+                      selectedAdmin.status === "ACTIVE"
+                        ? "bg-lime-500/10 text-lime-400 border-lime-400/20"
+                        : "bg-red-500/10 text-red-400 border-red-500/20",
+                    )}
+                  >
                     {selectedAdmin.status}
                   </Badge>
                 </div>
@@ -770,30 +937,53 @@ export default function AdminManagementPage() {
 
               <div className="space-y-3">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
-                  <Shield className="h-3 w-3 text-lime-400" /> Active Permissions
+                  <Shield className="h-3 w-3 text-lime-400" /> Active
+                  Permissions
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {selectedAdmin.permissions?.map(perm => (
-                    <Badge key={perm} variant="secondary" className="bg-slate-900 text-slate-300 border-slate-800 text-[10px]">
-                      {perm.split("_").map(s => s.charAt(0) + s.slice(1).toLowerCase()).join(" ")}
+                  {selectedAdmin.permissions?.map((perm) => (
+                    <Badge
+                      key={perm}
+                      variant="secondary"
+                      className="bg-slate-900 text-slate-300 border-slate-800 text-[10px]"
+                    >
+                      {perm
+                        .split("_")
+                        .map((s) => s.charAt(0) + s.slice(1).toLowerCase())
+                        .join(" ")}
                     </Badge>
                   ))}
-                  {(!selectedAdmin.permissions || selectedAdmin.permissions.length === 0) && (
-                    <p className="text-xs text-slate-600 italic">No special permissions granted.</p>
+                  {(!selectedAdmin.permissions ||
+                    selectedAdmin.permissions.length === 0) && (
+                    <p className="text-xs text-slate-600 italic">
+                      No special permissions granted.
+                    </p>
                   )}
                 </div>
               </div>
 
               <div className="pt-4 border-t border-slate-800 flex justify-between text-[10px] text-slate-600 font-mono">
-                <span>Created: {format(new Date(selectedAdmin.createdAt), "yyyy-MM-dd HH:mm")}</span>
-                <span>Last Updated: {format(new Date(selectedAdmin.updatedAt), "yyyy-MM-dd HH:mm")}</span>
+                <span>
+                  Created:{" "}
+                  {format(
+                    new Date(selectedAdmin.createdAt),
+                    "yyyy-MM-dd HH:mm",
+                  )}
+                </span>
+                <span>
+                  Last Updated:{" "}
+                  {format(
+                    new Date(selectedAdmin.updatedAt),
+                    "yyyy-MM-dd HH:mm",
+                  )}
+                </span>
               </div>
             </div>
           )}
-          
+
           <DialogFooter className="bg-slate-900/50 p-4 border-t border-slate-800">
-            <Button 
-              variant="secondary" 
+            <Button
+              variant="secondary"
               onClick={() => setIsAdminDetailsOpen(false)}
               className="w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-white"
             >
@@ -806,26 +996,38 @@ export default function AdminManagementPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="bg-slate-950 border-slate-800 text-slate-200 rounded-3xl shadow-2xl">
           <DialogHeader className="pt-4">
-            <DialogTitle className="text-xl font-black text-white tracking-tight">Revoke Admin Access</DialogTitle>
+            <DialogTitle className="text-xl font-black text-white tracking-tight">
+              Revoke Admin Access
+            </DialogTitle>
             <DialogDescription className="text-slate-500 font-medium">
-              Are you sure you want to permanently delete the administrator account for <span className="text-white font-black underline decoration-red-500/50 underline-offset-4">{adminToDelete?.email}</span>? This action is irreversible and will immediately revoke all access.
+              Are you sure you want to permanently delete the administrator
+              account for{" "}
+              <span className="text-white font-black underline decoration-red-500/50 underline-offset-4">
+                {adminToDelete?.email}
+              </span>
+              ? This action is irreversible and will immediately revoke all
+              access.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-6 sm:justify-center">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => setIsDeleteDialogOpen(false)}
               className="text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl px-8"
             >
               Keep Access
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               className="bg-red-500 hover:bg-red-400 text-white font-black rounded-xl px-10 shadow-[0_10px_20px_rgba(239,68,68,0.2)]"
-              onClick={() => adminToDelete && deleteMutation.mutate(adminToDelete.id)}
+              onClick={() =>
+                adminToDelete && deleteMutation.mutate(adminToDelete.id)
+              }
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deleteMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Revoke Permanently
             </Button>
           </DialogFooter>

@@ -8,10 +8,10 @@ const BACKEND_URL =
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
@@ -29,7 +29,7 @@ export async function PATCH(
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
-    console.error(`Scheduler Post publish-status ${params.id} PATCH Error:`, error);
+    console.error(`Scheduler Post publish-status ${id} PATCH Error:`, error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
