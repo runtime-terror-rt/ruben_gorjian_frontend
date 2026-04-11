@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, User, UserCheck, UserX, Trash2, ChevronDown, Clock } from "lucide-react";
+import { Eye, EyeOff, User, UserCheck, UserX, Trash2, ChevronDown, Clock } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -156,6 +156,7 @@ export default function AdminUsersPage() {
     planCode: "",
     sendVerification: true,
   });
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
 
   const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
 
@@ -835,14 +836,27 @@ export default function AdminUsersPage() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="create-password">Initial Password (optional)</Label>
-              <Input
-                id="create-password"
-                type="password"
-                value={createState.password}
-                onChange={(event) => setCreateState((prev) => ({ ...prev, password: event.target.value }))}
-                placeholder="Secure password"
-              />
+              <div className="relative">
+                <Input
+                  id="create-password"
+                  type={showCreatePassword ? "text" : "password"}
+                  value={createState.password}
+                  onChange={(event) => setCreateState((prev) => ({ ...prev, password: event.target.value }))}
+                  placeholder="Secure password"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                  onClick={() => setShowCreatePassword(!showCreatePassword)}
+                >
+                  {showCreatePassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
             <label className="flex items-center gap-2 text-sm text-slate-200">
               <Checkbox

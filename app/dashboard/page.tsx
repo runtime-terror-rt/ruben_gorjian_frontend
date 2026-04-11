@@ -371,17 +371,21 @@ function MetricCard({
   loading: boolean;
 }) {
   return (
-    <Card className="bg-slate-900 border-slate-800 hover:border-slate-700 transition">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xs uppercase tracking-wide text-slate-400">
+    <Card className="overflow-hidden border border-slate-800/80 bg-slate-900/50 hover:border-lime-400/30 transition-all">
+      <CardContent className="p-4 sm:p-5 flex flex-col justify-center space-y-1.5">
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
           {label}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+        </p>
         {loading ? (
-          <div className="h-6 w-20 animate-pulse rounded bg-slate-700/60" />
+          <div className="h-5 w-1/2 animate-pulse rounded bg-slate-800/80" />
         ) : (
+<<<<<<< HEAD
           <p className="text-lg font-semibold text-white">{value ?? 0}</p>
+=======
+          <p className="text-sm font-black text-slate-100 truncate">
+            {value ?? 0}
+          </p>
+>>>>>>> e280b073d84dc9d87bac1e88294cbe971b29887c
         )}
       </CardContent>
     </Card>
