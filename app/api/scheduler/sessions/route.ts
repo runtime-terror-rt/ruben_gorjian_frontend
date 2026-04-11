@@ -1,15 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams.toString();
+    const headers = await getBackendHeaders();
+
+    const res = await fetch(`${getBackendUrl()}/scheduler/sessions${searchParams ? `?${searchParams}` : ''}`, {
+      method: "GET",
+      headers,
+    });
+
+    const data = await res.json().catch(() => null);
+
+    return NextResponse.json(data, { status: res.status });
+  } catch (error: any) {
+    console.error("Scheduler Sessions GET Error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json().catch(() => ({}));
+    const rawBody = await request.json().catch(() => ({}));
     const headers = await getBackendHeaders();
+    headers["Content-Type"] = "application/json";
 
     const res = await fetch(`${getBackendUrl()}/scheduler/sessions`, {
       method: "POST",
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify(rawBody),
     });
 
     const data = await res.json().catch(() => null);

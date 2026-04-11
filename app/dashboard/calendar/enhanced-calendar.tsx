@@ -189,7 +189,9 @@ function WeekView({
         >
           <div className="z-10 bg-slate-900/80 flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 border border-slate-800/50"></div>
           {localizedDays.map((day) => {
-            const isToday = day.date.isSame(dayjs(), "day");
+            const isToday = userTimezone 
+              ? day.date.isSame(dayjs().tz(userTimezone), "day")
+              : day.date.isSame(dayjs(), "day");
             return (
               <div
                 key={day.name}
@@ -259,8 +261,9 @@ function MonthView({
     publishPost,
     setDisplay,
     navigateToDate,
+    timezone: userTimezone,
   } = useCalendar();
-  const monthStart = dayjs(startDate).startOf("month");
+  const monthStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("month") : dayjs(startDate).startOf("month");
   const [wideMonth, setWideMonth] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -298,8 +301,7 @@ function MonthView({
 
   const calendarDays = useMemo(() => {
     const currentMonth = monthStart.month();
-    const currentYear = monthStart.year();
-    const startOfMonth = dayjs(new Date(currentYear, currentMonth, 1));
+    const startOfMonth = monthStart.startOf("month");
     const startDayOfWeek = startOfMonth.isoWeekday();
     const daysBeforeMonth = startDayOfWeek - 1;
     const calendarStartDate = startOfMonth.subtract(daysBeforeMonth, "day");
@@ -308,16 +310,18 @@ function MonthView({
     let currentDay = calendarStartDate;
     for (let i = 0; i < 42; i++) {
       let label = "current-month";
-      if (currentDay.month() < currentMonth) label = "previous-month";
-      if (currentDay.month() > currentMonth) label = "next-month";
+      const currentDayMonth = currentDay.month();
+      if (currentDayMonth < currentMonth) label = "previous-month";
+      else if (currentDayMonth > currentMonth) label = "next-month";
+      
       calendarDays.push({
-        day: currentDay,
+        day: userTimezone ? dayjs.tz(currentDay, userTimezone) : currentDay,
         label,
       });
       currentDay = currentDay.add(1, "day");
     }
     return calendarDays;
-  }, [monthStart]);
+  }, [monthStart, userTimezone]);
 
   const gridClassName = clsx(
     "grid grid-rows-[62px_auto] gap-[4px] rounded-[10px] absolute start-0 top-0",
@@ -355,8 +359,10 @@ function MonthView({
           ))}
           {calendarDays.map((date, index) => {
             const isCurrentMonth = date.label === "current-month";
-            const dayDate = dayjs(date.day).startOf("day");
-            const isToday = dayDate.isSame(dayjs(), "day");
+            const dayDate = userTimezone ? dayjs.tz(date.day, userTimezone).startOf("day") : dayjs(date.day).startOf("day");
+            const isToday = userTimezone 
+              ? dayDate.isSame(dayjs().tz(userTimezone), "day")
+              : dayDate.isSame(dayjs(), "day");
 
             return (
               <div
@@ -419,11 +425,13 @@ function DayView({
     const grouped: Record<number, typeof posts> = {};
     posts
       .filter((post) => {
-        const pDate = dayjs(post.scheduledFor);
+        const pDate = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
         return pDate.isSame(selectedDate, "day");
       })
       .forEach((post) => {
-        const hour = dayjs(post.scheduledFor).hour();
+        const hour = userTimezone 
+          ? dayjs.tz(post.scheduledFor, userTimezone).hour() 
+          : dayjs(post.scheduledFor).hour();
         if (!grouped[hour]) {
           grouped[hour] = [];
         }
@@ -433,9 +441,9 @@ function DayView({
     // Sort posts within each hour
     Object.keys(grouped).forEach((hour) => {
       grouped[Number(hour)].sort((a, b) => {
-        return (
-          dayjs(a.scheduledFor).valueOf() - dayjs(b.scheduledFor).valueOf()
-        );
+        const dateA = userTimezone ? dayjs.tz(a.scheduledFor, userTimezone) : dayjs(a.scheduledFor);
+        const dateB = userTimezone ? dayjs.tz(b.scheduledFor, userTimezone) : dayjs(b.scheduledFor);
+        return dateA.valueOf() - dateB.valueOf();
       });
     });
 
@@ -498,7 +506,8 @@ function DayView({
           {hours.map((hour) => {
             const hourPosts = postsByHour[hour] || [];
             const hourDate = selectedDate.hour(hour).minute(0);
-            const isPast = hourDate.isBefore(dayjs(), "minute");
+            const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
+            const isPast = hourDate.isBefore(now, "minute");
 
             return (
               <div key={hour} className="flex gap-3 items-start">
@@ -544,6 +553,8 @@ export default function EnhancedCalendar() {
     createPost,
     updatePost,
     movePost,
+    // Explicitly destructure timezone as userTimezone to be used in children
+    timezone: userTimezone,
   } = useCalendar();
   const { session } = useSessionContext();
   const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
@@ -561,17 +572,19 @@ export default function EnhancedCalendar() {
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
   const { uploadFile, uploading } = useUpload();
 
   const handleAddPost = useCallback((date?: Dayjs) => {
-    setModalDate(date ?? dayjs());
+    const defaultDate = userTimezone ? dayjs().tz(userTimezone) : dayjs();
+    setModalDate(date ?? defaultDate);
     setModalOpen(true);
-  }, []);
+  }, [userTimezone]);
 
   const handleCreatePost = useCallback(
     async (payload: {
       caption: string;
-      scheduledFor: Date;
+      scheduledFor: string;
       socialAccountIds: string[];
       platforms: string[];
       assetId?: string;
@@ -654,8 +667,8 @@ export default function EnhancedCalendar() {
             ? [post.hashtags]
             : [],
       });
-      // post.scheduledFor is already in user timezone
-      setModalDate(dayjs(post.scheduledFor));
+      // post.scheduledFor is already in user timezone from fetchPosts conversion
+      setModalDate(userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor));
       setModalOpen(true);
     },
     [posts],
@@ -664,8 +677,8 @@ export default function EnhancedCalendar() {
   const handleDragEnd = useCallback(
     async (postId: string, newDate: Date) => {
       try {
-        const targetDate = dayjs(newDate);
-        const now = dayjs();
+        const targetDate = userTimezone ? dayjs.tz(newDate, userTimezone) : dayjs(newDate);
+        const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
 
         // Validate: cannot move to past dates (before current minute)
         if (targetDate.isBefore(now, "minute")) {
@@ -685,8 +698,8 @@ export default function EnhancedCalendar() {
   );
 
   const formatDateRange = () => {
-    const start = dayjs(startDate);
-    const end = dayjs(endDate);
+    const start = userTimezone ? dayjs.tz(startDate, userTimezone) : dayjs(startDate);
+    const end = userTimezone ? dayjs.tz(endDate, userTimezone) : dayjs(endDate);
 
     if (display === "day") {
       return start.format("MMMM D, YYYY");
@@ -712,6 +725,33 @@ export default function EnhancedCalendar() {
 
   return (
     <DndProvider backend={dndBackend}>
+      {showDebug && (
+        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-amber-200 text-xs font-mono space-y-1 relative group">
+          <div className="flex justify-between items-start">
+            <h4 className="font-bold text-amber-400 mb-2">Timezone Debugger</h4>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowDebug(false)}
+              className="h-6 w-6 p-0 hover:bg-amber-500/20 text-amber-400"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+            <p>Target Timezone: <span className="text-white bg-slate-800 px-1 rounded">{userTimezone || "BROWSER_DEFAULT"}</span></p>
+            <p>Browser Timezone: <span className="text-white">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span></p>
+            <p>Current Time (Local): <span className="text-white">{dayjs().format("YYYY-MM-DD HH:mm:ss")}</span></p>
+            <p>Current Time (Locked): <span className="text-white">{userTimezone ? dayjs().tz(userTimezone).format("YYYY-MM-DD HH:mm:ss") : "N/A"}</span></p>
+            <p>UTC Now: <span className="text-white">{dayjs().utc().format("YYYY-MM-DD HH:mm:ss")} Z</span></p>
+          </div>
+          <div className="mt-2 pt-2 border-t border-amber-500/20">
+            <p className="text-[10px] text-amber-400/70 font-sans italic">
+              Tip: If "Current Time (Locked)" doesn't match your wall clock, check your Business Settings.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -784,6 +824,16 @@ export default function EnhancedCalendar() {
                 <span className="ml-1 sm:ml-2">Month</span>
               </Button>
             </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowDebug(!showDebug)}
+              className="h-9 w-9 p-0 border border-slate-700 bg-slate-900/50 hover:bg-slate-800 text-slate-400 hover:text-amber-400"
+              title="Toggle Timezone Debugger"
+            >
+              <AlertCircle className="h-4 w-4" />
+            </Button>
 
             <Button
               onClick={() => handleAddPost()}
@@ -865,21 +915,21 @@ export default function EnhancedCalendar() {
                 {display === "day" && (
                   <DayView
                     onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
+                    onEdit={handleEditPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
                 {display === "week" && (
                   <WeekView
                     onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
+                    onEdit={handleEditPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
                 {display === "month" && (
                   <MonthView
                     onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
+                    onEdit={handleEditPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
