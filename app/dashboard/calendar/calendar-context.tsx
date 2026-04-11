@@ -305,12 +305,15 @@ export function CalendarProvider({
           : (data.items || data.posts || []);
         
         // Convert post dates from UTC to user timezone for display
-        const postsWithTimezone = rawPosts.map((post: any) => ({
-          ...post,
-          scheduledFor: post.scheduledFor
-            ? fromUTC(post.scheduledFor, userTimezone).format()
-            : post.scheduledFor,
-        }));
+        const postsWithTimezone = rawPosts.map((post: any) => {
+          const dateValue = post.scheduledFor || post.scheduledAt;
+          return {
+            ...post,
+            scheduledFor: dateValue
+              ? fromUTC(dateValue, userTimezone).format()
+              : dateValue,
+          };
+        });
         setPosts(postsWithTimezone);
       }
     } catch (error) {
@@ -357,13 +360,13 @@ export function CalendarProvider({
           throw new Error("Timezone not ready. Please try again.");
         }
         // Convert scheduledFor from user timezone to UTC
+        const dateISO = parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString();
         const payload = {
           ...data,
-          scheduledAt: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString(),
+          scheduledAt: dateISO,
+          scheduledFor: dateISO,
           ...(targetUserId ? { userId: targetUserId, adminReason: "Created from admin dashboard" } : {}),
         };
-        // Remove scheduledFor if it exists in data to avoid confusion
-        if ('scheduledFor' in payload) delete (payload as any).scheduledFor;
 
         const response = await fetch("/api/scheduler/posts", {
           method: "POST",
@@ -396,11 +399,13 @@ export function CalendarProvider({
           ...data,
           caption: data.caption || ".",
           ...(data.scheduledFor
-            ? { scheduledAt: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString() }
+            ? { 
+                scheduledAt: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString(),
+                scheduledFor: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString()
+              }
             : {}),
           ...(targetUserId ? { userId: targetUserId, adminReason: data.adminReason || "Updated from admin dashboard" } : {}),
         };
-        if ('scheduledFor' in payload) delete (payload as any).scheduledFor;
 
         const response = await fetch(`/api/scheduler/posts/${id}`, {
           method: "PATCH",
