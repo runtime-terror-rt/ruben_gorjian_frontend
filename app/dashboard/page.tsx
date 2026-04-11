@@ -119,6 +119,26 @@ function useSystemAlerts(enabled: boolean) {
   });
 }
 
+function useSubscriptionProgress(enabled: boolean) {
+  return useQuery({
+    queryKey: ["subscription-progress"],
+    queryFn: () =>
+      apiGet<{
+        success: boolean;
+        data: {
+          subscription: any;
+          chart: {
+            type: string;
+            unit: string;
+            usedPercent: number;
+            remainingPercent: number;
+            segments: { key: string; label: string; value: number }[];
+          };
+        };
+      }>("/api/dashboard/overview/subscription-progress"),
+    enabled,
+  });
+}
 // ---------------- Page ----------------
 
 export default function DashboardPage() {
@@ -127,6 +147,10 @@ export default function DashboardPage() {
 
   const overviewQ = useDashboardOverview(enabled);
   const activityQ = useRecentActivity(enabled);
+
+  const progressQ = useSubscriptionProgress(enabled);
+  const progress = progressQ.data?.data.chart;
+
   const upcomingQ = useUpcomingPosts(enabled);
   const pipelineQ = usePostPipeline(enabled);
   const alertsQ = useSystemAlerts(enabled);
@@ -177,45 +201,225 @@ export default function DashboardPage() {
         </Button>
       </div>
 
+      {/* TOP GRID (Main UI like screenshot) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* LEFT CARD - PLAN */}
+        <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded">
+              ACTIVE PLAN
+            </span>
+            <span className="text-xs text-slate-400">
+              {overview?.plan.billingCycle}
+            </span>
+          </div>
+
+          <h2 className="text-2xl font-bold mb-2">
+            {overview?.plan.planCategory}
+          </h2>
+          <p className="text-xs text-slate-500 mb-6">
+            CODE: {overview?.plan.planCode}
+          </p>
+
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-slate-400 text-xs">SUBSCRIPTION PERIOD</p>
+              <p className="font-semibold">
+                {new Date(
+                  overview?.usage.periodStart || "",
+                ).toLocaleDateString()}{" "}
+                -{" "}
+                {new Date(overview?.usage.periodEnd || "").toLocaleDateString()}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-slate-400 text-xs">PAYMENT</p>
+              <p className="font-semibold">{overview?.plan.billingCycle}</p>
+            </div>
+          </div>
+
+          {/* FEATURES */}
+          <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
+            <FeatureBox
+              label="Platforms"
+              value={overview?.plan.platformLimit}
+            />
+            <FeatureBox label="Posts" value={overview?.plan.postQuota} />
+            <FeatureBox label="Support" value="24/7 Premium" />
+            <FeatureBox label="Video" value="Enabled" />
+          </div>
+        </div>
+
+        {/* RIGHT CARD - PIE CHART */}
+        <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white flex flex-col items-center justify-center">
+          <h3 className="text-lg font-semibold mb-2">Subscription Progress</h3>
+
+          {/* PIE */}
+          <div className="w-40 h-40 relative">
+            <div
+              className="w-full h-full rounded-full"
+              
+              style={{
+                background: `conic-gradient(
+    #ef4444 0% ${progress?.usedPercent || 0}%,
+    #22c55e ${progress?.usedPercent || 0}% ${100}%
+  )`,
+              }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-2xl font-bold">
+                {progress?.remainingPercent ?? 0}%
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-between w-full mt-4 text-sm text-slate-400">
+            <span>Used: {progress?.usedPercent}%</span>
+            <span>Remaining: {progress?.remainingPercent}%</span>
+          </div>
+        </div>
+      </div>
+
       {/* Plan Details */}
       <Section title="Plan Details">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <MetricCard label="Plan Code" value={overview?.plan.planCode} loading={isLoading} />
-          <MetricCard label="Category" value={overview?.plan.planCategory} loading={isLoading} />
-          <MetricCard label="Status" value={overview?.plan.status} loading={isLoading} />
-          <MetricCard label="Price Type" value={overview?.plan.priceType} loading={isLoading} />
-          <MetricCard label="Billing Cycle" value={overview?.plan.billingCycle} loading={isLoading} />
-          <MetricCard label="Days Left" value={overview?.plan.daysLeft} loading={isLoading} />
-          <MetricCard label="Post Limit Type" value={overview?.plan.postLimitType} loading={isLoading} />
-          <MetricCard label="Post Quota" value={overview?.plan.postQuota} loading={isLoading} />
-          <MetricCard label="Visual Quota" value={overview?.plan.visualQuota ?? "Unlimited"} loading={isLoading} />
-          <MetricCard label="Platform Limit" value={overview?.plan.platformLimit} loading={isLoading} />
-          <MetricCard label="Period Start" value={overview?.usage.periodStart ? new Date(overview.usage.periodStart).toLocaleDateString() : ""} loading={isLoading} />
-          <MetricCard label="Period End" value={overview?.usage.periodEnd ? new Date(overview.usage.periodEnd).toLocaleDateString() : ""} loading={isLoading} />
+          <MetricCard
+            label="Plan Code"
+            value={overview?.plan.planCode}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Category"
+            value={overview?.plan.planCategory}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Status"
+            value={overview?.plan.status}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Price Type"
+            value={overview?.plan.priceType}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Billing Cycle"
+            value={overview?.plan.billingCycle}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Days Left"
+            value={overview?.plan.daysLeft}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Post Limit Type"
+            value={overview?.plan.postLimitType}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Post Quota"
+            value={overview?.plan.postQuota}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Visual Quota"
+            value={overview?.plan.visualQuota ?? "Unlimited"}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Platform Limit"
+            value={overview?.plan.platformLimit}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Period Start"
+            value={
+              overview?.usage.periodStart
+                ? new Date(overview.usage.periodStart).toLocaleDateString()
+                : ""
+            }
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Period End"
+            value={
+              overview?.usage.periodEnd
+                ? new Date(overview.usage.periodEnd).toLocaleDateString()
+                : ""
+            }
+            loading={isLoading}
+          />
         </div>
       </Section>
 
       {/* Usage Details */}
       <Section title="Usage Metrics">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <MetricCard label="Posts Used" value={overview?.usage.postsUsed} loading={isLoading} />
-          <MetricCard label="Posts Remaining" value={overview?.usage.postsRemaining} loading={isLoading} />
-          <MetricCard label="Visuals Used" value={overview?.usage.visualsUsed} loading={isLoading} />
-          <MetricCard label="Visuals Remaining" value={overview?.usage.visualsRemaining ?? "Unlimited"} loading={isLoading} />
-          <MetricCard label="Visuals Bonus" value={overview?.usage.visualsBonus} loading={isLoading} />
-          <MetricCard label="Platforms Used" value={overview?.usage.platformsUsed} loading={isLoading} />
-          <MetricCard label="Platforms Remaining" value={overview?.usage.platformsRemaining} loading={isLoading} />
+          <MetricCard
+            label="Posts Used"
+            value={overview?.usage.postsUsed}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Posts Remaining"
+            value={overview?.usage.postsRemaining}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Visuals Used"
+            value={overview?.usage.visualsUsed}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Visuals Remaining"
+            value={overview?.usage.visualsRemaining ?? "Unlimited"}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Visuals Bonus"
+            value={overview?.usage.visualsBonus}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Platforms Used"
+            value={overview?.usage.platformsUsed}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Platforms Remaining"
+            value={overview?.usage.platformsRemaining}
+            loading={isLoading}
+          />
         </div>
       </Section>
 
       {/* Social Accounts */}
       <Section title="Social Accounts">
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <MetricCard label="Connected Total" value={overview?.socialAccounts.connectedTotal} loading={isLoading} />
-          <MetricCard label="Expiring Soon" value={overview?.socialAccounts.expiringSoon} loading={isLoading} />
-          {overview?.socialAccounts.byPlatform && Object.entries(overview.socialAccounts.byPlatform).map(([platform, count]) => (
-            <MetricCard key={platform} label={`${platform}`} value={count} loading={isLoading} />
-          ))}
+          <MetricCard
+            label="Connected Total"
+            value={overview?.socialAccounts.connectedTotal}
+            loading={isLoading}
+          />
+          <MetricCard
+            label="Expiring Soon"
+            value={overview?.socialAccounts.expiringSoon}
+            loading={isLoading}
+          />
+          {overview?.socialAccounts.byPlatform &&
+            Object.entries(overview.socialAccounts.byPlatform).map(
+              ([platform, count]) => (
+                <MetricCard
+                  key={platform}
+                  label={`${platform}`}
+                  value={count}
+                  loading={isLoading}
+                />
+              ),
+            )}
         </div>
       </Section>
 
@@ -379,15 +583,20 @@ function MetricCard({
         {loading ? (
           <div className="h-5 w-1/2 animate-pulse rounded bg-slate-800/80" />
         ) : (
-<<<<<<< HEAD
-          <p className="text-lg font-semibold text-white">{value ?? 0}</p>
-=======
           <p className="text-sm font-black text-slate-100 truncate">
             {value ?? 0}
           </p>
->>>>>>> e280b073d84dc9d87bac1e88294cbe971b29887c
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function FeatureBox({ label, value }: any) {
+  return (
+    <div className="bg-slate-800/40 rounded-lg p-3">
+      <p className="text-[10px] text-slate-400">{label}</p>
+      <p className="text-sm font-semibold text-white">{value ?? 0}</p>
+    </div>
   );
 }
