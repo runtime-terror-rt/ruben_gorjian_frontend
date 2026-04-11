@@ -23,6 +23,7 @@ type DashboardOverview = {
     postQuota: number;
     visualQuota: number | null;
     platformLimit: number;
+    videoSessionHours: number;
   };
   usage: {
     periodStart: string;
@@ -242,11 +243,15 @@ export default function DashboardPage() {
           {/* FEATURES */}
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
-              label="Platforms"
+              label="Platform Limit"
               value={overview?.plan.platformLimit}
             />
             <FeatureBox label="Posts" value={overview?.plan.postQuota} />
             <FeatureBox label="Video" value="Enabled" />
+            <FeatureBox
+              label="Video Session Hours"
+              value={overview?.plan.videoSessionHours}
+            />
             <FeatureBox label="Days Left" value={overview?.plan.daysLeft} />
           </div>
         </div>
@@ -289,7 +294,7 @@ export default function DashboardPage() {
 
       {/* Usage Metrics - NEW UI */}
       <Section title="Usage Metrics">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-2xl p-5 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/20">
             <p className="text-xs text-slate-400">Posts</p>
             <p className="text-2xl font-bold text-white">
@@ -305,13 +310,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
+          {/* <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
             <p className="text-xs text-slate-400">Platforms</p>
             <p className="text-2xl font-bold text-white">
               {overview?.usage.platformsUsed} /{" "}
               {overview?.usage.platformsRemaining}
             </p>
-          </div>
+          </div> */}
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
             <p className="text-xs text-slate-400">Bonus Visuals</p>
