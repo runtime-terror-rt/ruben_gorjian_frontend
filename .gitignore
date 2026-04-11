@@ -39,6 +39,10 @@ yarn-error.log*
 next-env.d.ts
 .env*.local
 
+<<<<<<< HEAD
 .env
+=======
+config.bat
+>>>>>>> dd323d257950146e72ee0546a08dac9d05490128
 
 .env.production
