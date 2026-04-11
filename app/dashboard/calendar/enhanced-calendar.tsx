@@ -25,7 +25,9 @@ import {
   AlertCircle,
   Loader2,
   List,
+  X,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import clsx from "clsx";
 import { CalendarColumn } from "@/components/calendar/calendar-column";
 import { CalendarItem } from "@/components/calendar/calendar-item";
@@ -177,15 +179,17 @@ function WeekView({
     }
     return days;
   }, [weekStart]);
+  const scrollHandlers = useScrollPropagation();
 
   return (
     <div className="flex flex-col text-slate-200 min-h-full">
       <div
         className="flex-1 relative h-full overflow-x-auto overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y" }}
+        {...scrollHandlers}
       >
         <div
-          className="grid [grid-template-columns:136px_repeat(7,160px)] md:[grid-template-columns:136px_repeat(7,_minmax(0,_1fr))] gap-[4px] rounded-[10px] absolute h-full start-0 top-0 w-max md:w-full"
+          className="grid [grid-template-columns:136px_repeat(7,160px)] md:[grid-template-columns:136px_repeat(7,_minmax(0,_1fr))] gap-[4px] rounded-[10px] min-h-full w-max md:w-full"
         >
           <div className="z-10 bg-slate-900/80 flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 border border-slate-800/50"></div>
           {localizedDays.map((day) => {
@@ -324,10 +328,10 @@ function MonthView({
   }, [monthStart, userTimezone]);
 
   const gridClassName = clsx(
-    "grid grid-rows-[62px_auto] gap-[4px] rounded-[10px] absolute start-0 top-0",
+    "grid gap-[2px] rounded-[10px]",
     wideMonth
-      ? "[grid-template-columns:repeat(7,160px)] w-max h-full"
-      : "grid-cols-7 w-full h-full min-w-[700px]",
+      ? "[grid-template-columns:repeat(7,160px)] w-max min-h-full"
+      : "grid-cols-7 w-full min-h-full min-w-[700px]",
   );
 
   return (
@@ -343,16 +347,19 @@ function MonthView({
         </Button>
       </div>
       <div
-        className="flex-1 flex relative h-full overflow-x-auto overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-        style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y" }}
+        className="flex-1 relative overflow-auto pb-12 [scrollbar-width:thin] [scrollbar-color:theme(colors.slate.700)_transparent]"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div className={gridClassName}>
+        <div 
+          className={gridClassName}
+          style={{ gridAutoRows: 'minmax(110px, auto)' }}
+        >
           {localizedDays.map((day) => (
             <div
               key={day}
-              className="z-[20] p-2 bg-slate-900/80 flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 border border-slate-800/50"
+              className="z-[30] p-2 bg-slate-900 border-b border-slate-800 flex justify-center items-center h-[52px] sticky top-0"
             >
-              <div className="text-[14px] font-medium text-slate-400">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
                 {day}
               </div>
             </div>
@@ -368,9 +375,10 @@ function MonthView({
               <div
                 key={index}
                 className={clsx(
-                  "text-center items-center justify-center flex rounded-[8px]",
-                  !isCurrentMonth && "opacity-30",
-                  isToday && "border border-lime-500/30 bg-lime-500/5",
+                  "text-center min-h-[120px] sm:min-h-[140px] flex border-r border-b border-slate-800/60 transition-all duration-200",
+                  !isCurrentMonth && "bg-slate-950/40 opacity-30",
+                  isToday && "bg-emerald-500/5",
+                  isCurrentMonth && "hover:bg-slate-800/30"
                 )}
               >
                 <CalendarColumn
@@ -512,8 +520,8 @@ function DayView({
             return (
               <div key={hour} className="flex gap-3 items-start">
                 {/* Timestamp on left */}
-                <div className="w-16 flex-shrink-0 pt-2">
-                  <span className="text-sm font-medium text-slate-400">
+            <div className="w-16 flex-shrink-0 pt-3 text-right pr-2">
+                  <span className="text-xs font-black uppercase tracking-tighter text-slate-500">
                     {convertTimeFormat(hour)}
                   </span>
                 </div>
@@ -571,9 +579,9 @@ export default function EnhancedCalendar() {
   } | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [showDebug, setShowDebug] = useState(false);
   const { uploadFile, uploading } = useUpload();
+  const { toast } = useToast();
 
   const handleAddPost = useCallback((date?: Dayjs) => {
     const defaultDate = userTimezone ? dayjs().tz(userTimezone) : dayjs();
@@ -620,15 +628,19 @@ export default function EnhancedCalendar() {
             ...(payload.hashtags ? { hashtags: payload.hashtags } : {}),
           });
         }
-        setError(null);
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to save post";
-        setError(message);
-        throw err; // rethrow so PostModal can catch and show error inside the modal
+        toast({
+          title: editingPost ? "Post Updated" : "Post Scheduled",
+          description: "Your post has been successfully saved.",
+        });
+        setModalOpen(false);
+      } catch (err: any) {
+        console.error("Calendar Action Error:", err);
+        const message = err.message || "Failed to save post";
+        toast({ title: "Error", description: message, variant: "destructive" });
+        throw err;
       }
     },
-    [createPost, updatePost, editingPost],
+    [createPost, updatePost, editingPost, toast],
   );
 
   const handleViewPost = useCallback((postId: string) => {
@@ -643,9 +655,11 @@ export default function EnhancedCalendar() {
 
       // Prevent editing posted content
       if (post.status === "POSTED") {
-        setError(
-          "Cannot edit posts that have already been published. Please duplicate the post to create a new version.",
-        );
+        toast({
+          title: "Update Prevented",
+          description: "Cannot edit posts that have already been published. Please duplicate the post to create a new version.",
+          variant: "destructive"
+        });
         return;
       }
 
@@ -671,7 +685,7 @@ export default function EnhancedCalendar() {
       setModalDate(userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor));
       setModalOpen(true);
     },
-    [posts],
+    [posts, userTimezone, toast],
   );
 
   const handleDragEnd = useCallback(
@@ -682,19 +696,25 @@ export default function EnhancedCalendar() {
 
         // Validate: cannot move to past dates (before current minute)
         if (targetDate.isBefore(now, "minute")) {
-          setError(
-            "Cannot schedule posts in the past. Please select a current or future date/time.",
-          );
+          toast({
+            title: "Invalid Move",
+            description: "Cannot schedule posts in the past. Please select a current or future date/time.",
+            variant: "destructive"
+          });
           return;
         }
 
         await movePost(postId, targetDate);
-        setError(null);
+        toast({ title: "Post Rescheduled", description: `Item moved to ${targetDate.format("MMM D, HH:mm")}` });
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to move post");
+        toast({
+          title: "Error",
+          description: err instanceof Error ? err.message : "Failed to move post",
+          variant: "destructive"
+        });
       }
     },
-    [movePost],
+    [movePost, userTimezone, toast],
   );
 
   const formatDateRange = () => {
@@ -884,24 +904,9 @@ export default function EnhancedCalendar() {
           </Card>
         </div>
 
-        {/* Error Banner */}
-        {error && (
-          <div className="rounded-lg border border-rose-600/50 bg-rose-950/30 px-4 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-            <AlertCircle className="h-4 w-4 text-rose-500" />
-            <p className="text-sm text-rose-300">{error}</p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setError(null)}
-              className="ml-auto h-6 w-6 p-0"
-            >
-              ×
-            </Button>
-          </div>
-        )}
-
-        {/* Calendar */}
-        <Card className="border-slate-800/50 bg-slate-900/40">
+        {/* Calendar Area */}
+        <div className="mt-8">
+          <Card className="border-slate-800/50 bg-slate-900/40">
           <CardContent className="p-4 sm:p-6 min-h-[600px]">
             {loading ? (
               <div className="flex items-center justify-center h-64">
@@ -911,7 +916,7 @@ export default function EnhancedCalendar() {
                 </div>
               </div>
             ) : (
-              <div className="h-[600px] sm:h-[700px]">
+              <div className="min-h-[600px] flex flex-col">
                 {display === "day" && (
                   <DayView
                     onAddPost={handleAddPost}
@@ -937,13 +942,13 @@ export default function EnhancedCalendar() {
             )}
           </CardContent>
         </Card>
+        </div>
 
         <PostModal
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);
             setEditingPost(null);
-            setError(null);
           }}
           initialDate={modalDate}
           editingPost={editingPost}

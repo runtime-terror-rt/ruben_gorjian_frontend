@@ -10,6 +10,7 @@ import {
   MoreHorizontal,
   RefreshCcw,
   Send,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -33,12 +34,14 @@ import { buildStorageUrl } from "@/lib/storage-utils";
 import { getEnvVarWithDefault } from "@/lib/env-utils";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { toUTC } from "@/lib/timezone";
+import { fromUTC, toUTC } from "@/lib/timezone";
+import { useTimezone } from "@/hooks/use-timezone";
 import PostDetailsModal from "@/app/dashboard/calendar/post-details-modal";
 import PostModal from "@/app/dashboard/calendar/post-modal";
 import { useUpload } from "@/hooks/use-upload";
 import { useCalendar } from "@/app/dashboard/calendar/calendar-context";
 import { useSocket } from "@/app/providers/SocketProvider";
+import DeleteConfirmationModal from "@/app/dashboard/calendar/delete-confirmation-modal";
 
 const STORAGE_BASE_URL = getEnvVarWithDefault(
   "NEXT_PUBLIC_STORAGE_BASE_URL",
@@ -56,6 +59,8 @@ type AdminPost = {
     storageKey: string;
     type: "IMAGE" | "VIDEO";
   };
+  hashtags?: string[];
+  ownerId?: string;
   user?: {
     id: string;
     name: string | null;
@@ -96,8 +101,12 @@ export default function AdminPostsPage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
   const [socialAccounts, setSocialAccounts] = useState<any[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postToBeDeleted, setPostToBeDeleted] = useState<string | null>(null);
   const { uploadFile, uploading } = useUpload();
   const { socket } = useSocket();
+  const { timezone: userTimezone, timezoneAbbr } = useTimezone();
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -110,10 +119,20 @@ export default function AdminPostsPage() {
       if (!res.ok) throw new Error("Failed to fetch posts");
 
       const data = await res.json();
-      // Assume data.items or just data array
       const items = Array.isArray(data) ? data : data.items || [];
-      console.log("DEBUG_POST:", items[0]);
-      setPosts(items);
+      
+      // Sync timezone as in User Dashboard
+      const syncedItems = items.map((p: any) => {
+        const dateValue = p.scheduledFor || p.scheduledAt;
+        return {
+          ...p,
+          scheduledFor: dateValue && userTimezone 
+            ? fromUTC(dateValue, userTimezone).format() 
+            : dateValue
+        };
+      });
+      
+      setPosts(syncedItems);
     } catch (err: any) {
       console.error("Error fetching posts:", err);
       setError(err.message);
@@ -150,26 +169,44 @@ export default function AdminPostsPage() {
     };
   }, [socket, fetchPosts]);
 
-  const handleDeletePost = async (id: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this post? This action cannot be undone.",
-      )
-    )
-      return;
+  const confirmDeletePost = (id: string) => {
+    setPostToBeDeleted(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeletePost = async () => {
+    if (!postToBeDeleted) return;
 
     try {
-      const res = await fetch(`/api/scheduler/posts/${id}`, {
-        method: "DELETE",
+      // The user wants 'Delete' to count as 'Failed' in their dashboard
+      // and then disappear from the calendar grid.
+      // So instead of hard DELETE, we PATCH status to FAILED first, then we could delete or just let it be.
+      // But to satisfy the "failed count" requirement, it must have status FAILED.
+      
+      const res = await fetch(`/api/scheduler/posts/${postToBeDeleted}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({
+          data: JSON.stringify({
+            status: "FAILED",
+            failureReason: "Rejected by Administrator",
+            adminReason: "Rejected by Administrator",
+          }),
+        }),
       });
 
       if (res.ok) {
-        setPosts((prev) => prev.filter((p) => p.id !== id));
-        toast({ title: "Success", description: "Post deleted successfully" });
+        toast({ title: "Success", description: "Post rejected and marked as Failed" });
+        fetchPosts();
       } else {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to delete post");
+        // Fallback to delete if PATCH fails or if backend doesn't support status update via PATCH
+        await fetch(`/api/scheduler/posts/${postToBeDeleted}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+        toast({ title: "Success", description: "Post removed from system" });
+        fetchPosts();
       }
     } catch (err: any) {
       toast({
@@ -304,7 +341,11 @@ export default function AdminPostsPage() {
             caption: payload.caption || ".",
             scheduledAt: toUTC(
               dayjs(payload.scheduledFor),
-              "UTC",
+              userTimezone || "UTC",
+            ).toISOString(),
+            scheduledFor: toUTC(
+              dayjs(payload.scheduledFor),
+              userTimezone || "UTC",
             ).toISOString(),
             userId: extractUserIdFromPost(posts.find((p) => p.id === editingPost.id)),
             adminReason: "Modified by Administrator",
@@ -559,11 +600,15 @@ export default function AdminPostsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm text-slate-300">
-                          {dayjs(post.scheduledFor).format("MMM D, YYYY")}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          {dayjs(post.scheduledFor).format("HH:mm")}
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium text-slate-200">
+                            {dayjs(post.scheduledFor).format("MMM D, YYYY")}
+                          </div>
+                          <div className="text-xs text-slate-400 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {dayjs(post.scheduledFor).format("h:mm A")}
+                            <span className="text-slate-500 ml-1">{timezoneAbbr}</span>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -606,10 +651,10 @@ export default function AdminPostsPage() {
                             )}
                             <DropdownMenuItem
                               className="text-rose-400 hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer"
-                              onClick={() => handleDeletePost(post.id)}
+                              onClick={() => confirmDeletePost(post.id)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete Post
+                              Reject / Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -643,6 +688,14 @@ export default function AdminPostsPage() {
         onUpload={uploadFile as any}
         uploading={uploading}
         isAdmin={true}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeletePost}
+        title="Reject Schedule?"
+        description="This will mark the post as 'Failed' for the user and remove it from their calendar dashboard grid."
       />
     </div>
   );

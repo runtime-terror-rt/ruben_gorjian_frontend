@@ -96,8 +96,10 @@ export default function ScheduleVisitPage() {
   }, [fetchSessions]);
 
   const blockedDates = useMemo(() => {
-    return sessions.map(s => dayjs(s.scheduledAt).format("YYYY-MM-DD"));
-  }, [sessions]);
+    return sessions
+      .filter(s => s.status !== "CANCELLED" && s.status !== "REJECTED")
+      .map(s => dayjs(s.scheduledAt || (s as any).scheduledFor).tz(userTimezone).format("YYYY-MM-DD"));
+  }, [sessions, userTimezone]);
 
   const calendarDays = useMemo(() => {
     const startOfMonth = currentDate.startOf("month");
@@ -153,6 +155,15 @@ export default function ScheduleVisitPage() {
       return;
     }
 
+    if (isDayBlocked(selectedDate)) {
+      toast({
+        title: "Date Unavailable",
+        description: "This date is already booked. Please choose another day.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!title.trim()) {
       toast({
         title: "Missing Title",
@@ -165,9 +176,9 @@ export default function ScheduleVisitPage() {
     setSubmitting(true);
     try {
       const [hours, minutes] = selectedTime.split(":").map(Number);
-      // Ensure we use the correct timezone for the photoshoot
+      // Construct the date in the user's photoshoot timezone to avoid jumps
       const scheduledAt = dayjs.tz(
-        selectedDate.hour(hours).minute(minutes).second(0).format("YYYY-MM-DD HH:mm:ss"),
+        `${selectedDate.format("YYYY-MM-DD")} ${selectedTime}:00`,
         userTimezone
       ).toISOString();
 
@@ -184,11 +195,15 @@ export default function ScheduleVisitPage() {
         if (adminReason.trim()) payload.adminReason = adminReason.trim();
       }
 
+      const requestBody = {
+        data: JSON.stringify(payload)
+      };
+
       let res;
       if (editingSession) {
-        res = await apiPatch<any, any>(`/api/scheduler/sessions/${editingSession.id}`, payload);
+        res = await apiPatch<any, any>(`/api/scheduler/sessions/${editingSession.id}`, requestBody);
       } else {
-        res = await apiPost<any, any>("/api/scheduler/sessions", payload);
+        res = await apiPost<any, any>("/api/scheduler/sessions", requestBody);
       }
 
       toast({
