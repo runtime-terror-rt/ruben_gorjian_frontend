@@ -12,6 +12,11 @@ import clsx from "clsx";
 import { buildStorageUrl } from "@/lib/storage-utils";
 
 dayjs.extend(relativeTime);
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import {
   Edit2,
   X,
@@ -95,7 +100,7 @@ export default function PostDetailsModal({
   posts,
   loading = false,
 }: PostDetailsModalProps) {
-  const { timezoneAbbr } = useTimezone();
+  const { timezone: userTimezone, timezoneAbbr } = useTimezone();
   const { session } = useSessionContext();
   const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
   const [isDeleting, setIsDeleting] = useState(false);
@@ -141,8 +146,10 @@ export default function PostDetailsModal({
     mediaUrl = anyPost.assets[0];
   }
 
-  // post.scheduledFor is already in user timezone (from calendar context)
-  const scheduledDate = post?.scheduledFor ? dayjs(post.scheduledFor) : null;
+  // scheduledDate should be parsed in the correct timezone
+  const scheduledDate = post?.scheduledFor 
+    ? dayjs.tz(post.scheduledFor, userTimezone) 
+    : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 overflow-hidden">
@@ -339,14 +346,14 @@ export default function PostDetailsModal({
                               }
                             />
                           </div>
-                          {target.publishedAt && (
-                            <p className="text-xs text-slate-400 mt-2">
-                              Published:{" "}
-                              {dayjs(target.publishedAt).format(
-                                "MMM D, YYYY [at] h:mm A"
-                              )}
-                            </p>
-                          )}
+                            {target.publishedAt && (
+                              <p className="text-xs text-slate-400 mt-2">
+                                Published:{" "}
+                                {dayjs.tz(target.publishedAt, userTimezone).format(
+                                  "MMM D, YYYY [at] h:mm A"
+                                )}
+                              </p>
+                            )}
                           {target.errorMessage && (
                             <div className="mt-2 rounded border border-rose-500/40 bg-rose-500/10 px-2 py-1">
                               <p className="text-xs text-rose-300">
@@ -376,25 +383,23 @@ export default function PostDetailsModal({
             </Button>
             
             {isAdmin && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="border-rose-500/50 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </Button>
-                <Button
-                  onClick={handleEdit}
-                  className="bg-lime-400 text-slate-900 hover:bg-lime-300"
-                >
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-              </>
+              <Button
+                variant="outline"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="border-rose-500/50 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
             )}
+            <Button
+              onClick={handleEdit}
+              className="bg-lime-400 text-slate-900 hover:bg-lime-300"
+            >
+              <Edit2 className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
           </div>
         )}
       </div>

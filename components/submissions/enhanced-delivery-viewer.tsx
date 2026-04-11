@@ -106,7 +106,24 @@ export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enha
       if (!res.downloadUrl) {
         throw new Error("Download not available.");
       }
-      window.open(res.downloadUrl, "_blank", "noopener");
+      
+      const response = await fetch(res.downloadUrl);
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new Error("Access Denied (403). Backend IAM user 'devkizito' lacks s3:GetObject permission.");
+        }
+        throw new Error("Network response was not ok");
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.fileName || "download";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to download file.";
       setError(message);
@@ -188,3 +205,6 @@ export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enha
     </>
   );
 }
+
+
+// test

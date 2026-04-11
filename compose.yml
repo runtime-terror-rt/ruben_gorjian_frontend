@@ -1,6 +1,6 @@
 services:
   web:
-    image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:latest
+    image: softvence/talexia_frontend:latest
     container_name: "Talexia-Frontend"
     env_file:
       - .env.production

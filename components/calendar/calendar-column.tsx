@@ -68,16 +68,21 @@ export const CalendarColumn = memo<CalendarColumnProps>(
     const [showAll, setShowAll] = useState(false);
 
     const postList = useMemo(() => {
+      const dateInTz = userTimezone ? getDate.tz(userTimezone) : getDate;
+      const targetDay = dateInTz.format("YYYY-MM-DD");
+      
       return posts.filter((post) => {
         const pDate = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
-        const check =
-          display === "day"
-            ? pDate.format("YYYY-MM-DD HH:mm") ===
-              getDate.format("YYYY-MM-DD HH:mm")
-            : display === "week"
-              ? pDate.isSame(getDate, "hour")
-              : pDate.isSame(getDate, "day");
-        return check;
+        
+        if (display === "day") {
+          return pDate.format("YYYY-MM-DD HH:mm") === dateInTz.format("YYYY-MM-DD HH:mm");
+        }
+        if (display === "week") {
+          return pDate.isSame(dateInTz, "hour");
+        }
+        
+        // Month view: compare YYYY-MM-DD strings for maximum reliability
+        return pDate.format("YYYY-MM-DD") === targetDay;
       });
     }, [posts, display, getDate, userTimezone]);
 
@@ -85,12 +90,14 @@ export const CalendarColumn = memo<CalendarColumnProps>(
     // Only block dates that are strictly in the past.
     const isBeforeNow = useMemo(() => {
       const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
+      const dateInTz = userTimezone ? getDate.tz(userTimezone) : getDate;
+      
       if (display === "month") {
-        // Block only days strictly before today
-        return getDate.startOf("day").isBefore(now.startOf("day"));
+        // Block only days strictly before today in the user's timezone
+        return dateInTz.startOf("day").isBefore(now.startOf("day"));
       }
-      // For day/week, block hours strictly before the current hour
-      return getDate.startOf("hour").isBefore(now.startOf("hour"));
+      // For day/week, block hours strictly before the current hour in the user's timezone
+      return dateInTz.startOf("hour").isBefore(now.startOf("hour"));
     }, [getDate, display, userTimezone]);
 
     const list = useMemo(() => {
