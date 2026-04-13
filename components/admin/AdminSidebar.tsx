@@ -95,6 +95,12 @@ export const NAV_SECTIONS: NavSection[] = [
         permission: "SUPPORT",           // ✅ fixed: was incorrectly "POST_MANAGE"
       },
       {
+        label: "FAQ",
+        href: "/admin/faq",
+        icon: BookOpen,
+        permission: "FAQ_MANAGE",
+      },
+      {
         label: "Case Studies",
         href: "/admin/case-studies",
         icon: BookOpen,
