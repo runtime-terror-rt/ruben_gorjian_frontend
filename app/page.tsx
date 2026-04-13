@@ -247,6 +247,14 @@ export default function HomePage() {
                 variant="outline"
                 className="rounded-full px-8"
               >
+                <Link href="/case-studies">Case Studies</Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-full px-8"
+              >
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>

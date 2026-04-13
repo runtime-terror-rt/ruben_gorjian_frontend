@@ -228,7 +228,7 @@ export default function AdminPostsPage() {
   };
 
   const extractUserIdFromPost = (post: any) => {
-    let id = post.owner?.id || post.user?.id || post.author?.id;
+    const id = post.owner?.id || post.user?.id || post.author?.id;
     if (id) return id;
 
     // Fallback: Extract from asset storage key or URL if backend omits the owner
