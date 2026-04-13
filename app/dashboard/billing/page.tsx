@@ -121,7 +121,7 @@ export default function BillingPage() {
       : null;
     
     // Exact price from plan object
-    let priceCents = plan.price > 0 ? plan.price : 0;
+    const priceCents = plan.price > 0 ? plan.price : 0;
     
     // If it's a yearly plan, we might want to show the monthly equivalent if the price is high
     const isYearly = plan.interval === "year";
