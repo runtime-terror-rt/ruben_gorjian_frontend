@@ -58,7 +58,8 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
 
     const params = new URLSearchParams({
       client_id: clientId,
-      redirect_uri: `${window.location.origin}/api/auth/google/callback`,
+      // redirect_uri: `${window.location.origin}/api/auth/google/callback`,
+      redirect_uri: "http://138.68.251.5.nip.io:4000/api/auth/google/callback",
       response_type: "code",
       scope: "email profile",
       access_type: "online",
