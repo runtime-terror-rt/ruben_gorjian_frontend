@@ -8,12 +8,14 @@ import { usePreventScroll } from "@/hooks/usePreventScroll";
 import { useSessionContext } from "@/context/SessionContext";
 import Image from "next/image";
 import logo from "@/components/assets/talexia_ai_logo.png";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Features", href: "/#features" },
   { label: "How it works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 function NavbarInner() {
@@ -58,16 +60,22 @@ function NavbarInner() {
           TALEXIA
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm text-[#4c4f5e] md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="transition hover:text-[#1c2231]"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-7 text-sm font-medium text-[#4c4f5e] md:flex">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "transition-all duration-200 hover:text-[#1c2231]",
+                  isActive ? "text-[#1c2231] font-bold" : "text-[#4c4f5e]"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -110,16 +118,24 @@ function NavbarInner() {
       {open ? (
         <div className="border-t border-[#e4e5ea] bg-[#f4f3ee] md:hidden">
           <nav className="mx-auto flex max-w-6xl flex-col px-4 py-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-2 py-3 text-sm font-medium text-[#363a49] transition hover:bg-white"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-lg px-2 py-3 text-sm font-medium transition-all duration-200",
+                    isActive 
+                      ? "bg-white text-[#1c2231] font-bold shadow-sm" 
+                      : "text-[#363a49] hover:bg-white/50"
+                  )}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
 
             {isAuthed ? (
               <Link
