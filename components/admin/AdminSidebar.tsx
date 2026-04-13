@@ -94,6 +94,12 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: MessageSquare,
         permission: "SUPPORT",           // ✅ fixed: was incorrectly "POST_MANAGE"
       },
+      {
+        label: "FAQ",
+        href: "/admin/faq",
+        icon: BookOpen,
+        permission: "FAQ_MANAGE",
+      },
     ],
   },
   {

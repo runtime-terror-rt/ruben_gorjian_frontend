@@ -24,6 +24,9 @@ function NavbarInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isAuthed = Boolean(session);
+  const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
+  const dashboardHref = isAdmin ? "/admin" : "/dashboard";
+  const dashboardLabel = isAdmin ? "Admin Panel" : "Dashboard";
 
   usePreventScroll(open);
 
@@ -81,22 +84,22 @@ function NavbarInner() {
         <div className="hidden items-center gap-3 md:flex">
           {isAuthed ? (
             <Link
-              href="/dashboard"
-              className="text-sm font-medium text-[#4c4f5e]"
+              href={dashboardHref}
+              className="text-sm font-medium text-[#4c4f5e] cursor-pointer"
             >
-              Dashboard
+              {dashboardLabel}
             </Link>
           ) : (
             <Link
               href={getLoginUrl()}
-              className="text-sm font-medium text-[#4c4f5e]"
+              className="text-sm font-medium text-[#4c4f5e] cursor-pointer"
             >
               Sign in
             </Link>
           )}
           <Link
             href="/pricing"
-            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600"
+            className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600 cursor-pointer"
             // className="rounded-full bg-[#D25FFD] px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600"
             // className="rounded-full bg-indigo-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600"
             // className="rounded-full bg-[#ff5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e84f33]"
@@ -139,16 +142,16 @@ function NavbarInner() {
 
             {isAuthed ? (
               <Link
-                href="/dashboard"
-                className="mt-2 rounded-full border border-[#d4d8e5] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1e2333]"
+                href={dashboardHref}
+                className="mt-2 rounded-full border border-[#d4d8e5] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1e2333] cursor-pointer"
                 onClick={() => setOpen(false)}
               >
-                Dashboard
+                {dashboardLabel}
               </Link>
             ) : (
               <Link
                 href={getLoginUrl()}
-                className="mt-2 rounded-full border border-[#d4d8e5] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1e2333]"
+                className="mt-2 rounded-full border border-[#d4d8e5] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1e2333] cursor-pointer"
                 onClick={() => setOpen(false)}
               >
                 Sign in
@@ -157,7 +160,7 @@ function NavbarInner() {
 
             <Link
               href="/pricing"
-              className="mt-2 rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-white"
+              className="mt-2 rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-white cursor-pointer"
               // className="mt-2 rounded-full bg-[#D25FFD] px-4 py-2.5 text-center text-sm font-semibold text-white"
               // className="mt-2 rounded-full bg-indigo-800 px-4 py-2.5 text-center text-sm font-semibold text-white"
               // className="mt-2 rounded-full bg-[#ff5a3d] px-4 py-2.5 text-center text-sm font-semibold text-white"
