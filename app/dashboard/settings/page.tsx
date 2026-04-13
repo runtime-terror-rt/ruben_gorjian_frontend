@@ -489,6 +489,11 @@ export default function SettingsPage() {
                 </Button>
               </div>
 
+              {/* Success / Error messages shown outside the collapsible form */}
+              {!showPwForm && pwMessage && (
+                <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
+              )}
+
               {showPwForm && (
                 <div className="space-y-3 pt-2 border-t border-slate-800">
                   {pwError && <p className="text-xs text-red-400">{pwError}</p>}
