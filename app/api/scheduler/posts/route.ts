@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get("token")?.value;
 
     let body: any;
-    let headers: Record<string, string> = {
+    const headers: Record<string, string> = {
       ...(token ? { Cookie: `token=${token}` } : {}),
     };
 
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers,
       body,
-      // @ts-ignore - duplex is required for streaming request bodies in new fetch
+      // @ts-expect-error - duplex is required for streaming request bodies in new fetch
       duplex: 'half',
     });
 
