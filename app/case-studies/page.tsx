@@ -1,29 +1,23 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Suspense, useMemo, useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import {
-  ChevronLeft,
-  ChevronRight,
   Image as ImageIcon,
   MapPin,
   Play,
   Loader2,
+  Maximize2,
+  X,
 } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import Navbar from "@/components/navbar";
 import FooterSecondary from "@/components/footer-secondary";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type CaseStudy = {
   id: string;
@@ -54,8 +48,12 @@ function getStringArray(input: unknown): string[] {
     const trimmed = input.trim();
     if (!trimmed) return [];
     if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
-      const parsed = JSON.parse(trimmed);
-      return Array.isArray(parsed) ? parsed.map(String).filter(Boolean) : [];
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed) ? parsed.map(String).filter(Boolean) : [];
+      } catch {
+        return [];
+      }
     }
     return trimmed
       .split(",")
@@ -98,84 +96,79 @@ function normalizeUserList(data: any): { items: CaseStudy[]; total: number; page
   return { items, total, pages };
 }
 
-function MediaCarousel({
+function FullWidthMediaGrid({
   images,
-  videoUrl,
+  onImageClick,
 }: {
   images: string[];
-  videoUrl: string | null;
+  onImageClick?: (url: string) => void;
 }) {
-  const [idx, setIdx] = useState(0);
-  const hasImages = images.length > 0;
-  const canPrev = idx > 0;
-  const canNext = idx < images.length - 1;
+  const mediaCount = images.length;
 
-  if (!hasImages && !videoUrl) {
+  if (mediaCount === 0) return null;
+
+  const renderMedia = (url: string, className: string, isLast?: boolean, count?: number) => {
     return (
-      <div className="h-[260px] sm:h-[340px] bg-[#f6f7fb] border border-[#e4e5ea] rounded-2xl flex items-center justify-center">
-        <div className="flex items-center gap-2 text-[#6b7280]">
-          <ImageIcon className="h-5 w-5" />
-          No media
+      <div 
+        key={url} 
+        className={cn("relative group overflow-hidden cursor-pointer bg-[#f3f4f6]", className)}
+        onClick={() => onImageClick?.(url)}
+      >
+        <img src={url} alt="" className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" loading="lazy" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
+        {isLast && count && count > 0 && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-[2px]">
+            <span className="text-white text-3xl font-black">+{count}</span>
+          </div>
+        )}
       </div>
     );
-  }
-
-  if (!hasImages && videoUrl) {
-    return (
-      <div className="relative overflow-hidden rounded-2xl border border-[#e4e5ea] bg-black">
-        <video
-          controls
-          playsInline
-          className="w-full h-[260px] sm:h-[340px] object-contain"
-          src={videoUrl}
-        />
-      </div>
-    );
-  }
+  };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[#e4e5ea] bg-white">
-      <img
-        src={images[idx]}
-        alt=""
-        className="w-full h-[260px] sm:h-[340px] object-cover"
-        loading="lazy"
-      />
-      {images.length > 1 && (
-        <>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            className={cn(
-              "absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-[#1c2231] border border-[#e4e5ea] shadow-sm",
-              !canPrev && "opacity-40 pointer-events-none",
-            )}
-            onClick={() => setIdx((p) => Math.max(0, p - 1))}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            className={cn(
-              "absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-[#1c2231] border border-[#e4e5ea] shadow-sm",
-              !canNext && "opacity-40 pointer-events-none",
-            )}
-            onClick={() => setIdx((p) => Math.min(images.length - 1, p + 1))}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/80 text-[10px] font-black tracking-widest uppercase text-[#1c2231] border border-[#e4e5ea]">
-            {idx + 1} / {images.length}
-          </div>
-        </>
+    <div className="w-full bg-[#f8f9fc] border-y border-[#e4e5ea]">
+      {mediaCount === 1 && (
+        <div className="h-[400px] sm:h-[600px]">
+          {renderMedia(images[0], "h-full w-full")}
+        </div>
       )}
-      {videoUrl && (
-        <div className="absolute top-2 right-2 px-3 py-1 rounded-full bg-white/80 text-[10px] font-black tracking-widest uppercase text-[#1c2231] inline-flex items-center gap-2 border border-[#e4e5ea]">
-          <Play className="h-3 w-3" /> Video inside
+
+      {mediaCount === 2 && (
+        <div className="grid grid-cols-2 gap-[2px] h-[300px] sm:h-[500px]">
+          {images.map((m) => renderMedia(m, "h-full w-full"))}
+        </div>
+      )}
+
+      {mediaCount === 3 && (
+        <div className="grid grid-cols-12 gap-[2px] h-[400px] sm:h-[600px]">
+          <div className="col-span-8 h-full">
+            {renderMedia(images[0], "h-full w-full")}
+          </div>
+          <div className="col-span-4 grid grid-rows-2 gap-[2px] h-full">
+            {images.slice(1, 3).map((m) => renderMedia(m, "h-full w-full"))}
+          </div>
+        </div>
+      )}
+
+      {mediaCount === 4 && (
+        <div className="grid grid-cols-2 grid-rows-2 gap-[2px] h-[400px] sm:h-[600px]">
+          {images.map((m) => renderMedia(m, "h-full w-full"))}
+        </div>
+      )}
+
+      {mediaCount >= 5 && (
+        <div className="grid grid-cols-12 grid-rows-2 gap-[2px] h-[400px] sm:h-[600px]">
+          <div className="col-span-8 row-span-2 h-full">
+            {renderMedia(images[0], "h-full w-full")}
+          </div>
+          <div className="col-span-4 h-full">
+            {renderMedia(images[1], "h-full w-full")}
+          </div>
+          <div className="col-span-4 h-full">
+            {renderMedia(images[2], "h-full w-full", mediaCount > 3, mediaCount - 3)}
+          </div>
         </div>
       )}
     </div>
@@ -183,289 +176,272 @@ function MediaCarousel({
 }
 
 export default function CaseStudiesPage() {
-  const [page, setPage] = useState(1);
   const limit = 10;
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<CaseStudy | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
-  const query = useQuery({
-    queryKey: ["case-studies", page, limit],
-    queryFn: async () => {
-      const data = await apiGet<any>(`/api/case-studies?page=${page}&limit=${limit}`);
-      return normalizeUserList(data);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: ["case-studies", limit],
+    queryFn: async ({ pageParam = 1 }) => {
+      const resp = await apiGet<any>(`/api/case-studies?page=${pageParam}&limit=${limit}`);
+      return normalizeUserList(resp);
     },
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.pages ? nextPage : undefined;
+    },
+    initialPageParam: 1,
   });
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
   const activeItems = useMemo(() => {
-    const items = query.data?.items ?? [];
+    const items = data?.pages.flatMap((p) => p.items) ?? [];
     return items
       .filter((cs) => {
         const status = cs.status ? String(cs.status).toUpperCase() : cs.isActive ? "ACTIVE" : "INACTIVE";
         return status === "ACTIVE";
       })
       .sort((a, b) => Number(a.displayOrder ?? 0) - Number(b.displayOrder ?? 0));
-  }, [query.data?.items]);
+  }, [data]);
 
   return (
-    <main className="min-h-screen bg-white text-[#1f2230]">
+    <main className="min-h-screen bg-[#fcfcfd] text-[#1f2230]">
       <Suspense fallback={null}>
         <Navbar />
       </Suspense>
 
-      <section className="px-4 py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto space-y-10">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#1c2231]">
-            Case <span className="text-accent">Studies</span>
-          </h1>
-          <p className="text-[#4c4f5e] text-sm sm:text-base max-w-2xl">
-            Real campaigns and production cycles. Scroll like a social feed to explore media and outcomes.
-          </p>
-        </div>
-
-        {query.isLoading ? (
-          <div className="flex items-center justify-center py-20 gap-3 text-[#4c4f5e]">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            Loading case studies...
+      <section className="px-4 py-12 sm:py-24">
+        <div className="max-w-4xl mx-auto space-y-20">
+          <div className="flex flex-col gap-3 text-center sm:text-left border-l-4 border-accent pl-6 py-2">
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-[#1c2231]">
+              Execution <span className="text-accent underline decoration-accent/10 underline-offset-8">Insight</span>
+            </h1>
+            <p className="text-[#6b7280] text-sm sm:text-lg max-w-2xl font-bold tracking-tight mt-2 italic opacity-80">
+              Transforming complex campaigns into predictable, high-performance production cycles.
+            </p>
           </div>
-        ) : activeItems.length === 0 ? (
-          <div className="rounded-3xl border border-[#e4e5ea] bg-[#fbfbfe] p-10 text-center">
-            <div className="text-[#1c2231] font-bold">No case studies available</div>
-            <div className="text-[#6b7280] text-sm mt-1">
-              When new case studies go live, they will appear here.
+
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-32 gap-6 text-[#4c4f5e]">
+              <Loader2 className="h-12 w-12 animate-spin text-accent" />
+              <p className="font-black tracking-[0.4em] uppercase text-[10px]">Assembling Visual Intelligence</p>
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {activeItems.map((cs) => {
-              const logoUrl = cs.logoUrl || getMediaUrl(cs.logo);
-              const imageUrls = Array.isArray(cs.images)
-                ? cs.images.map(getMediaUrl).filter(Boolean) as string[]
-                : [];
-              const videoUrl = cs.videoUrl || getMediaUrl(cs.video);
-              const services = getStringArray(cs.services);
+          ) : activeItems.length === 0 ? (
+            <div className="rounded-[3rem] border border-[#e4e5ea] bg-white p-20 text-center shadow-2xl shadow-indigo-500/5">
+              <div className="text-[#1c2231] font-black text-2xl">The feed is currently silent</div>
+              <div className="text-[#6b7280] text-base mt-2 max-w-sm mx-auto font-medium">
+                Our latest production narratives are being processed and will appear here shortly.
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-24 sm:gap-40">
+              {activeItems.map((cs) => {
+                const logoUrl = cs.logoUrl || getMediaUrl(cs.logo);
+                const imageUrls = Array.isArray(cs.images)
+                  ? cs.images.map(getMediaUrl).filter(Boolean) as string[]
+                  : [];
+                const videoUrl = cs.videoUrl || getMediaUrl(cs.video);
+                const services = getStringArray(cs.services);
+                const structureItems = getStringArray(cs.structureItems);
 
-              return (
-                <Card
-                  key={cs.id}
-                  className="border-[#e4e5ea] bg-white rounded-3xl overflow-hidden shadow-[0_20px_70px_rgba(10,20,60,0.12)]"
-                >
-                  <CardHeader className="p-5 border-b border-[#e4e5ea] bg-[#fbfbfe]">
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-2xl border border-[#e4e5ea] bg-white overflow-hidden flex items-center justify-center flex-shrink-0">
-                        {logoUrl ? (
-                          <img src={logoUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
-                        ) : (
-                          <ImageIcon className="h-5 w-5 text-[#9ca3af]" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-3">
-                          <h2 className="text-[#1c2231] font-black text-lg truncate">
-                            {cs.title || "Untitled Case Study"}
-                          </h2>
-                          {typeof cs.displayOrder === "number" && (
-                            <Badge className="rounded-full bg-accent/10 text-accent border border-accent/20">
-                              #{cs.displayOrder}
-                            </Badge>
-                          )}
-                        </div>
-                        {cs.location && (
-                          <div className="mt-1 text-xs text-[#6b7280] flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            <span className="truncate">{cs.location}</span>
-                          </div>
-                        )}
-                        {cs.tagline && (
-                          <div className="mt-2 text-sm text-[#363a49] leading-relaxed">
-                            {cs.tagline}
-                          </div>
-                        )}
-                        {services.length > 0 && (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {services.slice(0, 6).map((s, idx) => (
-                              <span
-                                key={`${s}-${idx}`}
-                                className="px-2 py-1 rounded-full bg-[#eef0f6] text-[#1c2231] text-[10px] font-black tracking-widest uppercase"
-                              >
-                                {s}
-                              </span>
-                            ))}
-                            {services.length > 6 && (
-                              <span className="px-2 py-1 rounded-full bg-[#eef0f6] text-[#6b7280] text-[10px] font-black tracking-widest uppercase">
-                                +{services.length - 6}
-                              </span>
+                return (
+                  <Card
+                    key={cs.id}
+                    className="group border-none bg-transparent rounded-none overflow-visible shadow-none relative"
+                  >
+                    <CardHeader className="p-0 mb-8 sm:mb-12">
+                      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b-2 border-[#f0f2f8] pb-8">
+                        <div className="flex items-center gap-6">
+                          <div className="h-20 w-20 rounded-[2rem] border-2 border-[#e4e5ea] bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-lg group-hover:border-accent transition-colors duration-500">
+                            {logoUrl ? (
+                              <img src={logoUrl} alt="" className="h-full w-full object-cover scale-110" loading="lazy" />
+                            ) : (
+                              <ImageIcon className="h-7 w-7 text-[#9ca3af]" />
                             )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="p-5 space-y-4">
-                    <MediaCarousel images={imageUrls} videoUrl={videoUrl} />
-
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="text-xs text-[#6b7280] font-semibold">
-                        {cs.updatedAt ? `Updated ${dayjs(cs.updatedAt).format("MMM D, YYYY")}` : ""}
-                      </div>
-                      <Button
-                        onClick={() => {
-                          setSelected(cs);
-                          setOpen(true);
-                        }}
-                        className="bg-accent text-white hover:bg-indigo-600 font-black tracking-widest uppercase"
-                      >
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <Button
-            variant="outline"
-            className="border-[#d4d8e5]"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-          >
-            Prev
-          </Button>
-          <div className="text-xs text-[#6b7280] font-semibold">
-            Page <span className="text-[#1c2231]">{page}</span>
-          </div>
-          <Button
-            variant="outline"
-            className="border-[#d4d8e5]"
-            onClick={() => setPage((p) => p + 1)}
-            disabled={(query.data?.pages ?? 1) > 1 ? page >= (query.data?.pages ?? 1) : false}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-      </section>
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-5xl bg-white border-[#e4e5ea] p-0 overflow-hidden">
-          <DialogHeader>
-            <div className="px-6 pt-6 pb-4 border-b border-[#e4e5ea] bg-[#fbfbfe]">
-              <DialogTitle className="text-[#1c2231] text-xl sm:text-2xl font-black">
-                {selected?.title || "Case Study"}
-              </DialogTitle>
-              {selected?.location && (
-                <div className="mt-2 text-sm text-[#6b7280] flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  {selected.location}
-                </div>
-              )}
-            </div>
-          </DialogHeader>
-          {selected && (
-            <div className="max-h-[75vh] overflow-y-auto px-6 py-6 space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                <div className="space-y-4">
-                  <div className="rounded-3xl border border-[#e4e5ea] bg-white p-5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-[11px] text-[#6b7280] font-black tracking-[0.22em] uppercase">
-                        Overview
-                      </div>
-                      {typeof selected.displayOrder === "number" && (
-                        <Badge className="rounded-full bg-accent/10 text-accent border border-accent/20">
-                          #{selected.displayOrder}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="mt-3 text-sm sm:text-base text-[#363a49] leading-relaxed">
-                      {selected.tagline || "—"}
-                    </div>
-                    {(selected.videoTitle || selected.cycleTitle) && (
-                      <div className="mt-4 text-xs text-[#6b7280] font-semibold">
-                        {selected.videoTitle ? `Video: ${selected.videoTitle}` : ""}
-                        {selected.videoTitle && selected.cycleTitle ? " • " : ""}
-                        {selected.cycleTitle ? `Cycle: ${selected.cycleTitle}` : ""}
-                      </div>
-                    )}
-                    {selected.updatedAt && (
-                      <div className="mt-2 text-xs text-[#9ca3af] font-semibold">
-                        Updated {dayjs(selected.updatedAt).format("MMM D, YYYY")}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="rounded-3xl border border-[#e4e5ea] bg-white p-5">
-                    <div className="text-[11px] text-[#6b7280] font-black tracking-[0.22em] uppercase">
-                      Services
-                    </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {getStringArray(selected.services).length === 0 ? (
-                        <span className="text-sm text-[#9ca3af]">—</span>
-                      ) : (
-                        getStringArray(selected.services).map((s, idx) => (
-                          <span
-                            key={`${s}-${idx}`}
-                            className="px-3 py-1 rounded-full bg-[#eef0f6] text-[#1c2231] text-[10px] font-black tracking-widest uppercase"
-                          >
-                            {s}
-                          </span>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl border border-[#e4e5ea] bg-white p-5">
-                  <div className="text-[11px] text-[#6b7280] font-black tracking-[0.22em] uppercase">
-                    {selected.structureTitle || "Production Structure"}
-                  </div>
-                  <div className="mt-4 space-y-3">
-                    {getStringArray(selected.structureItems).length === 0 ? (
-                      <div className="text-sm text-[#9ca3af]">—</div>
-                    ) : (
-                      getStringArray(selected.structureItems).map((it, idx) => (
-                        <div
-                          key={`${it}-${idx}`}
-                          className="flex items-start gap-3 rounded-2xl border border-[#e4e5ea] bg-[#fbfbfe] p-4"
-                        >
-                          <div className="h-8 w-8 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-[11px] font-black text-accent flex-shrink-0">
-                            {idx + 1}
-                          </div>
-                          <div className="text-sm sm:text-base text-[#1c2231] font-semibold leading-snug">
-                            {it}
+                          <div>
+                             <div className="flex items-center gap-3 mb-1">
+                                <h2 className="text-[#1c2231] font-black text-2xl sm:text-4xl tracking-tighter leading-none">
+                                  {cs.title || "Project Alpha"}
+                                </h2>
+                                {typeof cs.displayOrder === "number" && (
+                                  <span className="text-accent/40 font-black text-3xl sm:text-5xl italic tracking-tighter leading-none ml-2">
+                                    0{cs.displayOrder}
+                                  </span>
+                                )}
+                             </div>
+                            {cs.location && (
+                              <div className="text-xs text-[#9ca3af] font-black flex items-center gap-2 uppercase tracking-[0.2em] mt-2">
+                                <div className="h-1.5 w-1.5 rounded-full bg-accent" />
+                                {cs.location}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
+                      </div>
+                    </CardHeader>
 
-              <div className="rounded-3xl border border-[#e4e5ea] bg-white p-5">
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="text-[11px] text-[#6b7280] font-black tracking-[0.22em] uppercase">
-                    Media
-                  </div>
-                  <div className="text-xs text-[#9ca3af] font-semibold">
-                    {Array.isArray(selected.images) ? `${selected.images.length} images` : ""}
-                  </div>
-                </div>
-                <MediaCarousel
-                  images={
-                    Array.isArray(selected.images)
-                      ? (selected.images.map(getMediaUrl).filter(Boolean) as string[])
-                      : []
-                  }
-                  videoUrl={selected.videoUrl || getMediaUrl(selected.video)}
-                />
+                    <CardContent className="p-0 space-y-12 sm:space-y-16">
+                      
+                      {/* 1. NARRATIVE SECTION */}
+                      <div className="space-y-6 px-2 sm:px-0">
+                        <div className="flex items-center gap-4 text-accent">
+                            <div className="h-px w-10 bg-accent" />
+                            <div className="text-[10px] font-black tracking-[0.5em] uppercase">Executive Narrative</div>
+                        </div>
+                        <p className="text-[#1c2231] text-xl sm:text-4xl leading-[1.2] font-black tracking-tight max-w-[90%]">
+                          {cs.tagline || "Engineered for high-frequency execution and strategic brand expansion."}
+                        </p>
+                      </div>
+
+                      {/* 2. INTEL GRID */}
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-20 px-2 sm:px-0">
+                         {/* Services */}
+                         <div className="lg:col-span-4 space-y-6">
+                             <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.3em] uppercase opacity-60">Services Integrated</div>
+                             <div className="flex flex-wrap gap-2">
+                                {services.length === 0 ? (
+                                    <div className="text-sm font-bold opacity-30 italic">Syncing Intel...</div>
+                                ) : (
+                                    services.map((s, idx) => (
+                                    <span
+                                        key={`${s}-${idx}`}
+                                        className="px-4 py-2 rounded-xl bg-[#f0f2f8] text-[#1c2231] text-[10px] font-black tracking-[0.1em] uppercase border border-[#e4e5ea]"
+                                    >
+                                        {s}
+                                    </span>
+                                    ))
+                                )}
+                            </div>
+                         </div>
+
+                         {/* Pipeline */}
+                         <div className="lg:col-span-8 space-y-6">
+                            <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.3em] uppercase opacity-60">Production Pipeline</div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
+                                {structureItems.length === 0 ? (
+                                <div className="text-sm font-bold opacity-30 italic">Building Architecture...</div>
+                                ) : (
+                                structureItems.map((it, idx) => (
+                                    <div key={`${it}-${idx}`} className="flex items-start gap-4 border-l border-[#e4e5ea] pl-6 py-1">
+                                        <span className="text-accent font-black text-xs">0{idx + 1}</span>
+                                        <div className="text-sm sm:text-base text-[#363a49] font-bold leading-tight">
+                                            {it}
+                                        </div>
+                                    </div>
+                                ))
+                                )}
+                            </div>
+                         </div>
+                      </div>
+
+                      {/* 3. FULL WIDTH IMAGE GRID */}
+                      {imageUrls.length > 0 && (
+                        <div className="space-y-4">
+                            <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.3em] uppercase flex items-center gap-4 px-2 sm:px-0">
+                              <span className="shrink-0">Production Assets</span>
+                              <div className="h-px w-full bg-[#f0f2f8]" />
+                            </div>
+                            <FullWidthMediaGrid images={imageUrls} onImageClick={setLightboxImage} />
+                        </div>
+                      )}
+
+                      {/* 4. VIDEO PLAYER - CINEMATIC SCALE */}
+                      {videoUrl && (
+                        <div className="space-y-6 px-2 sm:px-0">
+                          <div className="flex items-center gap-4 text-accent">
+                            <div className="h-px w-10 bg-accent" />
+                            <div className="text-[10px] font-black tracking-[0.5em] uppercase">Core Sync</div>
+                          </div>
+                          <div className="rounded-[2.5rem] sm:rounded-[4rem] overflow-hidden border-4 border-[#f0f2f8] bg-black shadow-2xl aspect-video relative group transition-all duration-500 hover:border-accent/20">
+                            <video src={videoUrl} controls playsInline className="w-full h-full object-contain" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 5. FOOTER SYNC */}
+                      <div className="pt-12 border-t border-[#f0f2f8] flex items-center justify-between px-2 sm:px-0">
+                         <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.4em] uppercase opacity-50">
+                            Execution Ref: {cs.updatedAt ? dayjs(cs.updatedAt).format("YYYY-MM-DD") : "SYNC_PENDING"}
+                         </div>
+                         <div className="flex items-center gap-4">
+                           <span className="text-[9px] text-[#9ca3af] font-black tracking-[0.3em] uppercase">Authenticity Verified</span>
+                           <div className="h-4 w-4 rounded-full border border-accent/30 flex items-center justify-center">
+                              <div className="h-1.5 w-1.5 rounded-full bg-accent animate-ping" />
+                           </div>
+                         </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
+          <div 
+            ref={loadMoreRef} 
+            className="flex flex-col items-center justify-center py-20 gap-4"
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Loader2 className="h-10 w-10 animate-spin text-accent" />
+                <p className="text-[10px] font-black tracking-[0.5em] uppercase text-[#4c4f5e]">Next Narrative Syncing</p>
+              </>
+            ) : hasNextPage ? (
+              <p className="text-[10px] text-[#9ca3af] font-black tracking-[0.5em] uppercase opacity-40">Reveal Further Insights</p>
+            ) : activeItems.length > 0 ? (
+              <div className="flex flex-col items-center gap-8 w-full opacity-20 px-10">
+                <div className="h-20 w-px bg-gradient-to-b from-[#e4e5ea] to-transparent" />
+                <p className="text-[10px] text-[#9ca3af] font-black tracking-[0.6em] uppercase whitespace-nowrap">Narrative Stream Concluded</p>
               </div>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      {/* Lightbox for full image viewing */}
+      <Dialog open={!!lightboxImage} onOpenChange={() => setLightboxImage(null)}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-transparent border-none overflow-hidden flex items-center justify-center">
+          {lightboxImage && (
+            <div className="relative w-full h-full flex items-center justify-center p-4">
+               <button 
+                onClick={() => setLightboxImage(null)}
+                className="absolute top-4 right-4 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors"
+               >
+                 <X className="h-6 w-6" />
+               </button>
+               <img 
+                src={lightboxImage} 
+                alt="Full preview" 
+                className="w-full h-full object-contain rounded-2xl shadow-2xl" 
+               />
             </div>
           )}
         </DialogContent>
       </Dialog>
+
       <FooterSecondary />
     </main>
   );

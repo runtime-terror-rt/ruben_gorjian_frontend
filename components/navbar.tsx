@@ -47,15 +47,12 @@ function NavbarInner() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#e4e5ea] bg-white backdrop-blur">
-      {/* <header className="sticky top-0 z-40 border-b border-[#e4e5ea] bg-[#f4f3ee]/95 backdrop-blur"> */}
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-sm font-semibold tracking-[0.22em] text-[#1c2231]"
         >
           <Image
-            // src={logo}
-            // src="/talexia_ai_logo.png"
             src={logo}
             alt="Talexia"
             width={40}
@@ -66,17 +63,25 @@ function NavbarInner() {
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-[#4c4f5e] md:flex">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname?.startsWith(item.href) &&
+                  (item.href.length > 1 || pathname === "/");
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "transition-all duration-200 hover:text-[#1c2231]",
+                  "relative py-1 transition-all duration-200 hover:text-[#1c2231]",
                   isActive ? "text-[#1c2231] font-bold" : "text-[#4c4f5e]"
                 )}
               >
                 {item.label}
+                {isActive && (
+                  <span className="absolute -bottom-1.5 left-0 h-[2px] w-full rounded-full bg-accent" />
+                )}
               </Link>
             );
           })}
@@ -101,9 +106,6 @@ function NavbarInner() {
           <Link
             href="/pricing"
             className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600 cursor-pointer"
-            // className="rounded-full bg-[#D25FFD] px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600"
-            // className="rounded-full bg-indigo-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-600"
-            // className="rounded-full bg-[#ff5a3d] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e84f33]"
           >
             Get started
           </Link>
@@ -123,20 +125,26 @@ function NavbarInner() {
         <div className="border-t border-[#e4e5ea] bg-[#f4f3ee] md:hidden">
           <nav className="mx-auto flex max-w-6xl flex-col px-4 py-4">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname?.startsWith(item.href) &&
+                    (item.href.length > 1 || pathname === "/");
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "rounded-lg px-2 py-3 text-sm font-medium transition-all duration-200",
-                    isActive 
-                      ? "bg-white text-[#1c2231] font-bold shadow-sm" 
+                    "rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center justify-between",
+                    isActive
+                      ? "bg-white text-accent font-bold shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#e4e5ea]"
                       : "text-[#363a49] hover:bg-white/50"
                   )}
                   onClick={() => setOpen(false)}
                 >
                   {item.label}
+                  {isActive && <div className="h-1.5 w-1.5 rounded-full bg-accent" />}
                 </Link>
               );
             })}
@@ -162,9 +170,6 @@ function NavbarInner() {
             <Link
               href="/pricing"
               className="mt-2 rounded-full bg-accent px-4 py-2.5 text-center text-sm font-semibold text-white cursor-pointer"
-              // className="mt-2 rounded-full bg-[#D25FFD] px-4 py-2.5 text-center text-sm font-semibold text-white"
-              // className="mt-2 rounded-full bg-indigo-800 px-4 py-2.5 text-center text-sm font-semibold text-white"
-              // className="mt-2 rounded-full bg-[#ff5a3d] px-4 py-2.5 text-center text-sm font-semibold text-white"
               onClick={() => setOpen(false)}
             >
               Get started
