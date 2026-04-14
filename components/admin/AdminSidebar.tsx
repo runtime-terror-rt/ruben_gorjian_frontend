@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -86,24 +87,25 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Submissions",
         href: "/admin/submissions",
         icon: FileText,
-        permission: "SCHEDULE_MANAGE",
+        permission: "SUBMISSIONS",
       },
       {
         label: "Support System",
         href: "/admin/support-system",
         icon: MessageSquare,
-        permission: "SUPPORT",           // ✅ fixed: was incorrectly "POST_MANAGE"
+        permission: "SUPPORT",
       },
       {
         label: "FAQ",
         href: "/admin/faq",
         icon: BookOpen,
-        permission: "FAQ_MANAGE",
+        permission: "FAQ",
       },
       {
         label: "Case Studies",
         href: "/admin/case-studies",
         icon: BookOpen,
+        permission: "CASE_STUDIES",
       },
     ],
   },
@@ -200,7 +202,7 @@ export function AdminSidebar({
           <div className="flex h-full flex-col min-h-0">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
-              <div className="flex items-center gap-2">
+              <Link href="/" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
                 <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center">
                   <span className="text-sm font-bold text-slate-900">T</span>
                 </div>
@@ -208,7 +210,7 @@ export function AdminSidebar({
                   <div className="text-sm font-semibold text-white">Talexia</div>
                   <div className="text-xs text-slate-400">Admin Panel</div>
                 </div>
-              </div>
+              </Link>
               <button
                 onClick={onClose}
                 className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -310,7 +312,7 @@ export function AdminSidebar({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 p-4 h-16 flex-shrink-0">
         {!isCollapsed ? (
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
             <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-bold text-slate-900">T</span>
             </div>
@@ -318,11 +320,11 @@ export function AdminSidebar({
               <div className="text-sm font-semibold text-white truncate">Talexia</div>
               <div className="text-xs text-slate-400 truncate">Admin Panel</div>
             </div>
-          </div>
+          </Link>
         ) : (
-          <div className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center">
+          <Link href="/" className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center hover:opacity-80 transition-opacity">
             <span className="text-sm font-bold text-slate-900">T</span>
-          </div>
+          </Link>
         )}
         {!isCollapsed && (
           <button

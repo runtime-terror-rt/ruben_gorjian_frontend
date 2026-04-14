@@ -80,11 +80,11 @@ export default function DeleteConfirmationModal({
              </p>
           </div>
 
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <DialogFooter className="gap-4">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 h-12 rounded-2xl order-2 sm:order-1"
+              className="flex-1 border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black h-14 rounded-2xl order-2 sm:order-1 transition-all hover:scale-105 active:scale-95"
             >
               Cancel
             </Button>
@@ -92,7 +92,7 @@ export default function DeleteConfirmationModal({
               variant="destructive"
               onClick={handleConfirm}
               disabled={isDeleting}
-              className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold h-12 rounded-2xl shadow-lg shadow-rose-600/20 order-1 sm:order-2"
+              className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] order-1 sm:order-2 transition-all hover:scale-105 active:scale-95 border-none"
             >
               {isDeleting ? (
                 <div className="flex items-center gap-2">
