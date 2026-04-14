@@ -39,6 +39,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
     if (isAdmin && !isOnLoginPage) {
       // Find what permission the current route requires
+      const isSuperAdmin = session?.role === "SUPER_ADMIN";
       const userPermissions = session?.permissions || [];
       let requiredPermission: string | undefined;
 
@@ -55,11 +56,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       }
 
       // If route requires a permission and user doesn't have it
-      if (requiredPermission && !userPermissions.includes(requiredPermission)) {
+      // SUPER_ADMIN skips this check completely
+      if (requiredPermission && !isSuperAdmin && !userPermissions.includes(requiredPermission)) {
         // Find the first route they DO have access to
         let firstAccessibleRoute: string | null = null;
         for (const section of NAV_SECTIONS) {
-          const item = section.items.find(i => !i.permission || userPermissions.includes(i.permission));
+          const item = section.items.find(i => 
+            !i.permission || 
+            isSuperAdmin || 
+            userPermissions.includes(i.permission)
+          );
           if (item) {
             firstAccessibleRoute = item.href;
             break;

@@ -11,6 +11,8 @@ import {
   RefreshCcw,
   Send,
   Clock,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -98,6 +100,13 @@ export default function AdminPostsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil((posts || []).length / itemsPerPage);
+  const currentPosts = (posts || []).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
   const [socialAccounts, setSocialAccounts] = useState<any[]>([]);
@@ -133,6 +142,7 @@ export default function AdminPostsPage() {
       });
       
       setPosts(syncedItems);
+      setCurrentPage(1); // Reset to first page on refresh
     } catch (err: any) {
       console.error("Error fetching posts:", err);
       setError(err.message);
@@ -144,7 +154,7 @@ export default function AdminPostsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userTimezone, toast]);
 
   useEffect(() => {
     fetchPosts();
@@ -513,26 +523,26 @@ export default function AdminPostsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading && posts.length === 0 ? (
+              {loading && (posts || []).length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-48 text-center">
+                  <TableCell colSpan={8} className="h-48 text-center">
                     <div className="flex flex-col items-center gap-2 text-slate-500">
                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
                       Loading posts...
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : posts.length === 0 ? (
+              ) : (posts || []).length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="h-48 text-center text-slate-500"
                   >
                     No posts found.
                   </TableCell>
                 </TableRow>
               ) : (
-                posts.map((post: any) => {
+                currentPosts.map((post: any) => {
                   let mediaUrl = null;
                   if (post.asset?.storageKey) {
                     mediaUrl = buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey);
@@ -699,6 +709,38 @@ export default function AdminPostsPage() {
             </TableBody>
           </Table>
         </CardContent>
+
+        {/* ── Pagination Footer ── */}
+        {(posts || []).length > itemsPerPage && (
+          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
+            <div className="text-xs text-slate-500 font-medium">
+              Showing {(posts || []).length} records
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                className="bg-slate-900 border-slate-800 h-8 px-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-xs text-slate-400 px-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                className="bg-slate-900 border-slate-800 h-8 px-2"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
 
       <PostDetailsModal

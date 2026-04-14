@@ -610,9 +610,10 @@ export default function AdminManagementPage() {
 
             {/* ── Pagination Footer ── */}
             {data && data.totalPages > 0 && (
-              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6">
+              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 bg-slate-950/20">
+                
                 {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
+                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
                   Showing page{" "}
                   <span className="text-slate-300 font-black">{page}</span> of{" "}
                   <span className="text-slate-300 font-black">
@@ -625,28 +626,8 @@ export default function AdminManagementPage() {
                   total admins
                 </p>
 
-                {/* Center: page number pills */}
-                <div className="flex items-center gap-3">
-                  {Array.from({ length: data.totalPages }, (_, i) => i + 1).map(
-                    (pg) => (
-                      <button
-                        key={pg}
-                        onClick={() => setPage(pg)}
-                        disabled={isLoading}
-                        className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
-                          pg === page
-                            ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
-                            : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
-                        } disabled:cursor-not-allowed`}
-                      >
-                        {pg}
-                      </button>
-                    ),
-                  )}
-                </div>
-
                 {/* Right: Prev / Next */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={isLoading || page <= 1}
@@ -667,6 +648,11 @@ export default function AdminManagementPage() {
                     </svg>
                     Previous
                   </button>
+
+                  <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
+                    <span className="text-xs font-black text-lime-400">Page {page}</span>
+                  </div>
+
                   <button
                     onClick={() => setPage((p) => p + 1)}
                     disabled={isLoading || page >= data.totalPages}
@@ -865,18 +851,18 @@ export default function AdminManagementPage() {
               </div>
             </div>
 
-            <DialogFooter className="pt-4 flex flex-col-reverse sm:flex-row gap-3">
+            <DialogFooter className="pt-6 flex flex-col-reverse sm:flex-row gap-4">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
+                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
                 onClick={() => setIsDialogOpen(false)}
-                className="text-slate-500 hover:text-white hover:bg-slate-900 rounded-xl"
               >
                 Dismiss
               </Button>
               <Button
                 type="submit"
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-10 h-12 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 {createMutation.isPending || updateMutation.isPending ? (
@@ -884,7 +870,7 @@ export default function AdminManagementPage() {
                 ) : (
                   <UserCheck className="mr-2 h-4 w-4" />
                 )}
-                {editingAdmin ? "Save Account Changes" : "Confirm"}
+                {editingAdmin ? "Save Account Changes" : "Confirm Onboarding"}
               </Button>
             </DialogFooter>
           </form>
@@ -993,11 +979,11 @@ export default function AdminManagementPage() {
             </div>
           )}
 
-          <DialogFooter className="bg-slate-900/50 p-4 border-t border-slate-800">
+          <DialogFooter className="bg-slate-900/50 p-6 border-t border-slate-800">
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => setIsAdminDetailsOpen(false)}
-              className="w-full rounded-xl bg-slate-800 hover:bg-slate-700 text-white"
+              className="w-full border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Close Record
             </Button>
@@ -1021,17 +1007,17 @@ export default function AdminManagementPage() {
               access.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="pt-6 sm:justify-center">
+          <DialogFooter className="pt-8 flex flex-col-reverse sm:flex-row gap-4 sm:justify-center">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
-              className="text-slate-400 hover:text-white hover:bg-slate-900 rounded-xl px-8"
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Keep Access
             </Button>
             <Button
               variant="destructive"
-              className="bg-red-500 hover:bg-red-400 text-white font-black rounded-xl px-10 shadow-[0_10px_20px_rgba(239,68,68,0.2)]"
+              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
               onClick={() =>
                 adminToDelete && deleteMutation.mutate(adminToDelete.id)
               }

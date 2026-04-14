@@ -406,7 +406,7 @@ export default function AdminCaseStudiesPage() {
   }, [items.length, listQuery.data?.pages, listQuery.data?.total]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Case Studies</h1>
@@ -414,7 +414,10 @@ export default function AdminCaseStudiesPage() {
             Create, update, activate/inactivate and delete case studies.
           </p>
         </div>
-        <Button onClick={openCreate} className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold">
+        <Button 
+          onClick={openCreate} 
+          className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Create Case Study
         </Button>
@@ -739,11 +742,11 @@ export default function AdminCaseStudiesPage() {
               </div>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-2">
+            <DialogFooter className="gap-4 pt-4">
               <Button
                 type="button"
                 variant="outline"
-                className="border-slate-700"
+                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
                 onClick={() => setDialogOpen(false)}
                 disabled={saveMutation.isPending}
               >
@@ -751,7 +754,7 @@ export default function AdminCaseStudiesPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold"
+                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={saveMutation.isPending}
               >
                 {saveMutation.isPending ? (
@@ -760,9 +763,9 @@ export default function AdminCaseStudiesPage() {
                     Saving...
                   </span>
                 ) : editing ? (
-                  "Update"
+                  "Update Case Study"
                 ) : (
-                  "Create"
+                  "Create Case Study"
                 )}
               </Button>
             </DialogFooter>
@@ -778,11 +781,11 @@ export default function AdminCaseStudiesPage() {
           <div className="text-sm text-slate-400">
             This action cannot be undone. {deleteTarget?.title ? `“${deleteTarget.title}”` : ""}
           </div>
-          <DialogFooter className="gap-2 sm:gap-2">
+          <DialogFooter className="gap-4 pt-4">
             <Button
               type="button"
               variant="outline"
-              className="border-slate-700"
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
               onClick={() => setDeleteTarget(null)}
               disabled={deleteMutation.isPending}
             >
@@ -790,7 +793,7 @@ export default function AdminCaseStudiesPage() {
             </Button>
             <Button
               type="button"
-              className="bg-rose-600 hover:bg-rose-500 text-white font-bold"
+              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               disabled={deleteMutation.isPending || !deleteTarget?.id}
               onClick={() => deleteTarget?.id && deleteMutation.mutate(deleteTarget.id)}
             >
@@ -800,7 +803,7 @@ export default function AdminCaseStudiesPage() {
                   Deleting...
                 </span>
               ) : (
-                "Delete"
+                "Delete Study"
               )}
             </Button>
           </DialogFooter>

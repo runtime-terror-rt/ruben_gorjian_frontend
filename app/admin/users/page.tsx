@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, EyeOff, User, UserCheck, UserX, Trash2, ChevronDown, Clock } from "lucide-react";
+import { Eye, EyeOff, User, UserCheck, UserX, Trash2, ChevronDown, Clock, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 20;
 
@@ -724,7 +725,7 @@ export default function AdminUsersPage() {
               <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-950/20">
                 
                 {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
+                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
                   Showing page{" "}
                   <span className="text-slate-300 font-black">{filters.page}</span>
                   {" "}of{" "}
@@ -733,26 +734,8 @@ export default function AdminUsersPage() {
                   <span className="text-slate-300 font-black">{total}</span> total users
                 </p>
 
-                {/* Center: page number pills */}
-                <div className="flex items-center gap-3">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
-                    <button
-                      key={pg}
-                      onClick={() => setFilters(prev => ({ ...prev, page: pg }))}
-                      disabled={usersQuery.isLoading}
-                      className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
-                        pg === filters.page
-                          ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
-                          : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
-                      } disabled:cursor-not-allowed`}
-                    >
-                      {pg}
-                    </button>
-                  ))}
-                </div>
-
                 {/* Right: Prev / Next */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
                     disabled={usersQuery.isLoading || filters.page <= 1}
@@ -763,6 +746,11 @@ export default function AdminUsersPage() {
                     </svg>
                     Previous
                   </button>
+                  
+                  <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
+                    <span className="text-xs font-black text-lime-400">Page {filters.page}</span>
+                  </div>
+
                   <button
                     onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
                     disabled={usersQuery.isLoading || filters.page >= totalPages}
@@ -868,8 +856,13 @@ export default function AdminUsersPage() {
               Send verification email
             </label>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateState((prev) => ({ ...prev, open: false }))}>
+          <DialogFooter className="gap-4 pt-4">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => setCreateState((prev) => ({ ...prev, open: false }))}
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+            >
               Cancel
             </Button>
             <Button
@@ -884,8 +877,16 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!createState.email || createUserMutation.isPending}
+              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
-              Create
+              {createUserMutation.isPending ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                "Confirm User Creation"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -925,8 +926,13 @@ export default function AdminUsersPage() {
               </Select>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditState((prev) => ({ ...prev, open: false }))}>
+          <DialogFooter className="gap-4 pt-4">
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={() => setEditState((prev) => ({ ...prev, open: false }))}
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+            >
               Cancel
             </Button>
             <Button
@@ -939,8 +945,16 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!editState.user || updateUserMutation.isPending}
+              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
-              Save
+              {updateUserMutation.isPending ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </span>
+              ) : (
+                "Save Account Changes"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -983,8 +997,12 @@ export default function AdminUsersPage() {
               Cancel at period end (recommended)
             </label>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmAction(null)}>
+          <DialogFooter className="gap-4 pt-8">
+            <Button 
+              variant="outline" 
+              onClick={() => setConfirmAction(null)}
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+            >
               Back
             </Button>
             <Button
@@ -992,10 +1010,13 @@ export default function AdminUsersPage() {
               disabled={
                 (confirmAction?.type === "block" && !blockReason)
               }
-              variant="default"
-              className={confirmAction?.type === "delete" ? "bg-red-600 hover:bg-red-700 text-white" : ""}
+              className={cn(
+                "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base",
+                confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-white" : 
+                "bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
+              )}
             >
-              Confirm
+              Confirm Action
             </Button>
           </DialogFooter>
         </DialogContent>

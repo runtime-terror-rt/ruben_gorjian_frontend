@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2 } from "lucide-react";
+import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Faq = {
   id: string;
@@ -101,6 +101,12 @@ export default function AdminFaqPage() {
     const rows = data?.data ?? [];
     return [...rows].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
   }, [data?.data]);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(faqs.length / itemsPerPage);
+  const currentFaqs = faqs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const resetForm = () => {
     setFormData({
@@ -228,7 +234,7 @@ export default function AdminFaqPage() {
         </div>
         <Button
           onClick={openCreate}
-          className="cursor-pointer bg-gradient-to-r from-lime-500 to-emerald-500 hover:from-lime-400 hover:to-emerald-400 text-slate-950 font-bold gap-2 px-6 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-105 active:scale-95"
+          className="cursor-pointer bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
         >
           <Plus className="h-5 w-5" /> Create FAQ
         </Button>
@@ -241,98 +247,132 @@ export default function AdminFaqPage() {
             <p className="text-slate-500 text-sm">Loading FAQs...</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader className="bg-slate-800/50">
-              <TableRow className="hover:bg-transparent border-slate-800">
-                <TableHead className="text-slate-400 font-semibold py-4 w-20">Order</TableHead>
-                <TableHead className="text-slate-400 font-semibold py-4">Question</TableHead>
-                <TableHead className="text-slate-400 font-semibold py-4 w-36">Status</TableHead>
-                <TableHead className="text-slate-400 font-semibold py-4 w-52">Updated</TableHead>
-                <TableHead className="text-slate-400 font-semibold py-4 w-20 text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {faqs.length ? (
-                faqs.map((faq) => (
-                  <TableRow key={faq.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
-                    <TableCell className="py-4 text-slate-200 font-medium">{faq.displayOrder}</TableCell>
-                    <TableCell className="py-4">
-                      <div className="text-white font-medium leading-5">{faq.question}</div>
-                      <div className="text-slate-500 text-xs mt-1 line-clamp-2">{faq.answer}</div>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <Badge
-                        variant="outline"
-                        className={
-                          faq.isActive
-                            ? "border-lime-400/30 bg-lime-400/10 text-lime-300"
-                            : "border-slate-700 bg-slate-800/40 text-slate-300"
-                        }
-                      >
-                        {faq.isActive ? "ACTIVE" : "INACTIVE"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-4 text-slate-400 text-sm">{formatDateTime(faq.updatedAt)}</TableCell>
-                    <TableCell className="py-4 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="cursor-pointer h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-slate-200">
-                          <DropdownMenuItem
-                            onClick={() => openEdit(faq)}
-                            className="cursor-pointer focus:bg-slate-800"
-                          >
-                            <Pencil className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              statusMutation.mutate({
-                                id: faq.id,
-                                status: faq.isActive ? "INACTIVE" : "ACTIVE",
-                              })
-                            }
-                            className="cursor-pointer focus:bg-slate-800"
-                          >
-                            {faq.isActive ? (
-                              <>
-                                <PowerOff className="mr-2 h-4 w-4" /> Deactivate
-                              </>
-                            ) : (
-                              <>
-                                <Power className="mr-2 h-4 w-4" /> Activate
-                              </>
-                            )}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setFaqToDelete(faq);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                            className="cursor-pointer text-red-400 focus:bg-slate-800 focus:text-red-400"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+          <>
+            <Table>
+              <TableHeader className="bg-slate-800/50">
+                <TableRow className="hover:bg-transparent border-slate-800">
+                  <TableHead className="text-slate-400 font-semibold py-4 w-20">Order</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4">Question</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-36">Status</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-52">Updated</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-20 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentFaqs.length ? (
+                  currentFaqs.map((faq) => (
+                    <TableRow key={faq.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
+                      <TableCell className="py-4 text-slate-200 font-medium">{faq.displayOrder}</TableCell>
+                      <TableCell className="py-4">
+                        <div className="text-white font-medium leading-5">{faq.question}</div>
+                        <div className="text-slate-500 text-xs mt-1 line-clamp-2">{faq.answer}</div>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <Badge
+                          variant="outline"
+                          className={
+                            faq.isActive
+                              ? "border-lime-400/30 bg-lime-400/10 text-lime-300"
+                              : "border-slate-700 bg-slate-800/40 text-slate-300"
+                          }
+                        >
+                          {faq.isActive ? "ACTIVE" : "INACTIVE"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-4 text-slate-400 text-sm">{formatDateTime(faq.updatedAt)}</TableCell>
+                      <TableCell className="py-4 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="cursor-pointer h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-slate-200">
+                            <DropdownMenuItem
+                              onClick={() => openEdit(faq)}
+                              className="cursor-pointer focus:bg-slate-800"
+                            >
+                              <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                statusMutation.mutate({
+                                  id: faq.id,
+                                  status: faq.isActive ? "INACTIVE" : "ACTIVE",
+                                })
+                              }
+                              className="cursor-pointer focus:bg-slate-800"
+                            >
+                              {faq.isActive ? (
+                                <>
+                                  <PowerOff className="mr-2 h-4 w-4" /> Deactivate
+                                </>
+                              ) : (
+                                <>
+                                  <Power className="mr-2 h-4 w-4" /> Activate
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setFaqToDelete(faq);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                              className="cursor-pointer text-red-400 focus:bg-slate-800 focus:text-red-400"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                      No FAQs found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="h-32 text-center text-slate-500">
-                    No FAQs found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+
+            {/* Pagination Footer */}
+            {faqs.length > itemsPerPage && (
+              <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
+                <div className="text-xs text-slate-500 font-medium uppercase">
+                  Showing {faqs.length} total records
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="bg-slate-900 border-slate-800 h-8 px-2"
+                  >
+                    <ChevronLeft className="h-4 w-4 text-slate-400" />
+                  </Button>
+                  <div className="px-3 py-1 bg-lime-400/10 border border-lime-400/20 rounded-md text-[10px] font-bold text-lime-400 uppercase">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage >= totalPages}
+                    className="bg-slate-900 border-slate-800 h-8 px-2"
+                  >
+                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -410,11 +450,11 @@ export default function AdminFaqPage() {
               </div>
             </div>
 
-            <DialogFooter className="pt-2">
+            <DialogFooter className="gap-4 pt-4">
               <Button
                 type="button"
                 variant="outline"
-                className="cursor-pointer border-slate-700 bg-slate-900 text-slate-300 hover:text-white"
+                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
                 onClick={() => setIsDialogOpen(false)}
               >
                 Cancel
@@ -422,12 +462,12 @@ export default function AdminFaqPage() {
               <Button
                 type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="cursor-pointer bg-lime-500 hover:bg-lime-400 text-slate-950 font-bold"
+                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               >
                 {(createMutation.isPending || updateMutation.isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                {editingFaq ? "Update" : "Create"}
+                {editingFaq ? "Update FAQ" : "Create FAQ"}
               </Button>
             </DialogFooter>
           </form>
@@ -446,11 +486,11 @@ export default function AdminFaqPage() {
             <div className="text-sm text-white font-medium">{faqToDelete?.question}</div>
             <div className="text-xs text-slate-500 mt-1 line-clamp-2">{faqToDelete?.answer}</div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-4 pt-4">
             <Button
               type="button"
               variant="outline"
-              className="cursor-pointer border-slate-700 bg-slate-900 text-slate-300 hover:text-white"
+              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
               Cancel
@@ -460,10 +500,10 @@ export default function AdminFaqPage() {
               variant="destructive"
               disabled={!faqToDelete || deleteMutation.isPending}
               onClick={() => faqToDelete && deleteMutation.mutate(faqToDelete.id)}
-              className="cursor-pointer"
+              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
             >
               {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Delete
+              Delete FAQ
             </Button>
           </DialogFooter>
         </DialogContent>

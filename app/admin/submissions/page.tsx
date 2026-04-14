@@ -25,7 +25,8 @@ import {
   Download,
   Eye,
   Search,
-  XIcon,
+  ChevronLeft,
+  ChevronRight,
   Package
 } from "lucide-react";
 import { apiGet, apiPatch } from "@/lib/api-client";
@@ -177,6 +178,16 @@ export default function AdminSubmissionsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [detailsLoading, setDetailsLoading] = useState(false);
   
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+  const filteredSubmissions = submissions; // Simple for now
+  const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
+  const currentSubmissions = filteredSubmissions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   // Status Update Dialog State
   const [statusConfirm, setStatusConfirm] = useState<{
     open: boolean;
@@ -223,6 +234,7 @@ export default function AdminSubmissionsPage() {
         console.error("Unexpected response format:", res);
         setSubmissions([]);
       }
+      setCurrentPage(1); // Reset to first page
     } catch (err: unknown) {
       const error = err as { message?: string };
       setError(error.message || "Failed to load submissions");
@@ -382,8 +394,6 @@ export default function AdminSubmissionsPage() {
       setSelectedIds(new Set(submissions.map(s => s.id)));
     }
   }
-
-  const filteredSubmissions = submissions;
 
   if (loading) {
     return (
@@ -597,7 +607,7 @@ export default function AdminSubmissionsPage() {
           </div>
 
           <div className="grid gap-4">
-            {filteredSubmissions.map((submission) => (
+            {currentSubmissions.map((submission) => (
               <Card key={submission.id} className="border-slate-800 bg-slate-900/60">
                 <CardHeader>
                   <div className="flex items-start gap-3">
@@ -632,82 +642,114 @@ export default function AdminSubmissionsPage() {
                     </Button>
                   </div>
                 </CardHeader>
-              <CardContent className="space-y-3">
-                {/* User Note */}
-                {submission.userNote && (
-                  <div className="rounded-lg bg-slate-800/50 p-3">
-                    <p className="text-xs font-medium text-slate-300 mb-1">User Note:</p>
-                    <p className="text-sm text-slate-400">{submission.userNote}</p>
-                  </div>
-                )}
-
-                {/* Admin Note */}
-                {submission.adminNote && (
-                  <div className="rounded-lg bg-lime-400/5 p-3 border border-lime-400/10">
-                    <p className="text-xs font-bold text-lime-400 uppercase tracking-wider mb-1">Admin Note:</p>
-                    <p className="text-sm text-slate-300">{submission.adminNote}</p>
-                  </div>
-                )}
-
-                {/* Files Summary */}
-                <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <FileText className="h-4 w-4" />
-                  {submission.fileCount} file{submission.fileCount !== 1 ? "s" : ""}
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex gap-2 pt-2">
-                  {submission.status === "SUBMITTED" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setStatusConfirm({
-                        open: true,
-                        submissionId: submission.id,
-                        targetStatus: "IN_REVIEW",
-                        note: "",
-                      })}
-                      disabled={updating}
-                    >
-                      Start Review
-                    </Button>
+                <CardContent className="space-y-3">
+                  {/* User Note */}
+                  {submission.userNote && (
+                    <div className="rounded-lg bg-slate-800/50 p-3">
+                      <p className="text-xs font-medium text-slate-300 mb-1">User Note:</p>
+                      <p className="text-sm text-slate-400">{submission.userNote}</p>
+                    </div>
                   )}
-                  {submission.status === "IN_REVIEW" && (
-                    <>
+
+                  {/* Admin Note */}
+                  {submission.adminNote && (
+                    <div className="rounded-lg bg-lime-400/5 p-3 border border-lime-400/10">
+                      <p className="text-xs font-bold text-lime-400 uppercase tracking-wider mb-1">Admin Note:</p>
+                      <p className="text-sm text-slate-300">{submission.adminNote}</p>
+                    </div>
+                  )}
+
+                  {/* Files Summary */}
+                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <FileText className="h-4 w-4" />
+                    {submission.fileCount} file{submission.fileCount !== 1 ? "s" : ""}
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="flex gap-2 pt-2">
+                    {submission.status === "SUBMITTED" && (
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => setStatusConfirm({
                           open: true,
                           submissionId: submission.id,
-                          targetStatus: "COMPLETED",
+                          targetStatus: "IN_REVIEW",
                           note: "",
                         })}
                         disabled={updating}
                       >
-                        Mark Complete
+                        Start Review
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setStatusConfirm({
-                          open: true,
-                          submissionId: submission.id,
-                          targetStatus: "REJECTED",
-                          note: "",
-                        })}
-                        disabled={updating}
-                        className="border-red-600 text-red-400 hover:bg-red-600/10"
-                      >
-                        Reject
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    )}
+                    {submission.status === "IN_REVIEW" && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setStatusConfirm({
+                            open: true,
+                            submissionId: submission.id,
+                            targetStatus: "COMPLETED",
+                            note: "",
+                          })}
+                          disabled={updating}
+                        >
+                          Mark Complete
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setStatusConfirm({
+                            open: true,
+                            submissionId: submission.id,
+                            targetStatus: "REJECTED",
+                            note: "",
+                          })}
+                          disabled={updating}
+                          className="border-red-600 text-red-400 hover:bg-red-600/10"
+                        >
+                          Reject
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+
+          {/* Pagination Footer */}
+          {filteredSubmissions.length > itemsPerPage && (
+            <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20 rounded-xl mt-6">
+              <div className="text-xs text-slate-500 font-medium">
+                Showing {filteredSubmissions.length} records
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-xs text-slate-400 px-2">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage >= totalPages}
+                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       )}
 
