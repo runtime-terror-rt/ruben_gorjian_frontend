@@ -87,24 +87,25 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Submissions",
         href: "/admin/submissions",
         icon: FileText,
-        permission: "SCHEDULE_MANAGE",
+        permission: "SUBMISSIONS",
       },
       {
         label: "Support System",
         href: "/admin/support-system",
         icon: MessageSquare,
-        permission: "SUPPORT",           // ✅ fixed: was incorrectly "POST_MANAGE"
+        permission: "SUPPORT",
       },
       {
         label: "FAQ",
         href: "/admin/faq",
         icon: BookOpen,
-        permission: "FAQ_MANAGE",
+        permission: "FAQ",
       },
       {
         label: "Case Studies",
         href: "/admin/case-studies",
         icon: BookOpen,
+        permission: "CASE_STUDIES",
       },
     ],
   },

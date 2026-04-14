@@ -75,9 +75,12 @@ const PERMISSIONS = [
   "SCHEDULE_MANAGE",
   "POST_MANAGE",
   "COUPON_MANAGE",
-  "SUPPORT",
   "VIRTUAL_ADMIN_MANAGE",
+  "SUBMISSIONS",
+  "SUPPORT",
   "PROFILE",
+  "CASE_STUDIES",
+  "FAQ",
 ];
 
 const ROLES = ["ADMIN", "SUPER_ADMIN"];
@@ -840,7 +843,7 @@ export default function AdminManagementPage() {
                         htmlFor={`perm-${perm}`}
                         className="text-xs font-semibold text-slate-400 cursor-pointer group-hover:text-white transition-colors"
                       >
-                        {perm
+                        {perm === "FAQ" ? "FAQ" : perm
                           .split("_")
                           .map((s) => s.charAt(0) + s.slice(1).toLowerCase())
                           .join(" ")}
@@ -945,7 +948,7 @@ export default function AdminManagementPage() {
                       variant="secondary"
                       className="bg-slate-900 text-slate-300 border-slate-800 text-[10px]"
                     >
-                      {perm
+                      {perm === "FAQ" ? "FAQ" : perm
                         .split("_")
                         .map((s) => s.charAt(0) + s.slice(1).toLowerCase())
                         .join(" ")}
