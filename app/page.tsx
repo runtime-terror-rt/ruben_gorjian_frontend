@@ -173,7 +173,7 @@ export default function HomePage() {
         displayPrice: active,
         billingNote:
           billingCycle === "monthly"
-            ? "Billed monthly"
+            ? "Per month"
             : `Billed annually (${formatPrice(yearlyMonthlyEquivalent * 12)}/year)`,
       };
     }).filter(Boolean) as Array<{
