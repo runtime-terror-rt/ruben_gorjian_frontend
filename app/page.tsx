@@ -29,9 +29,9 @@ import { Button } from "@/components/ui/button";
 type BillingCycle = "monthly" | "yearly";
 
 const PLAN_SUBTITLES: Record<PlanKey, string> = {
-  "FMP-20": "Done-for-you management at starter volume.",
-  "FMP-35": "Our most selected full management tier.",
-  "FM-70": "High-output execution for multi-client agencies.",
+  "FMP-20": "Complete done-for-you posting",
+  "FMP-35": "More content. Broader reach.",
+  "FM-70": "Your dedicated digital marketing team",
 };
 
 const PLAN_BADGES: Partial<Record<PlanKey, string>> = {
