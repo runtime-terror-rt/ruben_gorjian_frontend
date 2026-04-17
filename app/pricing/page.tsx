@@ -344,7 +344,7 @@ function PricingPageContent() {
                         <span>{feature.label}</span>
                         <Tooltip
                           id={`pricing-tooltip-${key}`}
-                          className="max-w-xs"
+                          className="!bg-slate-900 max-w-xs !text-slate-200 !border !border-slate-800 !rounded-xl !p-3 !text-xs !shadow-2xl !opacity-100 z-50"
                         />
                       </li>
                     ))}
