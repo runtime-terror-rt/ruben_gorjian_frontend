@@ -97,7 +97,7 @@ export default function FAQPage() {
         className="px-4 pb-16 pt-14 sm:pt-20"
         aria-labelledby="faq-heading"
       >
-        <div className="mx-auto max-w-4xl space-y-10 rounded-3xl border border-[#dfe2ec] bg-white p-6 sm:p-8">
+        <div className="mx-auto max-w-5xl space-y-10 rounded-3xl border border-[#dfe2ec] bg-white p-6 sm:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#777b86]">
             FAQs
           </p>
@@ -117,7 +117,7 @@ export default function FAQPage() {
                 <AccordionTrigger className="text-left text-sm font-medium">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-left text-sm text-[#55596a]">
+                <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
