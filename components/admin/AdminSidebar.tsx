@@ -10,7 +10,9 @@ import {
   FileText,
   Image as ImageIcon,
   Settings,
+  Calendar,
   ChevronLeft,
+
   ChevronRight,
   ExternalLink,
   BookOpen,
@@ -78,11 +80,19 @@ export const NAV_SECTIONS: NavSection[] = [
         permission: "POST_MANAGE",
       },
       {
+        label: "Session Schedule",
+        href: "/admin/session-schedule",
+        icon: Calendar,
+        permission: "POST_MANAGE",
+      },
+      {
         label: "Media",
         href: "/admin/media",
         icon: ImageIcon,
         permission: "POST_MANAGE",
       },
+
+
       {
         label: "Submissions",
         href: "/admin/submissions",

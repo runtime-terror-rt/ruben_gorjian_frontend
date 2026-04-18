@@ -129,9 +129,12 @@ export default function AdminPostsPage() {
 
       const data = await res.json();
       const items = Array.isArray(data) ? data : data.items || [];
+      const filteredItems = items.filter((p: any) => 
+        p.scheduleType !== "PHOTO_SESSION" && p.scheduleType !== "VIDEO_SESSION"
+      );
       
       // Sync timezone as in User Dashboard
-      const syncedItems = items.map((p: any) => {
+      const syncedItems = filteredItems.map((p: any) => {
         const dateValue = p.scheduledFor || p.scheduledAt;
         return {
           ...p,
@@ -142,6 +145,8 @@ export default function AdminPostsPage() {
       });
       
       setPosts(syncedItems);
+
+
       setCurrentPage(1); // Reset to first page on refresh
     } catch (err: any) {
       console.error("Error fetching posts:", err);

@@ -225,7 +225,11 @@ export default function ScheduleVisitPage() {
         sessionTitle: title.trim(),
         sessionNotes: notes.trim(),
         sessionDurationMinutes: duration,
+        status: "PENDING",
+
       };
+
+
 
       if (isAdmin) {
         if (targetUserId.trim()) payload.userId = targetUserId.trim();
@@ -458,17 +462,22 @@ export default function ScheduleVisitPage() {
                             </span>
                             <span className={clsx(
                               "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
-                              s.status === "SCHEDULED" ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-700/30 text-slate-500"
+                              s.status?.toUpperCase() === "SCHEDULED" || s.status?.toUpperCase() === "COMPLETED" ? "bg-emerald-500/10 text-emerald-500" : 
+                              s.status?.toUpperCase() === "PENDING" ? "bg-amber-500/10 text-amber-500 animate-pulse" :
+
+                              "bg-slate-700/30 text-slate-500"
                             )}>
                               {s.status}
                             </span>
+
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         {isAdmin && (
                           <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
-                            {["SCHEDULED", "COMPLETED", "CANCELLED"].map((status) => (
+                            {["pending", "completed", "canceled"].map((status) => (
+
                               <Button
                                 key={status}
                                 variant="ghost"
