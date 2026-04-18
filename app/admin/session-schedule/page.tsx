@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { clsx } from "clsx";
+
 import {
   Calendar,
   Camera,
@@ -166,10 +168,11 @@ export default function SessionSchedulePage() {
       case "POSTED":
       case "COMPLETE":
         return (
-          <Badge className="bg-emerald-500/20 text-green-500 border-green-500/30">
+          <Badge className="bg-green-500/25 text-green-600 border-green-500/30">
             Completed
           </Badge>
         );
+
       case "CANCELLED":
       case "CANCELED":
       case "REJECTED":
@@ -182,16 +185,17 @@ export default function SessionSchedulePage() {
         );
       case "PENDING":
         return (
-          <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 animate-pulse">
+          <Badge className="bg-amber-400/10 text-amber-400 border-amber-400/20 animate-pulse">
             Pending
           </Badge>
         );
       case "SCHEDULED":
         return (
-          <Badge className="bg-blue-500/20 text-yellow-500 border-yellow-500/30">
+          <Badge className="bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
             Pending
           </Badge>
         );
+
       default:
         return (
           <Badge variant="outline" className="text-slate-500 border-slate-800">
@@ -341,11 +345,19 @@ export default function SessionSchedulePage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                            className={clsx(
+                              "h-8 w-8 p-0 transition-colors",
+                              s.status.toUpperCase() === "COMPLETED" || 
+                              s.status.toUpperCase() === "POSTED" || 
+                              s.status.toUpperCase() === "COMPLETE"
+                                ? "text-green-500 hover:text-green-400"
+                                : "text-slate-400 hover:text-white"
+                            )}
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
+
                         <DropdownMenuContent
                           align="end"
                           className="bg-slate-900 border-slate-800 text-slate-300"
