@@ -347,11 +347,11 @@ export default function SessionSchedulePage() {
                             size="sm"
                             className={clsx(
                               "h-8 w-8 p-0 transition-colors",
-                              s.status.toUpperCase() === "COMPLETED" || 
-                              s.status.toUpperCase() === "POSTED" || 
-                              s.status.toUpperCase() === "COMPLETE"
+                              s.status.toUpperCase() === "COMPLETED" ||
+                                s.status.toUpperCase() === "POSTED" ||
+                                s.status.toUpperCase() === "COMPLETE"
                                 ? "text-green-500 hover:text-green-400"
-                                : "text-slate-400 hover:text-white"
+                                : "text-slate-400 hover:text-white",
                             )}
                           >
                             <MoreHorizontal className="h-4 w-4" />
