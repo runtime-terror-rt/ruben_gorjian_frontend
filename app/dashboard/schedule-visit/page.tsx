@@ -462,7 +462,7 @@ export default function ScheduleVisitPage() {
                             </span>
                             <span className={clsx(
                               "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
-                              s.status?.toUpperCase() === "SCHEDULED" || s.status?.toUpperCase() === "COMPLETED" ? "bg-emerald-500/10 text-emerald-500" : 
+                              s.status?.toUpperCase() === "SCHEDULED" || s.status?.toUpperCase() === "COMPLETED" ? "bg-green-500/10 text-green-500" : 
                               s.status?.toUpperCase() === "PENDING" ? "bg-amber-500/10 text-amber-500 animate-pulse" :
 
                               "bg-slate-700/30 text-slate-500"
