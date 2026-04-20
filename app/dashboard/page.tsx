@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Calendar, FileText, AlertTriangle } from "lucide-react";
+import { RefreshCw, Calendar, FileText, AlertTriangle, Camera, Video, Clock } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
+import dayjs from "dayjs";
+import { cn } from "@/lib/utils";
 
 // ---------------- Types ----------------
 
@@ -140,6 +142,15 @@ function useSubscriptionProgress(enabled: boolean) {
     enabled,
   });
 }
+function useUpcomingSessions(enabled: boolean) {
+  return useQuery({
+    queryKey: ["upcoming-sessions"],
+    queryFn: () =>
+      apiGet<any>("/api/scheduler/sessions"),
+    enabled,
+  });
+}
+
 // ---------------- Page ----------------
 
 export default function DashboardPage() {
@@ -153,6 +164,7 @@ export default function DashboardPage() {
   const progress = progressQ.data?.data.chart;
 
   const upcomingQ = useUpcomingPosts(enabled);
+  const sessionsQ = useUpcomingSessions(enabled);
   const pipelineQ = usePostPipeline(enabled);
   const alertsQ = useSystemAlerts(enabled);
 
@@ -160,6 +172,7 @@ export default function DashboardPage() {
 
   const activity = activityQ.data?.data.items || [];
   const upcoming = upcomingQ.data?.data.items || [];
+  const sessions = Array.isArray(sessionsQ.data) ? sessionsQ.data : (sessionsQ.data?.items || sessionsQ.data?.sessions || []);
   const pipeline = pipelineQ.data?.data;
   const alerts = alertsQ.data?.data.items || [];
 
@@ -167,6 +180,11 @@ export default function DashboardPage() {
   const upcomingData = upcoming;
   const alertsData = alerts;
   const pipelineData = pipeline || {};
+
+  // Get only the next upcoming session (not cancelled/rejected)
+  const nextSession = sessions
+    .filter((s: any) => s.status !== "CANCELLED" && s.status !== "REJECTED" && dayjs(s.scheduledAt).isAfter(dayjs().subtract(1, 'hour')))
+    .sort((a: any, b: any) => dayjs(a.scheduledAt).diff(dayjs(b.scheduledAt)))[0];
 
   const isLoading = overviewQ.isLoading;
 
@@ -409,8 +427,8 @@ export default function DashboardPage() {
         </div>
       </Section> */}
 
-      {/* ================= PIPELINE + UPCOMING ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* ================= PIPELINE + UPCOMING + SESSION ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* PIPELINE */}
         <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
           <h2 className="text-white font-semibold mb-4">Post Pipeline</h2>
@@ -430,20 +448,75 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* UPCOMING */}
+        {/* UPCOMING POSTS */}
         <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
           <h2 className="text-white font-semibold mb-4">Upcoming Posts</h2>
 
           <div className="space-y-3">
-            {upcomingData.map((p) => (
-              <div key={p.postId} className="p-3 rounded-lg bg-slate-900/40">
-                <p className="text-sm text-white">{p.postId}</p>
-                <p className="text-xs text-slate-400">
-                  {new Date(p.scheduledFor).toLocaleString()}
-                </p>
-              </div>
-            ))}
+            {upcomingData.length === 0 ? (
+              <p className="text-xs text-slate-500 italic">No upcoming posts</p>
+            ) : (
+              upcomingData.slice(0, 3).map((p) => (
+                <div key={p.postId} className="p-3 rounded-lg bg-slate-900/40">
+                  <p className="text-sm text-white">{p.postId}</p>
+                  <p className="text-xs text-slate-400">
+                    {new Date(p.scheduledFor).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
+        </div>
+
+        {/* UPCOMING SESSION (ONLY ONE) */}
+        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
+          <h2 className="text-white font-semibold mb-4">Upcoming Session</h2>
+          
+          {nextSession ? (
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-lime-400/10 to-transparent border border-lime-400/20">
+              <div className="flex items-center gap-4 mb-4">
+                <div className={cn(
+                  "p-3 rounded-xl",
+                  nextSession.scheduleType === "PHOTO_SESSION" ? "bg-amber-400/10 text-amber-400" : "bg-indigo-400/10 text-indigo-400"
+                )}>
+                  {nextSession.scheduleType === "PHOTO_SESSION" ? <Camera className="h-6 w-6" /> : <Video className="h-6 w-6" />}
+                </div>
+                <div>
+                  <h4 className="text-white font-bold">{nextSession.session?.title || nextSession.sessionTitle || "Untitled Session"}</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-0.5">
+                    {nextSession.scheduleType.replace("_", " ")}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-slate-300">
+                  <Calendar className="h-4 w-4 text-lime-400" />
+                  <span>{dayjs(nextSession.scheduledAt).format("MMM D, YYYY")}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-300">
+                  <Clock className="h-4 w-4 text-lime-400" />
+                  <span>{dayjs(nextSession.scheduledAt).format("h:mm A")}</span>
+                </div>
+              </div>
+
+              <Link href="/dashboard/schedule-visit">
+                <Button variant="ghost" className="w-full mt-4 h-9 text-xs font-bold uppercase tracking-widest text-lime-400 hover:text-lime-300 hover:bg-lime-400/10 rounded-xl">
+                  Manage Sessions
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className="p-3 bg-slate-800/50 rounded-full mb-3">
+                <Calendar className="h-6 w-6 text-slate-600" />
+              </div>
+              <p className="text-sm text-slate-400">No upcoming sessions</p>
+              <Link href="/dashboard/schedule-visit">
+                <Button variant="link" className="text-lime-400 text-xs mt-1">Book now</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
