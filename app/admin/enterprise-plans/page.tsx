@@ -464,24 +464,20 @@ export default function EnterprisePlansPage() {
           <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest pl-1">Status</label>
           <Select 
             value={statusFilter} 
-            onValueChange={(val) => {
-              setStatusFilter(val);
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
               setPage(1);
             }}
+            className="bg-slate-950/50 border-slate-800 h-11"
           >
-            <SelectTrigger className="bg-slate-950/50 border-slate-800 h-11">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-800">
-              <SelectItem value="ALL">All Status</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="SENT">Sent</SelectItem>
-              <SelectItem value="VIEWED">Viewed</SelectItem>
-              <SelectItem value="SIGNED_UP">Signed Up</SelectItem>
-              <SelectItem value="PAID">Paid</SelectItem>
-              <SelectItem value="EXPIRED">Expired</SelectItem>
-              <SelectItem value="CANCELED">Canceled</SelectItem>
-            </SelectContent>
+            <option value="ALL">All Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="SENT">Sent</option>
+            <option value="VIEWED">Viewed</option>
+            <option value="SIGNED_UP">Signed Up</option>
+            <option value="PAID">Paid</option>
+            <option value="EXPIRED">Expired</option>
+            <option value="CANCELED">Canceled</option>
           </Select>
         </div>
       </div>
@@ -716,17 +712,14 @@ export default function EnterprisePlansPage() {
               <div className="space-y-2">
                 <Label htmlFor="billingCycle">Billing Cycle</Label>
                 <Select 
+                  id="billingCycle"
                   value={formData.billingCycle}
-                  onValueChange={(val) => setFormData(prev => ({ ...prev, billingCycle: val }))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, billingCycle: e.target.value }))}
+                  className="bg-slate-950 border-slate-800"
                 >
-                  <SelectTrigger className="bg-slate-950 border-slate-800">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-800">
-                    <SelectItem value="MONTHLY">Monthly</SelectItem>
-                    <SelectItem value="YEARLY">Yearly</SelectItem>
-                    <SelectItem value="ONETIME">One Time</SelectItem>
-                  </SelectContent>
+                  <option value="MONTHLY">Monthly</option>
+                  <option value="YEARLY">Yearly</option>
+                  <option value="ONETIME">One Time</option>
                 </Select>
               </div>
               <div className="space-y-2">
