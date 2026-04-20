@@ -253,7 +253,7 @@ export default function HomePage() {
                 asChild
                 size="lg"
                 variant="ghost"
-                className="rounded-full px-8 text-black border border-black hover:bg-neutral-100 transition-all font-semibold"
+                className="rounded-full px-8 text-black !border !border-black hover:bg-neutral-100 transition-all font-semibold"
               >
                 <Link href="/contact">Contact Us</Link>
               </Button>
