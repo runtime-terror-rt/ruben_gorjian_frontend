@@ -282,8 +282,16 @@ export default function ScheduleVisitPage() {
     return day.isBefore(dayjs(), "day");
   };
 
+  const userBookings = useMemo(() => {
+    if (isAdmin) return sessions;
+    return sessions.filter(s => {
+      const ownerId = (s as any).userId || (s as any).user?.id;
+      return ownerId === userSession?.id;
+    });
+  }, [sessions, userSession?.id, isAdmin]);
+
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+    <div className="max-w-9xl mx-auto space-y-8 pb-12">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -424,7 +432,7 @@ export default function ScheduleVisitPage() {
                   <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
                   <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">Loading sessions...</p>
                 </div>
-              ) : sessions.length === 0 ? (
+              ) : userBookings.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
                   <div className="p-4 bg-slate-800/50 rounded-full mb-4">
                     <CalendarDays className="h-8 w-8 text-slate-600" />
@@ -434,7 +442,7 @@ export default function ScheduleVisitPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-slate-800/50">
-                  {sessions.map((s) => (
+                  {userBookings.map((s) => (
                     <div
                       key={s.id}
                       className={clsx(
@@ -685,10 +693,10 @@ export default function ScheduleVisitPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting || !selectedDate || isDayBlocked(selectedDate)}
+                  disabled={submitting || !selectedDate || (isDayBlocked(selectedDate) && !editingSession)}
                   className={clsx(
                     "w-full h-14 text-lg font-black tracking-widest uppercase transition-all duration-500 rounded-2xl",
-                    selectedDate && !isDayBlocked(selectedDate)
+                    selectedDate && (!isDayBlocked(selectedDate) || editingSession)
                       ? (editingSession
                         ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
                         : "bg-lime-400 hover:bg-lime-300 text-slate-900 shadow-[0_10px_30px_rgba(163,230,53,0.3)]")
@@ -699,8 +707,8 @@ export default function ScheduleVisitPage() {
                     <span className="flex items-center gap-3">
                       <Loader2 className="h-5 w-5 animate-spin" /> {editingSession ? "Updating..." : "Scheduling..."}
                     </span>
-                  ) : isDayBlocked(selectedDate) ? (
-                    "Already Booked"
+                  ) : isDayBlocked(selectedDate) && !editingSession ? (
+                    "Date Already Booked"
                   ) : editingSession ? (
                     "Update Session"
                   ) : selectedDate ? (
@@ -709,6 +717,12 @@ export default function ScheduleVisitPage() {
                     "Select a Date to Continue"
                   )}
                 </Button>
+
+                {isDayBlocked(selectedDate) && !editingSession && (
+                  <p className="text-[10px] text-center text-rose-400 uppercase tracking-[0.2em] font-bold">
+                    This date is already taken. Please select another.
+                  </p>
+                )}
 
                 <p className="text-[10px] text-center text-slate-500 uppercase tracking-[0.2em] font-bold">
                   All sessions are reviewed by our team
