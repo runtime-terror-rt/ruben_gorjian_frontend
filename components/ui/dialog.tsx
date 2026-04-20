@@ -4,7 +4,6 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { useScrollPropagation } from "@/hooks/use-scroll-propagation";
 
 type DialogContextValue = {
   open: boolean;
@@ -59,12 +58,17 @@ export function DialogContent({
   className?: string;
 }) {
   const ctx = useDialog();
-  const scrollHandlers = useScrollPropagation({ scrollWindowAtBoundary: true });
   const [mounted, setMounted] = React.useState(false);
-
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    if (ctx.open) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [ctx.open]);
 
   if (!ctx.open || !mounted) return null;
 
@@ -82,8 +86,8 @@ export function DialogContent({
         )}
       >
         <div
-          className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 scroll-smooth"
-          {...scrollHandlers}
+          className="flex-1 overflow-y-auto overflow-x-hidden p-6"
+          data-lenis-prevent
         >
           {children}
         </div>
