@@ -14,6 +14,12 @@ import {
   Pencil,
   Image as ImageIcon,
   Video as VideoIcon,
+  X,
+  Check,
+  MapPin,
+  Upload,
+  Clapperboard,
+  FileText,
 } from "lucide-react";
 import { apiDelete, apiGet, apiPatch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -149,10 +155,12 @@ function TagInput({
   value,
   onChange,
   placeholder,
+  variant = "default",
 }: {
   value: string[];
   onChange: (next: string[]) => void;
   placeholder?: string;
+  variant?: "default" | "pill";
 }) {
   const [draft, setDraft] = useState("");
 
@@ -170,14 +178,17 @@ function TagInput({
   };
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
-      <div className="flex flex-wrap gap-2">
+    <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-2 sm:p-3">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {value.map((t, idx) => (
           <button
             type="button"
             key={`${t}-${idx}`}
             onClick={() => remove(idx)}
-            className="px-2 py-1 rounded-full bg-slate-800 text-slate-200 text-xs font-semibold hover:bg-rose-500/20 hover:text-rose-300 transition-colors"
+            className={cn(
+              "px-3 py-1 text-slate-200 text-[10px] sm:text-xs font-semibold hover:bg-rose-500/20 hover:text-rose-300 transition-colors",
+              variant === "pill" ? "rounded-full bg-slate-100/10" : "rounded-lg bg-slate-800"
+            )}
             title="Remove"
           >
             {t}
@@ -197,10 +208,10 @@ function TagInput({
             }
           }}
           placeholder={placeholder}
-          className="flex-1 min-w-[180px] bg-transparent outline-none text-sm text-slate-200 placeholder:text-slate-600"
+          className="flex-1 min-w-[120px] bg-transparent outline-none text-sm text-slate-200 placeholder:text-slate-600"
         />
       </div>
-      <div className="mt-2 text-[10px] text-slate-600 font-semibold uppercase tracking-widest">
+      <div className="mt-2 text-[9px] sm:text-[10px] text-slate-600 font-semibold uppercase tracking-widest">
         Press Enter to add, click tag to remove
       </div>
     </div>
@@ -428,30 +439,6 @@ export default function AdminCaseStudiesPage() {
           <div className="text-sm text-slate-300 font-semibold">
             Total: <span className="text-white">{totals.total}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-slate-700"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Prev
-            </Button>
-            <div className="text-xs text-slate-500 font-semibold">
-              Page <span className="text-slate-200">{page}</span> /{" "}
-              <span className="text-slate-200">{totals.pages}</span>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-slate-700"
-              disabled={page >= totals.pages}
-              onClick={() => setPage((p) => Math.min(totals.pages, p + 1))}
-            >
-              Next
-            </Button>
-          </div>
         </div>
 
         {listQuery.isLoading ? (
@@ -594,159 +581,267 @@ export default function AdminCaseStudiesPage() {
             </TableBody>
           </Table>
         )}
+        <div className="p-4 border-t border-slate-800 flex items-center justify-end">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-slate-700"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Prev
+            </Button>
+            <div className="text-xs text-slate-500 font-semibold">
+              Page <span className="text-slate-200">{page}</span> /{" "}
+              <span className="text-slate-200">{totals.pages}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-slate-700"
+              disabled={page >= totals.pages}
+              onClick={() => setPage((p) => Math.min(totals.pages, p + 1))}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={(o) => !saveMutation.isPending && setDialogOpen(o)}>
-        <DialogContent className="max-w-3xl bg-slate-950 border-slate-800">
-          <DialogHeader>
-            <DialogTitle className="text-white">
+        <DialogContent className="w-full max-w-[98vw] sm:max-w-[95vw] lg:max-w-6xl bg-[#0b0e14] border-slate-800/50 max-h-[98vh] flex flex-col p-0 overflow-hidden shadow-2xl">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-800/40">
+            <button
+              onClick={() => setDialogOpen(false)}
+              className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h2 className="text-xl font-bold text-white font-sora">
               {editing ? "Update Case Study" : "Create Case Study"}
-            </DialogTitle>
-          </DialogHeader>
+            </h2>
+            <button
+              onClick={form.handleSubmit((v) => saveMutation.mutate(v))}
+              disabled={saveMutation.isPending}
+              className="flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors disabled:opacity-50"
+            >
+              <Check className="h-4 w-4" />
+              <span>Check</span>
+            </button>
+          </div>
 
           <form
             onSubmit={form.handleSubmit((v) => saveMutation.mutate(v))}
-            className="space-y-5"
+            className="flex-1 overflow-y-auto px-4 sm:px-8 py-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label className="text-slate-300">Logo</Label>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  {...form.register("logo")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-slate-300">Title</Label>
-                <Input
-                  placeholder="Case study title"
-                  {...form.register("title", { required: true })}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-16">
+              {/* Left Column: Core Identity & Editorial Narrative */}
+              <div className="space-y-10">
+                {/* Core Identity */}
+                <section className="space-y-6">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">Core Identity</h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Case Title</Label>
+                      <Input
+                        placeholder="e.g. The Quantum Rebranding"
+                        {...form.register("title", { required: true })}
+                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl focus:ring-1 focus:ring-indigo-500/50"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Location</Label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                          <Input
+                            placeholder="San Francisco, CA"
+                            {...form.register("location")}
+                            className="h-12 pl-10 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Display Order</Label>
+                        <Input
+                          type="number"
+                          placeholder="01"
+                          {...form.register("displayOrder", { valueAsNumber: true })}
+                          className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 sm:p-5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-white transition-colors group-hover:text-indigo-300">Active Status</h4>
+                        <p className="text-[11px] text-slate-500">Visible to the public immediately after creation</p>
+                      </div>
+                      <Controller
+                        name="isActive"
+                        control={form.control}
+                        render={({ field }) => (
+                          <button
+                            type="button"
+                            onClick={() => field.onChange(!field.value)}
+                            className={cn(
+                              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 p-0.5",
+                              field.value ? "bg-lime-400" : "bg-rose-500"
+                            )}
+                          >
+                            <span className="sr-only">Toggle active status</span>
+                            <span
+                              className={cn(
+                                "pointer-events-none block h-5 w-5 shrink-0 rounded-full bg-white shadow-lg transform transition duration-200 ease-in-out",
+                                field.value ? "translate-x-5" : "translate-x-0"
+                              )}
+                            />
+                          </button>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                {/* Editorial Narrative */}
+                <section className="space-y-6">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">Editorial Narrative</h3>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Editorial Tagline</Label>
+                      <Textarea
+                        placeholder="Describe the soul of the project in a single punchy sentence..."
+                        {...form.register("tagline")}
+                        className="min-h-[100px] bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-2xl resize-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Services Provided</Label>
+                      <Controller
+                        name="services"
+                        control={form.control}
+                        render={({ field }) => (
+                          <TagInput
+                            value={getStringArray(field.value)}
+                            onChange={(vals) => field.onChange(vals)}
+                            placeholder="Add service..."
+                          />
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Structure Highlights</Label>
+                      <Controller
+                        name="structureItems"
+                        control={form.control}
+                        render={({ field }) => (
+                          <TagInput
+                            value={getStringArray(field.value)}
+                            onChange={(vals) => field.onChange(vals)}
+                            placeholder="Add highlight..."
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                </section>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-slate-300">Location</Label>
-                <Input
-                  placeholder="Dhaka, Bangladesh"
-                  {...form.register("location")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-slate-300">Display Order</Label>
-                <Input
-                  type="number"
-                  {...form.register("displayOrder", { valueAsNumber: true })}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
+              {/* Right Column: Visual Media & Cinematic Component */}
+              <div className="space-y-10">
+                {/* Visual Media */}
+                <section className="space-y-6">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-400/80">Visual Media</h3>
+                  <div className="space-y-8">
+                    {/* Project Logo Dropzone */}
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Logo</Label>
+                      <div className="relative group cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          {...form.register("logo")}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="border-2 border-dashed border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center gap-4 bg-slate-900/20 group-hover:bg-slate-900/40 group-hover:border-indigo-500/50 transition-all">
+                          <div className="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Upload className="h-6 w-6 text-indigo-400" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-sm font-bold text-slate-200">Drop Logo Here</p>
+                            <p className="text-[10px] text-slate-500 mt-1">SVG, PNG or AI (Max 2MB)</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Cycle Title</Label>
-                <Input
-                  placeholder="Production Cycle"
-                  {...form.register("cycleTitle")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
+                    {/* Project Gallery */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Gallery</Label>
+                        <span className="text-[10px] font-black text-slate-600">Upload up to 12 images</span>
+                      </div>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        {/* Add Button */}
+                        <label className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group">
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            {...form.register("images")}
+                            className="hidden"
+                          />
+                          <Plus className="h-6 w-6 text-slate-500 group-hover:text-indigo-400 group-hover:scale-110 transition-all" />
+                        </label>
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
+                            <ImageIcon className="h-6 w-6 text-slate-800" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </section>
 
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Services</Label>
-                <Controller
-                  control={form.control}
-                  name="services"
-                  render={({ field }) => (
-                    <TagInput
-                      value={field.value || []}
-                      onChange={field.onChange}
-                      placeholder='Type a service, press Enter (e.g. "Creative Direction")'
-                    />
-                  )}
-                />
-              </div>
+                {/* Cinematic Component */}
+                <section className="space-y-6">
+                  <div className="bg-[#151922] border border-slate-800/50 rounded-3xl p-6 space-y-6">
+                    <div className="flex items-center gap-2 text-indigo-400">
+                      <Clapperboard className="h-5 w-5" />
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Cinematic Component</h3>
+                    </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Tagline</Label>
-                <Textarea
-                  rows={2}
-                  placeholder="Short summary"
-                  {...form.register("tagline")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Structure Title</Label>
-                <Input
-                  placeholder="Production Structure"
-                  {...form.register("structureTitle")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Structure Items</Label>
-                <Controller
-                  control={form.control}
-                  name="structureItems"
-                  render={({ field }) => (
-                    <TagInput
-                      value={field.value || []}
-                      onChange={field.onChange}
-                      placeholder='Type an item, press Enter (e.g. "Planning")'
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-slate-300">Images (multiple)</Label>
-                <Input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  {...form.register("images")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-slate-300">Video Title</Label>
-                <Input
-                  placeholder="Campaign Walkthrough"
-                  {...form.register("videoTitle")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-slate-300">Video (only one)</Label>
-                <Input
-                  type="file"
-                  accept="video/*"
-                  {...form.register("video")}
-                  className="bg-slate-900 border-slate-800 text-slate-200"
-                />
-              </div>
-
-              <div className="flex items-center gap-3 md:col-span-2 pt-1">
-                <Checkbox
-                  checked={form.watch("isActive")}
-                  onCheckedChange={(v) => form.setValue("isActive", Boolean(v))}
-                />
-                <div className="text-sm text-slate-300 font-semibold">
-                  Active (show on landing page)
-                </div>
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Video Component Title"
+                        {...form.register("videoTitle")}
+                        className="h-12 bg-slate-800/40 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                      />
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm">
+                          <span>Discovery Phase</span>
+                          <Plus className="h-4 w-4 text-slate-500 rotate-45" />
+                        </div>
+                        <button
+                          type="button"
+                          className="flex h-12 items-center justify-center gap-2 px-6 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-sm font-bold hover:bg-teal-500/20 transition-all"
+                        >
+                          <VideoIcon className="h-4 w-4" />
+                          <span>Upload Clip</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </div>
             </div>
 
-            <DialogFooter className="gap-4 pt-4">
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-end gap-5 border-t border-slate-800/50 pt-8 pb-4">
               <Button
                 type="button"
                 variant="outline"
-                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+                className="w-full sm:w-auto h-14 min-w-[140px] rounded-2xl border-slate-700 bg-transparent text-slate-300 hover:bg-white/5 hover:text-white font-black uppercase tracking-widest text-xs transition-all"
                 onClick={() => setDialogOpen(false)}
                 disabled={saveMutation.isPending}
               >
@@ -754,13 +849,13 @@ export default function AdminCaseStudiesPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={saveMutation.isPending}
+                className="w-full sm:w-auto h-14 min-w-[240px] rounded-2xl bg-gradient-to-r from-fuchsia-500 to-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 {saveMutation.isPending ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
+                    Processing...
                   </span>
                 ) : editing ? (
                   "Update Case Study"
@@ -768,7 +863,7 @@ export default function AdminCaseStudiesPage() {
                   "Create Case Study"
                 )}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
