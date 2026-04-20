@@ -26,6 +26,13 @@ export function useScrollPropagation(options: UseScrollPropagationOptions = {}) 
   const handleWheel = useCallback(
     (e: React.WheelEvent<HTMLDivElement>) => {
       const element = e.currentTarget;
+      const target = e.target as HTMLElement;
+      
+      // Allow native scrolling for textareas
+      if (target.tagName.toLowerCase() === "textarea") {
+        return;
+      }
+
       const { scrollTop, scrollHeight, clientHeight } = element;
 
       const isAtTop = scrollTop <= 0;
@@ -52,6 +59,13 @@ export function useScrollPropagation(options: UseScrollPropagationOptions = {}) 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       const element = e.currentTarget;
+      const target = e.target as HTMLElement;
+      
+      // Allow native scrolling for textareas
+      if (target.tagName.toLowerCase() === "textarea") {
+        return;
+      }
+
       const { scrollTop, scrollHeight, clientHeight } = element;
 
       const isAtTop = scrollTop <= 0;
