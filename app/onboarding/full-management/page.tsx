@@ -50,6 +50,13 @@ function FullManagementOnboardingInner() {
   const [connectedAccounts, setConnectedAccounts] = useState<string[]>([]);
   const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop += e.deltaY;
+    }
+  };
+
   const [form, setForm] = useState({
     businessName: "",
     websiteUrl: "",
@@ -395,6 +402,7 @@ function FullManagementOnboardingInner() {
 
     if (currentSection < 6) {
       setCurrentSection((s) => (s + 1) as Section);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -460,7 +468,7 @@ function FullManagementOnboardingInner() {
         <div className="w-full max-w-4xl rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden">
           <div className="grid md:grid-cols-3">
             <aside className="md:col-span-1 bg-slate-900/60 border-r border-slate-800 px-5 py-6">
-              <div className="space-y-2">
+              <div className="space-y-2 sticky top-0">
                 {sections.map((section) => {
                   const active = section.id === currentSection;
                   const done = section.id < currentSection;
@@ -518,7 +526,11 @@ function FullManagementOnboardingInner() {
                 </div>
               ) : null}
 
-              <div className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[70vh]">
+              <div 
+                ref={scrollRef}
+                onWheel={handleWheel}
+                className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[60vh] custom-scrollbar pb-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+              >
                 {currentSection === 1 ? (
                   <>
                     <div className="space-y-2">
