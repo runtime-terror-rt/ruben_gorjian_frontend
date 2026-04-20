@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import Navbar from "@/components/navbar";
-import heroImage from "@/components/assets/new_img.png";
+import heroImage from "@/components/assets/hero_cocktail.jpg";
 import whiskImage from "@/components/assets/whisk.png";
 import contentCalendarImage from "@/components/assets/Content_1.png";
 import FooterSecondary from "@/components/footer-secondary";
@@ -241,31 +241,34 @@ export default function HomePage() {
               >
                 <Link href="/pricing">Signup</Link>
               </Button>
-              <Button
+              {/* <Button
                 asChild
                 size="lg"
                 variant="outline"
                 className="rounded-full px-8"
               >
                 <Link href="/case-studies">Case Studies</Link>
-              </Button>
+              </Button> */}
               <Button
                 asChild
                 size="lg"
-                variant="outline"
-                className="rounded-full px-8"
+                variant="ghost"
+                className="rounded-full px-8 text-black border border-black hover:bg-neutral-100 transition-all font-semibold"
               >
                 <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
           </div>
-          <div>
-            <Image
-              src={heroImage}
-              alt="Talexia landing visual"
-              className="h-auto w-full object-cover"
-              priority
-            />
+          <div className="relative flex items-start justify-end">
+            <div className="relative w-full overflow-hidden rounded-3xl shadow-2xl ring-1 ring-black/5">
+              <Image
+                src={heroImage}
+                alt="Professional cocktail photography by Ruben Gorjian"
+                className="h-[480px] w-full object-cover object-center"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent rounded-3xl" />
+            </div>
           </div>
         </div>
       </section>
