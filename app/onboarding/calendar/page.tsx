@@ -131,13 +131,23 @@ function CalendarOnboardingInner() {
     handledQueryKeyRef.current = queryKey;
 
     const errorParam = searchParams.get("error");
+    const errorMessageParam = searchParams.get("errorMessage");
     const successParam = searchParams.get("success");
     const platformParam = searchParams.get("platform");
 
     if (errorParam) {
+      const decodedMessage = errorMessageParam
+        ? decodeURIComponent(errorMessageParam)
+        : errorParam === "missing_params"
+          ? "Missing required OAuth parameters. Please try connecting again."
+          : errorParam === "connection_failed"
+            ? "Failed to connect account. Please check your credentials and try again."
+            : "Unable to connect account";
+
+      setError(decodedMessage);
       toast({
         title: "Connection failed",
-        description: "Unable to connect account",
+        description: decodedMessage,
         variant: "destructive",
       });
       window.history.replaceState({}, "", "/onboarding/calendar");
@@ -167,6 +177,7 @@ function CalendarOnboardingInner() {
 
   const connectPlatform = async (platform: string) => {
     setConnectingPlatform(platform);
+    setError(null);
     try {
       const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
@@ -181,14 +192,39 @@ function CalendarOnboardingInner() {
       const data = await response.json().catch(() => ({}));
 
       const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
-      if (connectUrl) {
+      
+      if (connectUrl && response.ok) {
         window.location.href = connectUrl;
-      } else {
-        setError("No connect URL returned from server.");
+        return;
       }
+
+      // Aggressively find the best error message from the response data
+      const errorMsg = 
+        (typeof data.error === 'string' ? data.error : (data.error?.message || null)) || 
+        (typeof data.message === 'string' ? data.message : null) ||
+        (data.details?.message) ||
+        (data.details?.provider?.message) ||
+        (typeof data.err === 'string' ? data.err : null) ||
+        (data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : String(data.error)) : null) ||
+        (data && Object.keys(data).length > 0 ? JSON.stringify(data) : null) ||
+        (!response.ok ? `HTTP ${response.status}: ${response.statusText}` : null) ||
+        "No connect URL returned from server.";
+
+      setError(errorMsg);
+      toast({
+        title: "Connection Error",
+        description: errorMsg,
+        variant: "destructive",
+      });
     } catch (err) {
       console.error("Connection error:", err);
-      setError("Failed to start connection process.");
+      const message = err instanceof Error ? err.message : "Failed to start connection process.";
+      setError(message);
+      toast({
+        title: "Connection Error",
+        description: message,
+        variant: "destructive",
+      });
     } finally {
       setConnectingPlatform(null);
     }

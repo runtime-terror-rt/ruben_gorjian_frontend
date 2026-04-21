@@ -182,28 +182,35 @@ function SocialPageInner() {
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok) {
-        const raw: string = data?.error || `HTTP ${response.status}: ${response.statusText}`;
-        throw new Error(raw);
-      }
+      // Find the best error message from the response data
+      const errorMsg = 
+        (typeof data.error === 'string' ? data.error : null) || 
+        (typeof data.message === 'string' ? data.message : null) ||
+        (data.details?.message) ||
+        (data.details?.provider?.message) ||
+        (typeof data.err === 'string' ? data.err : null) ||
+        (data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : String(data.error)) : null) ||
+        (data && Object.keys(data).length > 0 ? JSON.stringify(data) : null) ||
+        (!response.ok ? `HTTP ${response.status}: ${response.statusText}` : null) ||
+        "No connect URL returned from server.";
 
-        const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
-
-        if (connectUrl) {
-          window.location.href = connectUrl;
-        } else {
-          throw new Error("No connect URL returned from server.");
-        }
+      setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
+      toast({
+        title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
+        description: errorMsg,
+        variant: "destructive",
+      });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to connect account";
       console.error("Connect error:", error);
       setConnectErrors((prev) => ({ ...prev, [platform]: message }));
       toast({
-        title: `Failed to connect ${platform.charAt(0) + platform.slice(1).toLowerCase()}`,
+        title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
         description: message,
         variant: "destructive",
       });
+    } finally {
       setConnectingPlatform(null);
     }
   };

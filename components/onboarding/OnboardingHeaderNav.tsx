@@ -228,7 +228,7 @@ export function OnboardingHeaderNav({
                 className="bg-slate-900 text-slate-400"
               >
                 <DropdownMenuItem
-                  onClick={() => window.open("/help", "_blank")}
+                  onClick={() => router.push("/faq")}
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
                   Help centre
@@ -241,7 +241,7 @@ export function OnboardingHeaderNav({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => window.open("/pricing", "_blank")}
+                  onClick={() => router.push("/onboarding/my-plan")}
                 >
                   <Info className="h-4 w-4 mr-2" />
                   What&apos;s included in my plan?

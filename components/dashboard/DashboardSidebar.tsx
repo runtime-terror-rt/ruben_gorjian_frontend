@@ -208,7 +208,7 @@ export function DashboardSidebar({
             {/* Footer */}
             <div className="border-t border-slate-800 p-4 space-y-2 flex-shrink-0">
               <button
-                onClick={() => handleNavClick("/help")}
+                onClick={() => handleNavClick("/faq")}
                 className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
               >
                 <HelpCircle className="h-4 w-4" />
@@ -330,7 +330,7 @@ export function DashboardSidebar({
       {!isCollapsed && (
         <div className="border-t border-slate-800 p-4 space-y-2 flex-shrink-0">
           <button
-            onClick={() => handleNavClick("/help")}
+            onClick={() => handleNavClick("/faq")}
             className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
           >
             <HelpCircle className="h-4 w-4" />
@@ -352,7 +352,7 @@ export function DashboardSidebar({
       {isCollapsed && (
         <div className="border-t border-slate-800 p-2 space-y-2">
           <button
-            onClick={() => handleNavClick("/help")}
+            onClick={() => handleNavClick("/faq")}
             className="w-full rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
             title="Help & Support"
           >
