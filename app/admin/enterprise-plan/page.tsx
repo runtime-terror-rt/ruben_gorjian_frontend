@@ -23,6 +23,10 @@ import {
   Loader2,
   ShieldCheck,
   TrendingUp,
+  ArrowLeft,
+  ArrowRight,
+  CheckSquare,
+  Camera,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -35,7 +39,7 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 
-import { apiDelete, apiGet, apiPost } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,7 +82,7 @@ type EnterpriseInvite = {
   fullName: string;
   companyName: string;
   planCode: string;
-  status: "PENDING" | "SENT" | "VIEWED" | "SIGNED_UP" | "PAID" | "EXPIRED" | "CANCELED";
+  status: "PENDING" | "VIEWED" | "SIGNED_UP" | "PAYMENT_COMPLETED" | "EXPIRED" | "CANCELED";
   proposal?: {
     planName: string;
     amount: number;
@@ -121,33 +125,32 @@ type InviteListResponse = {
 function StatusBadge({ status }: { status: string }) {
   const s = status.toUpperCase();
   switch (s) {
-    case "PAID":
+    case "PAYMENT_COMPLETED":
       return (
         <Badge className="bg-lime-500/20 text-lime-400 border-lime-400/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest animate-pulse shadow-[0_0_15px_rgba(163,230,53,0.1)]">
           <CheckCircle2 className="h-3 w-3" />
-          Fully Paid
+          PAYMENT_COMPLETED
         </Badge>
       );
     case "PENDING":
-    case "SENT":
       return (
         <Badge className="bg-amber-400/10 text-amber-400 border-amber-400/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
           <Send className="h-3 w-3" />
-          {s === "SENT" ? "Sent" : "Created"}
+          PENDING
         </Badge>
       );
     case "VIEWED":
       return (
         <Badge className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
           <Eye className="h-3 w-3" />
-          Client Viewed
+          VIEWED
         </Badge>
       );
     case "SIGNED_UP":
       return (
         <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
           <User className="h-3 w-3" />
-          Onboarded
+          SIGNED_UP
         </Badge>
       );
     case "EXPIRED":
@@ -155,7 +158,7 @@ function StatusBadge({ status }: { status: string }) {
       return (
         <Badge variant="destructive" className="bg-red-500/10 text-red-400 border-red-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
           <XCircle className="h-3 w-3" />
-          {s === "EXPIRED" ? "Offer Expired" : "Voided"}
+          {s}
         </Badge>
       );
     default:
@@ -188,7 +191,7 @@ export default function EnterprisePlanPage() {
 
   // State
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("PENDING");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -280,7 +283,7 @@ export default function EnterprisePlanPage() {
   });
 
   const resendMutation = useMutation({
-    mutationFn: (id: string) => apiPost(`/api/admin/enterprise-plans/${id}/resend`, {}),
+    mutationFn: (id: string) => apiPost(`/api/admin/enterprise-plan/invites/${id}/resend`, {}),
     onSuccess: () => {
       toast({ title: "Invite resent" });
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
@@ -288,7 +291,7 @@ export default function EnterprisePlanPage() {
   });
 
   const cancelMutation = useMutation({
-    mutationFn: (id: string) => apiPost(`/api/admin/enterprise-plans/${id}/cancel`, {}),
+    mutationFn: (id: string) => apiPatch(`/api/admin/enterprise-plan/invites/${id}/cancel`, {}),
     onSuccess: () => {
       toast({ title: "Invite canceled" });
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
@@ -414,7 +417,7 @@ export default function EnterprisePlanPage() {
                 <DropdownMenuItem 
                   onClick={() => resendMutation.mutate(invite.id)}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
-                  disabled={invite.status === "PAID" || invite.status === "CANCELED"}
+                  disabled={invite.status === "PAYMENT_COMPLETED" || invite.status === "CANCELED"}
                 >
                   <Mail className="mr-3 h-4 w-4 text-amber-400" /> 
                   <span className="font-medium">Resend Email</span>
@@ -422,7 +425,7 @@ export default function EnterprisePlanPage() {
                 
                 <DropdownMenuSeparator className="bg-slate-800 my-1" />
                 
-                {invite.status !== "CANCELED" && invite.status !== "PAID" && (
+                {invite.status !== "CANCELED" && invite.status !== "PAYMENT_COMPLETED" && (
                   <DropdownMenuItem 
                     onClick={() => cancelMutation.mutate(invite.id)}
                     className="rounded-lg py-2.5 cursor-pointer focus:bg-amber-500/10 text-amber-400"
@@ -510,8 +513,8 @@ export default function EnterprisePlanPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Value", value: formatAmount((invitesQuery.data?.items || []).reduce((acc, curr) => acc + (curr.proposal?.amount || curr.amount || 0), 0), "usd"), icon: TrendingUp, color: "text-lime-400", bg: "bg-lime-400/10" },
-          { label: "Active Proposals", value: (invitesQuery.data?.items || []).filter(i => i.status === "SENT" || i.status === "PENDING" || i.status === "VIEWED").length, icon: Send, color: "text-blue-400", bg: "bg-blue-400/10" },
-          { label: "Successful Converts", value: (invitesQuery.data?.items || []).filter(i => i.status === "PAID").length, icon: ShieldCheck, color: "text-indigo-400", bg: "bg-indigo-400/10" },
+          { label: "Active Proposals", value: (invitesQuery.data?.items || []).filter(i => i.status === "PENDING" || i.status === "VIEWED").length, icon: Send, color: "text-blue-400", bg: "bg-blue-400/10" },
+          { label: "Successful Converts", value: (invitesQuery.data?.items || []).filter(i => i.status === "PAYMENT_COMPLETED").length, icon: ShieldCheck, color: "text-indigo-400", bg: "bg-indigo-400/10" },
           { label: "Pipeline Health", value: "98%", icon: Building2, color: "text-emerald-400", bg: "bg-emerald-400/10" },
         ].map((stat, i) => (
           <motion.div 
@@ -562,13 +565,12 @@ export default function EnterprisePlanPage() {
               className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300"
             >
               <option value="ALL">All Categories</option>
-              <option value="PENDING">Draft Proposals</option>
-              <option value="SENT">Sent & Active</option>
-              <option value="VIEWED">Client Viewed</option>
-              <option value="SIGNED_UP">Onboarded</option>
-              <option value="PAID">Fully Paid</option>
-              <option value="EXPIRED">Expired Offer</option>
-              <option value="CANCELED">Voided</option>
+              <option value="PENDING">PENDING</option>
+              <option value="VIEWED">VIEWED</option>
+              <option value="SIGNED_UP">SIGNED_UP</option>
+              <option value="PAYMENT_COMPLETED">PAYMENT_COMPLETED</option>
+              <option value="EXPIRED">EXPIRED</option>
+              <option value="CANCELED">CANCELED</option>
             </Select>
           </div>
         </div>
@@ -700,403 +702,389 @@ export default function EnterprisePlanPage() {
       {/* --- Modals & Dialogs --- */}
 
       {/* Create Invite Modal */}
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[2rem] p-0 border-none shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-          <div className="p-8 bg-gradient-to-b from-slate-800 to-slate-900 border-b border-white/5">
-            <DialogHeader>
-              <div className="h-14 w-14 rounded-2xl bg-lime-400 flex items-center justify-center text-slate-950 mb-4 shadow-[0_0_30px_rgba(163,230,53,0.2)]">
-                <Send className="h-7 w-7" />
+      <Dialog 
+        open={isCreateModalOpen} 
+        onOpenChange={(open) => {
+          setIsCreateModalOpen(open);
+        }}
+      >
+        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[900px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
+          <div className="p-8 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/5 blur-[100px] pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <DialogTitle className="text-3xl font-black text-white tracking-tighter">New Enterprise Proposal</DialogTitle>
+                <DialogDescription className="text-slate-500 text-sm font-medium tracking-tight mt-1">
+                  Configure custom proposal details for high-value clients.
+                </DialogDescription>
               </div>
-              <DialogTitle className="text-3xl font-black text-white tracking-tight">Create Enterprise Proposal</DialogTitle>
-              <DialogDescription className="text-slate-400 text-base font-medium">
-                Configure a custom high-value plan and invite your client to join.
-              </DialogDescription>
-            </DialogHeader>
+              <div className="h-12 w-12 rounded-2xl bg-lime-400/10 flex items-center justify-center text-lime-400">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handleCreateSubmit} className="p-8 space-y-8">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-lime-400/10 border border-lime-400/20 flex items-center justify-center text-[10px] font-black text-lime-400">01</div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest">Client Information</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Plan Name</Label>
-                  <Input 
-                    value={formData.planName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/50"
-                    required
-                  />
-                </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Company Name</Label>
-                  <Input 
-                    placeholder="e.g. Omega Holdings"
-                    value={formData.companyName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/50"
-                    required
-                  />
-                </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</Label>
-                  <Input 
-                    placeholder="e.g. Masud Rana"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/50"
-                    required
-                  />
-                </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</Label>
-                  <Input 
-                    type="email"
-                    placeholder="e.g. client@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/50"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-lime-400/10 border border-lime-400/20 flex items-center justify-center text-[10px] font-black text-lime-400">02</div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest">Plan Configuration</h3>
-              </div>
-              
-              <div className="space-y-4">
-                <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Social Platforms</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 bg-slate-950/30 rounded-2xl border border-slate-800">
-                  {["INSTAGRAM", "FACEBOOK", "TIKTOK", "LINKEDIN", "X/TWITTER"].map((platform) => (
-                    <div key={platform} className="flex items-center space-x-3 bg-slate-900/50 p-3 rounded-xl border border-white/5 transition-colors hover:border-lime-400/20">
-                      <Checkbox 
-                        id={`platform-${platform}`} 
-                        checked={formData.socialPlatforms.includes(platform)}
-                        onCheckedChange={() => togglePlatform(platform)}
-                        className="h-5 w-5 rounded-md border-slate-700"
-                      />
-                      <label 
-                        htmlFor={`platform-${platform}`}
-                        className="text-xs font-bold text-slate-300 cursor-pointer"
-                      >
-                        {platform}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between ml-1">
-                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Reels Per Month</Label>
-                    <span className="text-[10px] font-bold text-lime-400 bg-lime-400/10 px-2 py-0.5 rounded-full">High Value</span>
-                  </div>
-                  <Input 
-                    type="number"
-                    value={formData.reelsPerMonth}
-                    onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/30"
-                  />
-                </div>
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between ml-1">
-                    <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Micro Reels Per Month</Label>
-                    <span className="text-[10px] font-bold text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full">Engagement</span>
-                  </div>
-                  <Input 
-                    type="number"
-                    value={formData.microReelsPerMonth}
-                    onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl focus-visible:ring-lime-400/30"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-lime-400/10 border border-lime-400/20 flex items-center justify-center text-[10px] font-black text-lime-400">03</div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest">Production & Automation</h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Photo Shoot Frequency</Label>
-                  <Select 
-                    value={formData.proPhotoShootFrequency}
-                    onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootFrequency: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl font-bold"
-                  >
-                    <option value="One Time">One Time</option>
-                    <option value="Monthly">Monthly</option>
-                    <option value="Every 2 Months">Every 2 Months</option>
-                    <option value="Quarterly">Quarterly</option>
-                  </Select>
-                </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Pro Shoot Length</Label>
-                  <Select 
-                    value={formData.proPhotoShootLength}
-                    onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootLength: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl font-bold"
-                  >
-                    <option value="1 hour">1 hour</option>
-                    <option value="2 hours">2 hours</option>
-                    <option value="4 hours">4 hours</option>
-                    <option value="6 hours">6 hours</option>
-                    <option value="Full Day">Full Day</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center justify-between p-4 bg-slate-950/30 rounded-2xl border border-slate-800 transition-all hover:bg-slate-900/50">
-                  <div className="flex flex-col">
-                    <Label htmlFor="captionHashtags" className="text-sm font-bold text-slate-200">Captions & Hashtags</Label>
-                    <p className="text-[10px] text-slate-500 font-medium tracking-tight">AI optimized brand copywriting</p>
-                  </div>
-                  <Checkbox 
-                    id="captionHashtags" 
-                    checked={formData.captionHashtags}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, captionHashtags: !!checked }))}
-                    className="h-6 w-6 rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950"
-                  />
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-950/30 rounded-2xl border border-slate-800 transition-all hover:bg-slate-900/50">
-                  <div className="flex flex-col">
-                    <Label htmlFor="scheduling" className="text-sm font-bold text-slate-200">Auto Scheduling</Label>
-                    <p className="text-[10px] text-slate-500 font-medium tracking-tight">Fully managed posting queue</p>
-                  </div>
-                  <Checkbox 
-                    id="scheduling" 
-                    checked={formData.scheduling}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, scheduling: !!checked }))}
-                    className="h-6 w-6 rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-lime-400/10 border border-lime-400/20 flex items-center justify-center text-[10px] font-black text-lime-400">04</div>
-                <h3 className="text-sm font-black text-white uppercase tracking-widest">Pricing & Expiration</h3>
-              </div>
+          <div className="p-8 bg-slate-950/40">
+            <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Proposal Amount ($)</Label>
-                  <Input 
-                    type="number"
-                    value={formData.amount}
-                    onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl font-black text-lime-400 text-lg focus-visible:ring-lime-400/50"
-                  />
+                {/* Client Identity Section */}
+                <div className="md:col-span-3">
+                  <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                    <User className="h-3 w-3" /> Client Identity
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">planName</Label>
+                      <Input 
+                        value={formData.planName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        placeholder="e.g. OMEGA ELITE"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">companyName</Label>
+                      <Input 
+                        value={formData.companyName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        placeholder="Legal Entity"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">fullName</Label>
+                      <Input 
+                        value={formData.fullName}
+                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        placeholder="Full Name"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-3">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">email</Label>
+                      <Input 
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        placeholder="client@company.com"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Billing Cycle</Label>
-                  <Select 
-                    value={formData.billingCycle}
-                    onChange={(e) => setFormData(prev => ({ ...prev, billingCycle: e.target.value }))}
-                    className="bg-slate-950/50 border-slate-800 h-12 rounded-xl font-bold"
-                  >
-                    <option value="MONTHLY">Monthly</option>
-                    <option value="YEARLY">Yearly</option>
-                    <option value="ONETIME">One Time</option>
-                  </Select>
+
+                {/* Service Logistics */}
+                <div className="md:col-span-2 space-y-4">
+                  <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                    <TrendingUp className="h-3 w-3" /> Service Strategy
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">reelsPerMonth</Label>
+                      <Input 
+                        type="number"
+                        value={formData.reelsPerMonth}
+                        onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">microReelsPerMonth</Label>
+                      <Input 
+                        type="number"
+                        value={formData.microReelsPerMonth}
+                        onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootFrequency</Label>
+                      <Select 
+                        value={formData.proPhotoShootFrequency}
+                        onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootFrequency: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
+                      >
+                        <option value="One Time">One Time</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Every 2 Months">Every 2 Months</option>
+                        <option value="Quarterly">Quarterly</option>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootLength</Label>
+                      <Select 
+                        value={formData.proPhotoShootLength}
+                        onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootLength: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
+                      >
+                        <option value="1 hour">1 hour</option>
+                        <option value="2 hours">2 hours</option>
+                        <option value="4 hours">4 hours</option>
+                        <option value="6 hours">6 hours</option>
+                        <option value="Full Day">Full Day</option>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">socialPlatforms</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {["INSTAGRAM", "FACEBOOK", "TIKTOK",].map((platform) => (
+                        <div 
+                          key={platform} 
+                          onClick={() => togglePlatform(platform)}
+                          className={cn(
+                            "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all cursor-pointer",
+                            formData.socialPlatforms.includes(platform) 
+                            ? "bg-lime-400/10 border-lime-400/30 text-lime-400" 
+                            : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                          )}
+                        >
+                          <div className={cn(
+                            "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                            formData.socialPlatforms.includes(platform) ? "bg-lime-400 border-lime-400" : "border-slate-700"
+                          )}>
+                            {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
+                          </div>
+                          <span className="text-[10px] font-black tracking-wider">{platform}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Offer Expires In</Label>
-                  <div className="relative">
-                    <Input 
-                      type="number"
-                      value={formData.expiresInDays}
-                      onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))}
-                      className="bg-slate-950/50 border-slate-800 h-12 rounded-xl pr-14"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-600 uppercase">Days</span>
+
+                {/* Financials */}
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                    <ShieldCheck className="h-3 w-3" /> Financials
+                  </h3>
+                  <div className="space-y-4 bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">amount</Label>
+                      <Input 
+                        type="number"
+                        value={formData.amount}
+                        onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
+                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-lime-400 text-lg font-black"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">billingCycle</Label>
+                      <Select 
+                        value={formData.billingCycle}
+                        onChange={(e) => setFormData(prev => ({ ...prev, billingCycle: e.target.value }))}
+                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
+                      >
+                        <option value="MONTHLY">Monthly</option>
+                        <option value="YEARLY">Yearly</option>
+                      </Select>
+                    </div>
+                    <div className="flex items-center justify-between pt-2">
+                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer" htmlFor="captions">captionHashtags</Label>
+                      <Checkbox 
+                        id="captions"
+                        checked={formData.captionHashtags} 
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, captionHashtags: !!checked }))}
+                        className="rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950" 
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer" htmlFor="scheduling">scheduling</Label>
+                      <Checkbox 
+                        id="scheduling"
+                        checked={formData.scheduling} 
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, scheduling: !!checked }))}
+                        className="rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950" 
+                      />
+                    </div>
+                    <div className="space-y-2 pt-2 border-t border-white/5">
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">expiresInDays</Label>
+                      <Input 
+                        type="number"
+                        value={formData.expiresInDays}
+                        onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))}
+                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        min={1}
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
+          </div>
 
-            <div className="pt-6 flex flex-col sm:flex-row gap-4">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => setIsCreateModalOpen(false)}
-                className="flex-1 border-slate-800 bg-slate-900/50 text-slate-400 h-14 rounded-2xl font-bold hover:text-white"
-              >
-                Discard
-              </Button>
-              <Button 
-                type="submit" 
-                className="flex-[2] bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.2)] transition-all active:scale-95"
-                disabled={createInviteMutation.isPending}
-              >
-                {createInviteMutation.isPending ? (
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                ) : (
-                  <Send className="h-5 w-5 mr-2" />
-                )}
-                Send Proposal
-              </Button>
-            </div>
-          </form>
+          <div className="p-8 pt-4 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex items-center justify-end gap-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setIsCreateModalOpen(false)}
+              className="border-white/10 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
+            >
+              Cancel
+            </Button>
+            <Button 
+              form="enterprise-proposal-form"
+              type="submit" 
+              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-12 px-8 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95 uppercase tracking-widest text-[11px]"
+              disabled={createInviteMutation.isPending}
+            >
+              {createInviteMutation.isPending ? (
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4 mr-2" />
+              )}
+              Dispatch Proposal
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 sm:max-w-[600px] rounded-[2.5rem] p-0 border-none shadow-2xl overflow-hidden">
+        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[850px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
           {inviteDetailsQuery.isLoading ? (
-            <div className="p-12 flex flex-col items-center justify-center space-y-4">
-              <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
-              <p className="text-slate-400 font-bold animate-pulse">Loading proposal details...</p>
+            <div className="p-20 flex flex-col items-center justify-center space-y-6">
+              <div className="relative">
+                <Loader2 className="h-10 w-10 text-lime-400 animate-spin" />
+                <div className="absolute inset-0 blur-xl bg-lime-400/20 animate-pulse" />
+              </div>
+              <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-[10px]">Synchronizing Data...</p>
             </div>
           ) : inviteDetailsQuery.data?.invite ? (
             (() => {
               const invite = inviteDetailsQuery.data.invite;
               return (
                 <div className="flex flex-col">
-                  {/* Modal Header Section */}
-                  <div className="p-8 bg-gradient-to-br from-slate-800 to-slate-900 border-b border-white/5">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="h-14 w-14 rounded-2xl bg-slate-950 border border-white/5 flex items-center justify-center text-lime-400 shadow-inner">
-                        <Building2 className="h-7 w-7" />
+                  {/* Compact Header */}
+                  <div className="p-8 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_left,rgba(163,230,53,0.05),transparent)] pointer-events-none" />
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lime-400">
+                          <Building2 className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-black text-white tracking-tight">{invite.companyName}</h2>
+                          <div className="flex items-center gap-3 text-slate-500 font-bold uppercase tracking-widest text-[9px] mt-0.5">
+                            <span>{invite.fullName}</span>
+                            <div className="h-1 w-1 rounded-full bg-slate-800" />
+                            <span>{invite.email}</span>
+                          </div>
+                        </div>
                       </div>
                       <StatusBadge status={invite.status} />
                     </div>
-                    <h2 className="text-3xl font-black text-white tracking-tight mb-1">{invite.companyName}</h2>
-                    <p className="text-slate-400 font-medium flex items-center gap-2">
-                      <User className="h-4 w-4 text-slate-600" />
-                      {invite.fullName}
-                    </p>
                   </div>
 
-                  {/* Modal Body Section */}
-                  <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto scrollbar-hide bg-slate-950/20">
-                    {/* Visual Lifecycle Timeline */}
-                    <div className="relative px-2">
-                      <div className="absolute top-[18px] left-[18px] bottom-[18px] w-[2px] bg-slate-800" />
-                      <div className="space-y-8 relative z-10">
+                  {/* Body - Grid Layout to avoid scroll */}
+                  <div className="p-8 grid grid-cols-1 md:grid-cols-5 gap-8 bg-slate-950/40">
+                    {/* Lifecycle - Left Column */}
+                    <div className="md:col-span-2 space-y-6">
+                      <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Activity Lifecycle</h3>
+                      <div className="space-y-4 relative">
+                        <div className="absolute top-2 left-5 bottom-2 w-[1px] bg-slate-800" />
                         {[
-                          { label: "Proposal Created", date: invite.createdAt, icon: Plus, active: !!invite.createdAt, color: "text-blue-400", bg: "bg-blue-400/10" },
-                          { label: "Client Viewed", date: invite.viewedAt, icon: Eye, active: !!invite.viewedAt, color: "text-amber-400", bg: "bg-amber-400/10" },
-                          { label: "Account Setup", date: invite.signedUpAt, icon: ShieldCheck, active: !!invite.signedUpAt, color: "text-indigo-400", bg: "bg-indigo-400/10" },
-                          { label: "Conversion (Paid)", date: invite.paidAt, icon: CheckCircle2, active: !!invite.paidAt, color: "text-lime-400", bg: "bg-lime-400/10" },
-                        ].map((step, idx) => (
-                          <div key={idx} className="flex gap-6 items-start group">
-                            <div className={cn(
-                              "h-9 w-9 rounded-xl flex items-center justify-center transition-all border shadow-lg shrink-0",
-                              step.active ? cn(step.bg, step.color, "border-white/10") : "bg-slate-900 text-slate-700 border-white/5"
-                            )}>
-                              <step.icon className="h-4 w-4" />
-                            </div>
-                            <div className="pt-1.5 flex-1 border-b border-white/[0.03] pb-4 group-last:border-none">
-                              <div className="flex items-center justify-between">
-                                <p className={cn("text-xs font-black uppercase tracking-widest", step.active ? "text-white" : "text-slate-600")}>
-                                  {step.label}
-                                </p>
-                                {step.active && (
-                                  <Badge className="bg-lime-400/10 text-lime-400 text-[8px] font-black uppercase px-1.5 py-0">Completed</Badge>
-                                )}
+                          { id: "PENDING", label: "ISSUED", date: invite.createdAt, icon: Send },
+                          { id: "VIEWED", label: "VIEWED", date: invite.viewedAt, icon: Eye },
+                          { id: "SIGNED_UP", label: "JOINED", date: invite.signedUpAt, icon: User },
+                          { id: "PAYMENT_COMPLETED", label: "PAID", date: invite.paidAt, icon: CheckCircle2 },
+                        ].map((step, idx) => {
+                          const isActive = !!step.date;
+                          return (
+                            <div key={idx} className="flex gap-4 items-center relative z-10">
+                              <div className={cn(
+                                "h-10 w-10 rounded-lg flex items-center justify-center border transition-all",
+                                isActive ? "bg-lime-400/10 text-lime-400 border-lime-400/20" : "bg-slate-900 text-slate-700 border-white/5"
+                              )}>
+                                <step.icon className="h-4 w-4" />
                               </div>
-                              <p className={cn("text-[11px] mt-1 font-medium", step.active ? "text-slate-400" : "text-slate-800")}>
-                                {step.date ? formatDate(step.date) : "Awaiting event tracking..."}
-                              </p>
+                              <div>
+                                <p className={cn("text-[9px] font-black uppercase tracking-widest", isActive ? "text-white" : "text-slate-700")}>{step.label}</p>
+                                <p className="text-[10px] text-slate-500 font-medium">{step.date ? formatDate(step.date) : "Pending"}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Proposal Details - Right Column */}
+                    <div className="md:col-span-3 space-y-6">
+                      <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[9px] font-black text-lime-400 uppercase tracking-widest mb-1">Current Proposal</p>
+                            <h3 className="text-xl font-black text-white tracking-tight">{invite.proposal?.planName || invite.planName}</h3>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-black text-white tracking-tighter">
+                              {formatAmount(invite.proposal?.amount || invite.amount || 0, invite.proposal?.currency || invite.currency || "usd")}
+                            </p>
+                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5">/ {invite.proposal?.billingCycle || invite.billingCycle}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Social Content</p>
+                            <div className="space-y-1">
+                              <div className="flex justify-between text-[11px]">
+                                <span className="text-slate-400">Monthly Reels</span>
+                                <span className="text-white font-bold">{invite.reelsPerMonth || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-[11px]">
+                                <span className="text-slate-400">Micro Content</span>
+                                <span className="text-white font-bold">{invite.microReelsPerMonth || 0}</span>
+                              </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Official Proposal Section */}
-                    <div className="bg-slate-900 border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl">
-                      <div className="bg-gradient-to-r from-lime-400/20 to-transparent p-6 pb-0">
-                        <div className="flex items-center justify-between mb-4">
-                          <Badge className="bg-lime-400 text-slate-950 text-[9px] font-black uppercase tracking-[0.2em] px-2 py-0.5">Enterprise Proposal</Badge>
-                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ID: {invite.planCode}</span>
-                        </div>
-                        <h3 className="text-3xl font-black text-white tracking-tighter mb-1">{invite.proposal?.planName || invite.planName}</h3>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-black text-lime-400 tracking-tighter">
-                            {formatAmount(invite.proposal?.amount || invite.amount || 0, invite.proposal?.currency || invite.currency || "usd")}
-                          </span>
-                          <span className="text-sm font-black text-slate-500 uppercase tracking-widest opacity-50">/ {invite.proposal?.billingCycle || invite.billingCycle}</span>
-                        </div>
-                      </div>
-
-                      <div className="p-6 grid grid-cols-2 gap-4">
-                        <div className="p-4 bg-slate-950/40 rounded-2xl border border-white/5">
-                          <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Social Range</p>
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {invite.socialPlatforms?.map((p: string) => (
-                              <Badge key={p} variant="outline" className="text-[8px] font-black border-slate-800 text-slate-400 uppercase tracking-tighter">{p}</Badge>
-                            ))}
+                          <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Shoot Logistics</p>
+                            <div className="space-y-1">
+                              <p className="text-[11px] text-white font-bold">{invite.proPhotoShootFrequency || "N/A"}</p>
+                              <p className="text-[10px] text-slate-500">{invite.proPhotoShootLength || "N/A"} session</p>
+                            </div>
                           </div>
                         </div>
-                        <div className="grid grid-rows-2 gap-4">
-                          <div className="p-3 bg-slate-950/40 rounded-2xl border border-white/5 flex items-center justify-between px-4">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Reels</span>
-                            <span className="text-xs font-black text-white">{invite.reelsPerMonth || 0}</span>
+
+                        <div className="flex flex-wrap gap-4 pt-2">
+                          <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.captionHashtags ? "text-lime-400" : "text-slate-700")}>
+                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.captionHashtags ? "bg-lime-400" : "bg-slate-800")} /> AI Captions
                           </div>
-                          <div className="p-3 bg-slate-950/40 rounded-2xl border border-white/5 flex items-center justify-between px-4">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Micro</span>
-                            <span className="text-xs font-black text-white">{invite.microReelsPerMonth || 0}</span>
+                          <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.scheduling ? "text-indigo-400" : "text-slate-700")}>
+                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.scheduling ? "bg-indigo-400" : "bg-slate-800")} /> Auto Scheduling
                           </div>
                         </div>
                       </div>
 
-                      <div className="px-6 pb-6 pt-2 flex items-center justify-between border-t border-white/[0.03] mt-2">
-                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
-                          <div className={cn("flex items-center gap-1.5", invite.captionHashtags ? "text-lime-400" : "text-slate-700")}>
-                            <CheckCircle2 className="h-3 w-3" /> Captions
-                          </div>
-                          <div className={cn("flex items-center gap-1.5", invite.scheduling ? "text-lime-400" : "text-slate-700")}>
-                            <CheckCircle2 className="h-3 w-3" /> Scheduling
-                          </div>
-                        </div>
-                        <div className="text-[10px] font-black text-slate-600 flex items-center gap-2">
-                          <Building2 className="h-3 w-3" /> {invite.proPhotoShootFrequency || "N/A"} Shots
-                        </div>
+                      <div className="flex items-center justify-between px-2 text-[9px] font-bold text-slate-600 uppercase tracking-widest">
+                        <span>Ref: {invite.planCode}</span>
+                        <span>Created By: {invite.sentByAdminEmail?.split('@')[0]}</span>
                       </div>
-                    </div>
-
-                    {/* System Meta */}
-                    <div className="px-4 py-3 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-between text-[10px] text-slate-600 font-bold uppercase tracking-widest">
-                      <span>Recipient: {invite.email}</span>
-                      <span>Authored: {invite.sentByAdminEmail}</span>
                     </div>
                   </div>
 
-                  {/* Modal Footer Section */}
-                  <div className="p-8 pt-4">
+                  {/* Footer */}
+                  <div className="p-8 pt-4 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex justify-end">
                     <Button 
                       variant="outline" 
                       onClick={() => setIsDetailsModalOpen(false)}
-                      className="w-full border-slate-800 bg-slate-900/50 text-slate-400 h-14 rounded-2xl font-bold hover:text-white transition-all active:scale-95"
+                      className="border-white/10 bg-white/5 text-slate-400 h-11 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
                     >
-                      Close Summary
+                      Close Details
                     </Button>
                   </div>
                 </div>
               );
             })()
           ) : (
-            <div className="p-12 flex flex-col items-center justify-center space-y-4 text-center">
-              <AlertCircle className="h-12 w-12 text-rose-500" />
-              <div>
-                <p className="text-white font-black text-xl">System Error</p>
-                <p className="text-slate-500 text-sm mt-1">Failed to fetch the requested proposal data.</p>
-              </div>
-              <Button onClick={() => setIsDetailsModalOpen(false)} variant="outline" className="border-slate-800">Dismiss</Button>
+            <div className="p-20 text-center">
+              <p className="text-white font-bold">Failed to load proposal details.</p>
+              <Button onClick={() => setIsDetailsModalOpen(false)} className="mt-4">Close</Button>
             </div>
           )}
         </DialogContent>
@@ -1104,36 +1092,58 @@ export default function EnterprisePlanPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={isConfirmDeleteOpen} onOpenChange={setIsConfirmDeleteOpen}>
-        <DialogContent className="bg-slate-950 border-none rounded-[2rem] p-8 sm:max-w-[400px] shadow-2xl">
-          <DialogHeader className="items-center text-center">
-            <div className="h-20 w-20 rounded-3xl bg-red-500/10 flex items-center justify-center mb-6 border border-red-500/20">
-              <AlertCircle className="h-10 w-10 text-red-500" />
+        <DialogContent className="bg-[#0a0a0f] border border-white/5 rounded-[2rem] p-0 sm:max-w-[420px] shadow-[0_40px_80px_rgba(0,0,0,0.8)] overflow-hidden">
+          {/* Red glow accent top bar */}
+          <div className="h-1 w-full bg-gradient-to-r from-transparent via-red-500 to-transparent" />
+
+          <div className="p-8 flex flex-col items-center text-center gap-6">
+            {/* Icon */}
+            <div className="relative">
+              <div className="absolute inset-0 blur-2xl bg-red-500/20 rounded-full" />
+              <div className="relative h-20 w-20 rounded-3xl bg-gradient-to-br from-red-500/20 to-rose-900/30 flex items-center justify-center border border-red-500/30 rotate-3">
+                <Trash2 className="h-9 w-9 text-red-400 -rotate-3" />
+              </div>
             </div>
-            <DialogTitle className="text-2xl font-black text-white tracking-tight">Erase Record</DialogTitle>
-            <DialogDescription className="text-slate-400 text-sm font-medium mt-2 leading-relaxed text-center">
-              This will permanently remove the enterprise invitation record. This action <span className="text-red-400 font-bold underline">cannot be recovered</span>.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-8 flex flex-col gap-3">
-            <Button 
-              variant="destructive"
+
+            {/* Text */}
+            <div className="space-y-2">
+              <DialogTitle className="text-2xl font-black text-white tracking-tight">
+                Permanently Delete?
+              </DialogTitle>
+              <DialogDescription className="text-slate-400 text-sm font-medium leading-relaxed">
+                This will permanently erase the enterprise invite record and all associated proposal data.
+                <br />
+                <span className="text-red-400 font-bold mt-1 inline-block">This action cannot be undone.</span>
+              </DialogDescription>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="px-8 pb-8 flex flex-col gap-3">
+            <button
               onClick={() => inviteToDelete && deleteMutation.mutate(inviteToDelete)}
-              className="bg-red-600 hover:bg-red-500 h-14 rounded-2xl font-black shadow-[0_15px_30px_rgba(220,38,38,0.2)] transition-all active:scale-95"
               disabled={deleteMutation.isPending}
+              className="w-full h-14 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white shadow-[0_8px_30px_rgba(220,38,38,0.35)]"
             >
               {deleteMutation.isPending ? (
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Deleting...</span>
+                </>
               ) : (
-                "Delete Completely"
+                <>
+                  <Trash2 className="h-4 w-4 stroke-[3px]" />
+                  <span>Delete Permanently</span>
+                </>
               )}
-            </Button>
-            <Button 
-              variant="outline" 
+            </button>
+
+            <button
               onClick={() => setIsConfirmDeleteOpen(false)}
-              className="border-slate-800 bg-slate-900/50 text-slate-400 h-14 rounded-2xl font-bold hover:text-white transition-all active:scale-95"
+              className="w-full h-12 rounded-2xl font-bold text-[12px] tracking-wider uppercase transition-all active:scale-95 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5 hover:border-white/10"
             >
               Cancel
-            </Button>
+            </button>
           </div>
         </DialogContent>
       </Dialog>
