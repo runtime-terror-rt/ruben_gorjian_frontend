@@ -1,32 +1,30 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { getBackendUrl } from "@/lib/server-backend";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore ? cookieStore.toString() : "";
 
-    const res = await fetch(`${getBackendUrl()}/api/auth/signup-enterprise-invite`, {
+    const res = await fetch(`${getBackendUrl()}/auth/signup-enterprise-invite`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "true",
+        ...(cookieHeader ? { cookie: cookieHeader } : {}),
       },
       body: JSON.stringify(body),
+      credentials: "include",
     });
 
-    const text = await res.text();
-    let data;
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      data = { message: text || "Empty response from server" };
-    }
-
+    const data = await res.json();
     const response = NextResponse.json(data, { status: res.status });
 
-    const setCookies = res.headers.getSetCookie();
-    for (const cookie of setCookies) {
-      response.headers.append("set-cookie", cookie);
+    const setCookie = res.headers.get("set-cookie");
+    if (setCookie) {
+      response.headers.set("set-cookie", setCookie);
     }
 
     return response;

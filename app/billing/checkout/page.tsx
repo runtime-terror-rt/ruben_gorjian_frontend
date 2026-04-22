@@ -40,7 +40,7 @@ function CheckoutContent() {
   
   // URL params
   const rawPlan = searchParams.get("plan");
-  const isEnterprise = rawPlan?.startsWith("ENT-");
+  const isEnterprise = rawPlan?.startsWith("ENT-") || rawPlan?.startsWith("ENT_");
   const planCode = isEnterprise ? rawPlan : (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35") as PlanKey;
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     (searchParams.get("cycle") as "monthly" | "yearly") || "monthly"
@@ -62,11 +62,14 @@ function CheckoutContent() {
     const fetchCoupons = async () => {
       try {
         const res = await apiGet<{ coupons: Coupon[] }>("/api/billing/coupons");
-        if (res.coupons) {
+        if (res && res.coupons) {
           setAvailableCoupons(res.coupons);
         }
-      } catch (err) {
-        console.error("Failed to fetch coupons", err);
+      } catch (err: any) {
+        // Log error but don't show to user as coupons are optional
+        console.warn("Failed to fetch coupons (likely unauthorized for enterprise users)", err.message);
+        // Ensure availableCoupons remains an empty array
+        setAvailableCoupons([]);
       }
     };
     fetchCoupons();
@@ -282,7 +285,11 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">{isEnterprise ? "Enterprise Plan" : PLAN_NAMES[planCode as PlanKey]}</h3>
+                        <h3 className="font-semibold text-white">
+                          {isEnterprise 
+                            ? (searchParams.get("name") || "Enterprise Plan") 
+                            : PLAN_NAMES[planCode as PlanKey]}
+                        </h3>
                         {calculation.isFounder && (
                           <div className="flex items-center gap-1 bg-lime-400/20 text-lime-400 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
                             <Sparkles className="h-2.5 w-2.5" /> Founder
@@ -478,7 +485,11 @@ function CheckoutContent() {
                 {/* Main Plan */}
                 <div className="flex justify-between items-start text-slate-300">
                   <div className="flex flex-col">
-                    <span className="font-medium text-white">{isEnterprise ? "Enterprise Plan" : PLAN_NAMES[planCode as PlanKey]}</span>
+                    <span className="font-medium text-white">
+                      {isEnterprise 
+                        ? (searchParams.get("name") || "Enterprise Plan") 
+                        : PLAN_NAMES[planCode as PlanKey]}
+                    </span>
                     <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>
                   </div>
                   <div className="text-right">
