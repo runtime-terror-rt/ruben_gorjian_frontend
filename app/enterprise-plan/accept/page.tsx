@@ -28,9 +28,34 @@ function EnterpriseAcceptForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inviteDetails, setInviteDetails] = useState<any>(null);
+  const [isValidating, setIsValidating] = useState(true);
 
   // If no token, show invalid state
   const isValidToken = !!token;
+
+  useEffect(() => {
+    async function validateToken() {
+      if (!token) {
+        setIsValidating(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/auth/enterprise-invite/${token}`);
+        if (res.ok) {
+          const data = await res.json();
+          setInviteDetails(data.invite || data.enterpriseInvite || data);
+        }
+      } catch (err) {
+        console.error("Error validating token:", err);
+      } finally {
+        setIsValidating(false);
+      }
+    }
+
+    validateToken();
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,14 +80,23 @@ function EnterpriseAcceptForm() {
 
       setIsSuccess(true);
 
-      // Extract plan code from response if available, fallback to a query param or generic code
-      const planCode = data.planCode || data.enterprisePlan?.planCode || searchParams.get("plan") || "ENT-UNKNOWN";
-      const price = data.price ?? data.enterprisePlan?.price ?? data.enterprisePlan?.amount ?? searchParams.get("price") ?? 0;
-
-      // Redirect to checkout after short delay
-      setTimeout(() => {
-        router.push(`/billing/checkout?plan=${planCode}&price=${price}`);
-      }, 2500);
+      // Extract plan code from response if available, fallback to inviteDetails or query param
+      const enterprisePlan = data.enterpriseInvite || data.invite || data.enterprisePlan || data.plan || inviteDetails || {};
+      const planCode = data.planCode || enterprisePlan.planCode || enterprisePlan.lookupKey || searchParams.get("plan") || "ENT-UNKNOWN";
+      const planName = data.planName || enterprisePlan.planName || enterprisePlan.name || "";
+      
+      // Try to find the price in various common fields
+      const price = data.price ?? 
+                    enterprisePlan.price ?? 
+                    enterprisePlan.amount ?? 
+                    enterprisePlan.monthlyPrice ?? 
+                    searchParams.get("price") ?? 
+                    0;
+  
+        // Redirect to checkout after short delay
+        setTimeout(() => {
+          router.push(`/billing/checkout?plan=${planCode}&price=${price}${planName ? `&name=${encodeURIComponent(planName)}` : ""}`);
+        }, 2500);
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -114,7 +148,17 @@ function EnterpriseAcceptForm() {
           {/* Body */}
           <div className="px-10 py-8">
             <AnimatePresence mode="wait">
-              {!isValidToken ? (
+              {isValidating ? (
+                <motion.div
+                  key="validating"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-12 space-y-4"
+                >
+                  <Loader2 className="h-10 w-10 text-lime-400 animate-spin mx-auto" />
+                  <p className="text-slate-500 text-sm font-medium">Validating your invitation...</p>
+                </motion.div>
+              ) : !isValidToken ? (
                 <motion.div
                   key="invalid"
                   initial={{ opacity: 0 }}
@@ -170,6 +214,39 @@ function EnterpriseAcceptForm() {
                       <p className="text-[11px] text-slate-400 font-mono truncate">{token}</p>
                     </div>
                   </div>
+
+                  {/* Invite details display */}
+                  {inviteDetails && (
+                    <div className="bg-lime-400/5 border border-lime-400/20 rounded-2xl p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="h-3.5 w-3.5 text-lime-400" />
+                          <p className="text-[10px] font-black text-lime-400 uppercase tracking-widest">Selected Plan</p>
+                        </div>
+                        <div className="px-2 py-0.5 rounded-full bg-lime-400/10 border border-lime-400/20">
+                          <p className="text-[9px] font-black text-lime-400 uppercase">Enterprise</p>
+                        </div>
+                      </div>
+                      <div className="flex items-end justify-between gap-4">
+                        <div className="min-w-0">
+                          <h3 className="text-white font-bold text-lg truncate tracking-tight">
+                            {inviteDetails.planName || inviteDetails.name || "Enterprise Growth"}
+                          </h3>
+                          <p className="text-slate-500 text-[10px] font-medium uppercase tracking-widest mt-0.5">
+                            {inviteDetails.companyName || inviteDetails.company || "Your Company"}
+                          </p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-white font-black text-xl tracking-tighter">
+                            ${(inviteDetails.amount || inviteDetails.price || 0).toLocaleString()}
+                          </p>
+                          <p className="text-slate-600 text-[9px] font-bold uppercase tracking-widest">
+                            / {inviteDetails.billingCycle?.toLowerCase() || "monthly"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Name field */}
                   <div className="space-y-2">
