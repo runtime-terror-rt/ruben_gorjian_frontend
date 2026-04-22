@@ -931,7 +931,7 @@ export default function AdminUserDetailPage() {
                   </CardContent>
                 </Card>
               )}
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle>Posting Channel</CardTitle>
                 </CardHeader>
@@ -1002,7 +1002,7 @@ export default function AdminUserDetailPage() {
                     Save Posting Channel
                   </Button>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           )}
 
