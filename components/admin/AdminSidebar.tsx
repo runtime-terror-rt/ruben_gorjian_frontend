@@ -90,12 +90,12 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: Calendar,
         permission: "POST_MANAGE",
       },
-      {
-        label: "Media",
-        href: "/admin/media",
-        icon: ImageIcon,
-        permission: "POST_MANAGE",
-      },
+      // {
+      //   label: "Media",
+      //   href: "/admin/media",
+      //   icon: ImageIcon,
+      //   permission: "POST_MANAGE",
+      // },
 
 
       {
