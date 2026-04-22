@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+  platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
   displayName?: string | null;
   externalAccountId?: string | null;
   createdAt?: string;

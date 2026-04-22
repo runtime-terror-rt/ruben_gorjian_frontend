@@ -79,7 +79,7 @@ function HourDropZone({
     };
     targets: Array<{
       id: string;
-      platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+      platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
       status: string;
       errorMessage?: string | null;
     }>;

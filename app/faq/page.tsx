@@ -47,7 +47,7 @@ const fallbackFaqRows = [
     id: "fallback-3",
     question: "Which platforms do you support in Phase 1?",
     answer:
-      "Instagram, Facebook, and LinkedIn are supported for social connection and scheduled publishing.",
+      "Instagram, Facebook, and TikTok are supported for social connection and scheduled publishing.",
   },
   {
     id: "fallback-4",

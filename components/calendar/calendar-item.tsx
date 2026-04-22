@@ -6,7 +6,7 @@ import { useDrag } from "react-dnd";
 import dayjs from "dayjs";
 import clsx from "clsx";
 import { Copy, Send, Trash2, AlertCircle, Edit2 } from "lucide-react";
-import { FaInstagram, FaFacebook, FaLinkedin, FaTiktok } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaTiktok } from "react-icons/fa";
 import type { Dayjs } from "dayjs";
 import { buildStorageUrl } from "@/lib/storage-utils";
 import { useSessionContext } from "@/context/SessionContext";
@@ -31,7 +31,7 @@ type CalendarPost = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+    platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
     status: string;
     errorMessage?: string | null;
     socialAccount?: {
@@ -62,14 +62,12 @@ const STORAGE_BASE_URL = getEnvVarWithDefault(
 const platformIcons = {
   INSTAGRAM: FaInstagram,
   FACEBOOK: FaFacebook,
-  LINKEDIN: FaLinkedin,
   TIKTOK: FaTiktok,
 };
 
 const platformColors = {
   INSTAGRAM: "text-pink-500",
   FACEBOOK: "text-blue-500",
-  LINKEDIN: "text-blue-600",
   TIKTOK: "text-white",
 };
 

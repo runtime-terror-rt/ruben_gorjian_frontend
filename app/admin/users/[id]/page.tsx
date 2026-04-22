@@ -88,7 +88,6 @@ type BrandProfile = {
   website: string | null;
   socials: {
     facebook?: string;
-    linkedin?: string;
     instagram?: string;
     twitter?: string;
     tiktok?: string;
@@ -99,9 +98,9 @@ type BrandProfile = {
     salesModel?: string[];
     websiteUrl?: string;
     facebookUrl?: string;
-    linkedinUrl?: string;
     businessName?: string;
     instagramUrl?: string;
+    tiktokUrl?: string;
     outlineFrame?: string;
     targetAudience?: string[];
     brandPersonality?: string[];
@@ -194,7 +193,7 @@ type PublishingRoutingResponse = {
   mode: PublishingRoutingMode;
   useInstagram: boolean;
   useFacebook: boolean;
-  useLinkedin: boolean;
+  useTiktok: boolean;
 };
 
 export default function AdminUserDetailPage() {
@@ -271,7 +270,7 @@ export default function AdminUserDetailPage() {
       mode: "FORCE_NATIVE",
       useInstagram: true,
       useFacebook: true,
-      useLinkedin: true,
+      useTiktok: true,
     };
 
   const invoicesQuery = useQuery({
@@ -419,7 +418,7 @@ export default function AdminUserDetailPage() {
           mode: routingState.mode,
           useInstagram: routingState.useInstagram,
           useFacebook: routingState.useFacebook,
-          useLinkedin: routingState.useLinkedin,
+          useTiktok: routingState.useTiktok,
         },
       ),
     onSuccess: () => {
@@ -603,13 +602,13 @@ export default function AdminUserDetailPage() {
               Block
             </Button>
           )}
-          <Button
+          {/* <Button
             variant="outline"
             onClick={() => resendVerificationMutation.mutate()}
             disabled={user?.emailVerified}
           >
             Resend Verification
-          </Button>
+          </Button> */}
           <Button
             variant="outline"
             onClick={() => setConfirmAction({ type: "cancel" })}
@@ -881,8 +880,8 @@ export default function AdminUserDetailPage() {
                         {userQuery.data.brandProfile?.socials?.instagram && (
                           <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.instagram} target="_blank" rel="noreferrer">Instagram</a></Badge>
                         )}
-                        {userQuery.data.brandProfile?.socials?.linkedin && (
-                          <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></Badge>
+                        {userQuery.data.brandProfile?.socials?.tiktok && (
+                          <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.tiktok} target="_blank" rel="noreferrer">TikTok</a></Badge>
                         )}
                         {(!userQuery.data.brandProfile?.socials || Object.keys(userQuery.data.brandProfile.socials).length === 0) && (
                           <span className="text-slate-600">No social links</span>
@@ -983,13 +982,13 @@ export default function AdminUserDetailPage() {
                         />
                       </label>
                       <label className="flex items-center justify-between text-sm text-slate-200">
-                        LinkedIn
+                        TikTok
                         <Checkbox
-                          checked={routingState.useLinkedin}
+                          checked={routingState.useTiktok}
                           onCheckedChange={(value) =>
                             setRoutingDraft({
                               ...routingState,
-                              useLinkedin: Boolean(value),
+                              useTiktok: Boolean(value),
                             })
                           }
                         />
@@ -1077,12 +1076,12 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="text-slate-500">
-                      <TableHead>ID</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Scheduled For</TableHead>
-                      <TableHead>Platforms</TableHead>
-                      <TableHead>Caption Preview</TableHead>
+                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">ID</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Scheduled For</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Platforms</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Caption Preview</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1106,8 +1105,8 @@ export default function AdminUserDetailPage() {
                       </TableRow>
                     ) : (
                       scheduledItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell className="text-xs">
+                        <TableRow key={item.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors group">
+                          <TableCell className="text-xs font-mono text-slate-300">
                             {item.id.slice(0, 8)}
                           </TableCell>
                           <TableCell>
@@ -1119,12 +1118,12 @@ export default function AdminUserDetailPage() {
                                     ? "destructive"
                                     : "secondary"
                               }
-                              className="text-xs"
+                              className="text-[10px] uppercase tracking-wider"
                             >
                               {item.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs">
+                          <TableCell className="text-xs text-slate-300">
                             {formatDateTime(item.scheduledFor)}
                           </TableCell>
                           <TableCell>
@@ -1133,14 +1132,14 @@ export default function AdminUserDetailPage() {
                                 <Badge
                                   key={target.id}
                                   variant="outline"
-                                  className="text-xs"
+                                  className="text-[10px] border-slate-700 text-slate-300"
                                 >
                                   {target.platform}
                                 </Badge>
                               ))}
                             </div>
                           </TableCell>
-                          <TableCell className="text-xs max-w-xs truncate">
+                          <TableCell className="text-xs max-w-xs truncate text-slate-200 group-hover:text-white transition-colors">
                             {item.caption
                               ? item.caption.slice(0, 50) +
                                 (item.caption.length > 50 ? "..." : "")
@@ -1204,12 +1203,12 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="text-slate-500">
-                      <TableHead>Invoice</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Link</TableHead>
+                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Invoice</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Amount</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Date</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Link</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1224,28 +1223,32 @@ export default function AdminUserDetailPage() {
                       </TableRow>
                     ) : (
                       invoicesQuery.data?.items.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell>{invoice.number ?? invoice.id}</TableCell>
-                          <TableCell>{invoice.status}</TableCell>
+                        <TableRow key={invoice.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors">
+                          <TableCell className="font-medium text-slate-200">{invoice.number ?? invoice.id}</TableCell>
                           <TableCell>
+                            <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-slate-300 border-slate-700">
+                              {invoice.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-slate-200 font-medium">
                             {(invoice.amount / 100).toLocaleString("en-GB", {
                               style: "currency",
                               currency: invoice.currency.toUpperCase(),
                             })}
                           </TableCell>
-                          <TableCell>{formatDate(invoice.createdAt)}</TableCell>
+                          <TableCell className="text-sm text-slate-400">{formatDate(invoice.createdAt)}</TableCell>
                           <TableCell>
                             {invoice.hostedInvoiceUrl ? (
                               <a
-                                className="text-lime-300 hover:underline"
+                                className="text-lime-400 hover:text-lime-300 hover:underline font-medium text-sm transition-colors"
                                 href={invoice.hostedInvoiceUrl}
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                View
+                                View Invoice ↗
                               </a>
                             ) : (
-                              "—"
+                              <span className="text-slate-500">—</span>
                             )}
                           </TableCell>
                         </TableRow>
@@ -1265,10 +1268,10 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="text-slate-500">
-                      <TableHead>Action</TableHead>
-                      <TableHead>Actor</TableHead>
-                      <TableHead>Time</TableHead>
+                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Action</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Actor</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Time</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1283,10 +1286,14 @@ export default function AdminUserDetailPage() {
                       </TableRow>
                     ) : (
                       auditLogsQuery.data?.items.map((log) => (
-                        <TableRow key={log.id}>
-                          <TableCell>{log.action}</TableCell>
-                          <TableCell>{log.actorEmail}</TableCell>
-                          <TableCell>{formatDateTime(log.createdAt)}</TableCell>
+                        <TableRow key={log.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors">
+                          <TableCell className="font-medium text-slate-200">
+                            <Badge variant="secondary" className="bg-slate-800 text-slate-300 hover:bg-slate-700">
+                              {log.action}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-slate-300">{log.actorEmail}</TableCell>
+                          <TableCell className="text-sm text-slate-400">{formatDateTime(log.createdAt)}</TableCell>
                         </TableRow>
                       ))
                     )}

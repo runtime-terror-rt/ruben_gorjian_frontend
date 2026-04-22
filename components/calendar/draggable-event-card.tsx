@@ -6,7 +6,7 @@ import { useDrag, useDrop } from "react-dnd";
 import { StatusPill } from "./status-pill";
 import dayjs from "dayjs";
 import clsx from "clsx";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 import { buildStorageUrl } from "@/lib/storage-utils";
 import { useCalendar } from "@/app/dashboard/calendar/calendar-context";
 import timezone from "dayjs/plugin/timezone";
@@ -29,7 +29,7 @@ type CalendarPost = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN";
+    platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
     status: string;
     errorMessage?: string | null;
   }>;
@@ -58,7 +58,7 @@ const STORAGE_BASE_URL = getEnvVarWithDefault("NEXT_PUBLIC_STORAGE_BASE_URL", ""
 const platformIcons = {
   INSTAGRAM: FaInstagram,
   FACEBOOK: FaFacebook,
-  LINKEDIN: FaLinkedin,
+  TIKTOK: FaTiktok,
 };
 
 export function DraggableEventCard({
@@ -190,7 +190,7 @@ export function DraggableEventCard({
                       "h-2.5 w-2.5",
                       platform === "INSTAGRAM" && "text-pink-500",
                       platform === "FACEBOOK" && "text-blue-500",
-                      platform === "LINKEDIN" && "text-blue-600"
+                      platform === "TIKTOK" && "text-white"
                     )}
                   />
                 );
@@ -279,7 +279,7 @@ export function DraggableEventCard({
                     "h-4 w-4",
                     platform === "INSTAGRAM" && "text-pink-500",
                     platform === "FACEBOOK" && "text-blue-500",
-                    platform === "LINKEDIN" && "text-blue-600"
+                    platform === "TIKTOK" && "text-white"
                   )}
                 />
               );

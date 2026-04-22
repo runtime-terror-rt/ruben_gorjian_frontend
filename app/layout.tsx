@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { poppins, stack_sans_notch, sora } from "./fonts";
 import SmoothScroller from "@/components/SmoothScroller";
 import MetaPixel from "@/components/MetaPixel";
+import Script from "next/script";
 import "./globals.css";
 import { SessionProvider } from "@/context/SessionContext";
 import { getEnvVar } from "@/lib/env-utils";
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth" className={cn("font-sans dark", geist.variable)}>
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
       </head>
 
       <body suppressHydrationWarning 
