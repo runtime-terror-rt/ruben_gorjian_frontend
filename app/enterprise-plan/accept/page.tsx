@@ -57,10 +57,11 @@ function EnterpriseAcceptForm() {
 
       // Extract plan code from response if available, fallback to a query param or generic code
       const planCode = data.planCode || data.enterprisePlan?.planCode || searchParams.get("plan") || "ENT-UNKNOWN";
+      const price = data.price ?? data.enterprisePlan?.price ?? data.enterprisePlan?.amount ?? searchParams.get("price") ?? 0;
 
       // Redirect to checkout after short delay
       setTimeout(() => {
-        router.push(`/billing/checkout?plan=${planCode}`);
+        router.push(`/billing/checkout?plan=${planCode}&price=${price}`);
       }, 2500);
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
