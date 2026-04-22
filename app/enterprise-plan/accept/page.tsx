@@ -55,9 +55,12 @@ function EnterpriseAcceptForm() {
 
       setIsSuccess(true);
 
-      // Redirect to dashboard after short delay
+      // Extract plan code from response if available, fallback to a query param or generic code
+      const planCode = data.planCode || data.enterprisePlan?.planCode || searchParams.get("plan") || "ENT-UNKNOWN";
+
+      // Redirect to checkout after short delay
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push(`/billing/checkout?plan=${planCode}`);
       }, 2500);
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -141,7 +144,7 @@ function EnterpriseAcceptForm() {
                   <div>
                     <p className="text-white font-black text-xl tracking-tight">Account Activated!</p>
                     <p className="text-slate-400 text-sm mt-1 font-medium">
-                      Welcome aboard. Redirecting to your dashboard...
+                      Welcome aboard. Redirecting to secure checkout...
                     </p>
                   </div>
                   <div className="flex justify-center">

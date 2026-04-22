@@ -40,7 +40,8 @@ function CheckoutContent() {
   
   // URL params
   const rawPlan = searchParams.get("plan");
-  const planCode = (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35") as PlanKey;
+  const isEnterprise = rawPlan?.startsWith("ENT-");
+  const planCode = (isEnterprise ? rawPlan : (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35")) as string;
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     (searchParams.get("cycle") as "monthly" | "yearly") || "monthly"
   );
@@ -75,14 +76,17 @@ function CheckoutContent() {
   useEffect(() => {
     if (appliedCoupon && !appliedCoupon.applicablePlans.includes(planCode)) {
       handleRemoveCoupon();
-      setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode]} plan.`);
+      setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
     }
   }, [planCode, appliedCoupon]);
 
   // Calculation Logic (aligned with screenshot and backend founder pricing)
   const calculation = useMemo(() => {
-    const catalogPlan = getPlanByLookupKey(planCode);
-    const basePrice = catalogPlan?.priceStandard || MONTHLY_PRICES[planCode] || 0;
+    let basePrice = 0;
+    if (!isEnterprise) {
+      const catalogPlan = getPlanByLookupKey(planCode as string);
+      basePrice = catalogPlan?.priceStandard || MONTHLY_PRICES[planCode as PlanKey] || 0;
+    }
     
     // BACKEND SYNC: Check if user has Founder pricing (30% discount)
     // Stripe shows $664.30 for $949.00 plan, which is 949 * 0.7
@@ -148,8 +152,8 @@ function CheckoutContent() {
       // STRICT VALIDATION: Check if the plan is explicitly on the allowed list
       const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode);
       
-      if (!isApplicable) {
-        setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode]} plan.`);
+      if (!isApplicable && !isEnterprise) {
+        setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
         return;
       }
       setAppliedCoupon(coupon);
@@ -180,8 +184,8 @@ function CheckoutContent() {
         const fb = fallbacks[code];
         const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode);
         
-        if (!isApplicable) {
-          setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode]} plan.`);
+        if (!isApplicable && !isEnterprise) {
+          setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
           return;
         }
         setAppliedCoupon(fb);
@@ -273,7 +277,7 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">{PLAN_NAMES[planCode]}</h3>
+                        <h3 className="font-semibold text-white">{isEnterprise ? "Enterprise Plan" : PLAN_NAMES[planCode as PlanKey]}</h3>
                         {calculation.isFounder && (
                           <div className="flex items-center gap-1 bg-lime-400/20 text-lime-400 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
                             <Sparkles className="h-2.5 w-2.5" /> Founder
@@ -284,10 +288,14 @@ function CheckoutContent() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-bold text-white">
-                      ${(calculation.planPrice / (calculation.isYearly ? 12 : 1)).toFixed(2)}
-                      <span className="text-xs font-normal text-slate-500">/mo</span>
-                    </p>
+                    {isEnterprise ? (
+                      <p className="text-lg font-bold text-white">Custom Pricing</p>
+                    ) : (
+                      <p className="text-lg font-bold text-white">
+                        ${(calculation.planPrice / (calculation.isYearly ? 12 : 1)).toFixed(2)}
+                        <span className="text-xs font-normal text-slate-500">/mo</span>
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -418,7 +426,7 @@ function CheckoutContent() {
                   </Button>
                 </div>
                 
-                {isCouponApplied && appliedCoupon && appliedCoupon.applicablePlans?.includes(planCode) && (
+                {isCouponApplied && appliedCoupon && (isEnterprise || appliedCoupon.applicablePlans?.includes(planCode as string)) && (
                   <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
                     <Check className="h-4 w-4" />
                     <div>
@@ -465,17 +473,23 @@ function CheckoutContent() {
                 {/* Main Plan */}
                 <div className="flex justify-between items-start text-slate-300">
                   <div className="flex flex-col">
-                    <span className="font-medium text-white">{PLAN_NAMES[planCode]}</span>
+                    <span className="font-medium text-white">{isEnterprise ? "Enterprise Plan" : PLAN_NAMES[planCode as PlanKey]}</span>
                     <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>
                   </div>
                   <div className="text-right">
-                    <span className={cn("text-white font-medium", calculation.isFounder && "block")}>
-                      ${calculation.planPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                    {calculation.isFounder && (
-                      <span className="text-[9px] text-slate-500 line-through block">
-                        ${(calculation.planPrice / 0.7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
+                    {isEnterprise ? (
+                      <span className="text-white font-medium">Custom</span>
+                    ) : (
+                      <>
+                        <span className={cn("text-white font-medium", calculation.isFounder && "block")}>
+                          ${calculation.planPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                        {calculation.isFounder && (
+                          <span className="text-[9px] text-slate-500 line-through block">
+                            ${(calculation.planPrice / 0.7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -537,8 +551,14 @@ function CheckoutContent() {
                 <span className="text-white font-bold text-lg mb-1">Total due today</span>
                 <div className="text-right">
                   <p className="text-4xl font-black text-white">
-                    <span className="text-sm font-normal text-slate-400 mr-1">US</span>
-                    ${calculation.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {isEnterprise ? (
+                      <span className="text-lg text-slate-300">Calculated at Checkout</span>
+                    ) : (
+                      <>
+                        <span className="text-sm font-normal text-slate-400 mr-1">US</span>
+                        ${calculation.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </>
+                    )}
                   </p>
                 </div>
               </div>
