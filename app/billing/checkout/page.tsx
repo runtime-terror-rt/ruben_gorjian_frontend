@@ -91,8 +91,11 @@ function CheckoutContent() {
       basePrice = catalogPlan?.priceStandard || MONTHLY_PRICES[planCode as PlanKey] || 0;
     } else {
       const customPrice = searchParams.get("price");
-      if (customPrice && !isNaN(Number(customPrice))) {
+      if (customPrice && !isNaN(Number(customPrice)) && Number(customPrice) > 0) {
         basePrice = Number(customPrice);
+      } else if (planCode === "ENT_192F55E1" || planCode === "ENT_3754E39C") {
+        // Fallback for known enterprise codes if price is missing in URL
+        basePrice = 1250;
       }
     }
     

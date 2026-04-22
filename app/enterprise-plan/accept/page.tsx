@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSessionContext } from "@/context/SessionContext";
 import {
   Eye,
   EyeOff,
@@ -19,6 +20,7 @@ import {
 function EnterpriseAcceptForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { refresh } = useSessionContext();
 
   const token = searchParams.get("token") ?? "";
 
@@ -79,6 +81,9 @@ function EnterpriseAcceptForm() {
       }
 
       setIsSuccess(true);
+      
+      // Refresh session to ensure frontend knows we're logged in
+      await refresh();
 
       // Extract plan code from response if available, fallback to inviteDetails or query param
       const enterprisePlan = data.enterpriseInvite || data.invite || data.enterprisePlan || data.plan || inviteDetails || {};
@@ -86,17 +91,17 @@ function EnterpriseAcceptForm() {
       const planName = data.planName || enterprisePlan.planName || enterprisePlan.name || "";
       
       // Try to find the price in various common fields
-      const price = data.price ?? 
-                    enterprisePlan.price ?? 
-                    enterprisePlan.amount ?? 
-                    enterprisePlan.monthlyPrice ?? 
-                    searchParams.get("price") ?? 
-                    0;
-  
-        // Redirect to checkout after short delay
-        setTimeout(() => {
-          router.push(`/billing/checkout?plan=${planCode}&price=${price}${planName ? `&name=${encodeURIComponent(planName)}` : ""}`);
-        }, 2500);
+      const priceValue = data.price ?? 
+                         enterprisePlan.price ?? 
+                         enterprisePlan.amount ?? 
+                         enterprisePlan.monthlyPrice ?? 
+                         searchParams.get("price") ?? 
+                         0;
+
+      // Redirect to checkout after short delay
+      setTimeout(() => {
+        router.push(`/billing/checkout?plan=${planCode}&price=${priceValue}${planName ? `&name=${encodeURIComponent(planName)}` : ""}`);
+      }, 2000);
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
