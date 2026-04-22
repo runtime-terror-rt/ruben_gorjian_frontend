@@ -33,7 +33,6 @@ import {
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
-  FaLinkedin as Linkedin,
   FaTiktok as Tiktok,
 } from "react-icons/fa";
 import NextImage from "next/image";
@@ -45,14 +44,12 @@ const STORAGE_BASE_URL = getEnvVarWithDefault("NEXT_PUBLIC_STORAGE_BASE_URL", ""
 const platformIcons = {
   INSTAGRAM: Instagram,
   FACEBOOK: Facebook,
-  LINKEDIN: Linkedin,
   TIKTOK: Tiktok,
 };
 
 const platformColors = {
   INSTAGRAM: "text-rose-500",
   FACEBOOK: "text-blue-500",
-  LINKEDIN: "text-sky-600",
   TIKTOK: "text-white",
 };
 
@@ -70,7 +67,7 @@ type PostDetails = {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+    platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
     status: "PENDING" | "SCHEDULED" | "POSTED" | "FAILED";
     errorMessage?: string | null;
     externalPostId?: string | null;

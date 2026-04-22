@@ -8,7 +8,7 @@ type CreatePostInput = {
   caption: string;
   hashtags?: string[];
   scheduledFor?: string;
-  platforms: Array<"INSTAGRAM" | "FACEBOOK" | "LINKEDIN">;
+  platforms: Array<"INSTAGRAM" | "FACEBOOK" | "TIKTOK">;
   socialAccountIds?: string[];
 };
 

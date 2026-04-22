@@ -13,7 +13,7 @@ const featureCards = [
   {
     title: "Calendar-first workflow",
     description:
-      "Plan Instagram, Facebook, and LinkedIn together. Draft, schedule, or auto-post with platform limits enforced.",
+      "Plan Instagram, Facebook, and TikTok together. Draft, schedule, or auto-post with platform limits enforced.",
     icon: CalendarRange,
   },
   {
@@ -25,7 +25,7 @@ const featureCards = [
 ];
 
 const chips = [
-  "Instagram / Facebook / LinkedIn",
+  "Instagram / Facebook / TikTok",
   "Auto-posting + retries",
   "Brand profile conditioning",
   "Founder pricing + quotas",
@@ -51,7 +51,7 @@ export default function FeaturesGrid() {
                 <p className="font-poppins text-base leading-relaxed text-slate-300 sm:text-lg">
                   Talexia.Ai is the AI-powered social team for agencies and
                   brand owners. We turn every asset into on-brand captions and
-                  push them to Instagram, Facebook, and LinkedIn while enforcing
+                  push them to Instagram, Facebook, and TikTok while enforcing
                   quotas and founder pricing automatically.
                 </p>
               </div>

@@ -147,7 +147,7 @@ function BillingSuccessContent() {
               <span className="text-lime-400 font-semibold">1.</span>
               <span>
                 Connect your social media accounts (Instagram, Facebook,
-                LinkedIn)
+                TikTok)
               </span>
             </li>
             <li className="flex items-start gap-2">

@@ -68,7 +68,7 @@ function VisualOnboardingInner() {
     primaryPlatform: "" as
       | "INSTAGRAM"
       | "FACEBOOK"
-      | "LINKEDIN"
+      | "TIKTOK"
       | "WEBSITE"
       | "ADS"
       | "",

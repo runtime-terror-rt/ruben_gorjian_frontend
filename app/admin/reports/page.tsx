@@ -11,7 +11,6 @@ import {
   Calendar,
   Instagram,
   Facebook,
-  Linkedin,
   Clock
 } from "lucide-react";
 import { SiTiktok as Tiktok } from "react-icons/si";
@@ -28,8 +27,7 @@ function ReportsContent() {
     platforms: {
       instagram: 420,
       facebook: 280,
-      linkedin: 110,
-      tiktok: 32
+      tiktok: 142
     }
   });
 
@@ -193,23 +191,12 @@ function ReportsContent() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <div className="flex items-center gap-2 text-slate-300">
-                    <Linkedin className="h-4 w-4 text-blue-400" />
-                    <span>LinkedIn</span>
-                  </div>
-                  <span className="font-bold text-white">{stats.platforms.linkedin} posts</span>
-                </div>
-                <Progress value={13} className="h-2 bg-slate-800" indicatorClassName="bg-blue-400" />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2 text-slate-300">
                     <Tiktok className="h-4 w-4 text-white" />
                     <span>TikTok</span>
                   </div>
                   <span className="font-bold text-white">{stats.platforms.tiktok} posts</span>
                 </div>
-                <Progress value={4} className="h-2 bg-slate-800" indicatorClassName="bg-white" />
+                <Progress value={17} className="h-2 bg-slate-800" indicatorClassName="bg-white" />
               </div>
             </div>
           </CardContent>

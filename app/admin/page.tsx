@@ -218,7 +218,7 @@ export default function AdminPage() {
     const platformCounts: Record<string, number> = {
       INSTAGRAM: 0,
       FACEBOOK: 0,
-      LINKEDIN: 0,
+      TIKTOK: 0,
     };
 
     calendars.forEach((calendar) => {

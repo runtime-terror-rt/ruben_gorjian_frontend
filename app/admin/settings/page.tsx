@@ -67,7 +67,7 @@ type GlobalRoutingSummary = {
     mode: RoutingMode;
     useInstagram: boolean;
     useFacebook: boolean;
-    useLinkedin: boolean;
+    useTiktok: boolean;
   };
   totalUsers: number;
   modeCounts: { [key in RoutingMode]: number };
@@ -267,7 +267,7 @@ export default function AdminSettingsPage() {
       mode: "FORCE_NATIVE" as RoutingMode,
       useInstagram: true,
       useFacebook: true,
-      useLinkedin: true,
+      useTiktok: true,
     };
 
   const [showPassword, setShowPassword] = useState({
@@ -679,7 +679,7 @@ export default function AdminSettingsPage() {
                       applyTo: effectiveApplyTo,
                       useInstagram: effectiveGlobalDefault.useInstagram,
                       useFacebook: effectiveGlobalDefault.useFacebook,
-                      useLinkedin: effectiveGlobalDefault.useLinkedin,
+                      useTiktok: effectiveGlobalDefault.useTiktok,
                     })
                   }
                   disabled={applyGlobalMutation.isPending}

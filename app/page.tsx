@@ -116,7 +116,7 @@ export default function HomePage() {
       icon: <ScanFace className="w-6 h-6 text-white" />,
       title: "Multi-Platform Presence",
       description:
-        "Reach your customers everywhere they scroll. Instagram, Facebook, LinkedIn and TikTok, all handled in one place.",
+        "Reach your customers everywhere they scroll. Instagram, Facebook, and TikTok, all handled in one place.",
     },
   ];
   const howItWorks2 = [

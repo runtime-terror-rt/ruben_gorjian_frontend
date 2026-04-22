@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import type { IconType } from "react-icons";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 import clsx from "clsx";
 
-type Platform = "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+type Platform = "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
 
 interface PlatformChipProps {
   platform: Platform;
@@ -15,14 +15,12 @@ interface PlatformChipProps {
 const platformIcons: Record<Platform, IconType> = {
   INSTAGRAM: FaInstagram,
   FACEBOOK: FaFacebook,
-  LINKEDIN: FaLinkedin,
   TIKTOK: FaTiktok,
 };
 
 const platformColors: Record<Platform, string> = {
   INSTAGRAM: "text-pink-500",
   FACEBOOK: "text-blue-500",
-  LINKEDIN: "text-blue-600",
   TIKTOK: "text-white",
 };
 

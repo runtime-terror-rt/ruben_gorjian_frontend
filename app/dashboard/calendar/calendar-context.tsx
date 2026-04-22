@@ -44,7 +44,7 @@ interface Post {
   };
   targets: Array<{
     id: string;
-    platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+    platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
     status: "PENDING" | "SCHEDULED" | "POSTED" | "FAILED";
     errorMessage?: string | null;
     externalPostId?: string | null;
@@ -58,7 +58,7 @@ interface Post {
 
 interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "LINKEDIN" | "TIKTOK";
+  platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
   displayName: string;
   externalAccountId: string;
 }

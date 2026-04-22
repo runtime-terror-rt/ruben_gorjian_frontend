@@ -62,8 +62,8 @@ function FullManagementOnboardingInner() {
     websiteUrl: "",
     instagramUrl: "",
     facebookUrl: "",
-    linkedinUrl: "",
-    platformsToManage: [] as ("INSTAGRAM" | "FACEBOOK")[],
+    tiktokUrl: "",
+    platformsToManage: [] as ("INSTAGRAM" | "FACEBOOK" | "TIKTOK")[],
     postingAccessGranted: "" as "YES" | "WILL_GRANT_AFTER" | "",
 
     industry: "" as
@@ -190,7 +190,7 @@ function FullManagementOnboardingInner() {
           websiteUrl: data.data.websiteUrl || "",
           instagramUrl: data.data.instagramUrl || "",
           facebookUrl: data.data.facebookUrl || "",
-          linkedinUrl: data.data.linkedinUrl || "",
+          tiktokUrl: data.data.tiktokUrl || "",
           platformsToManage: data.data.platformsToManage || [],
           postingAccessGranted: data.data.postingAccessGranted || "",
           industry: data.data.industry || "",
@@ -339,7 +339,7 @@ function FullManagementOnboardingInner() {
             websiteUrl: normalizeUrl(form.websiteUrl),
             instagramUrl: normalizeUrl(form.instagramUrl),
             facebookUrl: normalizeUrl(form.facebookUrl),
-            linkedinUrl: normalizeUrl(form.linkedinUrl),
+            tiktokUrl: normalizeUrl(form.tiktokUrl),
             platformsToManage: form.platformsToManage.length
               ? form.platformsToManage
               : undefined,
@@ -378,8 +378,8 @@ function FullManagementOnboardingInner() {
     // Auto-select connected accounts for management if none are selected
     if (connectedAccounts.length > 0 && form.platformsToManage.length === 0) {
       const initial = connectedAccounts.filter((p) =>
-        ["INSTAGRAM", "FACEBOOK"].includes(p),
-      ) as ("INSTAGRAM" | "FACEBOOK")[];
+        ["INSTAGRAM", "FACEBOOK", "TIKTOK"].includes(p),
+      ) as ("INSTAGRAM" | "FACEBOOK" | "TIKTOK")[];
       if (initial.length > 0) {
         setForm((f) => ({ ...f, platformsToManage: initial }));
       }
@@ -451,7 +451,7 @@ function FullManagementOnboardingInner() {
           websiteUrl: normalizedWebsiteUrl,
           instagramUrl: normalizeUrl(form.instagramUrl),
           facebookUrl: normalizeUrl(form.facebookUrl),
-          linkedinUrl: normalizeUrl(form.linkedinUrl),
+          tiktokUrl: normalizeUrl(form.tiktokUrl),
           industryOther: form.industryOther.trim() || undefined,
           toneToAvoid: form.toneToAvoid.trim() || undefined,
           postingFrequencyPreference:
@@ -618,6 +618,16 @@ function FullManagementOnboardingInner() {
                           }))
                         }
                         placeholder="facebook.com/your-page"
+                      />
+                      <Input
+                        value={form.tiktokUrl}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            tiktokUrl: e.target.value,
+                          }))
+                        }
+                        placeholder="tiktok.com/@your-handle"
                       />
                     </div>
                     <div className="space-y-2">
