@@ -369,7 +369,7 @@ export default function AdminSubscriptionsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-h-screen overflow-auto scrollbar-hide">
+    <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Subscriptions</h1>
