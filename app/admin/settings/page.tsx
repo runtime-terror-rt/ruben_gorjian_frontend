@@ -302,12 +302,12 @@ export default function AdminSettingsPage() {
           >
             <Lock className="h-4 w-4 mr-2" /> Security
           </TabsTrigger>
-          <TabsTrigger
+          {/* <TabsTrigger
             value="system"
             className="rounded-xl px-8 data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-bold transition-all"
           >
             <SettingsIcon className="h-4 w-4 mr-2" /> System
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
 
         {/* PROFILE TAB */}
