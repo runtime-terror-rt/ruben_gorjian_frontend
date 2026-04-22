@@ -41,7 +41,7 @@ function CheckoutContent() {
   // URL params
   const rawPlan = searchParams.get("plan");
   const isEnterprise = rawPlan?.startsWith("ENT-");
-  const planCode = (isEnterprise ? rawPlan : (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35")) as string;
+  const planCode = isEnterprise ? rawPlan : (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35") as PlanKey;
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     (searchParams.get("cycle") as "monthly" | "yearly") || "monthly"
   );
@@ -74,9 +74,9 @@ function CheckoutContent() {
 
   // Re-validate coupon if plan changes
   useEffect(() => {
-    if (appliedCoupon && !appliedCoupon.applicablePlans.includes(planCode)) {
+    if (appliedCoupon && !appliedCoupon.applicablePlans.includes(planCode as any)) {
       handleRemoveCoupon();
-      setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
+      setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode as PlanKey]} plan.`);
     }
   }, [planCode, appliedCoupon]);
 
@@ -86,6 +86,11 @@ function CheckoutContent() {
     if (!isEnterprise) {
       const catalogPlan = getPlanByLookupKey(planCode as string);
       basePrice = catalogPlan?.priceStandard || MONTHLY_PRICES[planCode as PlanKey] || 0;
+    } else {
+      const customPrice = searchParams.get("price");
+      if (customPrice && !isNaN(Number(customPrice))) {
+        basePrice = Number(customPrice);
+      }
     }
     
     // BACKEND SYNC: Check if user has Founder pricing (30% discount)
@@ -106,7 +111,7 @@ function CheckoutContent() {
     // FINAL SAFETY CHECK: Strict plan code-level enforcement
     const isActuallyApplicable = !!(appliedCoupon && 
       appliedCoupon.applicablePlans && 
-      appliedCoupon.applicablePlans.includes(planCode));
+      appliedCoupon.applicablePlans.includes(planCode as any));
 
     if (isCouponApplied && appliedCoupon && isActuallyApplicable) {
       const val = appliedCoupon.discountValue;
@@ -150,7 +155,7 @@ function CheckoutContent() {
     
     if (coupon) {
       // STRICT VALIDATION: Check if the plan is explicitly on the allowed list
-      const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode);
+      const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode as any);
       
       if (!isApplicable && !isEnterprise) {
         setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
@@ -182,7 +187,7 @@ function CheckoutContent() {
 
       if (fallbacks[code]) {
         const fb = fallbacks[code];
-        const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode);
+        const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode as any);
         
         if (!isApplicable && !isEnterprise) {
           setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
@@ -288,7 +293,7 @@ function CheckoutContent() {
                     </div>
                   </div>
                   <div className="text-right">
-                    {isEnterprise ? (
+                    {isEnterprise && calculation.planPrice === 0 ? (
                       <p className="text-lg font-bold text-white">Custom Pricing</p>
                     ) : (
                       <p className="text-lg font-bold text-white">
@@ -477,7 +482,7 @@ function CheckoutContent() {
                     <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>
                   </div>
                   <div className="text-right">
-                    {isEnterprise ? (
+                    {isEnterprise && calculation.planPrice === 0 ? (
                       <span className="text-white font-medium">Custom</span>
                     ) : (
                       <>
@@ -551,7 +556,7 @@ function CheckoutContent() {
                 <span className="text-white font-bold text-lg mb-1">Total due today</span>
                 <div className="text-right">
                   <p className="text-4xl font-black text-white">
-                    {isEnterprise ? (
+                    {isEnterprise && calculation.total === 0 ? (
                       <span className="text-lg text-slate-300">Calculated at Checkout</span>
                     ) : (
                       <>
