@@ -47,6 +47,7 @@ function CheckoutContent() {
   );
 
   // State
+  const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{name?: string, price?: number} | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [addonPlatformQty, setAddonPlatformQty] = useState(0);
   const [videoSessionHours, setVideoSessionHours] = useState(0);
@@ -56,6 +57,35 @@ function CheckoutContent() {
   const [isCouponApplied, setIsCouponApplied] = useState(false);
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+
+  // Fetch enterprise plan details if missing from URL
+  useEffect(() => {
+    if (isEnterprise && planCode) {
+      const urlPrice = searchParams.get("price");
+      const urlName = searchParams.get("name");
+      
+      if (urlPrice && urlName) {
+        setEnterprisePlanDetails({ name: urlName, price: Number(urlPrice) });
+        return;
+      }
+
+      const fetchPlanDetails = async () => {
+        try {
+          const res = await apiGet<any>(`/api/enterprise-plan/invites/${planCode}/details`);
+          if (res && !res.error && (res.proposal || res.invite)) {
+            setEnterprisePlanDetails({
+              name: res.proposal?.planName || res.invite?.planName || "Enterprise Plan",
+              price: res.proposal?.amount ?? res.invite?.amount ?? 0
+            });
+          }
+        } catch (err) {
+          console.error("Failed to fetch enterprise plan details:", err);
+        }
+      };
+      
+      fetchPlanDetails();
+    }
+  }, [isEnterprise, planCode, searchParams]);
 
   // Fetch coupons on mount
   useEffect(() => {
@@ -93,6 +123,8 @@ function CheckoutContent() {
       const customPrice = searchParams.get("price");
       if (customPrice && !isNaN(Number(customPrice)) && Number(customPrice) > 0) {
         basePrice = Number(customPrice);
+      } else if (enterprisePlanDetails?.price !== undefined) {
+        basePrice = enterprisePlanDetails.price;
       } else if (planCode === "ENT_192F55E1" || planCode === "ENT_3754E39C") {
         // Fallback for known enterprise codes if price is missing in URL
         basePrice = 1250;
@@ -146,7 +178,7 @@ function CheckoutContent() {
       isFounder,
       isActuallyApplicable
     };
-  }, [planCode, billingCycle, addonPlatformQty, videoSessionHours, isCouponApplied, appliedCoupon, session]);
+  }, [planCode, billingCycle, addonPlatformQty, videoSessionHours, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
 
   const handleApplyCoupon = (codeToApply?: string) => {
     const code = (codeToApply || couponCode).trim().toUpperCase();
@@ -290,7 +322,7 @@ function CheckoutContent() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-white">
                           {isEnterprise 
-                            ? (searchParams.get("name") || "Enterprise Plan") 
+                            ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan") 
                             : PLAN_NAMES[planCode as PlanKey]}
                         </h3>
                         {calculation.isFounder && (
@@ -490,7 +522,7 @@ function CheckoutContent() {
                   <div className="flex flex-col">
                     <span className="font-medium text-white">
                       {isEnterprise 
-                        ? (searchParams.get("name") || "Enterprise Plan") 
+                        ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan") 
                         : PLAN_NAMES[planCode as PlanKey]}
                     </span>
                     <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>

@@ -18,9 +18,9 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Talexia.ai - Your AI-Powered Social Media Team",
+  title: "Talexia:Restaurant Social Media & Food Photography",
   description:
-    "Talexia.ai turns your photos into high-impact visuals, plans your calendar, and generates strategic captions and hashtags.",
+    "Talexia turns your photos into high-impact visuals, plans your calendar, and generates strategic captions and hashtags.",
 };
 
 export default function RootLayout({
@@ -74,4 +74,4 @@ export default function RootLayout({
     </html>
   );
 }
-/* this is updated code  */
+
