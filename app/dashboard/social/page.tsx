@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect, useCallback, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,14 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Unlink, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { ExternalLink, Unlink } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
 } from "react-icons/fa";
 import { SiTiktok as Tiktok } from "react-icons/si";
-import { useToast } from "@/hooks/use-toast";
 
 interface SocialAccount {
   id: string;
@@ -61,15 +61,15 @@ function SocialPageInner() {
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(
-          err.error || `HTTP ${response.status}: ${response.statusText}`
+          err.error || `HTTP ${response.status}: ${response.statusText}`,
         );
       }
 
       const data = await response.json();
-      const rawAccounts = Array.isArray(data) 
-        ? data 
+      const rawAccounts = Array.isArray(data)
+        ? data
         : data.links || data.accounts || data.data || [];
-        
+
       const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
         id: acc.id || acc._id || acc.platform,
         platform: acc.platform?.toUpperCase(),
@@ -171,35 +171,64 @@ function SocialPageInner() {
     try {
       const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
         credentials: "include",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           platform: platform.toLowerCase(),
           redirectUrl: `${window.location.origin}/dashboard/social`,
-          showCalendar: false 
+          showCalendar: false,
+          timestamp: Date.now(), // Add timestamp to prevent caching
         }),
       });
 
       const data = await response.json().catch(() => ({}));
 
-      // Find the best error message from the response data
-      const errorMsg = 
-        (typeof data.error === 'string' ? data.error : null) || 
-        (typeof data.message === 'string' ? data.message : null) ||
-        (data.details?.message) ||
-        (data.details?.provider?.message) ||
-        (typeof data.err === 'string' ? data.err : null) ||
-        (data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : String(data.error)) : null) ||
-        (data && Object.keys(data).length > 0 ? JSON.stringify(data) : null) ||
-        (!response.ok ? `HTTP ${response.status}: ${response.statusText}` : null) ||
-        "No connect URL returned from server.";
+      // Check if response is successful first
+      if (!response.ok) {
+        const errorMsg =
+          (typeof data.error === "string" ? data.error : null) ||
+          (typeof data.message === "string" ? data.message : null) ||
+          data.details?.message ||
+          data.details?.provider?.message ||
+          (typeof data.err === "string" ? data.err : null) ||
+          (data.error
+            ? typeof data.error === "object"
+              ? JSON.stringify(data.error)
+              : String(data.error)
+            : null) ||
+          (data && Object.keys(data).length > 0
+            ? JSON.stringify(data)
+            : null) ||
+          `HTTP ${response.status}: ${response.statusText}`;
 
-      setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
-      toast({
-        title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
-        description: errorMsg,
-        variant: "destructive",
-      });
+        setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
+        toast({
+          title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
+          description: errorMsg,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Success case: extract and redirect to connect URL
+      const connectUrl =
+        data.url || data.link || data.connect?.access_url || data.connect?.url;
+      if (connectUrl) {
+        window.location.href = connectUrl;
+      } else {
+        const errorMsg = "No connect URL returned from server.";
+        setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
+        toast({
+          title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
+          description: errorMsg,
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to connect account";
@@ -226,16 +255,24 @@ function SocialPageInner() {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          err.error || `HTTP ${response.status}: ${response.statusText}`,
+        );
       }
 
       setAccounts(accounts.filter((acc) => acc.id !== accountId));
-      toast({ title: "Disconnected", description: "Account disconnected successfully." });
+      toast({
+        title: "Disconnected",
+        description: "Account disconnected successfully.",
+      });
     } catch (error) {
       console.error("Disconnect error:", error);
       toast({
         title: "Failed to disconnect",
-        description: error instanceof Error ? error.message : "Failed to disconnect account",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to disconnect account",
         variant: "destructive",
       });
     }
@@ -360,7 +397,9 @@ function SocialPageInner() {
                   disabled={connectingPlatform === "FACEBOOK"}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  {connectingPlatform === "FACEBOOK" ? "Connecting..." : "Connect Facebook"}
+                  {connectingPlatform === "FACEBOOK"
+                    ? "Connecting..."
+                    : "Connect Facebook"}
                 </Button>
               </div>
             )}
@@ -445,13 +484,14 @@ function SocialPageInner() {
                   disabled={connectingPlatform === "INSTAGRAM"}
                   className="w-full bg-gradient-to-r from-pink-500 to-orange-400 text-white"
                 >
-                  {connectingPlatform === "INSTAGRAM" ? "Connecting..." : "Connect Instagram"}
+                  {connectingPlatform === "INSTAGRAM"
+                    ? "Connecting..."
+                    : "Connect Instagram"}
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
-
 
         <Card
           className={`border-slate-800 bg-slate-900/60 ${tiktokAccount ? "border-lime-300/40" : ""}`}
@@ -518,7 +558,9 @@ function SocialPageInner() {
                   disabled={connectingPlatform === ("TIKTOK" as any)}
                   className="w-full bg-black hover:bg-slate-900 text-white border border-slate-700"
                 >
-                  {connectingPlatform === ("TIKTOK" as any) ? "Connecting..." : "Connect TikTok"}
+                  {connectingPlatform === ("TIKTOK" as any)
+                    ? "Connecting..."
+                    : "Connect TikTok"}
                 </Button>
               </div>
             )}

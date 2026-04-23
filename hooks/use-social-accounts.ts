@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface SocialAccount {
   id: string;
@@ -53,12 +53,18 @@ export function useSocialAccounts() {
     try {
       const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
+        },
         credentials: "include",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           platform: platform.toLowerCase(),
           redirectUrl: `${window.location.origin}/dashboard/social`,
-          showCalendar: false 
+          showCalendar: false,
+          timestamp: Date.now()
         }),
       });
 
@@ -123,4 +129,4 @@ export function useSocialAccounts() {
     disconnectAccount,
     refetch: fetchAccounts,
   }), [accounts, loading, connectPlatform, disconnectAccount, fetchAccounts]);
-}
+}
