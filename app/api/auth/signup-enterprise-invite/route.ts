@@ -27,6 +27,18 @@ export async function POST(req: Request) {
       response.headers.append("set-cookie", cookie);
     }
 
+    // Fallback: If backend returns a token but cookie wasn't set properly, set it manually
+    if (data.token) {
+      response.cookies.set({
+        name: "token",
+        value: data.token,
+        httpOnly: true,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
+    }
+
     return response;
   } catch (err) {
     console.error("Enterprise invite signup proxy error:", err);
