@@ -1,24 +1,20 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState, useCallback, useRef } from "react";
-import { useToast } from "@/hooks/use-toast";
-import {
-  AlertCircle,
-  Check,
-  RefreshCw,
-} from "lucide-react";
-import { FaFacebook, FaInstagram } from "react-icons/fa";
-import { useSessionContext } from "@/context/SessionContext";
 import { OnboardingHeaderNav } from "@/components/onboarding/OnboardingHeaderNav";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { useSessionContext } from "@/context/SessionContext";
+import { useToast } from "@/hooks/use-toast";
 import { normalizeUrl } from "@/lib/url-utils";
-import { SiTiktok } from "react-icons/si";
 import clsx from "clsx";
+import { AlertCircle, Check, RefreshCw } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
+import { SiTiktok } from "react-icons/si";
 
 type Section = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -48,7 +44,9 @@ function FullManagementOnboardingInner() {
   const [error, setError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const [connectedAccounts, setConnectedAccounts] = useState<string[]>([]);
-  const [connectingPlatform, setConnectingPlatform] = useState<string | null>(null);
+  const [connectingPlatform, setConnectingPlatform] = useState<string | null>(
+    null,
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
@@ -128,9 +126,12 @@ function FullManagementOnboardingInner() {
       if (accountsRes.ok) {
         const accountsData = await accountsRes.json();
         // Updated to include .data property, matching dashboard logic
-        const raw = Array.isArray(accountsData) 
-          ? accountsData 
-          : accountsData.links || accountsData.accounts || accountsData.data || [];
+        const raw = Array.isArray(accountsData)
+          ? accountsData
+          : accountsData.links ||
+            accountsData.accounts ||
+            accountsData.data ||
+            [];
         const platforms = raw.map((a: any) => a.platform?.toUpperCase());
         setConnectedAccounts(platforms);
       }
@@ -144,7 +145,10 @@ function FullManagementOnboardingInner() {
     await fetchConnectedAccounts();
     await refresh();
     setRefreshing(false);
-    toast({ title: "Refreshed", description: "Checked for new social connections" });
+    toast({
+      title: "Refreshed",
+      description: "Checked for new social connections",
+    });
   };
 
   useEffect(() => {
@@ -250,19 +254,21 @@ function FullManagementOnboardingInner() {
       });
       window.history.replaceState({}, "", "/onboarding/full-management");
     } else if (successParam) {
-      const message = platformParam ? `Connected ${platformParam.toLowerCase()}` : "Account connected";
+      const message = platformParam
+        ? `Connected ${platformParam.toLowerCase()}`
+        : "Account connected";
       toast({ title: "Success", description: message });
-      
+
       fetchConnectedAccounts();
       refresh();
-      
+
       if (refetchRetryIdRef.current) clearTimeout(refetchRetryIdRef.current);
       refetchRetryIdRef.current = setTimeout(async () => {
         refetchRetryIdRef.current = null;
         fetchConnectedAccounts();
         await refresh();
       }, 2000);
-      
+
       window.history.replaceState({}, "", "/onboarding/full-management");
     }
   }, [queryKey, searchParams, toast, fetchConnectedAccounts, refresh]);
@@ -279,30 +285,47 @@ function FullManagementOnboardingInner() {
     try {
       const response = await fetch("/api/social-media/platform/connect-link", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
         credentials: "include",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           platform: platform.toLowerCase(),
           redirectUrl: `${window.location.origin}/onboarding/full-management`,
-          showCalendar: false 
+          showCalendar: false,
+          timestamp: Date.now(),
         }),
       });
       const data = await response.json().catch(() => ({}));
 
-      const connectUrl = data.url || data.link || data.connect?.access_url || data.connect?.url;
+      const connectUrl =
+        data.url || data.link || data.connect?.access_url || data.connect?.url;
       if (connectUrl && response.ok) {
         window.location.href = connectUrl;
       } else {
         // Aggressively find the best error message from the response data
-        const errorMsg = 
-          (typeof data.error === 'string' ? data.error : (data.error?.message || null)) || 
-          (typeof data.message === 'string' ? data.message : null) ||
-          (data.details?.message) ||
-          (data.details?.provider?.message) ||
-          (typeof data.err === 'string' ? data.err : null) ||
-          (data.error ? (typeof data.error === 'object' ? JSON.stringify(data.error) : String(data.error)) : null) ||
-          (data && Object.keys(data).length > 0 ? JSON.stringify(data) : null) ||
-          (!response.ok ? `HTTP ${response.status}: ${response.statusText}` : null) ||
+        const errorMsg =
+          (typeof data.error === "string"
+            ? data.error
+            : data.error?.message || null) ||
+          (typeof data.message === "string" ? data.message : null) ||
+          data.details?.message ||
+          data.details?.provider?.message ||
+          (typeof data.err === "string" ? data.err : null) ||
+          (data.error
+            ? typeof data.error === "object"
+              ? JSON.stringify(data.error)
+              : String(data.error)
+            : null) ||
+          (data && Object.keys(data).length > 0
+            ? JSON.stringify(data)
+            : null) ||
+          (!response.ok
+            ? `HTTP ${response.status}: ${response.statusText}`
+            : null) ||
           "No connect URL returned from server.";
 
         setError(errorMsg);
@@ -314,7 +337,10 @@ function FullManagementOnboardingInner() {
       }
     } catch (err) {
       console.error("Connection error:", err);
-      const message = err instanceof Error ? err.message : "Failed to start connection process.";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to start connection process.";
       setError(message);
       toast({
         title: "Connection Error",
@@ -398,7 +424,9 @@ function FullManagementOnboardingInner() {
       if (connectedAccounts.length === 0)
         return setError("Please connect at least one social media account.");
       if (form.platformsToManage.length === 0)
-        return setError("Please select at least one connected platform to manage (vía the 'Manage' checkbox).");
+        return setError(
+          "Please select at least one connected platform to manage (vía the 'Manage' checkbox).",
+        );
       if (!form.postingAccessGranted)
         return setError("Specify posting access status.");
     }
@@ -436,7 +464,7 @@ function FullManagementOnboardingInner() {
 
     if (currentSection < 6) {
       setCurrentSection((s) => (s + 1) as Section);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -547,7 +575,12 @@ function FullManagementOnboardingInner() {
                     disabled={refreshing}
                     className="text-slate-400 hover:text-white gap-2"
                   >
-                    <RefreshCw className={clsx("h-3.5 w-3.5", refreshing && "animate-spin")} />
+                    <RefreshCw
+                      className={clsx(
+                        "h-3.5 w-3.5",
+                        refreshing && "animate-spin",
+                      )}
+                    />
                     Refresh
                   </Button>
                 )}
@@ -560,7 +593,7 @@ function FullManagementOnboardingInner() {
                 </div>
               ) : null}
 
-              <div 
+              <div
                 ref={scrollRef}
                 onWheel={handleWheel}
                 className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[60vh] custom-scrollbar pb-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
@@ -632,35 +665,49 @@ function FullManagementOnboardingInner() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-slate-300">
-                        Connect Platforms to Manage <span className="text-red-400">*</span>
+                        Connect Platforms to Manage{" "}
+                        <span className="text-red-400">*</span>
                       </Label>
                       <div className="space-y-3">
                         {platformOptions.map((option) => {
                           const Icon = option.icon;
-                          const isConnected = connectedAccounts.includes(option.value);
+                          const isConnected = connectedAccounts.includes(
+                            option.value,
+                          );
                           return (
                             <div
                               key={option.value}
                               className="flex items-center justify-between p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
                             >
                               <div className="flex items-center space-x-3">
-                                <div className={clsx(
-                                  "p-2 rounded-lg text-white",
-                                  option.value === "FACEBOOK" && "bg-blue-600",
-                                  option.value === "INSTAGRAM" && "bg-gradient-to-r from-pink-500 to-orange-400",
-                                  option.value === "TIKTOK" && "bg-black border border-slate-700"
-                                )}>
+                                <div
+                                  className={clsx(
+                                    "p-2 rounded-lg text-white",
+                                    option.value === "FACEBOOK" &&
+                                      "bg-blue-600",
+                                    option.value === "INSTAGRAM" &&
+                                      "bg-gradient-to-r from-pink-500 to-orange-400",
+                                    option.value === "TIKTOK" &&
+                                      "bg-black border border-slate-700",
+                                  )}
+                                >
                                   <Icon className="h-5 w-5" />
                                 </div>
                                 <div>
                                   <span className="text-sm font-medium text-slate-200 block">
                                     {option.label}
                                   </span>
-                                  <span className={clsx(
-                                    "text-[10px] block",
-                                    isConnected ? "text-lime-400" : "text-slate-400"
-                                  )}>
-                                    {isConnected ? "Connected successfully" : "Not connected yet"}
+                                  <span
+                                    className={clsx(
+                                      "text-[10px] block",
+                                      isConnected
+                                        ? "text-lime-400"
+                                        : "text-slate-400",
+                                    )}
+                                  >
+                                    {isConnected
+                                      ? "Connected successfully"
+                                      : "Not connected yet"}
                                   </span>
                                 </div>
                               </div>
@@ -669,13 +716,20 @@ function FullManagementOnboardingInner() {
                                 <div className="flex items-center gap-3">
                                   <label className="flex items-center gap-2 cursor-pointer group">
                                     <Checkbox
-                                      checked={form.platformsToManage.includes(option.value as any)}
+                                      checked={form.platformsToManage.includes(
+                                        option.value as any,
+                                      )}
                                       onCheckedChange={(checked: boolean) =>
                                         setForm((f) => ({
                                           ...f,
                                           platformsToManage: checked
-                                            ? [...f.platformsToManage, option.value as any]
-                                            : f.platformsToManage.filter((p) => p !== option.value),
+                                            ? [
+                                                ...f.platformsToManage,
+                                                option.value as any,
+                                              ]
+                                            : f.platformsToManage.filter(
+                                                (p) => p !== option.value,
+                                              ),
                                         }))
                                       }
                                       className="border-lime-400 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-900"
@@ -697,7 +751,9 @@ function FullManagementOnboardingInner() {
                                   disabled={connectingPlatform === option.value}
                                   className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs h-8"
                                 >
-                                  {connectingPlatform === option.value ? "Connecting..." : "Connect"}
+                                  {connectingPlatform === option.value
+                                    ? "Connecting..."
+                                    : "Connect"}
                                 </Button>
                               )}
                             </div>
@@ -1000,31 +1056,33 @@ function FullManagementOnboardingInner() {
                         Preferred Posting Times (Optional)
                       </Label>
                       <div className="grid grid-cols-2 gap-3">
-                        {(["MORNING", "AFTERNOON", "EVENING", "NIGHT"] as const).map(
-                          (time) => (
-                            <label
-                              key={time}
-                              className="flex items-center gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer"
-                            >
-                              <Checkbox
-                                checked={form.postingTimePreference.includes(time)}
-                                onCheckedChange={(checked: boolean) =>
-                                  setForm((f) => ({
-                                    ...f,
-                                    postingTimePreference: checked
-                                      ? [...f.postingTimePreference, time]
-                                      : f.postingTimePreference.filter(
-                                          (t) => t !== time,
-                                        ),
-                                  }))
-                                }
-                              />
-                              <span className="text-sm text-slate-200">
-                                {time.charAt(0) + time.slice(1).toLowerCase()}
-                              </span>
-                            </label>
-                          ),
-                        )}
+                        {(
+                          ["MORNING", "AFTERNOON", "EVENING", "NIGHT"] as const
+                        ).map((time) => (
+                          <label
+                            key={time}
+                            className="flex items-center gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer"
+                          >
+                            <Checkbox
+                              checked={form.postingTimePreference.includes(
+                                time,
+                              )}
+                              onCheckedChange={(checked: boolean) =>
+                                setForm((f) => ({
+                                  ...f,
+                                  postingTimePreference: checked
+                                    ? [...f.postingTimePreference, time]
+                                    : f.postingTimePreference.filter(
+                                        (t) => t !== time,
+                                      ),
+                                }))
+                              }
+                            />
+                            <span className="text-sm text-slate-200">
+                              {time.charAt(0) + time.slice(1).toLowerCase()}
+                            </span>
+                          </label>
+                        ))}
                       </div>
                     </div>
                   </>
@@ -1067,11 +1125,13 @@ function FullManagementOnboardingInner() {
 
 export default function FullManagementOnboardingPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-        <p className="text-slate-300">Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+          <p className="text-slate-300">Loading...</p>
+        </div>
+      }
+    >
       <FullManagementOnboardingInner />
     </Suspense>
   );
