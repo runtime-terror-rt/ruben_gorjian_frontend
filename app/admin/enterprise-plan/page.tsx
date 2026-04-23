@@ -199,6 +199,7 @@ export default function EnterprisePlanPage() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [inviteToDelete, setInviteToDelete] = useState<string | null>(null);
+  const [freqError, setFreqError] = useState<string | null>(null);
 
   // Form State for Create Invite
   const [formData, setFormData] = useState({
@@ -272,6 +273,7 @@ export default function EnterprisePlanPage() {
         billingCycle: "MONTHLY",
         expiresInDays: 7
       });
+      setFreqError(null);
     },
     onError: (error: any) => {
       toast({ 
@@ -462,6 +464,12 @@ export default function EnterprisePlanPage() {
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const freq = formData.proPhotoShootFrequency.trim().toLowerCase();
+    if (freq !== "monthly" && freq !== "yearly") {
+      setFreqError("Only \"Monthly\" or \"Yearly\" are allowed.");
+      return;
+    }
+    setFreqError(null);
     createInviteMutation.mutate(formData);
   };
 
@@ -709,67 +717,67 @@ export default function EnterprisePlanPage() {
         }}
       >
         <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[900px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
-          <div className="p-8 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
+          <div className="px-5 py-4 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/5 blur-[100px] pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <div>
-                <DialogTitle className="text-3xl font-black text-white tracking-tighter">New Enterprise Proposal</DialogTitle>
-                <DialogDescription className="text-slate-500 text-sm font-medium tracking-tight mt-1">
+                <DialogTitle className="text-xl font-black text-white tracking-tighter">New Enterprise Proposal</DialogTitle>
+                <DialogDescription className="text-slate-500 text-xs font-medium tracking-tight mt-0.5">
                   Configure custom proposal details for high-value clients.
                 </DialogDescription>
               </div>
-              <div className="h-12 w-12 rounded-2xl bg-lime-400/10 flex items-center justify-center text-lime-400">
-                <ShieldCheck className="h-6 w-6" />
+              <div className="h-9 w-9 rounded-xl bg-lime-400/10 flex items-center justify-center text-lime-400">
+                <ShieldCheck className="h-5 w-5" />
               </div>
             </div>
           </div>
 
-          <div className="p-8 bg-slate-950/40">
-            <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="px-5 py-4 bg-slate-950/40 overflow-y-auto max-h-[calc(85vh-130px)]">
+            <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Client Identity Section */}
                 <div className="md:col-span-3">
-                  <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <h3 className="text-[10px] font-black text-lime-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                     <User className="h-3 w-3" /> Client Identity
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">planName</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Plan Name</Label>
                       <Input 
                         value={formData.planName}
                         onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         placeholder="e.g. OMEGA ELITE"
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">companyName</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Company Name</Label>
                       <Input 
                         value={formData.companyName}
                         onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         placeholder="Legal Entity"
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">fullName</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Contact Full Name</Label>
                       <Input 
                         value={formData.fullName}
                         onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         placeholder="Full Name"
                         required
                       />
                     </div>
-                    <div className="space-y-2 md:col-span-3">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">email</Label>
+                    <div className="space-y-1 md:col-span-3">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Client Email</Label>
                       <Input 
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         placeholder="client@company.com"
                         required
                       />
@@ -778,80 +786,87 @@ export default function EnterprisePlanPage() {
                 </div>
 
                 {/* Service Logistics */}
-                <div className="md:col-span-2 space-y-4">
-                  <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <div className="md:col-span-2 space-y-3">
+                  <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                     <TrendingUp className="h-3 w-3" /> Service Strategy
                   </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">reelsPerMonth</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Reels / Month</Label>
                       <Input 
                         type="number"
                         value={formData.reelsPerMonth}
                         onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">microReelsPerMonth</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Micro Reels / Month</Label>
                       <Input 
                         type="number"
                         value={formData.microReelsPerMonth}
                         onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootFrequency</Label>
-                      <div className="flex p-1 bg-slate-950/60 rounded-xl border border-white/5 gap-1">
-                        {["Monthly", "Yearly"].map((opt) => (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => setFormData(prev => ({ ...prev, proPhotoShootFrequency: opt }))}
-                            className={cn(
-                              "flex-1 h-9 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all",
-                              formData.proPhotoShootFrequency === opt
-                                ? "bg-lime-400 text-slate-950 shadow-sm"
-                                : "text-slate-500 hover:text-slate-300"
-                            )}
-                          >
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Photo Shoot Frequency</Label>
+                      <Input
+                        type="text"
+                        value={formData.proPhotoShootFrequency}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setFormData(prev => ({ ...prev, proPhotoShootFrequency: val }));
+                          const normalized = val.trim().toLowerCase();
+                          if (normalized === "" || normalized === "monthly" || normalized === "yearly") {
+                            setFreqError(null);
+                          } else {
+                            setFreqError('Only "Monthly" or "Yearly" are allowed.');
+                          }
+                        }}
+                        className={cn(
+                          "bg-slate-900/50 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm",
+                          freqError ? "border-red-500/60 focus-visible:ring-red-500/30" : "border-white/5"
+                        )}
+                        placeholder="Monthly or Yearly"
+                      />
+                      {freqError && (
+                        <p className="text-red-400 text-[10px] font-bold ml-1 flex items-center gap-1">
+                          <span>⚠</span> {freqError}
+                        </p>
+                      )}
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootLength (hours)</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Photo Shoot Length (hrs)</Label>
                       <Input
                         type="text"
                         value={formData.proPhotoShootLength}
                         onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootLength: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         placeholder="e.g. 4 hours"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">socialPlatforms</Label>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-semibold text-slate-400 ml-1">Social Platforms</Label>
                     <div className="flex flex-wrap gap-2">
-                      {["INSTAGRAM", "FACEBOOK", "TIKTOK",].map((platform) => (
+                      {["INSTAGRAM", "FACEBOOK", "TIKTOK"].map((platform) => (
                         <div 
                           key={platform} 
                           onClick={() => togglePlatform(platform)}
                           className={cn(
-                            "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all cursor-pointer",
+                            "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer",
                             formData.socialPlatforms.includes(platform) 
                             ? "bg-lime-400/10 border-lime-400/30 text-lime-400" 
                             : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
                           )}
                         >
                           <div className={cn(
-                            "h-4 w-4 rounded border flex items-center justify-center transition-colors",
+                            "h-3.5 w-3.5 rounded border flex items-center justify-center transition-colors",
                             formData.socialPlatforms.includes(platform) ? "bg-lime-400 border-lime-400" : "border-slate-700"
                           )}>
-                            {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
+                            {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-2.5 w-2.5 text-slate-950" />}
                           </div>
                           <span className="text-[10px] font-black tracking-wider">{platform}</span>
                         </div>
@@ -861,33 +876,33 @@ export default function EnterprisePlanPage() {
                 </div>
 
                 {/* Financials */}
-                <div className="space-y-4">
-                  <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                     <ShieldCheck className="h-3 w-3" /> Financials
                   </h3>
-                  <div className="space-y-4 bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">amount</Label>
+                  <div className="space-y-3 bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Amount (USD)</Label>
                       <Input 
                         type="number"
                         value={formData.amount}
                         onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
-                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-lime-400 text-lg font-black"
+                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-lime-400 text-base font-black"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">billingCycle</Label>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Billing Cycle</Label>
                       <Select 
                         value={formData.billingCycle}
                         onChange={(e) => setFormData(prev => ({ ...prev, billingCycle: e.target.value }))}
-                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
+                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
                       >
                         <option value="MONTHLY">Monthly</option>
                         <option value="YEARLY">Yearly</option>
                       </Select>
                     </div>
-                    <div className="flex items-center justify-between pt-2">
-                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer" htmlFor="captions">captionHashtags</Label>
+                    <div className="flex items-center justify-between py-1">
+                      <Label className="text-[10px] font-semibold text-slate-400 cursor-pointer" htmlFor="captions">Caption & Hashtags</Label>
                       <Checkbox 
                         id="captions"
                         checked={formData.captionHashtags} 
@@ -896,7 +911,7 @@ export default function EnterprisePlanPage() {
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest cursor-pointer" htmlFor="scheduling">scheduling</Label>
+                      <Label className="text-[10px] font-semibold text-slate-400 cursor-pointer" htmlFor="scheduling">Auto Scheduling</Label>
                       <Checkbox 
                         id="scheduling"
                         checked={formData.scheduling} 
@@ -904,13 +919,13 @@ export default function EnterprisePlanPage() {
                         className="rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950" 
                       />
                     </div>
-                    <div className="space-y-2 pt-2 border-t border-white/5">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">expiresInDays</Label>
+                    <div className="space-y-1 pt-2 border-t border-white/5">
+                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Invite Expires In (Days)</Label>
                       <Input 
                         type="number"
                         value={formData.expiresInDays}
                         onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))}
-                        className="bg-slate-950/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
                         min={1}
                         required
                       />
@@ -921,7 +936,7 @@ export default function EnterprisePlanPage() {
             </form>
           </div>
 
-          <div className="p-8 pt-4 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex items-center justify-end gap-4">
+          <div className="px-5 py-3 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex items-center justify-end gap-3">
             <Button 
               type="button" 
               variant="outline" 
