@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef, Suspense, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSessionContext } from "@/context/SessionContext";
 import { Button } from "@/components/ui/button";
 
 function BillingSuccessContent() {
   const { refresh, session } = useSessionContext();
+  const router = useRouter();
   useSearchParams(); // presence triggers re-render when query changes
   const [checking, setChecking] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -77,8 +78,15 @@ function BillingSuccessContent() {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      
+      // Automatically redirect when active
+      if (session?.onboardingCompleted) {
+        router.push("/dashboard");
+      } else {
+        router.push("/onboarding");
+      }
     }
-  }, [session, checking]);
+  }, [session, checking, router]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
