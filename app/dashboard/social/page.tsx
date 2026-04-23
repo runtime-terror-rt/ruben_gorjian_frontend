@@ -188,6 +188,15 @@ function SocialPageInner() {
 
       const data = await response.json().catch(() => ({}));
 
+      // Success case: extract and redirect to connect URL
+      const connectUrl =
+        data.url || data.link || data.connect?.access_url || data.connect?.url;
+
+      if (connectUrl) {
+        window.location.href = connectUrl;
+        return;
+      }
+
       // Check if response is successful first
       if (!response.ok) {
         const errorMsg =
@@ -215,20 +224,14 @@ function SocialPageInner() {
         return;
       }
 
-      // Success case: extract and redirect to connect URL
-      const connectUrl =
-        data.url || data.link || data.connect?.access_url || data.connect?.url;
-      if (connectUrl) {
-        window.location.href = connectUrl;
-      } else {
-        const errorMsg = "No connect URL returned from server.";
-        setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
-        toast({
-          title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
-          description: errorMsg,
-          variant: "destructive",
-        });
-      }
+      // If we reach here, response was OK but no connect URL was found
+      const errorMsg = "No connect URL returned from server.";
+      setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
+      toast({
+        title: `Failed to connect ${platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()}`,
+        description: errorMsg,
+        variant: "destructive",
+      });
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to connect account";

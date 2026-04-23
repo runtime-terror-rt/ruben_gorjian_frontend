@@ -40,7 +40,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    const body = await request.json().catch(() => ({}));
+    const patchData = await request.json().catch(() => ({}));
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -50,7 +50,7 @@ export async function PATCH(
         "Content-Type": "application/json",
         ...(token ? { Cookie: `token=${token}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ data: patchData }),
     });
 
     const data = await res.json().catch(() => null);

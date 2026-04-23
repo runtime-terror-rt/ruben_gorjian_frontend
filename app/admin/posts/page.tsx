@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import {
-  FileText,
-  Trash2,
-  Eye,
-  Calendar,
-  User,
-  MoreHorizontal,
-  RefreshCcw,
-  Send,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import DeleteConfirmationModal from "@/app/dashboard/calendar/delete-confirmation-modal";
+import PostDetailsModal from "@/app/dashboard/calendar/post-details-modal";
+import PostModal from "@/app/dashboard/calendar/post-modal";
+import { useSocket } from "@/app/providers/SocketProvider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -23,27 +21,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import dayjs from "dayjs";
-import { buildStorageUrl } from "@/lib/storage-utils";
-import { getEnvVarWithDefault } from "@/lib/env-utils";
-import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
-import { fromUTC, toUTC } from "@/lib/timezone";
 import { useTimezone } from "@/hooks/use-timezone";
-import PostDetailsModal from "@/app/dashboard/calendar/post-details-modal";
-import PostModal from "@/app/dashboard/calendar/post-modal";
+import { useToast } from "@/hooks/use-toast";
 import { useUpload } from "@/hooks/use-upload";
-import { useCalendar } from "@/app/dashboard/calendar/calendar-context";
-import { useSocket } from "@/app/providers/SocketProvider";
-import DeleteConfirmationModal from "@/app/dashboard/calendar/delete-confirmation-modal";
+import { getEnvVarWithDefault } from "@/lib/env-utils";
+import { buildStorageUrl } from "@/lib/storage-utils";
+import { fromUTC, toUTC } from "@/lib/timezone";
+import dayjs from "dayjs";
+import {
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Eye,
+  FileText,
+  MoreHorizontal,
+  RefreshCcw,
+  Send,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 
 const STORAGE_BASE_URL = getEnvVarWithDefault(
   "NEXT_PUBLIC_STORAGE_BASE_URL",
@@ -100,12 +100,15 @@ export default function AdminPostsPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
   const totalPages = Math.ceil((posts || []).length / itemsPerPage);
-  const currentPosts = (posts || []).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentPosts = (posts || []).slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
@@ -121,31 +124,38 @@ export default function AdminPostsPage() {
     try {
       setLoading(true);
       setError(null);
-      // Admin should see all posts. If backend requires date range, we'll use a wide one.
-      const res = await fetch("/api/scheduler/posts", {
+      // Admin should see all posts. Fetching from /api/scheduler/posts
+      const startDate = dayjs().subtract(1, "year").toISOString();
+      const endDate = dayjs().add(5, "year").toISOString();
+      const res = await fetch(`/api/scheduler/posts?all=true&pageSize=1000&startDate=${startDate}&endDate=${endDate}`, {
         credentials: "include",
       });
+      console.log("res", res);
       if (!res.ok) throw new Error("Failed to fetch posts");
 
       const data = await res.json();
-      const items = Array.isArray(data) ? data : data.items || [];
-      const filteredItems = items.filter((p: any) => 
-        p.scheduleType !== "PHOTO_SESSION" && p.scheduleType !== "VIDEO_SESSION"
+      const items = Array.isArray(data)
+        ? data
+        : data.items || data.data?.items || data.data?.posts || data.data || [];
+      const filteredItems = items.filter(
+        (p: any) =>
+          p.scheduleType !== "PHOTO_SESSION" &&
+          p.scheduleType !== "VIDEO_SESSION"
       );
-      
+
       // Sync timezone as in User Dashboard
       const syncedItems = filteredItems.map((p: any) => {
         const dateValue = p.scheduledFor || p.scheduledAt;
         return {
           ...p,
-          scheduledFor: dateValue && userTimezone 
-            ? fromUTC(dateValue, userTimezone).format() 
-            : dateValue
+          scheduledFor:
+            dateValue && userTimezone
+              ? fromUTC(dateValue, userTimezone).format()
+              : dateValue,
         };
       });
-      
-      setPosts(syncedItems);
 
+      setPosts(syncedItems);
 
       setCurrentPage(1); // Reset to first page on refresh
     } catch (err: any) {
@@ -207,7 +217,7 @@ export default function AdminPostsPage() {
       // and then disappear from the calendar grid.
       // So instead of hard DELETE, we PATCH status to FAILED first, then we could delete or just let it be.
       // But to satisfy the "failed count" requirement, it must have status FAILED.
-      
+
       const res = await fetch(`/api/scheduler/posts/${postToBeDeleted}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -222,7 +232,10 @@ export default function AdminPostsPage() {
       });
 
       if (res.ok) {
-        toast({ title: "Success", description: "Post rejected and marked as Failed" });
+        toast({
+          title: "Success",
+          description: "Post rejected and marked as Failed",
+        });
         fetchPosts();
       } else {
         // Fallback to delete if PATCH fails or if backend doesn't support status update via PATCH
@@ -258,7 +271,7 @@ export default function AdminPostsPage() {
     }
 
     if (post.media && post.media.length > 0) {
-      const storageKey = post.media[0].storageKey || post.media[0].url || '';
+      const storageKey = post.media[0].storageKey || post.media[0].url || "";
       const match = extractFromUrl(storageKey);
       if (match) return match;
     }
@@ -283,8 +296,13 @@ export default function AdminPostsPage() {
     try {
       const targetUserId = extractUserIdFromPost(post);
       if (!targetUserId) {
-         toast({ title: "Error", description: "Cannot determine the user for this post as the backend did not provide an ID and there are no media assets.", variant: "destructive" });
-         return;
+        toast({
+          title: "Error",
+          description:
+            "Cannot determine the user for this post as the backend did not provide an ID and there are no media assets.",
+          variant: "destructive",
+        });
+        return;
       }
       // Fetch user's social accounts for editing
       const res = await fetch(
@@ -293,11 +311,13 @@ export default function AdminPostsPage() {
           credentials: "include",
         },
       );
-      
+
       let loadedAccounts: any[] = [];
       if (res.ok) {
         const data = await res.json();
-        const rawAccounts = Array.isArray(data) ? data : data.links || data.items || data.platforms || [];
+        const rawAccounts = Array.isArray(data)
+          ? data
+          : data.links || data.items || data.platforms || [];
         loadedAccounts = rawAccounts.map((acc: any) => ({
           id: acc.id || acc._id,
           platform: acc.platform?.toUpperCase(),
@@ -312,30 +332,32 @@ export default function AdminPostsPage() {
         post.targets.forEach((t: any) => {
           const plat = t.platform?.toUpperCase();
           const targetAccId = t.socialAccount?.id;
-          
+
           if (targetAccId) {
-             accountIds.push(targetAccId);
-             if (!loadedAccounts.find(a => a.id === targetAccId)) {
-               loadedAccounts.push({
-                 id: targetAccId,
-                 platform: plat,
-                 displayName: t.socialAccount?.displayName || `${plat} Account`,
-               });
-             }
+            accountIds.push(targetAccId);
+            if (!loadedAccounts.find((a) => a.id === targetAccId)) {
+              loadedAccounts.push({
+                id: targetAccId,
+                platform: plat,
+                displayName: t.socialAccount?.displayName || `${plat} Account`,
+              });
+            }
           } else {
-             // target has no socialAccount object, let's find one or mock one
-             let matchingAcc = loadedAccounts.find(acc => acc.platform === plat);
-             if (!matchingAcc) {
-               matchingAcc = {
-                 id: `mock-${plat}-${t.id}`,
-                 platform: plat,
-                 displayName: `${plat} (Pre-selected)`,
-               };
-               loadedAccounts.push(matchingAcc);
-             }
-             if (!accountIds.includes(matchingAcc.id)) {
-               accountIds.push(matchingAcc.id);
-             }
+            // target has no socialAccount object, let's find one or mock one
+            let matchingAcc = loadedAccounts.find(
+              (acc) => acc.platform === plat,
+            );
+            if (!matchingAcc) {
+              matchingAcc = {
+                id: `mock-${plat}-${t.id}`,
+                platform: plat,
+                displayName: `${plat} (Pre-selected)`,
+              };
+              loadedAccounts.push(matchingAcc);
+            }
+            if (!accountIds.includes(matchingAcc.id)) {
+              accountIds.push(matchingAcc.id);
+            }
           }
         });
       }
@@ -372,7 +394,9 @@ export default function AdminPostsPage() {
               dayjs(payload.scheduledFor),
               userTimezone || "UTC",
             ).toISOString(),
-            userId: extractUserIdFromPost(posts.find((p) => p.id === editingPost.id)),
+            userId: extractUserIdFromPost(
+              posts.find((p) => p.id === editingPost.id),
+            ),
             adminReason: "Modified by Administrator",
             assetIds:
               payload.assetIds || (payload.assetId ? [payload.assetId] : []),
@@ -423,7 +447,9 @@ export default function AdminPostsPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.allSuccessful === false && data.results) {
-          const errors = data.results.filter((r: any) => !r.success).map((r: any) => r.error);
+          const errors = data.results
+            .filter((r: any) => !r.success)
+            .map((r: any) => r.error);
           throw new Error(errors.join(", ") || "Publishing failed");
         }
         toast({
@@ -550,9 +576,17 @@ export default function AdminPostsPage() {
                 currentPosts.map((post: any) => {
                   let mediaUrl = null;
                   if (post.asset?.storageKey) {
-                    mediaUrl = buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey);
+                    mediaUrl = buildStorageUrl(
+                      STORAGE_BASE_URL,
+                      post.asset.storageKey,
+                    );
                   } else if (post.media && post.media.length > 0) {
-                    mediaUrl = post.media[0].url || buildStorageUrl(STORAGE_BASE_URL, post.media[0].storageKey);
+                    mediaUrl =
+                      post.media[0].url ||
+                      buildStorageUrl(
+                        STORAGE_BASE_URL,
+                        post.media[0].storageKey,
+                      );
                   } else if (post.assets && post.assets.length > 0) {
                     mediaUrl = post.assets[0];
                   }
@@ -598,53 +632,103 @@ export default function AdminPostsPage() {
                       <TableCell className="max-w-xs">
                         <div className="flex flex-col gap-0.5">
                           <div className="line-clamp-2 text-sm text-slate-200 font-medium">
-                            {post.session?.title || post.sessionTitle || post.caption || (
-                              <span className="text-slate-500 italic">
-                                No caption
-                              </span>
-                            )}
+                            {post.session?.title ||
+                              post.sessionTitle ||
+                              post.caption || (
+                                <span className="text-slate-500 italic">
+                                  No caption
+                                </span>
+                              )}
                           </div>
                           {(post.session?.notes || post.sessionNotes) && (
-                             <span className="text-[10px] text-slate-500 line-clamp-1 italic">
-                               Ref: {post.session?.notes || post.sessionNotes}
-                             </span>
+                            <span className="text-[10px] text-slate-500 line-clamp-1 italic">
+                              Ref: {post.session?.notes || post.sessionNotes}
+                            </span>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-sm font-medium text-slate-200">
-                            {post.owner?.name || post.user?.fullName || post.user?.name || post.author?.fullName || post.author?.name || (extractUserIdFromPost(post) ? `User: ${extractUserIdFromPost(post)?.substring(0, 8)}...` : "Unknown User")}
+                            {post.owner?.name ||
+                              post.user?.fullName ||
+                              post.user?.name ||
+                              post.author?.fullName ||
+                              post.author?.name ||
+                              (extractUserIdFromPost(post)
+                                ? `User: ${extractUserIdFromPost(post)?.substring(0, 8)}...`
+                                : "Unknown User")}
                           </span>
                           <span className="text-xs text-slate-500">
-                            {post.owner?.email || post.user?.email || post.author?.email || "No email"}
+                            {post.owner?.email ||
+                              post.user?.email ||
+                              post.author?.email ||
+                              "No email"}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-1">
-                          {post.targets?.map((t: any) => (
-                            <Badge
-                              key={t.id}
-                              variant="outline"
-                              className="text-[10px] py-0 px-1.5 border-slate-700 bg-slate-900 text-slate-400 uppercase"
-                            >
-                              {t.platform}
-                            </Badge>
-                          ))}
+                        <div className="flex flex-wrap gap-1">
+                          {post.targets?.map((t: any, idx: number) => {
+                            const platform = (t.platform || "").toUpperCase();
+                            const iconMap: Record<
+                              string,
+                              | typeof FaInstagram
+                              | typeof FaFacebook
+                              | typeof FaTiktok
+                            > = {
+                              INSTAGRAM: FaInstagram,
+                              FACEBOOK: FaFacebook,
+                              TIKTOK: FaTiktok,
+                            };
+                            const Icon = iconMap[platform];
+                            return (
+                              <Badge
+                                key={`${post.id}-${platform}-${idx}`}
+                                variant="outline"
+                                className="text-[10px] py-0 px-1.5 border-slate-700 bg-slate-900 text-slate-400 uppercase inline-flex items-center gap-1"
+                              >
+                                {Icon ? <Icon className="h-3 w-3" /> : null}
+                                {platform || "Unknown"}
+                              </Badge>
+                            );
+                          })}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
                           {getStatusBadge(post.status)}
-                          {post.status === "FAILED" && (post.failureReason || post.targets?.some((t: any) => t.errorMessage || t.failureReason)) && (
-                            <span 
-                              className="text-[10px] text-rose-400 max-w-[150px] truncate" 
-                              title={post.failureReason || post.targets?.find((t: any) => t.errorMessage || t.failureReason)?.errorMessage || post.targets?.find((t: any) => t.errorMessage || t.failureReason)?.failureReason || "Failed"}
-                            >
-                              {post.failureReason || post.targets?.find((t: any) => t.errorMessage || t.failureReason)?.errorMessage || post.targets?.find((t: any) => t.errorMessage || t.failureReason)?.failureReason}
-                            </span>
-                          )}
+                          {post.status === "FAILED" &&
+                            (post.failureReason ||
+                              post.targets?.some(
+                                (t: any) => t.errorMessage || t.failureReason,
+                              )) && (
+                              <span
+                                className="text-[10px] text-rose-400 max-w-[150px] truncate"
+                                title={
+                                  post.failureReason ||
+                                  post.targets?.find(
+                                    (t: any) =>
+                                      t.errorMessage || t.failureReason,
+                                  )?.errorMessage ||
+                                  post.targets?.find(
+                                    (t: any) =>
+                                      t.errorMessage || t.failureReason,
+                                  )?.failureReason ||
+                                  "Failed"
+                                }
+                              >
+                                {post.failureReason ||
+                                  post.targets?.find(
+                                    (t: any) =>
+                                      t.errorMessage || t.failureReason,
+                                  )?.errorMessage ||
+                                  post.targets?.find(
+                                    (t: any) =>
+                                      t.errorMessage || t.failureReason,
+                                  )?.failureReason}
+                              </span>
+                            )}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -655,7 +739,9 @@ export default function AdminPostsPage() {
                           <div className="text-xs text-slate-400 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {dayjs(post.scheduledFor).format("h:mm A")}
-                            <span className="text-slate-500 ml-1">{timezoneAbbr}</span>
+                            <span className="text-slate-500 ml-1">
+                              {timezoneAbbr}
+                            </span>
                           </div>
                         </div>
                       </TableCell>
@@ -663,11 +749,11 @@ export default function AdminPostsPage() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
-                              className="h-8 w-8 p-0 text-slate-400 hover:text-white"
+                              className="h-8 border-slate-700 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-1 px-3"
                             >
-                              <MoreHorizontal className="h-4 w-4" />
+                              Action <ChevronDown className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
@@ -737,7 +823,9 @@ export default function AdminPostsPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage >= totalPages}
                 className="bg-slate-900 border-slate-800 h-8 px-2"
               >

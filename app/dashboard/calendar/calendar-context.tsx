@@ -1,28 +1,23 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  ReactNode,
-} from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSocket } from "@/app/providers/SocketProvider";
+import { useTimezone } from "@/hooks/use-timezone";
+import { fromUTC, parseDateTimeLocal } from "@/lib/timezone";
+import { useUiStore } from "@/store/uiStore";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { useTimezone } from "@/hooks/use-timezone";
+import utc from "dayjs/plugin/utc";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  fromUTC,
-  formatForDateTimeLocal,
-  parseDateTimeLocal,
-  toUTC,
-} from "@/lib/timezone";
-import { useUiStore } from "@/store/uiStore";
-import { useSocket } from "@/app/providers/SocketProvider";
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 dayjs.extend(isoWeek);
 dayjs.extend(utc);
@@ -180,19 +175,23 @@ export function CalendarProvider({
   };
 
   const [display, setDisplayState] = useState<"day" | "week" | "month">(() =>
-    getInitialDisplay()
+    getInitialDisplay(),
   );
   const [posts, setPosts] = useState<Post[]>([]);
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([]);
   const [loading, setLoading] = useState(false);
   const [focusDate, setFocusDate] = useState(() =>
-    dayjs().format("YYYY-MM-DD")
+    dayjs().format("YYYY-MM-DD"),
   );
   const hasUserNavigatedRef = useRef(false);
   const isUpdatingDisplayRef = useRef(false);
 
   // Initialize date range
-  const initialRange = getDateRange(display, focusDate, userTimezone ?? undefined);
+  const initialRange = getDateRange(
+    display,
+    focusDate,
+    userTimezone ?? undefined,
+  );
   const [startDate, setStartDate] = useState(initialRange.startDate);
   const [endDate, setEndDate] = useState(initialRange.endDate);
 
@@ -201,7 +200,7 @@ export function CalendarProvider({
       setStartDate(newStartDate);
       setEndDate(newEndDate);
     },
-    []
+    [],
   );
 
   // Sync display with URL and persisted store
@@ -212,24 +211,32 @@ export function CalendarProvider({
       isUpdatingDisplayRef.current = true;
       setDisplayState(newDisplay);
       setStoredView(newDisplay);
-      const range = getDateRange(newDisplay, focusDate, userTimezone ?? undefined);
+      const range = getDateRange(
+        newDisplay,
+        focusDate,
+        userTimezone ?? undefined,
+      );
       setDateRange(range.startDate, range.endDate);
       // Update URL - read current searchParams at call time, not from closure
       const currentParams = new URLSearchParams(window.location.search);
       currentParams.set("view", newDisplay);
-      router.replace(`${pathname}?${currentParams.toString()}`, { scroll: false });
+      router.replace(`${pathname}?${currentParams.toString()}`, {
+        scroll: false,
+      });
       // Reset flag after a brief delay to allow URL update to complete
       setTimeout(() => {
         isUpdatingDisplayRef.current = false;
       }, 0);
     },
-    [focusDate, pathname, router, setDateRange, setStoredView, userTimezone]
+    [focusDate, pathname, router, setDateRange, setStoredView, userTimezone],
   );
 
   const navigateDate = useCallback(
     (direction: "prev" | "next" | "today") => {
       hasUserNavigatedRef.current = true;
-      const current = userTimezone ? dayjs.tz(focusDate, userTimezone) : dayjs(focusDate);
+      const current = userTimezone
+        ? dayjs.tz(focusDate, userTimezone)
+        : dayjs(focusDate);
       let newDate: dayjs.Dayjs;
 
       if (direction === "today") {
@@ -262,7 +269,7 @@ export function CalendarProvider({
       const range = getDateRange(display, nextFocus, userTimezone ?? undefined);
       setDateRange(range.startDate, range.endDate);
     },
-    [display, focusDate, setDateRange, userTimezone]
+    [display, focusDate, setDateRange, userTimezone],
   );
 
   const navigateToDate = useCallback(
@@ -273,7 +280,7 @@ export function CalendarProvider({
       const range = getDateRange(display, nextFocus, userTimezone ?? undefined);
       setDateRange(range.startDate, range.endDate);
     },
-    [display, setDateRange, userTimezone]
+    [display, setDateRange, userTimezone],
   );
 
   const fetchPosts = useCallback(async () => {
@@ -299,11 +306,16 @@ export function CalendarProvider({
 
       if (response.ok) {
         const data = await response.json();
-        // The new scheduler API returns posts in 'items' array
-        const rawPosts = Array.isArray(data) 
-          ? data 
-          : (data.items || data.posts || []);
-        
+        // Support all known scheduler response shapes
+        const rawPosts = Array.isArray(data)
+          ? data
+          : data.items ||
+            data.posts ||
+            data.data?.items ||
+            data.data?.posts ||
+            data.data ||
+            [];
+
         // Convert post dates from UTC to user timezone for display
         const postsWithTimezone = rawPosts.map((post: any) => {
           const dateValue = post.scheduledFor || post.scheduledAt;
@@ -335,23 +347,23 @@ export function CalendarProvider({
       if (response.ok) {
         const data = await response.json();
         // Assuming the data format might be { success: true, links: [...] } or just an array
-        const rawAccounts = Array.isArray(data) 
-          ? data 
+        const rawAccounts = Array.isArray(data)
+          ? data
           : data.links || data.accounts || data.data || [];
-        
+
         const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
           id: acc.id || acc._id || acc.platform,
           platform: acc.platform?.toUpperCase(),
           displayName: acc.username || acc.displayName || acc.platform,
           externalAccountId: acc.externalAccountId || acc.username || "",
         }));
-        
+
         setSocialAccounts(mappedAccounts);
       }
     } catch (error) {
       console.error("Failed to fetch social accounts:", error);
     }
-  }, []);
+  }, [targetUserId]);
 
   const createPost = useCallback(
     async (data: CreatePostData) => {
@@ -360,19 +372,27 @@ export function CalendarProvider({
           throw new Error("Timezone not ready. Please try again.");
         }
         // Convert scheduledFor from user timezone to UTC
-        const dateISO = parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString();
+        const dateISO = parseDateTimeLocal(
+          data.scheduledFor,
+          userTimezone,
+        ).toISOString();
         const payload = {
           ...data,
           scheduledAt: dateISO,
           scheduledFor: dateISO,
-          ...(targetUserId ? { userId: targetUserId, adminReason: "Created from admin dashboard" } : {}),
+          ...(targetUserId
+            ? {
+                userId: targetUserId,
+                adminReason: "Created from admin dashboard",
+              }
+            : {}),
         };
 
         const response = await fetch("/api/scheduler/posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ data: JSON.stringify(payload) }),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -386,7 +406,7 @@ export function CalendarProvider({
         throw error;
       }
     },
-    [fetchPosts, userTimezone, targetUserId]
+    [fetchPosts, userTimezone, targetUserId],
   );
 
   const updatePost = useCallback(
@@ -399,19 +419,30 @@ export function CalendarProvider({
           ...data,
           caption: data.caption || ".",
           ...(data.scheduledFor
-            ? { 
-                scheduledAt: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString(),
-                scheduledFor: parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString()
+            ? {
+                scheduledAt: parseDateTimeLocal(
+                  data.scheduledFor,
+                  userTimezone,
+                ).toISOString(),
+                scheduledFor: parseDateTimeLocal(
+                  data.scheduledFor,
+                  userTimezone,
+                ).toISOString(),
               }
             : {}),
-          ...(targetUserId ? { userId: targetUserId, adminReason: data.adminReason || "Updated from admin dashboard" } : {}),
+          ...(targetUserId
+            ? {
+                userId: targetUserId,
+                adminReason: data.adminReason || "Updated from admin dashboard",
+              }
+            : {}),
         };
 
         const response = await fetch(`/api/scheduler/posts/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ data: JSON.stringify(payload) }),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -425,7 +456,7 @@ export function CalendarProvider({
         throw error;
       }
     },
-    [fetchPosts, userTimezone, targetUserId]
+    [fetchPosts, userTimezone, targetUserId],
   );
 
   const deletePost = useCallback(
@@ -447,7 +478,7 @@ export function CalendarProvider({
         throw error;
       }
     },
-    [fetchPosts]
+    [fetchPosts],
   );
 
   const duplicatePost = useCallback(
@@ -456,7 +487,9 @@ export function CalendarProvider({
       if (!post) return;
 
       // post.scheduledFor is already in user timezone (from fetchPosts conversion)
-      const scheduledDate = dayjs.tz(post.scheduledFor, userTimezone).add(1, "hour");
+      const scheduledDate = dayjs
+        .tz(post.scheduledFor, userTimezone)
+        .add(1, "hour");
 
       const duplicateData: CreatePostData = {
         caption: post.caption + " (Copy)",
@@ -475,7 +508,7 @@ export function CalendarProvider({
 
       await createPost(duplicateData);
     },
-    [posts, createPost]
+    [posts, createPost, userTimezone],
   );
 
   const movePost = useCallback(
@@ -484,7 +517,7 @@ export function CalendarProvider({
         scheduledFor: newDate.format("YYYY-MM-DDTHH:mm"),
       });
     },
-    [updatePost]
+    [updatePost],
   );
 
   const publishPost = useCallback(
@@ -501,7 +534,7 @@ export function CalendarProvider({
       const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to publish post");
     },
-    [fetchPosts]
+    [fetchPosts],
   );
 
   const refreshData = useCallback(async () => {
@@ -512,17 +545,28 @@ export function CalendarProvider({
   // Skip if we're currently updating display to prevent loops
   useEffect(() => {
     if (isUpdatingDisplayRef.current) return;
-    
+
     const urlView = searchParams.get("view");
     if (urlView === "day" || urlView === "week" || urlView === "month") {
       if (urlView !== display) {
         setDisplayState(urlView);
         setStoredView(urlView);
-        const range = getDateRange(urlView, focusDate, userTimezone ?? undefined);
+        const range = getDateRange(
+          urlView,
+          focusDate,
+          userTimezone ?? undefined,
+        );
         setDateRange(range.startDate, range.endDate);
       }
     }
-  }, [searchParams, display, focusDate, setStoredView, setDateRange, userTimezone]);
+  }, [
+    searchParams,
+    display,
+    focusDate,
+    setStoredView,
+    setDateRange,
+    userTimezone,
+  ]);
 
   // Fetch data when date range changes
   useEffect(() => {
