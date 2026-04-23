@@ -100,13 +100,13 @@ function VerifyPageInner() {
         hasSubscription: !!session.subscription,
       });
 
-      // Determine the plan to use: from selection > pendingPlanCode > subscription > query params
+      // Determine the plan to use: from query params > pendingPlanCode > subscription > selection
       const queryPlanCode = searchParams.get("planCode");
       const planCodeToUse =
-        planSelection?.planCode ||
+        queryPlanCode ||
         pendingPlanCode ||
         session.subscription?.planCode ||
-        queryPlanCode;
+        planSelection?.planCode;
       const planCategoryToUse = planCategory;
 
       // Case 1: User has INCOMPLETE subscription or pendingPlanCode → redirect to checkout
