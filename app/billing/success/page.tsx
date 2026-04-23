@@ -83,7 +83,8 @@ function BillingSuccessContent() {
       if (session?.onboardingCompleted) {
         router.push("/dashboard");
       } else {
-        const isEnterprise = session?.subscription?.planCode?.startsWith("ENT_");
+        const activePlanCode = session?.subscription?.planCode || session?.pendingPlanCode;
+        const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
         router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
       }
     }
