@@ -104,6 +104,12 @@ function EnterpriseAcceptForm() {
                          searchParams.get("price") ?? 
                          0;
 
+      // Save plan details to localStorage for the verification redirect
+      if (planCode) {
+        localStorage.setItem(`ent_plan_${planCode}_price`, priceValue.toString());
+        localStorage.setItem(`ent_plan_${planCode}_name`, planName || "Enterprise Plan");
+      }
+
       // Show success toast
       toast({
         title: "Account Created",
