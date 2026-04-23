@@ -10,7 +10,8 @@ import type { PlanCategory } from "../types/plan-category";
 export type OnboardingRoute =
   | "/onboarding/calendar"
   | "/onboarding/visual"
-  | "/onboarding/full-management";
+  | "/onboarding/full-management"
+  | "/onboarding/brand-brief";
 
 /**
  * Maps plan category to the correct onboarding route

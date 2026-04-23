@@ -189,6 +189,12 @@ function OnboardingRouterContent() {
             planCategory === "JEWELRY_FULL_MANAGEMENT") &&
             session.fullManagementOnboardingCompleted);
 
+        // MANDATORY: Check for Brand Brief completion first
+        if (!session.brandBriefCompleted) {
+          router.push("/onboarding/brand-brief");
+          return;
+        }
+
         if (isCompleted) {
           router.push("/dashboard");
         } else {

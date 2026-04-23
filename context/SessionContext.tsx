@@ -21,6 +21,7 @@ export type Session = {
   emailVerifiedAt?: string | null;
   onboardingCompleted?: boolean;
   onboardingStep?: number;
+  brandBriefCompleted?: boolean;
   calendarOnboardingCompleted?: boolean;
   visualOnboardingCompleted?: boolean;
   fullManagementOnboardingCompleted?: boolean;
