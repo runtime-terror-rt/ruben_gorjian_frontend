@@ -109,21 +109,22 @@ function VerifyPageInner() {
         planSelection?.planCode;
       
       // Infer category: prioritize Enterprise as FULL_MANAGEMENT
+      const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
       let planCategoryToUse = planCategory;
-      if (planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-")) {
+      if (isEnterprise) {
         planCategoryToUse = "FULL_MANAGEMENT";
       }
 
       // Case 1: User needs to pay for the resolved plan
       // Trigger if: 
       // 1. Subscription is INCOMPLETE
-      // 2. We have a plan to use but no active subscription
+      // 2. It is an ENTERPRISE plan (always go to checkout)
       // 3. We have a plan to use that DIFFERENT from the current active subscription (upgrade/change)
       const isNewPlan = planCodeToUse && session.subscription?.planCode !== planCodeToUse;
       
       if (
         subscriptionStatus === "INCOMPLETE" ||
-        (planCodeToUse && (subscriptionStatus !== "ACTIVE" && subscriptionStatus !== "TRIALING")) ||
+        (isEnterprise && subscriptionStatus !== "ACTIVE" && subscriptionStatus !== "TRIALING") ||
         (isNewPlan && subscriptionStatus === "ACTIVE") // Upgrade/Change scenario
       ) {
         if (planCodeToUse) {
