@@ -82,24 +82,35 @@ export default function SessionSchedulePage() {
   const { toast } = useToast();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+
   const [view, setView] = useState<"table" | "calendar">("calendar");
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
   const { socket } = useSocket();
   const { timezoneAbbr } = useTimezone();
 
-  const fetchSessions = useCallback(async () => {
+  const fetchSessions = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
-      // Fetching from /posts because it's confirmed to return all records for admins
+      // Fetching from unified posts endpoint with session filters
       const startDate = dayjs().subtract(1, "year").toISOString();
       const endDate = dayjs().add(5, "year").toISOString();
-      const data = await apiGet<any>(
-        `/api/scheduler/posts?all=true&pageSize=1000&startDate=${startDate}&endDate=${endDate}`,
-      );
+      
+      const queryParams = new URLSearchParams({
+        all: "true",
+        page: view === "calendar" ? "1" : page.toString(),
+        pageSize: view === "calendar" ? "1000" : itemsPerPage.toString(),
+        startDate,
+        endDate,
+        scheduleType: "PHOTO_SESSION,VIDEO_SESSION"
+      });
+
+      const data = await apiGet<any>(`/api/scheduler/posts?${queryParams.toString()}`);
       const items = Array.isArray(data)
         ? data
         : data.items ||
@@ -108,6 +119,16 @@ export default function SessionSchedulePage() {
           data.sessions ||
           data.data ||
           [];
+
+      // Update pagination info
+      const meta = data.meta || data.data?.meta;
+      if (meta) {
+        setTotalPages(meta.totalPages || 1);
+        setTotalCount(meta.totalCount || items.length);
+      } else {
+        setTotalPages(1);
+        setTotalCount(items.length);
+      }
 
       // Filter for sessions ONLY and sync timezones
       const sessionItems = items
@@ -136,11 +157,11 @@ export default function SessionSchedulePage() {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, view, currentPage, itemsPerPage]);
 
   useEffect(() => {
-    fetchSessions();
-  }, [fetchSessions]);
+    fetchSessions(currentPage);
+  }, [currentPage, fetchSessions]); // Re-fetch when page or view (via fetchSessions) changes
 
   useEffect(() => {
     if (!socket) return;
@@ -290,11 +311,7 @@ export default function SessionSchedulePage() {
     return sessions.filter((s) => dayjs(s.scheduledAt).isSame(date, "day"));
   };
 
-  const totalPages = Math.ceil(sessions.length / itemsPerPage);
-  const currentItems = sessions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const currentItems = sessions;
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -343,7 +360,7 @@ export default function SessionSchedulePage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchSessions}
+            onClick={() => fetchSessions()}
             disabled={loading}
             className="border-slate-700 hover:bg-slate-800 text-slate-300 h-9"
           >
@@ -607,10 +624,10 @@ export default function SessionSchedulePage() {
             </Table>
           </CardContent>
 
-          {sessions.length > itemsPerPage && (
+          {totalCount > 0 && (
             <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-950/20">
               <div className="text-xs text-slate-500 font-medium">
-                Showing {sessions.length} sessions
+                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalCount)} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} sessions
               </div>
               <div className="flex items-center gap-2">
                 <Button
