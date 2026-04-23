@@ -109,29 +109,6 @@ function VerifyPageInner() {
         queryPlanCode;
       const planCategoryToUse = planCategory;
 
-      // Force Enterprise plans to go to checkout first
-      const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
-      
-      if (isEnterprise) {
-        console.log("[Verify] Enterprise plan detected, redirecting to frontend checkout page");
-        
-        // Try to recover plan price and name from localStorage
-        let redirectUrl = `/billing/checkout?plan=${planCodeToUse}`;
-        
-        try {
-          const savedPrice = localStorage.getItem(`ent_plan_${planCodeToUse}_price`);
-          const savedName = localStorage.getItem(`ent_plan_${planCodeToUse}_name`);
-          
-          if (savedPrice) redirectUrl += `&price=${encodeURIComponent(savedPrice)}`;
-          if (savedName) redirectUrl += `&name=${encodeURIComponent(savedName)}`;
-        } catch (e) {
-          console.error("[Verify] Error reading from localStorage:", e);
-        }
-        
-        window.location.href = redirectUrl;
-        return;
-      }
-
       // Case 1: User has INCOMPLETE subscription or pendingPlanCode → redirect to checkout
       if (
         subscriptionStatus === "INCOMPLETE" ||
@@ -141,37 +118,27 @@ function VerifyPageInner() {
       ) {
         if (planCodeToUse) {
           console.log(
-            "[Verify] Payment required, redirecting to checkout for plan:",
+            "[Verify] Payment required, redirecting to frontend checkout page for plan:",
             planCodeToUse
           );
 
-          // Trigger checkout
-          const origin = window.location.origin;
-          fetch("/api/billing/checkout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              planCode: planCodeToUse,
-              successUrl: `${origin}/billing/success`,
-              cancelUrl: `${origin}/billing/cancel`,
-            }),
-            credentials: "include",
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl;
-              } else {
-                console.error("[Verify] Checkout failed:", data);
-                // Fallback: redirect to pricing
-                window.location.href = "/pricing";
-              }
-            })
-            .catch((err) => {
-              console.error("[Verify] Checkout error:", err);
-              // Fallback: redirect to pricing
-              window.location.href = "/pricing";
-            });
+          let redirectUrl = `/billing/checkout?plan=${planCodeToUse}`;
+          
+          // Try to recover plan price and name from localStorage for Enterprise plans
+          const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
+          if (isEnterprise) {
+            try {
+              const savedPrice = localStorage.getItem(`ent_plan_${planCodeToUse}_price`);
+              const savedName = localStorage.getItem(`ent_plan_${planCodeToUse}_name`);
+              
+              if (savedPrice) redirectUrl += `&price=${encodeURIComponent(savedPrice)}`;
+              if (savedName) redirectUrl += `&name=${encodeURIComponent(savedName)}`;
+            } catch (e) {
+              console.error("[Verify] Error reading from localStorage:", e);
+            }
+          }
+          
+          window.location.href = redirectUrl;
           return;
         }
       }
