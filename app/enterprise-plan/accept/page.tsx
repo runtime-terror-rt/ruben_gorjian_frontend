@@ -88,13 +88,17 @@ function EnterpriseAcceptForm() {
       // Extract plan code from response if available, fallback to inviteDetails or query param
       const enterprisePlan = data.enterpriseInvite || data.invite || data.enterprisePlan || data.plan || inviteDetails || {};
       const planCode = data.planCode || enterprisePlan.planCode || enterprisePlan.lookupKey || searchParams.get("plan") || "ENT-UNKNOWN";
-      const planName = data.planName || enterprisePlan.planName || enterprisePlan.name || "";
+      const planName = data.planName || enterprisePlan.proposal?.planName || enterprisePlan.planName || enterprisePlan.name || "";
       
       // Try to find the price in various common fields
       const priceValue = data.price ?? 
+                         enterprisePlan.proposal?.amount ??
                          enterprisePlan.price ?? 
                          enterprisePlan.amount ?? 
                          enterprisePlan.monthlyPrice ?? 
+                         inviteDetails?.proposal?.amount ??
+                         inviteDetails?.amount ??
+                         inviteDetails?.price ??
                          searchParams.get("price") ?? 
                          0;
 
@@ -243,7 +247,7 @@ function EnterpriseAcceptForm() {
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="text-white font-black text-xl tracking-tighter">
-                            ${(inviteDetails.amount || inviteDetails.price || 0).toLocaleString()}
+                            ${(inviteDetails.proposal?.amount || inviteDetails.amount || inviteDetails.price || 0).toLocaleString()}
                           </p>
                           <p className="text-slate-600 text-[9px] font-bold uppercase tracking-widest">
                             / {inviteDetails.billingCycle?.toLowerCase() || "monthly"}
