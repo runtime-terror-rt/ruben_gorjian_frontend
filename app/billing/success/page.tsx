@@ -69,25 +69,39 @@ function BillingSuccessContent() {
 
   // Check session status after refresh
   useEffect(() => {
-    const isActive =
-      session?.subscription?.status === "ACTIVE" ||
-      session?.subscription?.status === "TRIALING";
-
-    if (isActive && checking) {
-      setChecking(false);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+    const checkStatus = async () => {
+      const { getPlanSelection } = await import("@/lib/plan-selection");
+      const selection = getPlanSelection();
+      const expectedPlanCode = selection?.planCode;
       
-      // Automatically redirect when active
-      if (session?.onboardingCompleted) {
-        router.push("/dashboard");
-      } else {
-        const activePlanCode = session?.subscription?.planCode || session?.pendingPlanCode;
-        const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
-        router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
+      const currentPlanCode = session?.subscription?.planCode;
+      const status = session?.subscription?.status;
+      
+      const isStatusActive = status === "ACTIVE" || status === "TRIALING";
+      
+      // If we expect a specific plan (from checkout), wait until the session matches it
+      const isPlanMatched = !expectedPlanCode || currentPlanCode === expectedPlanCode;
+      
+      const isActive = isStatusActive && isPlanMatched;
+
+      if (isActive && checking) {
+        setChecking(false);
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        
+        // Automatically redirect when active
+        if (session?.onboardingCompleted) {
+          router.push("/dashboard");
+        } else {
+          const activePlanCode = currentPlanCode || session?.pendingPlanCode || expectedPlanCode;
+          const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+          router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
+        }
       }
-    }
+    };
+
+    checkStatus();
   }, [session, checking, router]);
 
   return (
