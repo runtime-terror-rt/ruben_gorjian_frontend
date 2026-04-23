@@ -803,30 +803,33 @@ export default function EnterprisePlanPage() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootFrequency</Label>
-                      <Select 
-                        value={formData.proPhotoShootFrequency}
-                        onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootFrequency: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
-                      >
-                        <option value="One Time">One Time</option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Every 2 Months">Every 2 Months</option>
-                        <option value="Quarterly">Quarterly</option>
-                      </Select>
+                      <div className="flex p-1 bg-slate-950/60 rounded-xl border border-white/5 gap-1">
+                        {["Monthly", "Yearly"].map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, proPhotoShootFrequency: opt }))}
+                            className={cn(
+                              "flex-1 h-9 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all",
+                              formData.proPhotoShootFrequency === opt
+                                ? "bg-lime-400 text-slate-950 shadow-sm"
+                                : "text-slate-500 hover:text-slate-300"
+                            )}
+                          >
+                            {opt}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootLength</Label>
-                      <Select 
+                      <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">proPhotoShootLength (hours)</Label>
+                      <Input
+                        type="text"
                         value={formData.proPhotoShootLength}
                         onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootLength: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
-                      >
-                        <option value="1 hour">1 hour</option>
-                        <option value="2 hours">2 hours</option>
-                        <option value="4 hours">4 hours</option>
-                        <option value="6 hours">6 hours</option>
-                        <option value="Full Day">Full Day</option>
-                      </Select>
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        placeholder="e.g. 4 hours"
+                      />
                     </div>
                   </div>
 
