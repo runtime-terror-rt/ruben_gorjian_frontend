@@ -119,6 +119,28 @@ function VerifyPageInner() {
             "[Verify] Payment required, redirecting to checkout for plan:",
             planCodeToUse
           );
+
+          // If it's an enterprise plan, redirect to the frontend checkout page so they can see details
+          if (planCodeToUse.startsWith("ENT_") || planCodeToUse.startsWith("ENT-")) {
+            console.log("[Verify] Enterprise plan detected, redirecting to frontend checkout page");
+            
+            // Try to recover plan price and name from localStorage
+            let redirectUrl = `/billing/checkout?plan=${planCodeToUse}`;
+            
+            try {
+              const savedPrice = localStorage.getItem(`ent_plan_${planCodeToUse}_price`);
+              const savedName = localStorage.getItem(`ent_plan_${planCodeToUse}_name`);
+              
+              if (savedPrice) redirectUrl += `&price=${encodeURIComponent(savedPrice)}`;
+              if (savedName) redirectUrl += `&name=${encodeURIComponent(savedName)}`;
+            } catch (e) {
+              console.error("[Verify] Error reading from localStorage:", e);
+            }
+            
+            window.location.href = redirectUrl;
+            return;
+          }
+
           // Trigger checkout
           const origin = window.location.origin;
           fetch("/api/billing/checkout", {
