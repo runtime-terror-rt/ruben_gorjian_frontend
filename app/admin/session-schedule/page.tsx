@@ -1,28 +1,23 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
 
-import {
-  Calendar,
-  Camera,
-  Video,
-  Trash2,
-  CheckCircle2,
-  User,
-  MoreHorizontal,
-  RefreshCcw,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  XCircle,
-  LayoutGrid,
-  List,
-  Mail,
-  CalendarDays,
-  Info,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -31,27 +26,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  Calendar,
+  CalendarDays,
+  Camera,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  LayoutGrid,
+  List,
+  Mail,
+  MoreHorizontal,
+  RefreshCcw,
+  User,
+  Video,
+  XCircle,
+  ChevronDown,
+} from "lucide-react";
 
 import dayjs from "dayjs";
 
-import { useToast } from "@/hooks/use-toast";
-import { useTimezone } from "@/hooks/use-timezone";
 import { useSocket } from "@/app/providers/SocketProvider";
+import { useTimezone } from "@/hooks/use-timezone";
+import { useToast } from "@/hooks/use-toast";
 import { apiGet, apiPatch } from "@/lib/api";
 
 type Session = {
@@ -97,10 +95,19 @@ export default function SessionSchedulePage() {
     try {
       setLoading(true);
       // Fetching from /posts because it's confirmed to return all records for admins
-      const data = await apiGet<any>("/api/scheduler/posts");
+      const startDate = dayjs().subtract(1, "year").toISOString();
+      const endDate = dayjs().add(5, "year").toISOString();
+      const data = await apiGet<any>(
+        `/api/scheduler/posts?all=true&pageSize=1000&startDate=${startDate}&endDate=${endDate}`,
+      );
       const items = Array.isArray(data)
         ? data
-        : data.items || data.sessions || [];
+        : data.items ||
+          data.data?.items ||
+          data.data?.posts ||
+          data.sessions ||
+          data.data ||
+          [];
 
       // Filter for sessions ONLY and sync timezones
       const sessionItems = items
@@ -245,7 +252,10 @@ export default function SessionSchedulePage() {
     const days = [];
 
     // Fill previous month days
-    const prevMonthEnd = currentMonth.subtract(1, "month").endOf("month").date();
+    const prevMonthEnd = currentMonth
+      .subtract(1, "month")
+      .endOf("month")
+      .date();
     for (let i = startDay - 1; i >= 0; i--) {
       days.push({
         day: prevMonthEnd - i,
@@ -356,7 +366,9 @@ export default function SessionSchedulePage() {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-slate-400 hover:text-white"
-                onClick={() => setCurrentMonth(currentMonth.subtract(1, "month"))}
+                onClick={() =>
+                  setCurrentMonth(currentMonth.subtract(1, "month"))
+                }
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -399,7 +411,9 @@ export default function SessionSchedulePage() {
                     key={idx}
                     className={cn(
                       "min-h-[100px] p-2 border-r border-b border-slate-800/50 transition-colors",
-                      dateObj.month !== "current" ? "bg-slate-900/20 opacity-30" : "bg-transparent",
+                      dateObj.month !== "current"
+                        ? "bg-slate-900/20 opacity-30"
+                        : "bg-transparent",
                       idx % 7 === 6 && "border-r-0",
                     )}
                   >
@@ -407,7 +421,9 @@ export default function SessionSchedulePage() {
                       <span
                         className={cn(
                           "inline-flex items-center justify-center h-6 w-6 rounded-full font-bold",
-                          isToday ? "bg-lime-400 text-slate-950" : "text-slate-400",
+                          isToday
+                            ? "bg-lime-400 text-slate-950"
+                            : "text-slate-400",
                         )}
                       >
                         {dateObj.day}
@@ -423,7 +439,9 @@ export default function SessionSchedulePage() {
                             s.scheduleType === "PHOTO_SESSION"
                               ? "bg-lime-400/10 text-lime-400 hover:bg-lime-400/20"
                               : "bg-indigo-400/10 text-indigo-400 hover:bg-indigo-400/20",
-                            (s.status.toUpperCase() === "COMPLETED" || s.status.toUpperCase() === "COMPLETE") && "opacity-50 grayscale",
+                            (s.status.toUpperCase() === "COMPLETED" ||
+                              s.status.toUpperCase() === "COMPLETE") &&
+                              "opacity-50 grayscale",
                           )}
                         >
                           <span className="opacity-70 mr-1">
@@ -455,173 +473,180 @@ export default function SessionSchedulePage() {
           <CardContent className="p-0">
             <Table>
               <TableHeader className="bg-slate-950/50">
-              <TableRow className="border-slate-800 hover:bg-transparent">
-                <TableHead>Type</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date / Time</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading && sessions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-48 text-center">
-                    <div className="flex flex-col items-center gap-2 text-slate-500">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
-                      Loading sessions...
-                    </div>
-                  </TableCell>
+                <TableRow className="border-slate-800 hover:bg-transparent">
+                  <TableHead>Type</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date / Time</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ) : sessions.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="h-48 text-center text-slate-500"
-                  >
-                    No sessions found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                currentItems.map((s) => (
-                  <TableRow
-                    key={s.id}
-                    className="border-slate-800 hover:bg-slate-800/30 transition-colors group"
-                  >
-                    <TableCell>{getSessionTypeBadge(s.scheduleType)}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-slate-200">
-                          {s.session?.title ||
-                            s.sessionTitle ||
-                            "Untitled Session"}
-                        </span>
-                        {(s.session?.notes || s.sessionNotes) && (
-                          <span className="text-[10px] text-slate-500 line-clamp-1 italic">
-                            Notes: {s.session?.notes || s.sessionNotes}
-                          </span>
-                        )}
+              </TableHeader>
+              <TableBody>
+                {loading && sessions.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-48 text-center">
+                      <div className="flex flex-col items-center gap-2 text-slate-500">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+                        Loading sessions...
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-slate-200">
-                          {s.owner?.fullName ||
-                            s.owner?.name ||
-                            s.user?.fullName ||
-                            s.user?.name ||
-                            "Unknown"}
-                        </span>
-                        <span className="text-xs text-slate-500">
-                          {s.owner?.email || s.user?.email}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(s.status)}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <div className="text-sm font-medium text-slate-200">
-                          {dayjs(s.scheduledAt).format("MMM D, YYYY")}
-                        </div>
-                        <div className="text-xs text-slate-400 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {dayjs(s.scheduledAt).format("h:mm A")}
-                          <span className="text-slate-500 ml-1">
-                            {timezoneAbbr}
-                          </span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={cn(
-                              "h-8 w-8 p-0 transition-colors",
-                              s.status.toUpperCase() === "COMPLETED" ||
-                                s.status.toUpperCase() === "POSTED" ||
-                                s.status.toUpperCase() === "COMPLETE"
-                                ? "text-green-500 hover:text-green-400"
-                                : "text-slate-400 hover:text-white",
-                            )}
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-slate-900 border-slate-800 text-slate-300"
-                        >
-                          {s.status.toUpperCase() !== "COMPLETED" && (
-                            <DropdownMenuItem
-                              className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-emerald-400"
-                              onClick={() => updateStatus(s.id, "COMPLETED")}
-                            >
-                              <CheckCircle2 className="h-4 w-4 mr-2" />
-                              Complete Session
-                            </DropdownMenuItem>
-                          )}
-                          {s.status.toUpperCase() !== "CANCELLED" &&
-                            s.status.toUpperCase() !== "REJECTED" && (
-                              <DropdownMenuItem
-                                className="hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer text-rose-400"
-                                onClick={() => updateStatus(s.id, "CANCELLED")}
-                              >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Cancel Session
-                              </DropdownMenuItem>
-                            )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
+                ) : sessions.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="h-48 text-center text-slate-500"
+                    >
+                      No sessions found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  currentItems.map((s) => (
+                    <TableRow
+                      key={s.id}
+                      className="border-slate-800 hover:bg-slate-800/30 transition-colors group"
+                    >
+                      <TableCell>
+                        {getSessionTypeBadge(s.scheduleType)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-200">
+                            {s.session?.title ||
+                              s.sessionTitle ||
+                              "Untitled Session"}
+                          </span>
+                          {(s.session?.notes || s.sessionNotes) && (
+                            <span className="text-[10px] text-slate-500 line-clamp-1 italic">
+                              Notes: {s.session?.notes || s.sessionNotes}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-200">
+                            {s.owner?.fullName ||
+                              s.owner?.name ||
+                              s.user?.fullName ||
+                              s.user?.name ||
+                              "Unknown"}
+                          </span>
+                          <span className="text-xs text-slate-500">
+                            {s.owner?.email || s.user?.email}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(s.status)}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium text-slate-200">
+                            {dayjs(s.scheduledAt).format("MMM D, YYYY")}
+                          </div>
+                          <div className="text-xs text-slate-400 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {dayjs(s.scheduledAt).format("h:mm A")}
+                            <span className="text-slate-500 ml-1">
+                              {timezoneAbbr}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={cn(
+                                "h-8 border-slate-700 bg-slate-900/50 flex items-center gap-1 px-3 transition-colors",
+                                s.status.toUpperCase() === "COMPLETED" ||
+                                  s.status.toUpperCase() === "POSTED" ||
+                                  s.status.toUpperCase() === "COMPLETE"
+                                  ? "text-green-500 hover:bg-slate-800 hover:text-green-400"
+                                  : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                              )}
+                            >
+                              Action <ChevronDown className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
 
-        {sessions.length > itemsPerPage && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-950/20">
-            <div className="text-xs text-slate-500 font-medium">
-              Showing {sessions.length} sessions
+                          <DropdownMenuContent
+                            align="end"
+                            className="bg-slate-900 border-slate-800 text-slate-300"
+                          >
+                            {s.status.toUpperCase() !== "COMPLETED" && (
+                              <DropdownMenuItem
+                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-emerald-400"
+                                onClick={() => updateStatus(s.id, "COMPLETED")}
+                              >
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                Complete Session
+                              </DropdownMenuItem>
+                            )}
+                            {s.status.toUpperCase() !== "CANCELLED" &&
+                              s.status.toUpperCase() !== "REJECTED" && (
+                                <DropdownMenuItem
+                                  className="hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer text-rose-400"
+                                  onClick={() =>
+                                    updateStatus(s.id, "CANCELLED")
+                                  }
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Cancel Session
+                                </DropdownMenuItem>
+                              )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+
+          {sessions.length > itemsPerPage && (
+            <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-950/20">
+              <div className="text-xs text-slate-500 font-medium">
+                Showing {sessions.length} sessions
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-xs text-slate-400 px-2">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage >= totalPages}
+                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage <= 1}
-                className="bg-slate-900 border-slate-800 h-8 px-2"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-xs text-slate-400 px-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage >= totalPages}
-                className="bg-slate-900 border-slate-800 h-8 px-2"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </Card>
+          )}
+        </Card>
       )}
 
       {/* Details Modal */}
-      <Dialog open={!!selectedSession} onOpenChange={(o) => !o && setSelectedSession(null)}>
+      <Dialog
+        open={!!selectedSession}
+        onOpenChange={(o) => !o && setSelectedSession(null)}
+      >
         <DialogContent className="max-w-lg bg-[#0b0e14] border-slate-800/60 p-0 overflow-hidden shadow-2xl">
           <DialogHeader className="p-6 pb-4 border-b border-slate-800/40">
             <div className="flex items-center justify-between">
@@ -636,12 +661,14 @@ export default function SessionSchedulePage() {
             <div className="p-6 space-y-8">
               {/* Type & Title */}
               <div className="flex items-start gap-4">
-                <div className={cn(
-                  "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 border",
-                  selectedSession.scheduleType === "PHOTO_SESSION"
-                    ? "bg-lime-400/10 border-lime-400/20 text-lime-400"
-                    : "bg-indigo-400/10 border-indigo-400/20 text-indigo-400"
-                )}>
+                <div
+                  className={cn(
+                    "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 border",
+                    selectedSession.scheduleType === "PHOTO_SESSION"
+                      ? "bg-lime-400/10 border-lime-400/20 text-lime-400"
+                      : "bg-indigo-400/10 border-indigo-400/20 text-indigo-400",
+                  )}
+                >
                   {selectedSession.scheduleType === "PHOTO_SESSION" ? (
                     <Camera className="h-6 w-6" />
                   ) : (
@@ -650,7 +677,9 @@ export default function SessionSchedulePage() {
                 </div>
                 <div>
                   <h4 className="text-lg font-bold text-slate-100">
-                    {selectedSession.session?.title || selectedSession.sessionTitle || "Untitled Session"}
+                    {selectedSession.session?.title ||
+                      selectedSession.sessionTitle ||
+                      "Untitled Session"}
                   </h4>
                   <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">
                     {selectedSession.scheduleType.replace("_", " ")}
@@ -660,18 +689,25 @@ export default function SessionSchedulePage() {
 
               {/* Client Info */}
               <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-400/80">Client Information</h5>
+                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-400/80">
+                  Client Information
+                </h5>
                 <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex items-center gap-4">
                   <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
                     <User className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white">
-                      {selectedSession.owner?.fullName || selectedSession.owner?.name || selectedSession.user?.fullName || selectedSession.user?.name || "Unknown Client"}
+                      {selectedSession.owner?.fullName ||
+                        selectedSession.owner?.name ||
+                        selectedSession.user?.fullName ||
+                        selectedSession.user?.name ||
+                        "Unknown Client"}
                     </p>
                     <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
                       <Mail className="h-3 w-3" />
-                      {selectedSession.owner?.email || selectedSession.user?.email}
+                      {selectedSession.owner?.email ||
+                        selectedSession.user?.email}
                     </div>
                   </div>
                 </div>
@@ -679,30 +715,46 @@ export default function SessionSchedulePage() {
 
               {/* Timing */}
               <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">Schedule Timeline</h5>
+                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">
+                  Schedule Timeline
+                </h5>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">Date</p>
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">
+                      Date
+                    </p>
                     <p className="text-sm font-bold text-slate-200">
-                      {dayjs(selectedSession.scheduledAt).format("MMMM D, YYYY")}
+                      {dayjs(selectedSession.scheduledAt).format(
+                        "MMMM D, YYYY",
+                      )}
                     </p>
                   </div>
                   <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">Time</p>
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">
+                      Time
+                    </p>
                     <p className="text-sm font-bold text-slate-200">
                       {dayjs(selectedSession.scheduledAt).format("h:mm A")}
-                      <span className="text-slate-500 ml-1.5 text-[10px]">{timezoneAbbr}</span>
+                      <span className="text-slate-500 ml-1.5 text-[10px]">
+                        {timezoneAbbr}
+                      </span>
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Notes */}
-              {(selectedSession.session?.notes || selectedSession.sessionNotes) && (
+              {(selectedSession.session?.notes ||
+                selectedSession.sessionNotes) && (
                 <div className="space-y-4">
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Session Notes</h5>
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                    Session Notes
+                  </h5>
                   <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 italic text-sm text-slate-400 leading-relaxed">
-                    "{selectedSession.session?.notes || selectedSession.sessionNotes}"
+                    "
+                    {selectedSession.session?.notes ||
+                      selectedSession.sessionNotes}
+                    "
                   </div>
                 </div>
               )}
@@ -710,32 +762,32 @@ export default function SessionSchedulePage() {
               {/* Actions */}
               <div className="pt-4 flex items-center gap-3">
                 {selectedSession.status.toUpperCase() !== "COMPLETED" &&
-                 selectedSession.status.toUpperCase() !== "COMPLETE" && (
-                  <Button
-                    onClick={() => {
-                      updateStatus(selectedSession.id, "COMPLETED");
-                      setSelectedSession(null);
-                    }}
-                    className="flex-1 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
-                  >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Complete Session
-                  </Button>
-                )}
+                  selectedSession.status.toUpperCase() !== "COMPLETE" && (
+                    <Button
+                      onClick={() => {
+                        updateStatus(selectedSession.id, "COMPLETED");
+                        setSelectedSession(null);
+                      }}
+                      className="flex-1 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
+                    >
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Complete Session
+                    </Button>
+                  )}
                 {selectedSession.status.toUpperCase() !== "CANCELLED" &&
-                 selectedSession.status.toUpperCase() !== "CANCELED" && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      updateStatus(selectedSession.id, "CANCELLED");
-                      setSelectedSession(null);
-                    }}
-                    className="flex-1 h-12 rounded-xl border-rose-500/30 bg-rose-500/5 text-rose-400 text-xs font-black uppercase tracking-widest hover:bg-rose-500/10 transition-all"
-                  >
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Cancel Session
-                  </Button>
-                )}
+                  selectedSession.status.toUpperCase() !== "CANCELED" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        updateStatus(selectedSession.id, "CANCELLED");
+                        setSelectedSession(null);
+                      }}
+                      className="flex-1 h-12 rounded-xl border-rose-500/30 bg-rose-500/5 text-rose-400 text-xs font-black uppercase tracking-widest hover:bg-rose-500/10 transition-all"
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Cancel Session
+                    </Button>
+                  )}
               </div>
             </div>
           )}

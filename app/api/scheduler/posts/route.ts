@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL =
   process.env.BACKEND_API_URL ||
@@ -37,14 +37,16 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
-    let body: any;
+    let body: BodyInit | null;
     const headers: Record<string, string> = {
       ...(token ? { Cookie: `token=${token}` } : {}),
     };
 
     if (contentType.includes("application/json")) {
-      body = JSON.stringify(await request.json().catch(() => ({})));
-      headers["Content-Type"] = "application/json";
+      const postData = await request.json().catch(() => ({}));
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(postData));
+      body = formData;
     } else {
       // For multipart/form-data (files), we forward the body as-is (readable stream)
       // and let the backend deal with the boundary
