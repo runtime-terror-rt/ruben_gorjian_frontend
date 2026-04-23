@@ -103,12 +103,12 @@ export default function AdminPostsPage() {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil((posts || []).length / itemsPerPage);
-  const currentPosts = (posts || []).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const itemsPerPage = 10;
+  
+  // For admin posts page, we want only POSTING type items
+  const currentPosts = posts;
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
@@ -120,23 +120,45 @@ export default function AdminPostsPage() {
   const { socket } = useSocket();
   const { timezone: userTimezone, timezoneAbbr } = useTimezone();
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
       setError(null);
       // Admin should see all posts. Fetching from /api/scheduler/posts
       const startDate = dayjs().subtract(1, "year").toISOString();
       const endDate = dayjs().add(5, "year").toISOString();
-      const res = await fetch(`/api/scheduler/posts?all=true&pageSize=1000&startDate=${startDate}&endDate=${endDate}`, {
+      
+      // We explicitly request scheduleType=POSTING to avoid getting sessions in this view
+      const queryParams = new URLSearchParams({
+        all: "true",
+        page: page.toString(),
+        pageSize: itemsPerPage.toString(),
+        startDate,
+        endDate,
+        scheduleType: "POSTING"
+      });
+
+      const res = await fetch(`/api/scheduler/posts?${queryParams.toString()}`, {
         credentials: "include",
       });
-      console.log("res", res);
       if (!res.ok) throw new Error("Failed to fetch posts");
 
       const data = await res.json();
       const items = Array.isArray(data)
         ? data
         : data.items || data.data?.items || data.data?.posts || data.data || [];
+      
+      // Update pagination info from backend meta
+      const meta = data.meta || data.data?.meta;
+      if (meta) {
+        setTotalPages(meta.totalPages || 1);
+        setTotalCount(meta.totalCount || items.length);
+      } else {
+        // Fallback if meta is missing
+        setTotalPages(1);
+        setTotalCount(items.length);
+      }
+
       const filteredItems = items.filter(
         (p: any) =>
           p.scheduleType !== "PHOTO_SESSION" &&
@@ -156,8 +178,6 @@ export default function AdminPostsPage() {
       });
 
       setPosts(syncedItems);
-
-      setCurrentPage(1); // Reset to first page on refresh
     } catch (err: any) {
       console.error("Error fetching posts:", err);
       setError(err.message);
@@ -172,8 +192,8 @@ export default function AdminPostsPage() {
   }, [userTimezone, toast]);
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    fetchPosts(currentPage);
+  }, [currentPage]); // Re-fetch when page changes
 
   useEffect(() => {
     if (!socket) return;
@@ -521,7 +541,7 @@ export default function AdminPostsPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={fetchPosts}
+          onClick={() => fetchPosts()}
           disabled={loading}
           className="border-slate-700 hover:bg-slate-800 text-slate-300"
         >
@@ -802,10 +822,10 @@ export default function AdminPostsPage() {
         </CardContent>
 
         {/* ── Pagination Footer ── */}
-        {(posts || []).length > itemsPerPage && (
+        {totalCount > 0 && (
           <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
             <div className="text-xs text-slate-500 font-medium">
-              Showing {(posts || []).length} records
+              Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalCount)} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} records
             </div>
             <div className="flex items-center gap-2">
               <Button
