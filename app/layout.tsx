@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Talexia:Restaurant Social Media & Food Photography",
+  title: "Talexia : Restaurant Social Media & Food Photography",
   description:
     "Talexia turns your photos into high-impact visuals, plans your calendar, and generates strategic captions and hashtags.",
 };

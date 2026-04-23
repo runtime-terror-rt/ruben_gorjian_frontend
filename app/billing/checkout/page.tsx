@@ -58,34 +58,44 @@ function CheckoutContent() {
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
 
-  // Fetch enterprise plan details if missing from URL
+  // Fetch enterprise plan details from API
   useEffect(() => {
-    if (isEnterprise && planCode) {
-      const urlPrice = searchParams.get("price");
-      const urlName = searchParams.get("name");
-      
-      if (urlPrice && urlName) {
-        setEnterprisePlanDetails({ name: urlName, price: Number(urlPrice) });
-        return;
-      }
+    if (!isEnterprise || !planCode) return;
 
-      const fetchPlanDetails = async () => {
-        try {
-          const res = await apiGet<any>(`/api/enterprise-plan/invites/${planCode}/details`);
-          if (res && !res.error && (res.proposal || res.invite)) {
-            setEnterprisePlanDetails({
-              name: res.proposal?.planName || res.invite?.planName || "Enterprise Plan",
-              price: res.proposal?.amount ?? res.invite?.amount ?? 0
-            });
+    const fetchPlanDetails = async () => {
+      try {
+        const res = await fetch(`/api/enterprise-plan/invites/${planCode}/details`, {
+          credentials: "include",
+          cache: "no-store",
+        });
+        const data = await res.json();
+        console.log("[Checkout] Enterprise plan details:", data);
+
+        if (data && (data.proposal || data.invite)) {
+          const name = data.proposal?.planName || data.invite?.planName || searchParams.get("name") || "Enterprise Plan";
+          const price = data.proposal?.amount ?? data.invite?.amount ?? Number(searchParams.get("price") ?? 0);
+          setEnterprisePlanDetails({ name, price });
+        } else {
+          // Fallback to URL params if API returned no usable data
+          const urlName = searchParams.get("name");
+          const urlPrice = searchParams.get("price");
+          if (urlName || urlPrice) {
+            setEnterprisePlanDetails({ name: urlName || "Enterprise Plan", price: Number(urlPrice ?? 0) });
           }
-        } catch (err) {
-          console.error("Failed to fetch enterprise plan details:", err);
         }
-      };
-      
-      fetchPlanDetails();
-    }
-  }, [isEnterprise, planCode, searchParams]);
+      } catch (err) {
+        console.error("[Checkout] Failed to fetch enterprise plan details:", err);
+        // Fallback to URL params
+        const urlName = searchParams.get("name");
+        const urlPrice = searchParams.get("price");
+        if (urlName || urlPrice) {
+          setEnterprisePlanDetails({ name: urlName || "Enterprise Plan", price: Number(urlPrice ?? 0) });
+        }
+      }
+    };
+
+    fetchPlanDetails();
+  }, [isEnterprise, planCode]);
 
   // Fetch coupons on mount
   useEffect(() => {
