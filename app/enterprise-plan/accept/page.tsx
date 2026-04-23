@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSessionContext } from "@/context/SessionContext";
+import { useToast } from "@/hooks/use-toast";
 import {
   Eye,
   EyeOff,
@@ -21,6 +22,7 @@ function EnterpriseAcceptForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { refresh } = useSessionContext();
+  const { toast } = useToast();
 
   const token = searchParams.get("token") ?? "";
 
@@ -102,11 +104,13 @@ function EnterpriseAcceptForm() {
                          searchParams.get("price") ?? 
                          0;
 
-      // Redirect to checkout after short delay
-      setTimeout(() => {
-        router.push(`/billing/checkout?plan=${planCode}&price=${priceValue}${planName ? `&name=${encodeURIComponent(planName)}` : ""}`);
-      }, 2000);
-    } catch (err: any) {
+      // Show success toast
+      toast({
+        title: "Account Created",
+        description: "Your account has been created successfully. Kindly check your email to verify it.",
+      });
+      
+    } catch (err: any) {  
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -196,15 +200,12 @@ function EnterpriseAcceptForm() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-white font-black text-xl tracking-tight">Account Activated!</p>
+                    <p className="text-white font-black text-xl tracking-tight">Account Created!</p>
                     <p className="text-slate-400 text-sm mt-1 font-medium">
-                      Welcome aboard. Redirecting to secure checkout...
+                      Your account has been created successfully. Please check your email to verify it.
                     </p>
                   </div>
-                  <div className="flex justify-center">
-                    <Loader2 className="h-4 w-4 text-lime-400 animate-spin" />
-                  </div>
-                </motion.div>
+                </motion.div> 
               ) : (
                 <motion.form
                   key="form"
