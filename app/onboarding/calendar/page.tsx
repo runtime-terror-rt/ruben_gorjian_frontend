@@ -82,6 +82,16 @@ function CalendarOnboardingInner() {
     }
 
     const planCategory = session.subscription?.planCategory;
+    
+    // Safety check for Enterprise plans - force to full-management
+    const activePlanCode = session.subscription?.planCode || session.pendingPlanCode;
+    const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+    
+    if (isEnterprise) {
+      router.push("/onboarding/full-management");
+      return;
+    }
+
     const isCalendarPlan =
       planCategory === "CALENDAR_ONLY" ||
       planCategory === "VISUAL_CALENDAR" ||

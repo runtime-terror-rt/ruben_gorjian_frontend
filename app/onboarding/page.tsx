@@ -169,8 +169,10 @@ function OnboardingRouterContent() {
       // Route to plan-specific onboarding using canonical mapping
       const { getOnboardingRouteForPlanCategory } =
         await import("@/lib/onboarding-routes");
+      const { getPlanSelection } = await import("@/lib/plan-selection");
+      const selection = getPlanSelection();
       
-      const activePlanCode = session.subscription?.planCode || pendingPlanCode;
+      const activePlanCode = session.subscription?.planCode || pendingPlanCode || selection?.planCode;
       const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
       
       const onboardingRoute = isEnterprise 

@@ -518,7 +518,7 @@ export default function EnterprisePlanPage() {
       </div>
 
       {/* Metrics Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Total Value", value: formatAmount((invitesQuery.data?.items || []).reduce((acc, curr) => acc + (curr.proposal?.amount || curr.amount || 0), 0), "usd"), icon: TrendingUp, color: "text-lime-400", bg: "bg-lime-400/10" },
           { label: "Active Proposals", value: (invitesQuery.data?.items || []).filter(i => i.status === "PENDING" || i.status === "VIEWED").length, icon: Send, color: "text-blue-400", bg: "bg-blue-400/10" },
@@ -544,7 +544,7 @@ export default function EnterprisePlanPage() {
             </Card>
           </motion.div>
         ))}
-      </div>
+      </div> */}
 
       {/* Main Content Area */}
       <div className="space-y-4">
