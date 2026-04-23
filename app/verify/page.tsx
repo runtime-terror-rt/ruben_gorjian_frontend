@@ -100,12 +100,37 @@ function VerifyPageInner() {
         hasSubscription: !!session.subscription,
       });
 
-      // Determine the plan to use: from selection > pendingPlanCode > subscription
+      // Determine the plan to use: from selection > pendingPlanCode > subscription > query params
+      const queryPlanCode = searchParams.get("planCode");
       const planCodeToUse =
         planSelection?.planCode ||
         pendingPlanCode ||
-        session.subscription?.planCode;
+        session.subscription?.planCode ||
+        queryPlanCode;
       const planCategoryToUse = planCategory;
+
+      // Force Enterprise plans to go to checkout first
+      const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
+      
+      if (isEnterprise) {
+        console.log("[Verify] Enterprise plan detected, redirecting to frontend checkout page");
+        
+        // Try to recover plan price and name from localStorage
+        let redirectUrl = `/billing/checkout?plan=${planCodeToUse}`;
+        
+        try {
+          const savedPrice = localStorage.getItem(`ent_plan_${planCodeToUse}_price`);
+          const savedName = localStorage.getItem(`ent_plan_${planCodeToUse}_name`);
+          
+          if (savedPrice) redirectUrl += `&price=${encodeURIComponent(savedPrice)}`;
+          if (savedName) redirectUrl += `&name=${encodeURIComponent(savedName)}`;
+        } catch (e) {
+          console.error("[Verify] Error reading from localStorage:", e);
+        }
+        
+        window.location.href = redirectUrl;
+        return;
+      }
 
       // Case 1: User has INCOMPLETE subscription or pendingPlanCode → redirect to checkout
       if (
@@ -119,27 +144,6 @@ function VerifyPageInner() {
             "[Verify] Payment required, redirecting to checkout for plan:",
             planCodeToUse
           );
-
-          // If it's an enterprise plan, redirect to the frontend checkout page so they can see details
-          if (planCodeToUse.startsWith("ENT_") || planCodeToUse.startsWith("ENT-")) {
-            console.log("[Verify] Enterprise plan detected, redirecting to frontend checkout page");
-            
-            // Try to recover plan price and name from localStorage
-            let redirectUrl = `/billing/checkout?plan=${planCodeToUse}`;
-            
-            try {
-              const savedPrice = localStorage.getItem(`ent_plan_${planCodeToUse}_price`);
-              const savedName = localStorage.getItem(`ent_plan_${planCodeToUse}_name`);
-              
-              if (savedPrice) redirectUrl += `&price=${encodeURIComponent(savedPrice)}`;
-              if (savedName) redirectUrl += `&name=${encodeURIComponent(savedName)}`;
-            } catch (e) {
-              console.error("[Verify] Error reading from localStorage:", e);
-            }
-            
-            window.location.href = redirectUrl;
-            return;
-          }
 
           // Trigger checkout
           const origin = window.location.origin;
