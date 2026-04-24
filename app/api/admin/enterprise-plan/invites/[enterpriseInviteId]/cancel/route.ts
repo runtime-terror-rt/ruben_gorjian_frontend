@@ -9,7 +9,7 @@ export async function PATCH(
     const { enterpriseInviteId } = await params;
     const headers = await getBackendHeaders();
 
-    const res = await fetch(`${getBackendUrl()}/api/admin/enterprise-plan/invites/${enterpriseInviteId}/cancel`, {
+    const res = await fetch(`${getBackendUrl()}/admin/enterprise-plan/invites/${enterpriseInviteId}/cancel`, {
       method: "PATCH",
       headers,
       credentials: "include",

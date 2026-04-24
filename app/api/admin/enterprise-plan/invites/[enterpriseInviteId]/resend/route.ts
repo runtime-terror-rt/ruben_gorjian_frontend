@@ -9,7 +9,7 @@ export async function POST(
     const { enterpriseInviteId } = await params;
     const headers = await getBackendHeaders();
 
-    const res = await fetch(`${getBackendUrl()}/api/admin/enterprise-plan/invites/${enterpriseInviteId}/resend`, {
+    const res = await fetch(`${getBackendUrl()}/admin/enterprise-plan/invites/${enterpriseInviteId}/resend`, {
       method: "POST",
       headers,
       credentials: "include",
