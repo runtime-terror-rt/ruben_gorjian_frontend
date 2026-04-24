@@ -63,6 +63,9 @@ function CheckoutContent() {
     if (!isEnterprise || !planCode) return;
 
     const fetchPlanDetails = async () => {
+      // Don't fetch until we have a session to avoid 401s if the session is still loading
+      if (!session) return;
+
       try {
         const res = await fetch(`/api/enterprise-plan/invites/${planCode}/details`, {
           credentials: "include",
@@ -95,7 +98,7 @@ function CheckoutContent() {
     };
 
     fetchPlanDetails();
-  }, [isEnterprise, planCode]);
+  }, [isEnterprise, planCode, session]);
 
   // Fetch coupons on mount
   useEffect(() => {

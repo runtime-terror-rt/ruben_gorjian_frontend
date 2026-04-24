@@ -172,8 +172,9 @@ export function AdminSidebar({
   };
 
   // Only show nav items the current user has permission for.
-  // During session loading we pass an empty list so nothing flickers.
-  const filteredSections = sessionLoading
+  // We avoid rendering the nav items until the session is fully loaded
+  // to prevent flickering or showing unauthorized menu items.
+  const filteredSections = sessionLoading || !session
     ? []
     : NAV_SECTIONS.map(section => ({
         ...section,
@@ -277,7 +278,7 @@ export function AdminSidebar({
             {/* Footer */}
             <div className="border-t border-slate-800 p-4 flex-shrink-0">
               <a
-                href="https://docs.talexia.ai"
+                href="https://www.talexia.us/execution-case-studies"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -414,7 +415,7 @@ export function AdminSidebar({
       {!isCollapsed && (
         <div className="border-t border-slate-800 p-4 flex-shrink-0">
           <a
-            href="https://docs.talexia.ai"
+            href="https://www.talexia.us/execution-case-studies"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"

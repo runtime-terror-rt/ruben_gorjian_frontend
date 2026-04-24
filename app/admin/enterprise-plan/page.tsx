@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Plus, 
   Search, 
@@ -186,6 +187,7 @@ function formatAmount(amount: number, currency: string) {
 // --- Main Component ---
 
 export default function EnterprisePlanPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -233,8 +235,8 @@ export default function EnterprisePlanPage() {
           params.append("status", statusFilter);
         }
         
-        // Using the plural proxy route
-        const response = await apiGet<InviteListResponse>(`/api/admin/enterprise-plans?${params.toString()}`);
+        // Using the singular proxy route with invites subpath
+        const response = await apiGet<InviteListResponse>(`/api/admin/enterprise-plan/invites?${params.toString()}`);
         return response;
       } catch (err) {
         console.error("Enterprise Plan GET Error:", err);
@@ -246,13 +248,13 @@ export default function EnterprisePlanPage() {
   // Details Query
   const inviteDetailsQuery = useQuery({
     queryKey: ["enterprise-invite-details", selectedInvite?.id],
-    queryFn: () => apiGet<{ invite: EnterpriseInvite }>(`/api/admin/enterprise-plans/${selectedInvite?.id}/details`),
+    queryFn: () => apiGet<{ invite: EnterpriseInvite }>(`/api/admin/enterprise-plan/invites/${selectedInvite?.id}/details`),
     enabled: !!selectedInvite?.id && isDetailsModalOpen,
   });
 
   // Mutations
   const createInviteMutation = useMutation({
-    mutationFn: (data: typeof formData) => apiPost("/api/admin/enterprise-plans", data),
+    mutationFn: (data: typeof formData) => apiPost("/api/admin/enterprise-plan/invites", data),
     onSuccess: () => {
       toast({ title: "Enterprise invite created" });
       setIsCreateModalOpen(false);
@@ -289,6 +291,13 @@ export default function EnterprisePlanPage() {
     onSuccess: () => {
       toast({ title: "Invite resent" });
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Resend failed", 
+        description: error.message || "Unable to resend invite",
+        variant: "destructive" 
+      });
     }
   });
 
@@ -297,11 +306,18 @@ export default function EnterprisePlanPage() {
     onSuccess: () => {
       toast({ title: "Invite canceled" });
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Cancel failed", 
+        description: error.message || "Unable to cancel invite",
+        variant: "destructive" 
+      });
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiDelete(`/api/admin/enterprise-plans/${id}/permanent`),
+    mutationFn: (id: string) => apiDelete(`/api/admin/enterprise-plan/invites/${id}/permanent`),
     onSuccess: () => {
       toast({ title: "Permanently deleted" });
       setIsConfirmDeleteOpen(false);
@@ -384,7 +400,7 @@ export default function EnterprisePlanPage() {
       cell: ({ row }) => {
         const invite = row.original;
         const copyInviteLink = () => {
-          const url = `${window.location.origin}/enterprise/${invite.planCode}`;
+          const url = `${window.location.origin}/enterprise-plan/accept?token=${invite.id}`;
           navigator.clipboard.writeText(url);
           toast({ title: "Invite link copied" });
         };
@@ -393,31 +409,38 @@ export default function EnterprisePlanPage() {
           <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl">
+                <Button 
+                  variant="ghost" 
+                  className="h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800 rounded-2xl p-2 shadow-2xl">
                 <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-500 tracking-widest px-3 py-2">Management</DropdownMenuLabel>
                 <DropdownMenuItem 
-                  onClick={() => {
-                    setSelectedInvite(invite);
-                    setIsDetailsModalOpen(true);
-                  }}
+                  onClick={() => router.push(`/admin/enterprise-plan/${invite.id}`)}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                 >
                   <Eye className="mr-3 h-4 w-4 text-blue-400" /> 
                   <span className="font-medium">View Details</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={copyInviteLink}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    copyInviteLink();
+                  }}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                 >
                   <Copy className="mr-3 h-4 w-4 text-lime-400" /> 
                   <span className="font-medium">Copy Invite Link</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => resendMutation.mutate(invite.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resendMutation.mutate(invite.id);
+                  }}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                   disabled={invite.status === "PAYMENT_COMPLETED" || invite.status === "CANCELED"}
                 >
@@ -429,7 +452,10 @@ export default function EnterprisePlanPage() {
                 
                 {invite.status !== "CANCELED" && invite.status !== "PAYMENT_COMPLETED" && (
                   <DropdownMenuItem 
-                    onClick={() => cancelMutation.mutate(invite.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      cancelMutation.mutate(invite.id);
+                    }}
                     className="rounded-lg py-2.5 cursor-pointer focus:bg-amber-500/10 text-amber-400"
                   >
                     <XCircle className="mr-3 h-4 w-4" /> 
@@ -438,7 +464,8 @@ export default function EnterprisePlanPage() {
                 )}
 
                 <DropdownMenuItem 
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setInviteToDelete(invite.id);
                     setIsConfirmDeleteOpen(true);
                   }}
@@ -633,7 +660,11 @@ export default function EnterprisePlanPage() {
                   </TableRow>
                 ) : (invitesQuery.data?.items ?? []).length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border-white/5 hover:bg-white/[0.03] transition-all group border-b last:border-b-0">
+                    <TableRow 
+                      key={row.id} 
+                      className="border-white/5 hover:bg-white/[0.03] transition-all group border-b last:border-b-0 cursor-pointer"
+                      onClick={() => router.push(`/admin/enterprise-plan/${row.original.id}`)}
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="py-6 px-6 text-center first:text-left">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -1058,6 +1089,10 @@ export default function EnterprisePlanPage() {
                                 <span className="text-slate-400">Micro Content</span>
                                 <span className="text-white font-bold">{invite.microReelsPerMonth || 0}</span>
                               </div>
+                              {/* <div className="flex justify-between text-[11px]">
+                                <span className="text-slate-400">Industry</span>
+                                <span className="text-white font-bold">{invite.industry || "General"}</span>
+                              </div> */}
                             </div>
                           </div>
                           <div className="p-4 bg-white/5 rounded-xl border border-white/5">
