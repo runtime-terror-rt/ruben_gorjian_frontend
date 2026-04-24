@@ -38,7 +38,7 @@ interface SubmissionDetail {
   interests: string[];
   postsPerMonth: string;
   message: string;
-  source: string;
+  // source: string;
   status: SubmissionStatus;
   repliedBy: string | null;
   replyMessage: string | null;
@@ -222,7 +222,7 @@ export function SupportDetailsModal({
                     <p className="font-medium text-white text-sm">{formatDate(submission.createdAt)}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                {/* <div className="flex items-start gap-3">
                   <div className="p-1.5 rounded-md bg-slate-800/50 border border-white/5">
                     <Globe className="h-3.5 w-3.5 text-slate-400" />
                   </div>
@@ -230,7 +230,7 @@ export function SupportDetailsModal({
                     <p className="text-[9px] uppercase font-black text-slate-500 tracking-wider mb-1.5">Source</p>
                     <Badge variant="outline" className="text-[9px] font-bold border-slate-700 bg-lime-500/10 text-lime-400 py-0 px-2 h-4">{submission.source}</Badge>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 

@@ -324,13 +324,16 @@ export default function SupportSystemPage() {
                   <Eye className="mr-2 h-4 w-4" /> View Details
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => {
-                    setSelectedSubmission(sub);
-                    setIsStatusOpen(true);
-                  }}
+                  onClick={() =>
+                    statusMutation.mutate({
+                      id: sub.id,
+                      status: "RESOLVED",
+                    })
+                  }
                   className="rounded-lg focus:bg-slate-800 focus:text-lime-400"
+                  disabled={sub.status === "RESOLVED" || statusMutation.isPending}
                 >
-                  <Clock className="mr-2 h-4 w-4" /> View Status
+                  <CheckCircle className="mr-2 h-4 w-4" /> Resolved
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -469,29 +472,30 @@ export default function SupportSystemPage() {
 
       {/* Table */}
       <Card className="border-white/5 bg-slate-900/40 backdrop-blur-md overflow-hidden transition-all shadow-2xl">
-        <Table>
-          <TableHeader className="bg-slate-950/40">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                key={headerGroup.id}
-                className="border-white/5 hover:bg-transparent"
-              >
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="text-slate-500 py-4 font-semibold uppercase tracking-wider text-[10px]"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-slate-950/40">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-white/5 hover:bg-transparent"
+                >
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className="text-slate-500 py-4 font-semibold uppercase tracking-wider text-[10px]"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
           <TableBody>
             {submissionsQuery.isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
@@ -537,6 +541,7 @@ export default function SupportSystemPage() {
             )}
           </TableBody>
         </Table>
+      </div>
 
         {/* Pagination */}
         <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
