@@ -23,7 +23,9 @@ import {
   ShoppingBag,
   Activity,
   CreditCard,
-  Zap
+  Zap,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useSessionContext } from "@/context/SessionContext";
@@ -173,6 +175,8 @@ export default function AdminPage() {
   const [activityData, setActivityData] = useState<any>(null);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityPage, setActivityPage] = useState(1);
+  const [planBreakdownPage, setPlanBreakdownPage] = useState(1);
+  const planBreakdownPageSize = 3;
 
   const dataWithColors = useMemo(() => {
     return (revenueData?.plans || []).map((p: any, i: number) => ({
@@ -789,22 +793,55 @@ export default function AdminPage() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="mt-6 space-y-2">
-                <div className="mb-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Detailed breakdown</p>
-                </div>
-                {(revenueData?.plans || []).map((plan: any, index: number) => (
-                  <div key={plan.planCode} className="flex items-center justify-between p-2 rounded-xl transition-colors hover:bg-slate-800/40">
-                    <div className="flex items-center gap-2">
-                       <div className="h-2 w-2 rounded-full border border-white/20" style={{ backgroundColor: PLAN_COLORS[index % PLAN_COLORS.length] }} />
-                       <div className="flex flex-col">
-                         <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter truncate max-w-[150px]">{plan.planName}</span>
-                         <span className="text-[9px] text-slate-500 font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
-                       </div>
-                    </div>
-                    <span className="text-xs font-black text-white">{formatCurrency(plan.revenueCents)}</span>
+              <div className="mt-6 space-y-2 min-h-[180px]">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Detailed breakdown</p>
+                  <div className="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-white/5">
+                    <Button 
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPlanBreakdownPage(p => Math.max(1, p - 1))}
+                      disabled={planBreakdownPage === 1}
+                      className="h-8 w-8 rounded-xl bg-slate-900 border-slate-800 text-white hover:bg-slate-800 hover:text-lime-400 disabled:opacity-20 transition-all active:scale-95"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-[10px] font-black text-slate-500 font-mono px-2 min-w-[40px] text-center">
+                      {planBreakdownPage} / {Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize) || 1}
+                    </span>
+                    <Button 
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPlanBreakdownPage(p => Math.min(Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize), p + 1))}
+                      disabled={planBreakdownPage >= Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize)}
+                      className="h-8 w-8 rounded-xl bg-slate-900 border-slate-800 text-white hover:bg-slate-800 hover:text-lime-400 disabled:opacity-20 transition-all active:scale-95"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
                   </div>
-                ))}
+                </div>
+                {(revenueData?.plans || [])
+                  .slice((planBreakdownPage - 1) * planBreakdownPageSize, planBreakdownPage * planBreakdownPageSize)
+                  .map((plan: any, index: number) => {
+                    const originalIndex = (revenueData?.plans || []).findIndex((p: any) => p.planCode === plan.planCode);
+                    return (
+                      <div key={plan.planCode} className="flex items-center justify-between p-2 rounded-xl transition-colors hover:bg-slate-800/40">
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full border border-white/20" style={{ backgroundColor: PLAN_COLORS[originalIndex % PLAN_COLORS.length] }} />
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter truncate max-w-[150px]">{plan.planName}</span>
+                            <span className="text-[9px] text-slate-500 font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
+                          </div>
+                        </div>
+                        <span className="text-xs font-black text-white">{formatCurrency(plan.revenueCents)}</span>
+                      </div>
+                    );
+                  })}
+                {(revenueData?.plans?.length || 0) === 0 && (
+                  <div className="h-32 flex items-center justify-center">
+                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">No plan data available</p>
+                  </div>
+                )}
               </div>
           </div>
         </div>
