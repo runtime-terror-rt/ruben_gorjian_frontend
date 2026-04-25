@@ -223,28 +223,28 @@ export default function SupportSystemPage() {
         </div>
       ),
     },
-    {
-      accessorKey: "interests",
-      header: "Interests",
-      cell: ({ row }) => (
-        <div className="flex flex-wrap gap-1 max-w-[200px]">
-          {row.original.interests.slice(0, 2).map((i) => (
-            <Badge
-              key={i}
-              variant="outline"
-              className="text-[10px] h-5 bg-slate-800/30 text-white/40 font-light border-slate-700/50"
-            >
-              {i}
-            </Badge>
-          ))}
-          {row.original.interests.length > 2 && (
-            <Badge variant="outline" className="text-[10px] h-5">
-              +{row.original.interests.length - 2}
-            </Badge>
-          )}
-        </div>
-      ),
-    },
+    // {
+    //   accessorKey: "interests",
+    //   header: "Interests",
+    //   cell: ({ row }) => (
+    //     <div className="flex flex-wrap gap-1 max-w-[200px]">
+    //       {row.original.interests.slice(0, 2).map((i) => (
+    //         <Badge
+    //           key={i}
+    //           variant="outline"
+    //           className="text-[10px] h-5 bg-slate-800/30 text-white/40 font-light border-slate-700/50"
+    //         >
+    //           {i}
+    //         </Badge>
+    //       ))}
+    //       {row.original.interests.length > 2 && (
+    //         <Badge variant="outline" className="text-[10px] h-5">
+    //           +{row.original.interests.length - 2}
+    //         </Badge>
+    //       )}
+    //     </div>
+    //   ),
+    // },
     {
       accessorKey: "status",
       header: "Status",

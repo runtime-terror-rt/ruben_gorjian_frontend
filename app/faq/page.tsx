@@ -62,7 +62,7 @@ export default function FAQPage() {
 
   useEffect(() => {
     let isActive = true;
-    apiGet<FaqListResponse>("/api/faq?page=1&limit=10")
+    apiGet<FaqListResponse>("/api/faq?pageType=FAQ_PAGE")
       .then((res) => {
         if (!isActive) return;
         const rows = Array.isArray(res?.data) ? res.data : [];

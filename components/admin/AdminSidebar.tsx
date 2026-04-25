@@ -98,12 +98,12 @@ export const NAV_SECTIONS: NavSection[] = [
       // },
 
 
-      {
-        label: "Submissions",
-        href: "/admin/submissions",
-        icon: FileText,
-        permission: "SUBMISSIONS",
-      },
+      // {
+      //   label: "Submissions",
+      //   href: "/admin/submissions",
+      //   icon: FileText,
+      //   permission: "SUBMISSIONS",
+      // },
       {
         label: "Support System",
         href: "/admin/support-system",
@@ -277,7 +277,7 @@ export function AdminSidebar({
 
             {/* Footer */}
             <div className="border-t border-slate-800 p-4 flex-shrink-0">
-              <a
+              {/* <a
                 href="https://www.talexia.us/execution-case-studies"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -286,9 +286,9 @@ export function AdminSidebar({
                 <BookOpen className="h-4 w-4" />
                 <span>Documentation</span>
                 <ExternalLink className="h-3 w-3 ml-auto" />
-              </a>
+              </a> */}
               {/* Role badge */}
-              <div className={`mt-2 mx-1 flex items-center gap-2 px-3 py-2 rounded-xl ${
+              {/* <div className={`mt-2 mx-1 flex items-center gap-2 px-3 py-2 rounded-xl ${
                 isSuperAdmin
                   ? "bg-amber-400/10 border border-amber-400/20"
                   : "bg-slate-800/60 border border-slate-700/50"
@@ -309,7 +309,7 @@ export function AdminSidebar({
               </div>
               <div className="mt-2 px-3 text-xs text-slate-500">
                 Version 1.0.0
-              </div>
+              </div> */}
             </div>
           </div>
         </aside>
@@ -413,8 +413,8 @@ export function AdminSidebar({
 
       {/* Footer */}
       {!isCollapsed && (
-        <div className="border-t border-slate-800 p-4 flex-shrink-0">
-          <a
+        <div className="border-t border-slate-800 pt-10 p-4 flex-shrink-0">
+          {/* <a
             href="https://www.talexia.us/execution-case-studies"
             target="_blank"
             rel="noopener noreferrer"
@@ -426,7 +426,7 @@ export function AdminSidebar({
           </a>
           <div className="mt-2 px-3 text-xs text-slate-500">
             Version 1.0.0
-          </div>
+          </div> */}
         </div>
       )}
     </aside>

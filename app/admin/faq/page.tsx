@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
@@ -30,16 +30,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+
+type FaqPageType = "FAQ_PAGE" | "PRICING_PAGE";
 
 type Faq = {
   id: string;
   question: string;
   answer: string;
-  displayOrder: number;
+  // displayOrder is intentionally ignored in admin UI.
+  displayOrder?: number;
   isActive: boolean;
+  pageType: FaqPageType;
   createdByAdminId?: string | null;
   updatedByAdminId?: string | null;
   createdAt: string;
@@ -49,13 +54,21 @@ type Faq = {
 type GetAllFaqsResponse = {
   success: boolean;
   data: Faq[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 type UpsertFaqPayload = {
   question: string;
   answer: string;
+  // Keep for backend contract, but UI does not expose it.
   displayOrder: number;
   isActive: boolean;
+  pageType: FaqPageType;
 };
 
 type UpsertFaqResponse = {
@@ -85,35 +98,54 @@ export default function AdminFaqPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<Faq | null>(null);
   const [faqToDelete, setFaqToDelete] = useState<Faq | null>(null);
+  const [filterPageType, setFilterPageType] = useState<FaqPageType | "ALL">("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [formData, setFormData] = useState<UpsertFaqPayload>({
     question: "",
     answer: "",
-    displayOrder: 1,
+    displayOrder: 0,
     isActive: true,
+    pageType: "FAQ_PAGE",
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-faqs"],
-    queryFn: () => apiGet<GetAllFaqsResponse>("/api/faq/admin"),
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["admin-faqs", filterPageType, currentPage, itemsPerPage],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      params.append("page", String(currentPage));
+      params.append("limit", String(itemsPerPage));
+      if (filterPageType !== "ALL") {
+        params.append("pageType", filterPageType);
+      }
+      return apiGet<GetAllFaqsResponse>(`/api/faq/admin?${params.toString()}`);
+    },
+    placeholderData: (previousData) => previousData,
   });
 
-  const faqs = useMemo(() => {
-    const rows = data?.data ?? [];
-    return [...rows].sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-  }, [data?.data]);
+  const faqs = useMemo(() => data?.data ?? [], [data?.data]);
 
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(faqs.length / itemsPerPage);
-  const currentFaqs = faqs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.max(1, data?.pagination?.totalPages ?? 1);
+  const totalRecords = data?.pagination?.total ?? faqs.length;
+  const hasServerPagination = Boolean(data?.pagination);
+  const canGoPrev = currentPage > 1;
+  const canGoNext = hasServerPagination ? currentPage < totalPages : faqs.length >= itemsPerPage;
+
+  useEffect(() => {
+    // Avoid snapping back while a new page is still fetching.
+    if (isFetching) return;
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages, isFetching]);
 
   const resetForm = () => {
     setFormData({
       question: "",
       answer: "",
-      displayOrder: 1,
+      displayOrder: 0,
       isActive: true,
+      pageType: "FAQ_PAGE",
     });
   };
 
@@ -128,8 +160,10 @@ export default function AdminFaqPage() {
     setFormData({
       question: faq.question,
       answer: faq.answer,
-      displayOrder: faq.displayOrder,
+      // UI does not edit displayOrder.
+      displayOrder: 0,
       isActive: faq.isActive,
+      pageType: faq.pageType || "FAQ_PAGE",
     });
     setIsDialogOpen(true);
   };
@@ -194,8 +228,9 @@ export default function AdminFaqPage() {
     const payload: UpsertFaqPayload = {
       question: formData.question.trim(),
       answer: formData.answer.trim(),
-      displayOrder: Number(formData.displayOrder) || 0,
+      displayOrder: 0,
       isActive: Boolean(formData.isActive),
+      pageType: formData.pageType,
     };
     if (!payload.question || !payload.answer) {
       toast({ title: "Question and answer are required", variant: "destructive" });
@@ -232,16 +267,33 @@ export default function AdminFaqPage() {
           </h1>
           <p className="text-sm text-slate-400 mt-1">Create, edit, delete, and activate FAQs.</p>
         </div>
-        <Button
-          onClick={openCreate}
-          className="cursor-pointer bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
-        >
-          <Plus className="h-5 w-5" /> Create FAQ
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1">
+            <Filter className="h-4 w-4 text-slate-400" />
+            <Select
+              value={filterPageType}
+              onChange={(e) => {
+                setFilterPageType(e.target.value as FaqPageType | "ALL");
+                setCurrentPage(1);
+              }}
+              className="w-[160px] bg-transparent border-none text-slate-300 focus:ring-0 cursor-pointer"
+            >
+              <option value="ALL">All Pages</option>
+              <option value="FAQ_PAGE">FAQ Page</option>
+              <option value="PRICING_PAGE">Pricing Page</option>
+            </Select>
+          </div>
+          <Button
+            onClick={openCreate}
+            className="cursor-pointer bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+          >
+            <Plus className="h-5 w-5" /> Create FAQ
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
-        {isLoading ? (
+        {isLoading && !data ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-lime-400" />
             <p className="text-slate-500 text-sm">Loading FAQs...</p>
@@ -251,21 +303,28 @@ export default function AdminFaqPage() {
             <Table>
               <TableHeader className="bg-slate-800/50">
                 <TableRow className="hover:bg-transparent border-slate-800">
-                  <TableHead className="text-slate-400 font-semibold py-4 w-20">Order</TableHead>
                   <TableHead className="text-slate-400 font-semibold py-4">Question</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-36">Status</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-52">Updated</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-32">Page Type</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-32">Status</TableHead>
+                  <TableHead className="text-slate-400 font-semibold py-4 w-48">Updated</TableHead>
                   <TableHead className="text-slate-400 font-semibold py-4 w-20 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {currentFaqs.length ? (
-                  currentFaqs.map((faq) => (
+                {faqs.length ? (
+                  faqs.map((faq) => (
                     <TableRow key={faq.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
-                      <TableCell className="py-4 text-slate-200 font-medium">{faq.displayOrder}</TableCell>
                       <TableCell className="py-4">
                         <div className="text-white font-medium leading-5">{faq.question}</div>
                         <div className="text-slate-500 text-xs mt-1 line-clamp-2">{faq.answer}</div>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <Badge
+                          variant="outline"
+                          className="border-slate-700 bg-slate-800/40 text-slate-300 font-bold text-[10px]"
+                        >
+                          {faq.pageType === "FAQ_PAGE" ? "FAQ" : "PRICING"}
+                        </Badge>
                       </TableCell>
                       <TableCell className="py-4">
                         <Badge
@@ -342,29 +401,29 @@ export default function AdminFaqPage() {
             </Table>
 
             {/* Pagination Footer */}
-            {faqs.length > itemsPerPage && (
+            {totalPages > 1 && (
               <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
                 <div className="text-xs text-slate-500 font-medium uppercase">
-                  Showing {faqs.length} total records
+                  Showing {totalRecords} total records
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage <= 1}
+                    onClick={() => canGoPrev && setCurrentPage((p) => p - 1)}
+                    disabled={!canGoPrev || isFetching}
                     className="bg-slate-900 border-slate-800 h-8 px-2"
                   >
                     <ChevronLeft className="h-4 w-4 text-slate-400" />
                   </Button>
                   <div className="px-3 py-1 bg-lime-400/10 border border-lime-400/20 rounded-md text-[10px] font-bold text-lime-400 uppercase">
-                    Page {currentPage} of {totalPages}
+                    Page {currentPage} of {totalPages}{isFetching ? " • Loading..." : ""}
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage >= totalPages}
+                    onClick={() => canGoNext && setCurrentPage((p) => p + 1)}
+                    disabled={!canGoNext || isFetching}
                     className="bg-slate-900 border-slate-800 h-8 px-2"
                   >
                     <ChevronRight className="h-4 w-4 text-slate-400" />
@@ -420,33 +479,34 @@ export default function AdminFaqPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="displayOrder" className="text-slate-300">
-                  Display Order
+                <Label htmlFor="pageType" className="text-slate-300">
+                  Page Type
                 </Label>
-                <Input
-                  id="displayOrder"
-                  type="number"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
-                  value={formData.displayOrder}
-                  onChange={(e) =>
-                    setFormData((p) => ({ ...p, displayOrder: Number.parseInt(e.target.value || "0", 10) }))
-                  }
-                  min={0}
+                <Select
+                  id="pageType"
+                  value={formData.pageType}
+                  onChange={(e) => setFormData((p) => ({ ...p, pageType: e.target.value as FaqPageType }))}
+                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500 cursor-pointer"
                   required
-                />
+                >
+                  <option value="FAQ_PAGE">FAQ Page</option>
+                  <option value="PRICING_PAGE">Pricing Page</option>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-slate-300">Active</Label>
-                <div className="flex items-center gap-2 rounded-md border border-slate-800 bg-slate-950 px-3 py-2">
-                  <Checkbox
-                    checked={formData.isActive}
-                    onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
-                  />
-                  <span className="text-sm text-slate-300">Visible on site</span>
-                </div>
+              {/* Display Order field intentionally removed from admin form */}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-slate-300">Status</Label>
+              <div className="flex items-center gap-2 rounded-md border border-slate-800 bg-slate-950 px-3 py-2 w-fit">
+                <Checkbox
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
+                />
+                <span className="text-sm text-slate-300">Visible on site</span>
               </div>
             </div>
 

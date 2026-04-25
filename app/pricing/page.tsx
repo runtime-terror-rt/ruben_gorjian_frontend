@@ -23,6 +23,20 @@ import { useUiStore } from "@/store/uiStore";
 import { Tooltip } from "react-tooltip";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { apiGet } from "@/lib/api";
+
+type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  displayOrder: number;
+  isActive: boolean;
+};
+
+type FaqListResponse = {
+  success: boolean;
+  data: Faq[];
+};
 
 const STORAGE_KEY = "talexia_pricing_master";
 
@@ -135,6 +149,24 @@ function PricingPageContent() {
     return stored === "jewelry" ? "jewelry" : "regular";
   });
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const [faqs, setFaqs] = useState<Array<{ q: string; a: string }>>([
+    {
+      q: "Can I switch plans after I subscribe?",
+      a: "Yes. You can upgrade or downgrade at any time from billing settings. Changes are applied through Stripe.",
+    },
+    {
+      q: "How does founder pricing work?",
+      a: "Founder rates apply while founder slots remain and are grandfathered until cancellation. If canceled, re-subscription uses standard pricing.",
+    },
+    {
+      q: "Do all plans support scheduling?",
+      a: "All plans include the calendar and are admin-managed by Talexia.",
+    },
+    {
+      q: "What happens if I exceed monthly post limits?",
+      a: "Soft-limit plans continue with usage visibility. Hard-limit plans require upgrading or waiting for the next billing cycle.",
+    },
+  ]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const masterFromUrl = searchParams.get("master");
@@ -142,6 +174,24 @@ function PricingPageContent() {
     masterFromUrl === "regular" || masterFromUrl === "jewelry"
       ? masterFromUrl
       : masterPlan;
+
+  useEffect(() => {
+    apiGet<FaqListResponse>("/api/faq?pageType=PRICING_PAGE")
+      .then((res) => {
+        const rows = Array.isArray(res?.data) ? res.data : [];
+        const mapped = rows
+          .filter((r) => r.isActive)
+          .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+          .map((r) => ({
+            q: r.question,
+            a: r.answer,
+          }));
+        if (mapped.length) {
+          setFaqs(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     async function checkAuth() {
@@ -430,37 +480,32 @@ function PricingPageContent() {
           </div>
         </section>
 
-        <section className="px-4 pt-16">
-          <div className="mx-auto max-w-4xl rounded-2xl border border-[#d9dbe2] bg-white p-6 sm:p-8">
-            <h3 className="text-2xl font-semibold">Pricing FAQ</h3>
-            <Accordion type="single" collapsible className="mt-6 space-y-1">
-              {[
-                {
-                  q: "Can I switch plans after I subscribe?",
-                  a: "Yes. You can upgrade or downgrade at any time from billing settings. Changes are applied through Stripe.",
-                },
-                {
-                  q: "How does founder pricing work?",
-                  a: "Founder rates apply while founder slots remain and are grandfathered until cancellation. If canceled, re-subscription uses standard pricing.",
-                },
-                {
-                  q: "Do all plans support scheduling?",
-                  a: "All plans include the calendar and are admin-managed by Talexia.",
-                },
-                {
-                  q: "What happens if I exceed monthly post limits?",
-                  a: "Soft-limit plans continue with usage visibility. Hard-limit plans require upgrading or waiting for the next billing cycle.",
-                },
-              ].map((faq, index) => (
+        <section
+          id="pricing-faq"
+          className="px-4 pb-16 pt-14 sm:pt-20"
+          aria-labelledby="pricing-faq-heading"
+        >
+          <div className="mx-auto max-w-5xl space-y-10 rounded-3xl border border-[#dfe2ec] bg-white p-6 sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#777b86]">
+              Pricing FAQs
+            </p>
+            <h3
+              id="pricing-faq-heading"
+              className="mt-2 text-3xl font-bold font-sora text-primary sm:text-4xl"
+            >
+              Questions teams ask before switching
+            </h3>
+            <Accordion type="single" collapsible className="mt-6">
+              {faqs.map((faq, index) => (
                 <AccordionItem
                   key={faq.q}
                   value={`faq-${index}`}
-                  className="border-b border-[#eceef4]"
+                  className="mb-6 rounded-full border border-[#ebedf4] px-6 py-4"
                 >
                   <AccordionTrigger className="text-left text-sm font-medium">
                     {faq.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm text-[#4f5160]">
+                  <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>

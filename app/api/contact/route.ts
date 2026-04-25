@@ -8,6 +8,7 @@ interface ContactPayload {
   interests?: string[];
   postsPerMonth?: string;
   message?: string | null;
+  source?: string;
 }
 
 export async function POST(req: Request) {
@@ -34,11 +35,11 @@ export async function POST(req: Request) {
       fullName,
       businessName,
       email,
-      websiteOrHandle,
-      interests: Array.isArray(interests) ? interests : [],
-      postsPerMonth,
-      message,
-      source: "landing",
+      websiteOrHandle: websiteOrHandle || "",
+      interests: Array.isArray(interests) && interests.length > 0 ? interests : ["full-management"],
+      postsPerMonth: postsPerMonth || "100",
+      message: message || "",
+      source: body.source || "landing",
     };
 
     const response = await fetch(
@@ -60,7 +61,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: errMessage }, { status: response.status });
     }
 
-    return NextResponse.json({ success: true });
+    const backendData = await response.json();
+    return NextResponse.json(backendData);
   } catch (err) {
     console.error("Contact form submission failed:", err);
     return NextResponse.json({ error: "Unable to send message right now." }, { status: 500 });

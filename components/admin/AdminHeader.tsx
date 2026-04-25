@@ -160,13 +160,13 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-64 bg-slate-900 text-slate-400">
+          <DropdownMenuContent align="end" className="w-fit min-w-[260px] max-w-[400px] bg-slate-900 text-slate-400">
             <DropdownMenuLabel className="font-normal normal-case tracking-normal">
               <div className="flex flex-col space-y-1">
-                <span className="text-sm font-semibold text-white truncate">
+                <span className="text-sm font-semibold text-white whitespace-nowrap">
                   {session?.name || "Admin User"}
                 </span>
-                <span className="text-xs text-slate-400 truncate">
+                <span className="text-xs text-slate-400 whitespace-nowrap">
                   {session?.email || "admin@talexia.ai"}
                 </span>
               </div>

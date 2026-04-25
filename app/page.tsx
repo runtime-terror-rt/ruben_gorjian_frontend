@@ -247,7 +247,7 @@ export default function HomePage() {
                 variant="outline"
                 className="rounded-full px-8"
               >
-                <Link href="/case-studies">Case Studies</Link>
+                <Link href="/execution-case-studies">Case Studies</Link>
               </Button> */}
               <Button
                 asChild

@@ -161,17 +161,17 @@ export function DashboardHeader({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-64 bg-slate-900 text-slate-400"
+            className="w-fit min-w-[260px] max-w-[400px] bg-slate-900 text-slate-400"
           >
             <DropdownMenuLabel className="font-normal normal-case tracking-normal">
               <div className="flex flex-col space-y-1">
-                <span className="text-sm font-semibold text-white flex items-center gap-1 truncate">
+                <span className="text-sm font-semibold text-white flex items-center gap-1 whitespace-nowrap">
                   {session?.name || "User"}
                   {session?.isFounder && (
                     <Crown className="h-3 w-3 text-lime-400 shrink-0" />
                   )}
                 </span>
-                <span className="text-xs text-slate-400 truncate">
+                <span className="text-xs text-slate-400 whitespace-nowrap">
                   {session?.email || "user@example.com"}
                 </span>
               </div>

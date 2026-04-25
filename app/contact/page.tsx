@@ -15,7 +15,7 @@ type ContactPayload = {
   email: string;
   websiteOrHandle?: string;
   interests: string[];
-  postsPerMonth: string;
+  // postsPerMonth: string;
   message?: string;
   source?: string;
 };
@@ -62,8 +62,8 @@ export default function ContactPage() {
       email: (data.get("email") as string)?.trim(),
       websiteOrHandle: (data.get("websiteOrHandle") as string)?.trim(),
       message: (data.get("message") as string)?.trim(),
-      interests: ["full-management", "ai-visuals"],
-      postsPerMonth: "100",
+      interests: [],
+      // postsPerMonth: "100",
       source: "google-search",
     };
 
@@ -131,7 +131,7 @@ export default function ContactPage() {
                 {/* Success */}
                 {mutation.isSuccess && (
                   <p className="sm:col-span-2 rounded-xl border border-[#ced9f6] bg-[#edf2ff] px-4 py-2 text-sm text-[#2f4587]">
-                    Thanks. We received your request. Submission ID:{" "}
+                    Thanks. We received your request.{" "}
                     {(mutation.data as any)?.data?.submissionId}
                   </p>
                 )}
