@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import dayjs from "dayjs";
@@ -218,6 +218,18 @@ function TagInput({
   );
 }
 
+function FilePreview({ file, className }: { file: File; className?: string }) {
+  const [url, setUrl] = useState<string>("");
+  useEffect(() => {
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+  return url ? <img src={url} alt={file.name} className={className} /> : null;
+}
+
+
 type CaseStudyFormValues = {
   logo: FileList | null;
   title: string;
@@ -234,21 +246,21 @@ type CaseStudyFormValues = {
   isActive: boolean;
 };
 
-function buildCaseStudyFormData(values: CaseStudyFormValues) {
+function buildCaseStudyFormData(values: CaseStudyFormValues, selectedImages: File[]) {
   const fd = new FormData();
   if (values.logo && values.logo[0]) fd.append("logo", values.logo[0]);
-  fd.append("title", values.title);
-  if (values.location) fd.append("location", values.location);
+  fd.append("title", values.title || "");
+  fd.append("location", values.location || "");
   fd.append("displayOrder", String(values.displayOrder ?? 0));
-  if (values.cycleTitle) fd.append("cycleTitle", values.cycleTitle);
+  fd.append("cycleTitle", values.cycleTitle || "");
   fd.append("services", JSON.stringify(values.services ?? []));
-  if (values.tagline) fd.append("tagline", values.tagline);
-  if (values.structureTitle) fd.append("structureTitle", values.structureTitle);
+  fd.append("tagline", values.tagline || "");
+  fd.append("structureTitle", values.structureTitle || "");
   fd.append("structureItems", JSON.stringify(values.structureItems ?? []));
-  if (values.videoTitle) fd.append("videoTitle", values.videoTitle);
+  fd.append("videoTitle", values.videoTitle || "");
   if (values.video && values.video[0]) fd.append("video", values.video[0]);
-  if (values.images && values.images.length > 0) {
-    Array.from(values.images).forEach((file) => fd.append("images", file));
+  if (selectedImages && selectedImages.length > 0) {
+    selectedImages.forEach((file) => fd.append("images", file));
   }
   fd.append("isActive", values.isActive ? "true" : "false");
   return fd;
@@ -263,6 +275,7 @@ export default function AdminCaseStudiesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<CaseStudy | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CaseStudy | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const form = useForm<CaseStudyFormValues>({
     defaultValues: {
@@ -282,6 +295,29 @@ export default function AdminCaseStudiesPage() {
     },
   });
 
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const imagesInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+
+  const { ref: logoRef, ...logoRegister } = form.register("logo");
+  const { ref: videoRef, ...videoRegister } = form.register("video");
+
+  const logoFiles = form.watch("logo");
+  const videoFiles = form.watch("video");
+
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      setSelectedImages((prev) => [...prev, ...newFiles]);
+      // clear the input so the exact same files can be selected again if needed
+      e.target.value = "";
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const listQuery = useQuery({
     queryKey: ["admin-case-studies", page, limit],
     queryFn: async () => {
@@ -292,6 +328,7 @@ export default function AdminCaseStudiesPage() {
 
   const openCreate = () => {
     setEditing(null);
+    setSelectedImages([]);
     form.reset({
       logo: null,
       title: "",
@@ -312,6 +349,7 @@ export default function AdminCaseStudiesPage() {
 
   const openEdit = (cs: CaseStudy) => {
     setEditing(cs);
+    setSelectedImages([]);
     form.reset({
       logo: null,
       title: String(cs.title ?? ""),
@@ -338,7 +376,7 @@ export default function AdminCaseStudiesPage() {
         throw new Error("Only one video is allowed.");
       }
 
-      const fd = buildCaseStudyFormData(values);
+      const fd = buildCaseStudyFormData(values, selectedImages);
       const url = editing ? `/api/case-studies/${editing.id}` : "/api/case-studies";
       const method = editing ? "PATCH" : "POST";
 
@@ -350,10 +388,20 @@ export default function AdminCaseStudiesPage() {
 
       if (!res.ok) {
         const obj = payload && typeof payload === "object" ? (payload as any) : null;
-        const message =
-          (obj && (obj.error || obj.message) && String(obj.error || obj.message)) ||
-          (typeof payload === "string" && payload) ||
-          "Request failed";
+        let message = "Request failed";
+        
+        if (obj) {
+          if (obj.details?.fieldErrors) {
+            const errors = Object.entries(obj.details.fieldErrors)
+              .map(([field, errs]) => `${field}: ${(errs as string[]).join(', ')}`);
+            message = errors.join('\n');
+          } else {
+             message = (obj.error || obj.message) && String(obj.error || obj.message) || message;
+          }
+        } else if (typeof payload === "string" && payload) {
+          message = payload;
+        }
+        
         throw new Error(message);
       }
       return payload;
@@ -717,6 +765,14 @@ export default function AdminCaseStudiesPage() {
                       />
                     </div>
                     <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Services Cycle Title</Label>
+                      <Input
+                        placeholder="e.g. Discovery Phase"
+                        {...form.register("cycleTitle")}
+                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Services Provided</Label>
                       <Controller
                         name="services"
@@ -728,6 +784,14 @@ export default function AdminCaseStudiesPage() {
                             placeholder="Add service..."
                           />
                         )}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Structure Section Title</Label>
+                      <Input
+                        placeholder="e.g. Project Architecture"
+                        {...form.register("structureTitle")}
+                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
@@ -757,21 +821,48 @@ export default function AdminCaseStudiesPage() {
                     {/* Project Logo Dropzone */}
                     <div className="space-y-3">
                       <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Logo</Label>
-                      <div className="relative group cursor-pointer">
+                      <div className="relative group cursor-pointer overflow-hidden rounded-3xl" onClick={() => logoInputRef.current?.click()}>
                         <input
                           type="file"
                           accept="image/*"
-                          {...form.register("logo")}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          {...logoRegister}
+                          ref={(e) => {
+                            logoRef(e);
+                            if (e) logoInputRef.current = e;
+                          }}
+                          className="hidden"
                         />
-                        <div className="border-2 border-dashed border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center gap-4 bg-slate-900/20 group-hover:bg-slate-900/40 group-hover:border-indigo-500/50 transition-all">
-                          <div className="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Upload className="h-6 w-6 text-indigo-400" />
-                          </div>
-                          <div className="text-center">
-                            <p className="text-sm font-bold text-slate-200">Drop Logo Here</p>
-                            <p className="text-[10px] text-slate-500 mt-1">SVG, PNG or AI (Max 2MB)</p>
-                          </div>
+                        <div className="border-2 border-dashed border-slate-800 p-8 flex flex-col items-center justify-center gap-4 bg-slate-900/20 group-hover:bg-slate-900/40 group-hover:border-indigo-500/50 transition-all relative z-10 min-h-[160px]">
+                          {logoFiles && logoFiles.length > 0 ? (
+                            <div className="absolute inset-0 z-0 bg-slate-950">
+                              <FilePreview file={logoFiles[0]} className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity" />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <div className="bg-indigo-500/20 text-indigo-300 px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-indigo-500/30">
+                                  {logoFiles[0].name}
+                                </div>
+                                <p className="text-[10px] text-indigo-400/70 mt-2 font-bold uppercase tracking-widest">Click to change</p>
+                              </div>
+                            </div>
+                          ) : editing?.logoUrl || getMediaUrl(editing?.logo) ? (
+                            <div className="absolute inset-0 z-0 bg-slate-950">
+                              <img src={editing?.logoUrl || getMediaUrl(editing?.logo) || ""} alt="Logo" className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity" />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="bg-white/10 text-white px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-white/20">
+                                  Change Logo
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <Upload className="h-6 w-6 text-indigo-400" />
+                              </div>
+                              <div className="text-center">
+                                <p className="text-sm font-bold text-slate-200">Drop Logo Here</p>
+                                <p className="text-[10px] text-slate-500 mt-1">SVG, PNG or AI (Max 2MB)</p>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -784,21 +875,42 @@ export default function AdminCaseStudiesPage() {
                       </div>
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                         {/* Add Button */}
-                        <label className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group">
+                        <div onClick={() => imagesInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group relative overflow-hidden">
                           <input
                             type="file"
                             multiple
                             accept="image/*"
-                            {...form.register("images")}
+                            onChange={handleImagesChange}
+                            ref={imagesInputRef}
                             className="hidden"
                           />
-                          <Plus className="h-6 w-6 text-slate-500 group-hover:text-indigo-400 group-hover:scale-110 transition-all" />
-                        </label>
-                        {[1, 2, 3].map((i) => (
-                          <div key={i} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
-                            <ImageIcon className="h-6 w-6 text-slate-800" />
-                          </div>
-                        ))}
+                          <Plus className="h-6 w-6 text-slate-500 group-hover:text-indigo-400 group-hover:scale-110 transition-all relative z-10" />
+                        </div>
+                        {selectedImages.length > 0 ? (
+                          selectedImages.map((file, i) => (
+                            <div key={`new-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group">
+                              <FilePreview file={file} className="h-full w-full object-cover opacity-80" />
+                              <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-rose-500/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500">
+                                <X className="h-3 w-3" />
+                              </button>
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
+                                <span className="text-[10px] font-bold text-white px-2 text-center truncate w-full">{file.name}</span>
+                              </div>
+                            </div>
+                          ))
+                        ) : editing?.images && Array.isArray(editing.images) && editing.images.length > 0 ? (
+                          editing.images.map((img: any, i: number) => (
+                            <div key={`existing-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group">
+                              <img src={getMediaUrl(img) || ""} alt="" className="h-full w-full object-cover opacity-80" />
+                            </div>
+                          ))
+                        ) : (
+                          [1, 2, 3].map((i) => (
+                            <div key={`placeholder-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
+                              <ImageIcon className="h-6 w-6 text-slate-800" />
+                            </div>
+                          ))
+                        )}
                       </div>
                     </div>
                   </div>
@@ -819,16 +931,31 @@ export default function AdminCaseStudiesPage() {
                         className="h-12 bg-slate-800/40 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm">
-                          <span>Discovery Phase</span>
-                          <Plus className="h-4 w-4 text-slate-500 rotate-45" />
+                        <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm overflow-hidden">
+                          {videoFiles && videoFiles.length > 0 ? (
+                            <span className="truncate text-teal-300 font-bold">{videoFiles[0].name}</span>
+                          ) : editing?.videoUrl || getMediaUrl(editing?.video) ? (
+                            <span className="truncate text-teal-300 font-bold">Existing Video Uploaded</span>
+                          ) : (
+                            <span className="text-slate-500">No video selected</span>
+                          )}
+                          {!videoFiles?.length && !(editing?.videoUrl || getMediaUrl(editing?.video)) && (
+                            <Plus className="h-4 w-4 text-slate-500 rotate-45 flex-shrink-0" />
+                          )}
                         </div>
-                        <button
-                          type="button"
-                          className="flex h-12 items-center justify-center gap-2 px-6 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-sm font-bold hover:bg-teal-500/20 transition-all"
-                        >
+                        <button type="button" onClick={() => videoInputRef.current?.click()} className="flex h-12 items-center justify-center gap-2 px-6 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-sm font-bold hover:bg-teal-500/20 transition-all cursor-pointer">
+                          <input
+                            type="file"
+                            accept="video/*"
+                            {...videoRegister}
+                            ref={(e) => {
+                              videoRef(e);
+                              if (e) videoInputRef.current = e;
+                            }}
+                            className="hidden"
+                          />
                           <VideoIcon className="h-4 w-4" />
-                          <span>Upload Clip</span>
+                          <span>{videoFiles && videoFiles.length > 0 ? "Change Clip" : "Upload Clip"}</span>
                         </button>
                       </div>
                     </div>
