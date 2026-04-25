@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import dynamicImport from "next/dynamic";
 import { Check, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -19,6 +19,20 @@ import {
   type PricingPlan,
   type PlanGroup,
 } from "@/lib/pricing-data";
+import { apiGet } from "@/lib/api";
+
+type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  displayOrder: number;
+  isActive: boolean;
+};
+
+type FaqListResponse = {
+  success: boolean;
+  data: Faq[];
+};
 
 const Navbar = dynamicImport(() => import("@/components/navbar"), {
   ssr: false,
@@ -352,7 +366,7 @@ function ReassuranceStrip() {
 
 // FAQ Section Component
 function FAQSection() {
-  const faqs = [
+  const [faqs, setFaqs] = useState([
     {
       question: "What happens when I start a free trial?",
       answer: "You get full access for 7 days.",
@@ -374,7 +388,25 @@ function FAQSection() {
       answer:
         "Yes — 30% off for life for the first 25 customers.",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    apiGet<FaqListResponse>("/api/faq?pageType=PRICING_PAGE")
+      .then((res) => {
+        const rows = Array.isArray(res?.data) ? res.data : [];
+        const mapped = rows
+          .filter((r) => r.isActive)
+          .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+          .map((r) => ({
+            question: r.question,
+            answer: r.answer,
+          }));
+        if (mapped.length) {
+          setFaqs(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="py-16 px-4">

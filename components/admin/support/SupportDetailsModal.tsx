@@ -235,7 +235,7 @@ export function SupportDetailsModal({
             </div>
 
             {/* Requirements Section */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                 <div className="h-1 w-1 rounded-full bg-lime-400"></div>
                 Project Details
@@ -256,7 +256,7 @@ export function SupportDetailsModal({
                   <p className="text-white font-medium text-sm">{submission.postsPerMonth}</p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Message Section */}
             <div className="space-y-3">
