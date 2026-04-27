@@ -41,8 +41,6 @@ type Faq = {
   id: string;
   question: string;
   answer: string;
-  // displayOrder is intentionally ignored in admin UI.
-  displayOrder?: number;
   isActive: boolean;
   pageType: FaqPageType;
   createdByAdminId?: string | null;
@@ -65,8 +63,6 @@ type GetAllFaqsResponse = {
 type UpsertFaqPayload = {
   question: string;
   answer: string;
-  // Keep for backend contract, but UI does not expose it.
-  displayOrder: number;
   isActive: boolean;
   pageType: FaqPageType;
 };
@@ -104,7 +100,6 @@ export default function AdminFaqPage() {
   const [formData, setFormData] = useState<UpsertFaqPayload>({
     question: "",
     answer: "",
-    displayOrder: 0,
     isActive: true,
     pageType: "FAQ_PAGE",
   });
@@ -143,7 +138,6 @@ export default function AdminFaqPage() {
     setFormData({
       question: "",
       answer: "",
-      displayOrder: 0,
       isActive: true,
       pageType: "FAQ_PAGE",
     });
@@ -161,7 +155,7 @@ export default function AdminFaqPage() {
       question: faq.question,
       answer: faq.answer,
       // UI does not edit displayOrder.
-      displayOrder: 0,
+      // displayOrder: 0,
       isActive: faq.isActive,
       pageType: faq.pageType || "FAQ_PAGE",
     });
@@ -228,7 +222,7 @@ export default function AdminFaqPage() {
     const payload: UpsertFaqPayload = {
       question: formData.question.trim(),
       answer: formData.answer.trim(),
-      displayOrder: 0,
+     
       isActive: Boolean(formData.isActive),
       pageType: formData.pageType,
     };
@@ -479,16 +473,16 @@ export default function AdminFaqPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="pageType" className="text-slate-300">
+                <Label htmlFor="pageType" className="text-slate-300 font-medium">
                   Page Type
                 </Label>
                 <Select
                   id="pageType"
                   value={formData.pageType}
                   onChange={(e) => setFormData((p) => ({ ...p, pageType: e.target.value as FaqPageType }))}
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500 cursor-pointer"
+                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500 cursor-pointer h-11"
                   required
                 >
                   <option value="FAQ_PAGE">FAQ Page</option>
@@ -496,17 +490,19 @@ export default function AdminFaqPage() {
                 </Select>
               </div>
 
-              {/* Display Order field intentionally removed from admin form */}
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-slate-300">Status</Label>
-              <div className="flex items-center gap-2 rounded-md border border-slate-800 bg-slate-950 px-3 py-2 w-fit">
-                <Checkbox
-                  checked={formData.isActive}
-                  onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
-                />
-                <span className="text-sm text-slate-300">Visible on site</span>
+              <div className="space-y-2">
+                <Label className="text-slate-300 font-medium">Status</Label>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950 px-4 h-11 w-full transition-all hover:border-slate-700">
+                  <Checkbox
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
+                    className="border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950"
+                  />
+                  <Label htmlFor="isActive" className="text-sm text-slate-300 cursor-pointer flex-1">
+                    Visible on site
+                  </Label>
+                </div>
               </div>
             </div>
 

@@ -873,7 +873,7 @@ export default function AdminManagementPage() {
                 ) : (
                   <UserCheck className="mr-2 h-4 w-4" />
                 )}
-                {editingAdmin ? "Save Account Changes" : "Confirm Onboarding"}
+                {editingAdmin ? "Save Account Changes" : "Confirm "}
               </Button>
             </DialogFooter>
           </form>
