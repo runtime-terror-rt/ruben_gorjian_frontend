@@ -175,13 +175,6 @@ function OnboardingRouterContent() {
       const activePlanCode = session.subscription?.planCode || session.pendingPlanCode || selection?.planCode;
       const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
       
-      console.log("[OnboardingRouter] Plan detection:", { 
-        activePlanCode, 
-        isEnterprise, 
-        planCategory,
-        pendingPlanCode: session.pendingPlanCode 
-      });
-
       const onboardingRoute = isEnterprise 
         ? "/onboarding/brand-brief" 
         : getOnboardingRouteForPlanCategory(planCategory);
@@ -190,7 +183,6 @@ function OnboardingRouterContent() {
         if (onboardingRoute === pathname) {
           return;
         }
-
         // Determine if completed
         const isCompleted = isEnterprise
           ? session.brandBriefCompleted

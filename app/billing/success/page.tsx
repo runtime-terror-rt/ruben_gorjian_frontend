@@ -96,7 +96,7 @@ function BillingSuccessContent() {
         } else {
           const activePlanCode = currentPlanCode || session?.pendingPlanCode || expectedPlanCode;
           const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
-          router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
+          router.push(isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
         }
       }
     };
@@ -199,7 +199,14 @@ function BillingSuccessContent() {
             </Link>
           ) : (
             <Link
-              href={session?.subscription?.planCode?.startsWith("ENT_") ? "/onboarding/full-management" : "/onboarding"}
+              href={
+                (session?.subscription?.planCode?.startsWith("ENT_") || 
+                 session?.subscription?.planCode?.startsWith("ENT-") ||
+                 session?.pendingPlanCode?.startsWith("ENT_") ||
+                 session?.pendingPlanCode?.startsWith("ENT-")) 
+                ? "/onboarding/brand-brief" 
+                : "/onboarding"
+              }
               className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Onboarding
