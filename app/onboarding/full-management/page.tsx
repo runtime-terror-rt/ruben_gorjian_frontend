@@ -164,6 +164,14 @@ function FullManagementOnboardingInner() {
     }
 
     const planCategory = session.subscription?.planCategory;
+    const activePlanCode = session.subscription?.planCode || session.pendingPlanCode;
+    const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+
+    if (isEnterprise) {
+      router.push("/onboarding/brand-brief");
+      return;
+    }
+
     const isFullPlan =
       planCategory === "FULL_MANAGEMENT" ||
       planCategory === "JEWELRY_FULL_MANAGEMENT";

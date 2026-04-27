@@ -172,35 +172,41 @@ function OnboardingRouterContent() {
       const { getPlanSelection } = await import("@/lib/plan-selection");
       const selection = getPlanSelection();
       
-      const activePlanCode = session.subscription?.planCode || pendingPlanCode || selection?.planCode;
+      const activePlanCode = session.subscription?.planCode || session.pendingPlanCode || selection?.planCode;
       const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
       
+      console.log("[OnboardingRouter] Plan detection:", { 
+        activePlanCode, 
+        isEnterprise, 
+        planCategory,
+        pendingPlanCode: session.pendingPlanCode 
+      });
+
       const onboardingRoute = isEnterprise 
-        ? "/onboarding/full-management" 
+        ? "/onboarding/brand-brief" 
         : getOnboardingRouteForPlanCategory(planCategory);
 
       if (onboardingRoute) {
         if (onboardingRoute === pathname) {
           return;
         }
-        // Check if onboarding already completed for this plan category
-        const isCompleted =
-          ((planCategory === "CALENDAR_ONLY" ||
-            planCategory === "VISUAL_CALENDAR" ||
-            planCategory === "JEWELRY_CALENDAR_ONLY") &&
-            session.calendarOnboardingCompleted) ||
-          ((planCategory === "VISUAL_ADD_ON" ||
-            planCategory === "REGULAR_VISUAL" ||
-            planCategory === "JEWELRY_VISUAL") &&
-            session.visualOnboardingCompleted) ||
-          ((planCategory === "FULL_MANAGEMENT" ||
-            planCategory === "JEWELRY_FULL_MANAGEMENT") &&
-            session.fullManagementOnboardingCompleted);
 
-        //          if (!session.brandBriefCompleted) {
-        //   router.push("/onboarding/brand-brief");
-        //   return;
-        // }
+        // Determine if completed
+        const isCompleted = isEnterprise
+          ? session.brandBriefCompleted
+          : (
+            ((planCategory === "CALENDAR_ONLY" ||
+              planCategory === "VISUAL_CALENDAR" ||
+              planCategory === "JEWELRY_CALENDAR_ONLY") &&
+              session.calendarOnboardingCompleted) ||
+            ((planCategory === "VISUAL_ADD_ON" ||
+              planCategory === "REGULAR_VISUAL" ||
+              planCategory === "JEWELRY_VISUAL") &&
+              session.visualOnboardingCompleted) ||
+            ((planCategory === "FULL_MANAGEMENT" ||
+              planCategory === "JEWELRY_FULL_MANAGEMENT") &&
+              session.fullManagementOnboardingCompleted)
+          );
 
         if (isCompleted) {
           router.push("/dashboard");
