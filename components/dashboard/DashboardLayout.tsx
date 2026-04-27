@@ -51,7 +51,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
 
     // No active subscription but onboarding not finished - go to onboarding
-    if (hasActiveSubscription && !session.onboardingCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
+    const isCompleted = session.onboardingCompleted || session.brandBriefCompleted || session.fullManagementOnboardingCompleted || session.calendarOnboardingCompleted || session.visualOnboardingCompleted;
+    if (hasActiveSubscription && !isCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
       router.replace("/onboarding");
     }
   }, [session, sessionLoading, pathname, router]);
@@ -60,12 +61,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const hasActiveSubscription = session?.subscription?.planCode && 
     (session?.subscription?.status === "ACTIVE" || session?.subscription?.status === "TRIALING");
   
+  const isCompleted = session?.onboardingCompleted || session?.brandBriefCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
+  
   const isAuthorized = !!session && (
     pathname === "/pricing" || 
     pathname.startsWith("/billing/checkout") || 
     pathname.startsWith("/verify") || 
     pathname.startsWith("/onboarding") || 
-    (hasActiveSubscription && session.onboardingCompleted)
+    (hasActiveSubscription && isCompleted)
   );
 
   // Load sidebar collapsed state from localStorage (defer setState to avoid sync setState in effect)

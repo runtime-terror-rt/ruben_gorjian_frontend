@@ -82,7 +82,8 @@ function BillingSuccessContent() {
       // If we expect a specific plan (from checkout), wait until the session matches it
       const isPlanMatched = !expectedPlanCode || currentPlanCode === expectedPlanCode;
       
-      const isActive = isStatusActive && isPlanMatched;
+      // Also wait for the backend to fully populate the planCategory to prevent missing category errors in onboarding
+      const isActive = isStatusActive && isPlanMatched && !!session?.subscription?.planCategory;
 
       if (isActive && checking) {
         setChecking(false);
