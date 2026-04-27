@@ -80,6 +80,29 @@ export default function ScheduleVisitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [editingSession, setEditingSession] = useState<Session | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const userBookings = useMemo(() => {
+    if (isAdmin) return sessions;
+
+    return sessions.filter((s) => {
+      const ownerId = (s as any).userId || (s as any).user?.id;
+      return ownerId === userSession?.id;
+    });
+  }, [sessions, userSession?.id, isAdmin]);
+
+  const totalPages = Math.ceil(userBookings.length / itemsPerPage);
+
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return userBookings.slice(start, end);
+  }, [userBookings, currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [userBookings.length]);
+
   // Fetch blocked dates
   const fetchSessions = useCallback(async () => {
     try {
@@ -332,13 +355,13 @@ export default function ScheduleVisitPage() {
     return day.isBefore(dayjs(), "day");
   };
 
-  const userBookings = useMemo(() => {
-    if (isAdmin) return sessions;
-    return sessions.filter((s) => {
-      const ownerId = (s as any).userId || (s as any).user?.id;
-      return ownerId === userSession?.id;
-    });
-  }, [sessions, userSession?.id, isAdmin]);
+  // const userBookings = useMemo(() => {
+  //   if (isAdmin) return sessions;
+  //   return sessions.filter((s) => {
+  //     const ownerId = (s as any).userId || (s as any).user?.id;
+  //     return ownerId === userSession?.id;
+  //   });
+  // }, [sessions, userSession?.id, isAdmin]);
 
   return (
     <div className="max-w-9xl mx-auto space-y-8 pb-12">
@@ -516,7 +539,7 @@ export default function ScheduleVisitPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-slate-800/50">
-                  {userBookings.map((s) => (
+                  {paginatedBookings.map((s) => (
                     <div
                       key={s.id}
                       className={clsx(
@@ -633,6 +656,32 @@ export default function ScheduleVisitPage() {
                       </div>
                     </div>
                   ))}
+
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 py-4">
+                      <Button
+                        variant="outline"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => p - 1)}
+                        className="border-slate-700 text-white"
+                      >
+                        Prev
+                      </Button>
+
+                      <div className="text-slate-400 text-sm">
+                        Page {currentPage} of {totalPages}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        className="border-slate-700 text-white"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
