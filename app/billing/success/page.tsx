@@ -82,8 +82,7 @@ function BillingSuccessContent() {
       // If we expect a specific plan (from checkout), wait until the session matches it
       const isPlanMatched = !expectedPlanCode || currentPlanCode === expectedPlanCode;
       
-      // Also wait for the backend to fully populate the planCategory to prevent missing category errors in onboarding
-      const isActive = isStatusActive && isPlanMatched && !!session?.subscription?.planCategory;
+      const isActive = isStatusActive && isPlanMatched;
 
       if (isActive && checking) {
         setChecking(false);
@@ -97,7 +96,7 @@ function BillingSuccessContent() {
         } else {
           const activePlanCode = currentPlanCode || session?.pendingPlanCode || expectedPlanCode;
           const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
-          router.push(isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
+          router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
         }
       }
     };
@@ -200,14 +199,7 @@ function BillingSuccessContent() {
             </Link>
           ) : (
             <Link
-              href={
-                (session?.subscription?.planCode?.startsWith("ENT_") || 
-                 session?.subscription?.planCode?.startsWith("ENT-") ||
-                 session?.pendingPlanCode?.startsWith("ENT_") ||
-                 session?.pendingPlanCode?.startsWith("ENT-")) 
-                ? "/onboarding/brand-brief" 
-                : "/onboarding"
-              }
+              href={session?.subscription?.planCode?.startsWith("ENT_") ? "/onboarding/full-management" : "/onboarding"}
               className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Onboarding
