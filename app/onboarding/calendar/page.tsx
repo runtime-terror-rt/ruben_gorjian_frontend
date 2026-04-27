@@ -88,7 +88,7 @@ function CalendarOnboardingInner() {
     const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
     
     if (isEnterprise) {
-      router.push("/onboarding/full-management");
+      router.push("/onboarding/brand-brief");
       return;
     }
 
