@@ -17,6 +17,8 @@ const navItems = [
   { label: "Case Studies", href: "/execution-case-studies" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Contact Us", href: "/contact" },
+
 ];
 
 function NavbarInner() {
