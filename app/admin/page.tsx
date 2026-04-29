@@ -86,7 +86,7 @@ type AdminUser = {
   isFounder: boolean;
   signupDate: string;
   emailVerified: boolean;
-  onboardingCompleted: boolean;
+  onboardingCompleted: boolean; 
   subscriptions: Array<{
     id: string;
     planCode: string;

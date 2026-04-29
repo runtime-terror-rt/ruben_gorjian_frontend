@@ -116,7 +116,11 @@ function getMediaUrl(val: unknown): string | null {
   return null;
 }
 
-function normalizeAdminList(data: any, page: number, limit: number): CaseStudyListResult {
+function normalizeAdminList(
+  data: any,
+  page: number,
+  limit: number,
+): CaseStudyListResult {
   const items = Array.isArray(data)
     ? data
     : data?.items || data?.caseStudies || data?.data || data?.rows || [];
@@ -168,7 +172,9 @@ function TagInput({
     const next = raw.trim();
     if (!next) return;
     const normalized = next.replace(/\s+/g, " ");
-    const exists = value.some((v) => v.toLowerCase() === normalized.toLowerCase());
+    const exists = value.some(
+      (v) => v.toLowerCase() === normalized.toLowerCase(),
+    );
     if (exists) return;
     onChange([...value, normalized]);
   };
@@ -187,7 +193,9 @@ function TagInput({
             onClick={() => remove(idx)}
             className={cn(
               "px-3 py-1 text-slate-200 text-[10px] sm:text-xs font-semibold hover:bg-rose-500/20 hover:text-rose-300 transition-colors",
-              variant === "pill" ? "rounded-full bg-slate-100/10" : "rounded-lg bg-slate-800"
+              variant === "pill"
+                ? "rounded-full bg-slate-100/10"
+                : "rounded-lg bg-slate-800",
             )}
             title="Remove"
           >
@@ -229,7 +237,6 @@ function FilePreview({ file, className }: { file: File; className?: string }) {
   return url ? <img src={url} alt={file.name} className={className} /> : null;
 }
 
-
 type CaseStudyFormValues = {
   logo: FileList | null;
   title: string;
@@ -246,7 +253,10 @@ type CaseStudyFormValues = {
   isActive: boolean;
 };
 
-function buildCaseStudyFormData(values: CaseStudyFormValues, selectedImages: File[]) {
+function buildCaseStudyFormData(
+  values: CaseStudyFormValues,
+  selectedImages: File[],
+) {
   const fd = new FormData();
   if (values.logo && values.logo[0]) fd.append("logo", values.logo[0]);
   fd.append("title", values.title || "");
@@ -321,7 +331,9 @@ export default function AdminCaseStudiesPage() {
   const listQuery = useQuery({
     queryKey: ["admin-case-studies", page, limit],
     queryFn: async () => {
-      const data = await apiGet<any>(`/api/case-studies/admin?page=${page}&limit=${limit}`);
+      const data = await apiGet<any>(
+        `/api/case-studies/admin?page=${page}&limit=${limit}`,
+      );
       return normalizeAdminList(data, page, limit);
     },
   });
@@ -377,31 +389,42 @@ export default function AdminCaseStudiesPage() {
       }
 
       const fd = buildCaseStudyFormData(values, selectedImages);
-      const url = editing ? `/api/case-studies/${editing.id}` : "/api/case-studies";
+      const url = editing
+        ? `/api/case-studies/${editing.id}`
+        : "/api/case-studies";
       const method = editing ? "PATCH" : "POST";
 
-      const res = await fetch(url, { method, credentials: "include", body: fd });
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        body: fd,
+      });
       const contentType = res.headers.get("content-type") || "";
       const payload = contentType.includes("application/json")
         ? await res.json().catch(() => null)
         : await res.text().catch(() => null);
 
       if (!res.ok) {
-        const obj = payload && typeof payload === "object" ? (payload as any) : null;
+        const obj =
+          payload && typeof payload === "object" ? (payload as any) : null;
         let message = "Request failed";
-        
+
         if (obj) {
           if (obj.details?.fieldErrors) {
-            const errors = Object.entries(obj.details.fieldErrors)
-              .map(([field, errs]) => `${field}: ${(errs as string[]).join(', ')}`);
-            message = errors.join('\n');
+            const errors = Object.entries(obj.details.fieldErrors).map(
+              ([field, errs]) => `${field}: ${(errs as string[]).join(", ")}`,
+            );
+            message = errors.join("\n");
           } else {
-             message = (obj.error || obj.message) && String(obj.error || obj.message) || message;
+            message =
+              ((obj.error || obj.message) &&
+                String(obj.error || obj.message)) ||
+              message;
           }
         } else if (typeof payload === "string" && payload) {
           message = payload;
         }
-        
+
         throw new Error(message);
       }
       return payload;
@@ -424,10 +447,16 @@ export default function AdminCaseStudiesPage() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: async (payload: { id: string; status: "ACTIVE" | "INACTIVE" }) =>
-      apiPatch<any, { status: "ACTIVE" | "INACTIVE" }>(`/api/case-studies/${payload.id}/status`, {
-        status: payload.status,
-      }),
+    mutationFn: async (payload: {
+      id: string;
+      status: "ACTIVE" | "INACTIVE";
+    }) =>
+      apiPatch<any, { status: "ACTIVE" | "INACTIVE" }>(
+        `/api/case-studies/${payload.id}/status`,
+        {
+          status: payload.status,
+        },
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-case-studies"] });
     },
@@ -473,8 +502,8 @@ export default function AdminCaseStudiesPage() {
             Create, update, activate/inactivate and delete case studies.
           </p>
         </div>
-        <Button 
-          onClick={openCreate} 
+        <Button
+          onClick={openCreate}
           className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -499,18 +528,31 @@ export default function AdminCaseStudiesPage() {
             <TableHeader>
               <TableRow className="border-slate-800">
                 <TableHead className="text-slate-400">Title</TableHead>
-                <TableHead className="text-slate-400 hidden md:table-cell">Location</TableHead>
-                <TableHead className="text-slate-400 hidden lg:table-cell">Order</TableHead>
+                <TableHead className="text-slate-400 hidden md:table-cell">
+                  Location
+                </TableHead>
+                <TableHead className="text-slate-400 hidden lg:table-cell">
+                  Order
+                </TableHead>
                 <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400 hidden sm:table-cell">Media</TableHead>
-                <TableHead className="text-slate-400 hidden xl:table-cell">Updated</TableHead>
-                <TableHead className="text-slate-400 text-right">Actions</TableHead>
+                <TableHead className="text-slate-400 hidden sm:table-cell">
+                  Media
+                </TableHead>
+                <TableHead className="text-slate-400 hidden xl:table-cell">
+                  Updated
+                </TableHead>
+                <TableHead className="text-slate-400 text-right">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-slate-800">
-                  <TableCell colSpan={7} className="py-10 text-center text-slate-500">
+                  <TableCell
+                    colSpan={7}
+                    className="py-10 text-center text-slate-500"
+                  >
                     No case studies found.
                   </TableCell>
                 </TableRow>
@@ -522,8 +564,12 @@ export default function AdminCaseStudiesPage() {
                       ? "ACTIVE"
                       : "INACTIVE";
                   const logoUrl = cs.logoUrl || getMediaUrl(cs.logo);
-                  const imageCount = Array.isArray(cs.images) ? cs.images.length : 0;
-                  const hasVideo = Boolean(cs.videoUrl || getMediaUrl(cs.video));
+                  const imageCount = Array.isArray(cs.images)
+                    ? cs.images.length
+                    : 0;
+                  const hasVideo = Boolean(
+                    cs.videoUrl || getMediaUrl(cs.video),
+                  );
 
                   return (
                     <TableRow key={cs.id} className="border-slate-800">
@@ -531,7 +577,11 @@ export default function AdminCaseStudiesPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl border border-slate-800 bg-slate-800/40 overflow-hidden flex items-center justify-center">
                             {logoUrl ? (
-                              <img src={logoUrl} alt="" className="h-full w-full object-cover" />
+                              <img
+                                src={logoUrl}
+                                alt=""
+                                className="h-full w-full object-cover"
+                              />
                             ) : (
                               <ImageIcon className="h-4 w-4 text-slate-500" />
                             )}
@@ -550,7 +600,9 @@ export default function AdminCaseStudiesPage() {
                         {cs.location || "—"}
                       </TableCell>
                       <TableCell className="text-slate-400 hidden lg:table-cell">
-                        {typeof cs.displayOrder === "number" ? cs.displayOrder : "—"}
+                        {typeof cs.displayOrder === "number"
+                          ? cs.displayOrder
+                          : "—"}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -569,18 +621,30 @@ export default function AdminCaseStudiesPage() {
                           <span className="inline-flex items-center gap-1">
                             <ImageIcon className="h-4 w-4" /> {imageCount}
                           </span>
-                          <span className={cn("inline-flex items-center gap-1", !hasVideo && "opacity-40")}>
-                            <VideoIcon className="h-4 w-4" /> {hasVideo ? "1" : "0"}
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1",
+                              !hasVideo && "opacity-40",
+                            )}
+                          >
+                            <VideoIcon className="h-4 w-4" />{" "}
+                            {hasVideo ? "1" : "0"}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-slate-400 hidden xl:table-cell">
-                        {cs.updatedAt ? dayjs(cs.updatedAt).format("MMM D, YYYY") : "—"}
+                        {cs.updatedAt
+                          ? dayjs(cs.updatedAt).format("MMM D, YYYY")
+                          : "—"}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-slate-400 hover:text-white"
+                            >
                               <MoreHorizontal className="h-5 w-5" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -595,7 +659,8 @@ export default function AdminCaseStudiesPage() {
                               onClick={() =>
                                 statusMutation.mutate({
                                   id: cs.id,
-                                  status: status === "ACTIVE" ? "INACTIVE" : "ACTIVE",
+                                  status:
+                                    status === "ACTIVE" ? "INACTIVE" : "ACTIVE",
                                 })
                               }
                             >
@@ -657,7 +722,10 @@ export default function AdminCaseStudiesPage() {
         </div>
       </div>
 
-      <Dialog open={dialogOpen} onOpenChange={(o) => !saveMutation.isPending && setDialogOpen(o)}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(o) => !saveMutation.isPending && setDialogOpen(o)}
+      >
         <DialogContent className="w-full max-w-[98vw] sm:max-w-[95vw] lg:max-w-6xl bg-[#0b0e14] border-slate-800/50 max-h-[98vh] flex flex-col p-0 overflow-hidden shadow-2xl">
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-800/40">
             <button
@@ -688,10 +756,14 @@ export default function AdminCaseStudiesPage() {
               <div className="space-y-10">
                 {/* Core Identity */}
                 <section className="space-y-6">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">Core Identity</h3>
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">
+                    Core Identity
+                  </h3>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Case Title</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Case Title
+                      </Label>
                       <Input
                         placeholder="e.g. The Quantum Rebranding"
                         {...form.register("title", { required: true })}
@@ -700,7 +772,9 @@ export default function AdminCaseStudiesPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Location</Label>
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                          Location
+                        </Label>
                         <div className="relative">
                           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
                           <Input
@@ -711,11 +785,15 @@ export default function AdminCaseStudiesPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Display Order</Label>
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                          Display Order
+                        </Label>
                         <Input
                           type="number"
                           placeholder="01"
-                          {...form.register("displayOrder", { valueAsNumber: true })}
+                          {...form.register("displayOrder", {
+                            valueAsNumber: true,
+                          })}
                           className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                         />
                       </div>
@@ -723,8 +801,12 @@ export default function AdminCaseStudiesPage() {
 
                     <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 sm:p-5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-white transition-colors group-hover:text-indigo-300">Active Status</h4>
-                        <p className="text-[11px] text-slate-500">Visible to the public immediately after creation</p>
+                        <h4 className="text-sm font-bold text-white transition-colors group-hover:text-indigo-300">
+                          Active Status
+                        </h4>
+                        <p className="text-[11px] text-slate-500">
+                          Visible to the public immediately after creation
+                        </p>
                       </div>
                       <Controller
                         name="isActive"
@@ -735,14 +817,16 @@ export default function AdminCaseStudiesPage() {
                             onClick={() => field.onChange(!field.value)}
                             className={cn(
                               "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 p-0.5",
-                              field.value ? "bg-lime-400" : "bg-rose-500"
+                              field.value ? "bg-lime-400" : "bg-rose-500",
                             )}
                           >
-                            <span className="sr-only">Toggle active status</span>
+                            <span className="sr-only">
+                              Toggle active status
+                            </span>
                             <span
                               className={cn(
                                 "pointer-events-none block h-5 w-5 shrink-0 rounded-full bg-white shadow-lg transform transition duration-200 ease-in-out",
-                                field.value ? "translate-x-5" : "translate-x-0"
+                                field.value ? "translate-x-5" : "translate-x-0",
                               )}
                             />
                           </button>
@@ -754,10 +838,14 @@ export default function AdminCaseStudiesPage() {
 
                 {/* Editorial Narrative */}
                 <section className="space-y-6">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">Editorial Narrative</h3>
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-pink-400/80">
+                    Editorial Narrative
+                  </h3>
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Editorial Tagline</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Editorial Tagline
+                      </Label>
                       <Textarea
                         placeholder="Describe the soul of the project in a single punchy sentence..."
                         {...form.register("tagline")}
@@ -765,7 +853,9 @@ export default function AdminCaseStudiesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Services Cycle Title</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Services Cycle Title
+                      </Label>
                       <Input
                         placeholder="e.g. Discovery Phase"
                         {...form.register("cycleTitle")}
@@ -773,7 +863,9 @@ export default function AdminCaseStudiesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Services Provided</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Services Provided
+                      </Label>
                       <Controller
                         name="services"
                         control={form.control}
@@ -787,7 +879,9 @@ export default function AdminCaseStudiesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Structure Section Title</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Structure Section Title
+                      </Label>
                       <Input
                         placeholder="e.g. Project Architecture"
                         {...form.register("structureTitle")}
@@ -795,7 +889,9 @@ export default function AdminCaseStudiesPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Structure Highlights</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Structure Highlights
+                      </Label>
                       <Controller
                         name="structureItems"
                         control={form.control}
@@ -816,12 +912,19 @@ export default function AdminCaseStudiesPage() {
               <div className="space-y-10">
                 {/* Visual Media */}
                 <section className="space-y-6">
-                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-400/80">Visual Media</h3>
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-400/80">
+                    Visual Media
+                  </h3>
                   <div className="space-y-8">
                     {/* Project Logo Dropzone */}
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Logo</Label>
-                      <div className="relative group cursor-pointer overflow-hidden rounded-3xl" onClick={() => logoInputRef.current?.click()}>
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Project Logo
+                      </Label>
+                      <div
+                        className="relative group cursor-pointer overflow-hidden rounded-3xl"
+                        onClick={() => logoInputRef.current?.click()}
+                      >
                         <input
                           type="file"
                           accept="image/*"
@@ -835,17 +938,30 @@ export default function AdminCaseStudiesPage() {
                         <div className="border-2 border-dashed border-slate-800 p-8 flex flex-col items-center justify-center gap-4 bg-slate-900/20 group-hover:bg-slate-900/40 group-hover:border-indigo-500/50 transition-all relative z-10 min-h-[160px]">
                           {logoFiles && logoFiles.length > 0 ? (
                             <div className="absolute inset-0 z-0 bg-slate-950">
-                              <FilePreview file={logoFiles[0]} className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity" />
+                              <FilePreview
+                                file={logoFiles[0]}
+                                className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity"
+                              />
                               <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <div className="bg-indigo-500/20 text-indigo-300 px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-indigo-500/30">
                                   {logoFiles[0].name}
                                 </div>
-                                <p className="text-[10px] text-indigo-400/70 mt-2 font-bold uppercase tracking-widest">Click to change</p>
+                                <p className="text-[10px] text-indigo-400/70 mt-2 font-bold uppercase tracking-widest">
+                                  Click to change
+                                </p>
                               </div>
                             </div>
                           ) : editing?.logoUrl || getMediaUrl(editing?.logo) ? (
                             <div className="absolute inset-0 z-0 bg-slate-950">
-                              <img src={editing?.logoUrl || getMediaUrl(editing?.logo) || ""} alt="Logo" className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity" />
+                              <img
+                                src={
+                                  editing?.logoUrl ||
+                                  getMediaUrl(editing?.logo) ||
+                                  ""
+                                }
+                                alt="Logo"
+                                className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity"
+                              />
                               <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="bg-white/10 text-white px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-white/20">
                                   Change Logo
@@ -858,8 +974,12 @@ export default function AdminCaseStudiesPage() {
                                 <Upload className="h-6 w-6 text-indigo-400" />
                               </div>
                               <div className="text-center">
-                                <p className="text-sm font-bold text-slate-200">Drop Logo Here</p>
-                                <p className="text-[10px] text-slate-500 mt-1">SVG, PNG or AI (Max 2MB)</p>
+                                <p className="text-sm font-bold text-slate-200">
+                                  Drop Logo Here
+                                </p>
+                                <p className="text-[10px] text-slate-500 mt-1">
+                                  SVG, PNG or AI (Max 2MB)
+                                </p>
                               </div>
                             </>
                           )}
@@ -870,12 +990,19 @@ export default function AdminCaseStudiesPage() {
                     {/* Project Gallery */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Project Gallery</Label>
-                        <span className="text-[10px] font-black text-slate-600">Upload up to 12 images</span>
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                          Project Gallery
+                        </Label>
+                        <span className="text-[10px] font-black text-slate-600">
+                          Upload up to 12 images
+                        </span>
                       </div>
                       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                         {/* Add Button */}
-                        <div onClick={() => imagesInputRef.current?.click()} className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group relative overflow-hidden">
+                        <div
+                          onClick={() => imagesInputRef.current?.click()}
+                          className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group relative overflow-hidden"
+                        >
                           <input
                             type="file"
                             multiple
@@ -886,31 +1013,53 @@ export default function AdminCaseStudiesPage() {
                           />
                           <Plus className="h-6 w-6 text-slate-500 group-hover:text-indigo-400 group-hover:scale-110 transition-all relative z-10" />
                         </div>
-                        {selectedImages.length > 0 ? (
-                          selectedImages.map((file, i) => (
-                            <div key={`new-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group">
-                              <FilePreview file={file} className="h-full w-full object-cover opacity-80" />
-                              <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-rose-500/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500">
-                                <X className="h-3 w-3" />
-                              </button>
-                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
-                                <span className="text-[10px] font-bold text-white px-2 text-center truncate w-full">{file.name}</span>
+                        {selectedImages.length > 0
+                          ? selectedImages.map((file, i) => (
+                              <div
+                                key={`new-${i}`}
+                                className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group"
+                              >
+                                <FilePreview
+                                  file={file}
+                                  className="h-full w-full object-cover opacity-80"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeImage(i)}
+                                  className="absolute top-1 right-1 bg-rose-500/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
+                                  <span className="text-[10px] font-bold text-white px-2 text-center truncate w-full">
+                                    {file.name}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                          ))
-                        ) : editing?.images && Array.isArray(editing.images) && editing.images.length > 0 ? (
-                          editing.images.map((img: any, i: number) => (
-                            <div key={`existing-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group">
-                              <img src={getMediaUrl(img) || ""} alt="" className="h-full w-full object-cover opacity-80" />
-                            </div>
-                          ))
-                        ) : (
-                          [1, 2, 3].map((i) => (
-                            <div key={`placeholder-${i}`} className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center">
-                              <ImageIcon className="h-6 w-6 text-slate-800" />
-                            </div>
-                          ))
-                        )}
+                            ))
+                          : editing?.images &&
+                              Array.isArray(editing.images) &&
+                              editing.images.length > 0
+                            ? editing.images.map((img: any, i: number) => (
+                                <div
+                                  key={`existing-${i}`}
+                                  className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group"
+                                >
+                                  <img
+                                    src={getMediaUrl(img) || ""}
+                                    alt=""
+                                    className="h-full w-full object-cover opacity-80"
+                                  />
+                                </div>
+                              ))
+                            : [1, 2, 3].map((i) => (
+                                <div
+                                  key={`placeholder-${i}`}
+                                  className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center"
+                                >
+                                  <ImageIcon className="h-6 w-6 text-slate-800" />
+                                </div>
+                              ))}
                       </div>
                     </div>
                   </div>
@@ -921,7 +1070,9 @@ export default function AdminCaseStudiesPage() {
                   <div className="bg-[#151922] border border-slate-800/50 rounded-3xl p-6 space-y-6">
                     <div className="flex items-center gap-2 text-indigo-400">
                       <Clapperboard className="h-5 w-5" />
-                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Cinematic Component</h3>
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                        Cinematic Component
+                      </h3>
                     </div>
 
                     <div className="space-y-4">
@@ -933,17 +1084,31 @@ export default function AdminCaseStudiesPage() {
                       <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm overflow-hidden">
                           {videoFiles && videoFiles.length > 0 ? (
-                            <span className="truncate text-teal-300 font-bold">{videoFiles[0].name}</span>
-                          ) : editing?.videoUrl || getMediaUrl(editing?.video) ? (
-                            <span className="truncate text-teal-300 font-bold">Existing Video Uploaded</span>
+                            <span className="truncate text-teal-300 font-bold">
+                              {videoFiles[0].name}
+                            </span>
+                          ) : editing?.videoUrl ||
+                            getMediaUrl(editing?.video) ? (
+                            <span className="truncate text-teal-300 font-bold">
+                              Existing Video Uploaded
+                            </span>
                           ) : (
-                            <span className="text-slate-500">No video selected</span>
+                            <span className="text-slate-500">
+                              No video selected
+                            </span>
                           )}
-                          {!videoFiles?.length && !(editing?.videoUrl || getMediaUrl(editing?.video)) && (
-                            <Plus className="h-4 w-4 text-slate-500 rotate-45 flex-shrink-0" />
-                          )}
+                          {!videoFiles?.length &&
+                            !(
+                              editing?.videoUrl || getMediaUrl(editing?.video)
+                            ) && (
+                              <Plus className="h-4 w-4 text-slate-500 rotate-45 flex-shrink-0" />
+                            )}
                         </div>
-                        <button type="button" onClick={() => videoInputRef.current?.click()} className="flex h-12 items-center justify-center gap-2 px-6 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-sm font-bold hover:bg-teal-500/20 transition-all cursor-pointer">
+                        <button
+                          type="button"
+                          onClick={() => videoInputRef.current?.click()}
+                          className="flex h-12 items-center justify-center gap-2 px-6 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-sm font-bold hover:bg-teal-500/20 transition-all cursor-pointer"
+                        >
                           <input
                             type="file"
                             accept="video/*"
@@ -955,7 +1120,11 @@ export default function AdminCaseStudiesPage() {
                             className="hidden"
                           />
                           <VideoIcon className="h-4 w-4" />
-                          <span>{videoFiles && videoFiles.length > 0 ? "Change Clip" : "Upload Clip"}</span>
+                          <span>
+                            {videoFiles && videoFiles.length > 0
+                              ? "Change Clip"
+                              : "Upload Clip"}
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -995,13 +1164,17 @@ export default function AdminCaseStudiesPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(o) => !o && setDeleteTarget(null)}
+      >
         <DialogContent className="max-w-md bg-slate-950 border-slate-800">
           <DialogHeader>
             <DialogTitle className="text-white">Delete case study?</DialogTitle>
           </DialogHeader>
           <div className="text-sm text-slate-400">
-            This action cannot be undone. {deleteTarget?.title ? `“${deleteTarget.title}”` : ""}
+            This action cannot be undone.{" "}
+            {deleteTarget?.title ? `“${deleteTarget.title}”` : ""}
           </div>
           <DialogFooter className="gap-4 pt-4">
             <Button
@@ -1017,7 +1190,9 @@ export default function AdminCaseStudiesPage() {
               type="button"
               className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               disabled={deleteMutation.isPending || !deleteTarget?.id}
-              onClick={() => deleteTarget?.id && deleteMutation.mutate(deleteTarget.id)}
+              onClick={() =>
+                deleteTarget?.id && deleteMutation.mutate(deleteTarget.id)
+              }
             >
               {deleteMutation.isPending ? (
                 <span className="flex items-center gap-2">
