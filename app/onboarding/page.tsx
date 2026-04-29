@@ -39,6 +39,15 @@ function OnboardingRouterContent() {
       const pendingPlanCode = session.pendingPlanCode;
       const role = session.role;
 
+      // DEBUG LOGGING
+      console.group("[OnboardingRouter] Routing Decision Point");
+      console.log("✓ Session exists:", !!session);
+      console.log("✓ subscription.planCode:", session.subscription?.planCode);
+      console.log("✓ subscription.planCategory:", planCategory);
+      console.log("✓ subscription.status:", subscriptionStatus);
+      console.log("✓ pendingPlanCode:", pendingPlanCode);
+      console.groupEnd();
+
       // ROLE SECURITY: Admins and Super Admins should NEVER see onboarding
       if (role === "ADMIN" || role === "SUPER_ADMIN") {
         console.log("[OnboardingRouter] Admin role detected, redirecting to /admin");
@@ -158,12 +167,29 @@ function OnboardingRouterContent() {
       // If we have a planCategory (from subscription or resolved from pendingPlanCode), route accordingly
       // Note: Users with INCOMPLETE subscriptions should have planCategory resolved from pendingPlanCode
       if (!planCategory) {
-        // This shouldn't happen if backend is working correctly, but as a safety fallback
-        console.log(
-          "[OnboardingRouter] No plan category resolved, redirecting to pricing",
-        );
-        router.push("/pricing");
-        return;
+        // Try to resolve from plan code
+        console.log("[OnboardingRouter] No planCategory, attempting to resolve from plan code...");
+        
+        if (pendingPlanCode || session.subscription?.planCode) {
+          const planCodeToResolve = session.subscription?.planCode || pendingPlanCode;
+          
+          // Check if it's an enterprise plan
+          if (planCodeToResolve?.startsWith("ENT_") || planCodeToResolve?.startsWith("ENT-")) {
+            console.log("[OnboardingRouter] Detected enterprise plan code:", planCodeToResolve);
+            router.push("/onboarding/brand-brief");
+            return;
+          }
+          
+          // Otherwise try to fetch plan info
+          console.log("[OnboardingRouter] Attempting to fetch plan category for:", planCodeToResolve);
+          // This will be fetched in the next section
+        } else {
+          console.log(
+            "[OnboardingRouter] No plan category resolved, redirecting to pricing",
+          );
+          router.push("/pricing");
+          return;
+        }
       }
 
       // Route to plan-specific onboarding using canonical mapping

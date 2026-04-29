@@ -167,7 +167,17 @@ function FullManagementOnboardingInner() {
     const activePlanCode = session.subscription?.planCode || session.pendingPlanCode;
     const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
 
+    // DEBUG LOGGING
+    console.group("[FullManagementOnboarding] Page Load Check");
+    console.log("✓ session.subscription.planCode:", session.subscription?.planCode);
+    console.log("✓ session.subscription.planCategory:", planCategory);
+    console.log("✓ session.pendingPlanCode:", session.pendingPlanCode);
+    console.log("✓ activePlanCode:", activePlanCode);
+    console.log("✓ isEnterprise:", isEnterprise);
+    console.groupEnd();
+
     if (isEnterprise) {
+      console.log("[FullManagementOnboarding] Enterprise user detected, redirecting to brand-brief");
       router.push("/onboarding/brand-brief");
       return;
     }
@@ -176,6 +186,7 @@ function FullManagementOnboardingInner() {
       planCategory === "FULL_MANAGEMENT" ||
       planCategory === "JEWELRY_FULL_MANAGEMENT";
     if (!isFullPlan) {
+      console.log("[FullManagementOnboarding] Not a full plan:", planCategory, "redirecting to /onboarding");
       router.push("/onboarding");
       return;
     }

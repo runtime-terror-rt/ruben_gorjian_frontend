@@ -96,6 +96,17 @@ function BillingSuccessContent() {
         } else {
           const activePlanCode = currentPlanCode || session?.pendingPlanCode || expectedPlanCode;
           const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || session?.subscription?.planCategory === "ENTERPRISE";
+          
+          // DEBUG LOGGING
+          console.group("[BillingSuccess] Redirecting from Success Page");
+          console.log("✓ currentPlanCode:", currentPlanCode);
+          console.log("✓ session.subscription.planCode:", session?.subscription?.planCode);
+          console.log("✓ session.subscription.planCategory:", session?.subscription?.planCategory);
+          console.log("✓ activePlanCode:", activePlanCode);
+          console.log("✓ isEnterprise:", isEnterprise);
+          console.log("✓ Redirecting to:", isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
+          console.groupEnd();
+          
           router.push(isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
         }
       }
