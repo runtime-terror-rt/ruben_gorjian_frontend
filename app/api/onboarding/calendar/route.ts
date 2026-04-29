@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore ? cookieStore.toString() : "";
-    const res = await fetch(`${getBackendUrl()}/onboarding/calendar`, {
+    const res = await fetch(`${getBackendUrl()}/onboarding/brand-brief`, {
       headers: {
         ...(cookieHeader ? { cookie: cookieHeader } : {}),
       },
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const cookieStore = await cookies();
     const cookieHeader = cookieStore ? cookieStore.toString() : "";
-    const res = await fetch(`${getBackendUrl()}/onboarding/calendar`, {
+    const res = await fetch(`${getBackendUrl()}/onboarding/brand-brief`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
