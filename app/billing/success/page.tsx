@@ -73,15 +73,15 @@ function BillingSuccessContent() {
       const { getPlanSelection } = await import("@/lib/plan-selection");
       const selection = getPlanSelection();
       const expectedPlanCode = selection?.planCode;
-      
+
       const currentPlanCode = session?.subscription?.planCode;
       const status = session?.subscription?.status;
-      
+
       const isStatusActive = status === "ACTIVE" || status === "TRIALING";
-      
+
       // If we expect a specific plan (from checkout), wait until the session matches it
       const isPlanMatched = !expectedPlanCode || currentPlanCode === expectedPlanCode;
-      
+
       const isActive = isStatusActive && isPlanMatched;
 
       if (isActive && checking) {
@@ -89,14 +89,14 @@ function BillingSuccessContent() {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
         }
-        
+
         // Automatically redirect when active
         if (session?.onboardingCompleted) {
           router.push("/dashboard");
         } else {
           const activePlanCode = currentPlanCode || session?.pendingPlanCode || expectedPlanCode;
           const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
-          router.push(isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
+          router.push(isEnterprise ? "/onboarding/full-management" : "/onboarding");
         }
       }
     };
@@ -130,7 +130,7 @@ function BillingSuccessContent() {
             {checking
               ? "Activating your subscription..."
               : session?.subscription?.status === "ACTIVE" ||
-                  session?.subscription?.status === "TRIALING"
+                session?.subscription?.status === "TRIALING"
                 ? "Your subscription is now active. Welcome to Talexia!"
                 : "Your payment was successful. Your subscription will be activated shortly."}
           </p>
@@ -199,7 +199,7 @@ function BillingSuccessContent() {
             </Link>
           ) : (
             <Link
-              href={session?.subscription?.planCode?.startsWith("ENT_") || session?.subscription?.planCode?.startsWith("ENT-") ? "/onboarding/brand-brief" : "/onboarding"}
+              href={session?.subscription?.planCode?.startsWith("ENT_") ? "/onboarding/full-management" : "/onboarding"}
               className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Onboarding

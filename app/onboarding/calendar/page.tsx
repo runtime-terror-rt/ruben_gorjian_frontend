@@ -85,7 +85,7 @@ function CalendarOnboardingInner() {
     
     // Safety check for Enterprise plans - force to brand-brief
     const activePlanCode = session.subscription?.planCode || session.pendingPlanCode;
-    const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+    const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE" || planCategory === "FULL_MANAGEMENT";
     
     if (isEnterprise) {
       router.push("/onboarding/brand-brief");

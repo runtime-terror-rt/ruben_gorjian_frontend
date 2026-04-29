@@ -96,13 +96,13 @@ function OnboardingRouterContent() {
                 if (errorData.error?.includes("Plan not found")) {
                   alert(
                     `The plan "${planCodeToCheckout}" hasn't been set up in Stripe yet.\n\n` +
-                      `Please ask the administrator to create this plan in Stripe.\n\n` +
-                      `Redirecting you to the pricing page to select another plan.`,
+                    `Please ask the administrator to create this plan in Stripe.\n\n` +
+                    `Redirecting you to the pricing page to select another plan.`,
                   );
                 } else {
                   alert(
                     `Unable to start checkout: ${errorData.error || "Unknown error"}\n\n` +
-                      `Please try again or contact support.`,
+                    `Please try again or contact support.`,
                   );
                 }
 
@@ -123,8 +123,8 @@ function OnboardingRouterContent() {
                 console.error("[OnboardingRouter] Checkout failed:", data);
                 alert(
                   `Checkout session created but no redirect URL provided.\n\n` +
-                    `Message: ${data.message || "Unknown error"}\n\n` +
-                    `Please try again or contact support.`,
+                  `Message: ${data.message || "Unknown error"}\n\n` +
+                  `Please try again or contact support.`,
                 );
                 router.push("/pricing");
               }
@@ -133,8 +133,8 @@ function OnboardingRouterContent() {
               console.error("[OnboardingRouter] Checkout error:", err);
               alert(
                 `Failed to connect to checkout service.\n\n` +
-                  `Error: ${err.message}\n\n` +
-                  `Please check your internet connection and try again.`,
+                `Error: ${err.message}\n\n` +
+                `Please check your internet connection and try again.`,
               );
               router.push("/pricing");
             });
@@ -171,12 +171,12 @@ function OnboardingRouterContent() {
         await import("@/lib/onboarding-routes");
       const { getPlanSelection } = await import("@/lib/plan-selection");
       const selection = getPlanSelection();
-      
+
       const activePlanCode = session.subscription?.planCode || session.pendingPlanCode || selection?.planCode;
-      const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE";
-      
-      const onboardingRoute = isEnterprise 
-        ? "/onboarding/brand-brief" 
+      const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE" || planCategory === "FULL_MANAGEMENT";
+
+      const onboardingRoute = isEnterprise
+        ? "/onboarding/brand-brief"
         : getOnboardingRouteForPlanCategory(planCategory);
 
       if (onboardingRoute) {
