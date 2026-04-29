@@ -84,8 +84,10 @@ function CalendarOnboardingInner() {
     const planCategory = session.subscription?.planCategory;
 
     // Safety check for Enterprise plans - force to brand-brief
-    const activePlanCode = session.subscription?.planCode || session.pendingPlanCode;
-    const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+    // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
+    const pendingCode = session.pendingPlanCode;
+    const activePlanCode = session.subscription?.planCode || pendingCode;
+    const isEnterprise = (pendingCode?.startsWith("ENT_") || pendingCode?.startsWith("ENT-")) || activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
 
     // DEBUG LOGGING
     console.group("[CalendarOnboarding] Page Load Check");

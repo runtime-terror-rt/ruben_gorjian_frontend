@@ -108,8 +108,8 @@ function VerifyPageInner() {
         session.subscription?.planCode ||
         planSelection?.planCode;
       
-      // Infer category: Enterprise plans should have ENTERPRISE category
-      const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
+      // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
+      const isEnterprise = (pendingPlanCode?.startsWith("ENT_") || pendingPlanCode?.startsWith("ENT-")) || planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
       let planCategoryToUse = planCategory;
       if (isEnterprise) {
         planCategoryToUse = "ENTERPRISE";

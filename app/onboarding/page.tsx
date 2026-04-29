@@ -198,8 +198,10 @@ function OnboardingRouterContent() {
       const { getPlanSelection } = await import("@/lib/plan-selection");
       const selection = getPlanSelection();
 
-      const activePlanCode = session.subscription?.planCode || session.pendingPlanCode || selection?.planCode;
-      const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE";
+      // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
+      const pendingCode = session.pendingPlanCode;
+      const activePlanCode = session.subscription?.planCode || pendingCode || selection?.planCode;
+      const isEnterprise = (pendingCode?.startsWith("ENT_") || pendingCode?.startsWith("ENT-")) || activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE";
 
       const onboardingRoute = isEnterprise
         ? "/onboarding/brand-brief"
