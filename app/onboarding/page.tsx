@@ -173,7 +173,7 @@ function OnboardingRouterContent() {
       const selection = getPlanSelection();
       
       const activePlanCode = session.subscription?.planCode || session.pendingPlanCode || selection?.planCode;
-      const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-");
+      const isEnterprise = activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || planCategory === "ENTERPRISE";
       
       const onboardingRoute = isEnterprise 
         ? "/onboarding/brand-brief" 
