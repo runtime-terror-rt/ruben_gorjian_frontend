@@ -299,9 +299,10 @@ function CalendarOnboardingInner() {
     label: string;
     icon: IconType;
   }> = [
-      lue: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
-value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
-value: "TIKTOK", label: "TikTok", icon: SiTiktok },
+    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
+    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
+    { value: "TIKTOK", label: "TikTok", icon: SiTiktok },
+  ];
 
 
 if (sessionLoading) {
