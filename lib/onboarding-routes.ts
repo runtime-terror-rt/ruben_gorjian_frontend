@@ -38,6 +38,9 @@ export function getOnboardingRouteForPlanCategory(
     case "JEWELRY_FULL_MANAGEMENT":
       return "/onboarding/full-management";
 
+    case "ENTERPRISE":
+      return "/onboarding/brand-brief";
+
     default:
       return null;
   }
