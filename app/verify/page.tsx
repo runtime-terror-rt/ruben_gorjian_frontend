@@ -108,11 +108,11 @@ function VerifyPageInner() {
         session.subscription?.planCode ||
         planSelection?.planCode;
       
-      // Infer category: prioritize Enterprise as FULL_MANAGEMENT
+      // Infer category: Enterprise plans should have ENTERPRISE category
       const isEnterprise = planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
       let planCategoryToUse = planCategory;
       if (isEnterprise) {
-        planCategoryToUse = "FULL_MANAGEMENT";
+        planCategoryToUse = "ENTERPRISE";
       }
 
       // Case 1: User needs to pay for the resolved plan
