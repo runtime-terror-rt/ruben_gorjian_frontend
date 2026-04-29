@@ -83,6 +83,26 @@ export default function ScheduleVisitPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const [hasVideoAddon, setHasVideoAddon] = useState(false);
+
+  useEffect(() => {
+    async function checkVideoAddon() {
+      try {
+        const res = await apiGet<any>("/api/billing/current-plan");
+        if (res?.success && res?.subscription) {
+          setHasVideoAddon(!!res.subscription.videoAddonEnabled);
+        }
+      } catch (err) {
+        console.error("Failed to fetch plan for video addon", err);
+      }
+    }
+    if (!isAdmin) {
+      checkVideoAddon();
+    } else {
+      setHasVideoAddon(true);
+    }
+  }, [isAdmin]);
+
   const userBookings = useMemo(() => {
     if (isAdmin) return sessions;
 
@@ -749,12 +769,23 @@ export default function ScheduleVisitPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setSessionType("VIDEO_SESSION")}
+                      onClick={() => {
+                        if (!hasVideoAddon && !isAdmin) {
+                          toast({
+                            title: "Upgrade Required",
+                            description: "You need to purchase the Video Addon to schedule a video session.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        setSessionType("VIDEO_SESSION");
+                      }}
                       className={clsx(
-                        "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
+                        "flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300 relative",
                         sessionType === "VIDEO_SESSION"
                           ? "bg-lime-400/10 border-lime-400 text-white"
                           : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300",
+                        !hasVideoAddon && !isAdmin && "opacity-50 hover:border-transparent hover:text-slate-500 cursor-not-allowed"
                       )}
                     >
                       <Video
@@ -765,7 +796,14 @@ export default function ScheduleVisitPage() {
                             : "text-slate-600",
                         )}
                       />
-                      <span className="font-bold">Video Session</span>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="font-bold">Video Session</span>
+                        {!hasVideoAddon && !isAdmin && (
+                          <span className="text-[9px] text-red-400/80 font-black uppercase tracking-widest">
+                            Requires Addon
+                          </span>
+                        )}
+                      </div>
                     </button>
                   </div>
                 </div>
