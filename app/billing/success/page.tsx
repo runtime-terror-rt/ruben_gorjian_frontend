@@ -199,7 +199,7 @@ function BillingSuccessContent() {
             </Link>
           ) : (
             <Link
-              href={session?.subscription?.planCode?.startsWith("ENT_") || session?.subscription?.planCode?.startsWith("ENT-") ? "/onboarding/brand-brief" : "/onboarding"}
+              href={session?.subscription?.planCode?.startsWith("ENT_") || session?.subscription?.planCode?.startsWith("ENT-") || session?.subscription?.planCategory === "ENTERPRISE" ? "/onboarding/brand-brief" : "/onboarding"}
               className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Onboarding
