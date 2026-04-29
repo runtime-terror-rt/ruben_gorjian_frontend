@@ -77,7 +77,7 @@ function CalendarOnboardingInner() {
     if (sessionLoading) return;
 
     if (!session) {
-      router.push("/login?returnTo=/onboarding/calendar");
+      router.push("/login?returnTo=/onboarding/brand-brief");
       return;
     }
 
@@ -111,7 +111,7 @@ function CalendarOnboardingInner() {
       try {
         await fetchConnectedAccounts();
 
-        const res = await fetch("/api/onboarding/calendar", {
+        const res = await fetch("/api/onboarding/brand-brief", {
           cache: "no-store",
           credentials: "include",
         });
@@ -160,7 +160,7 @@ function CalendarOnboardingInner() {
         description: decodedMessage,
         variant: "destructive",
       });
-      window.history.replaceState({}, "", "/onboarding/calendar");
+      window.history.replaceState({}, "", "/onboarding/brand-brief");
     } else if (successParam) {
       const message = platformParam ? `Connected ${platformParam.toLowerCase()}` : "Account connected";
       toast({ title: "Success", description: message });
@@ -175,7 +175,7 @@ function CalendarOnboardingInner() {
         await refresh();
       }, 2000);
       
-      window.history.replaceState({}, "", "/onboarding/calendar");
+      window.history.replaceState({}, "", "/onboarding/brand-brief");
     }
   }, [queryKey, searchParams, toast, fetchConnectedAccounts, refresh]);
 
@@ -195,7 +195,7 @@ function CalendarOnboardingInner() {
         credentials: "include",
         body: JSON.stringify({ 
           platform: platform.toLowerCase(),
-          redirectUrl: `${window.location.origin}/onboarding/calendar`,
+          redirectUrl: `${window.location.origin}/onboarding/brand-brief`,
           showCalendar: false 
         }),
       });
@@ -261,7 +261,7 @@ function CalendarOnboardingInner() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/onboarding/calendar", {
+      const res = await fetch("/api/onboarding/brand-brief", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -321,10 +321,10 @@ function CalendarOnboardingInner() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-white">
-                  Calendar Setup
+                  Brand Brief
                 </h1>
                 <p className="mt-2 text-sm text-slate-300">
-                  Configure your calendar access and preferences
+                  Provide details about your brand and goals
                 </p>
               </div>
               <Button
