@@ -25,8 +25,8 @@ function EnterpriseAcceptForm() {
   const { toast } = useToast();
 
   const token = searchParams.get("token") ?? "";
+  const planCode = searchParams.get("planCode") ?? "";
 
-  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ function EnterpriseAcceptForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ token, name, password }),
+        body: JSON.stringify({ token, password }),
       });
 
       const data = await res.json();
@@ -82,39 +82,13 @@ function EnterpriseAcceptForm() {
         throw new Error(data.error || data.message || "Signup failed. Please try again.");
       }
 
-      setIsSuccess(true);
-      
-      // Refresh session to ensure frontend knows we're logged in
-      await refresh();
-
-      // Extract plan code from response if available, fallback to inviteDetails or query param
-      const enterprisePlan = data.enterpriseInvite || data.invite || data.enterprisePlan || data.plan || inviteDetails || {};
-      const planCode = data.planCode || enterprisePlan.planCode || enterprisePlan.lookupKey || searchParams.get("plan") || "ENT-UNKNOWN";
-      const planName = data.planName || enterprisePlan.proposal?.planName || enterprisePlan.planName || enterprisePlan.name || "";
-      
-      // Try to find the price in various common fields
-      const priceValue = data.price ?? 
-                         enterprisePlan.proposal?.amount ??
-                         enterprisePlan.price ?? 
-                         enterprisePlan.amount ?? 
-                         enterprisePlan.monthlyPrice ?? 
-                         inviteDetails?.proposal?.amount ??
-                         inviteDetails?.amount ??
-                         inviteDetails?.price ??
-                         searchParams.get("price") ?? 
-                         0;
-
-      // Save plan details to localStorage for the verification redirect
-      if (planCode) {
-        localStorage.setItem(`ent_plan_${planCode}_price`, priceValue.toString());
-        localStorage.setItem(`ent_plan_${planCode}_name`, planName || "Enterprise Plan");
-      }
-
-      // Show success toast
+      // Show brief success toast and redirect to checkout
       toast({
         title: "Account Created",
-        description: "Your account has been created successfully. Kindly check your email to verify it.",
+        description: "Redirecting to secure checkout...",
       });
+      
+      router.push(`/billing/checkout?plan=${planCode}`);
       
     } catch (err: any) {  
       setError(err.message || "Something went wrong. Please try again.");
@@ -220,16 +194,6 @@ function EnterpriseAcceptForm() {
                   onSubmit={handleSubmit}
                   className="space-y-5"
                 >
-                  {/* Invite token display (read-only) */}
-                  <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-4 flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-lime-400/10 flex items-center justify-center flex-shrink-0">
-                      <Building2 className="h-4 w-4 text-lime-400" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Invite Token</p>
-                      <p className="text-[11px] text-slate-400 font-mono truncate">{token}</p>
-                    </div>
-                  </div>
 
                   {/* Invite details display */}
                   {inviteDetails && (
@@ -264,28 +228,12 @@ function EnterpriseAcceptForm() {
                     </div>
                   )}
 
-                  {/* Name field */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                      Full Name
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your full name"
-                        required
-                        className="w-full h-12 pl-11 pr-4 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white text-sm font-medium placeholder:text-slate-700 focus:outline-none focus:border-lime-400/50 focus:ring-1 focus:ring-lime-400/20 transition-all"
-                      />
-                    </div>
-                  </div>
-
+            
+           
                   {/* Password field */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                      Create Password
+                      Set Password
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
@@ -325,7 +273,7 @@ function EnterpriseAcceptForm() {
                   {/* Submit button */}
                   <button
                     type="submit"
-                    disabled={isLoading || !name || !password}
+                    disabled={isLoading || !password}
                     className="w-full h-13 py-3.5 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_8px_30px_rgba(163,230,53,0.25)] mt-2"
                   >
                     {isLoading ? (

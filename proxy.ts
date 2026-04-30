@@ -12,6 +12,7 @@ type Session = {
   emailVerified?: boolean;
   onboardingCompleted?: boolean;
   onboardingStep?: number;
+  brandBriefCompleted?: boolean;
   calendarOnboardingCompleted?: boolean;
   visualOnboardingCompleted?: boolean;
   fullManagementOnboardingCompleted?: boolean;
@@ -87,17 +88,24 @@ export async function proxy(req: NextRequest) {
     }
 
     // Check if onboarding is completed (either generic or plan-specific)
+    const planCode = session?.subscription?.planCode;
     const planCategory = session?.subscription?.planCategory;
-    const isOnboardingCompleted = 
-      session?.onboardingCompleted ||
-      (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
-      (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
-      (planCategory === "FULL_MANAGEMENT" && session?.fullManagementOnboardingCompleted);
+    const isEnterprisePlan =
+      planCode?.startsWith("ENT_") ||
+      planCode?.startsWith("ENT-") ||
+      planCategory === "ENTERPRISE";
 
-     if (!isOnboardingCompleted && !path.startsWith("/onboarding")) {
-      const onboardingRoute = "/onboarding";
+    const isOnboardingCompleted = isEnterprisePlan
+      ? session?.brandBriefCompleted // Enterprise users must complete brand brief
+      : session?.onboardingCompleted ||
+        (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
+        (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
+        (planCategory === "FULL_MANAGEMENT" && session?.fullManagementOnboardingCompleted);
+
+    if (!isOnboardingCompleted && !path.startsWith("/onboarding")) {
+      const onboardingRoute = isEnterprisePlan ? "/onboarding/brand-brief" : "/onboarding";
       return NextResponse.redirect(new URL(onboardingRoute, req.url));
-    } 
+    }
   }
 
   return NextResponse.next();
