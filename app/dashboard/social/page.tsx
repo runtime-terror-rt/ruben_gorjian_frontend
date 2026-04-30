@@ -54,8 +54,13 @@ function SocialPageInner() {
   // Fetch once on mount; keep this outside dependencies so changes to toast don't retrigger repeatedly
   const fetchAccounts = useCallback(async () => {
     try {
-      const response = await fetch("/api/social-media/platform/my-links", {
+      const response = await fetch(`/api/social-media/platform/my-links?_t=${Date.now()}`, {
         credentials: "include",
+        cache: "no-store",
+        headers: {
+          "Pragma": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+        }
       });
 
       if (!response.ok) {
@@ -98,63 +103,6 @@ function SocialPageInner() {
     fetchAccounts();
   }, [fetchAccounts]);
 
-  useEffect(() => {
-    // Avoid re-handling the same query repeatedly
-    if (handledQueryKeyRef.current === queryKey) return;
-    handledQueryKeyRef.current = queryKey;
-
-    const error = searchParams.get("error");
-    const errorMessage = searchParams.get("errorMessage");
-    const success = searchParams.get("success");
-    const platform = searchParams.get("platform");
-    const pendingVerification = searchParams.get("pendingVerification");
-
-    if (error) {
-      // Decode the error message if it's URL encoded
-      const decodedMessage = errorMessage
-        ? decodeURIComponent(errorMessage)
-        : error === "missing_params"
-          ? "Missing required OAuth parameters. Please try connecting again."
-          : error === "connection_failed"
-            ? "Failed to connect account. Please check your credentials and try again."
-            : "Unable to connect account";
-
-      setInlineMessage({ type: "error", text: decodedMessage });
-      toast({
-        title: "Connection failed",
-        description: decodedMessage,
-        variant: "destructive",
-      });
-      if (typeof window !== "undefined") {
-        window.history.replaceState({}, "", "/dashboard/social");
-      }
-    } else if (success) {
-      const message = platform
-        ? `Connected ${platform.toLowerCase()} account`
-        : "Account connected";
-      const finalMessage =
-        pendingVerification === "true"
-          ? `${message}. Talexia is still syncing confirmation from Upload-Post.`
-          : message;
-      setInlineMessage({ type: "success", text: finalMessage });
-      toast({
-        title: "Connected",
-        description: finalMessage,
-      });
-      // Refetch so the list reflects reconciliation with Upload-Post
-      fetchAccounts();
-      // Delayed refetch to handle Upload-Post eventual consistency (cleaned up on unmount only)
-      if (refetchRetryIdRef.current) clearTimeout(refetchRetryIdRef.current);
-      refetchRetryIdRef.current = setTimeout(() => {
-        refetchRetryIdRef.current = null;
-        fetchAccounts();
-      }, 2000);
-      if (typeof window !== "undefined") {
-        window.history.replaceState({}, "", "/dashboard/social");
-      }
-    }
-  }, [queryKey, router, searchParams, toast, fetchAccounts]);
-
   // Clear delayed refetch on unmount
   useEffect(() => {
     return () => {
@@ -166,6 +114,7 @@ function SocialPageInner() {
   }, []);
 
   const connectPlatform = async (platform: SocialAccount["platform"]) => {
+    sessionStorage.setItem("pending_platform", platform.toLowerCase());
     setConnectingPlatform(platform);
     setConnectErrors((prev) => ({ ...prev, [platform]: undefined }));
     try {
@@ -180,13 +129,13 @@ function SocialPageInner() {
         credentials: "include",
         body: JSON.stringify({
           platform: platform.toLowerCase(),
-          redirectUrl: `${window.location.origin}/dashboard/social`,
-          showCalendar: false,
           timestamp: Date.now(), // Add timestamp to prevent caching
         }),
       });
 
       const data = await response.json().catch(() => ({}));
+
+      console.log("Connect response:", data);
 
       // Success case: extract and redirect to connect URL
       const connectUrl =
