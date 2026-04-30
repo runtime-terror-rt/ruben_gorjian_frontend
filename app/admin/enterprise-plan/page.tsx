@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Plus, 
-  Search, 
-  RefreshCw, 
-  MoreHorizontal, 
-  Calendar, 
-  AlertCircle, 
+import {
+  Plus,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  Calendar,
+  AlertCircle,
   Mail,
   Trash2,
   XCircle,
@@ -28,14 +28,15 @@ import {
   ArrowRight,
   CheckSquare,
   Camera,
+  Edit3,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  flexRender, 
-  getCoreRowModel, 
-  useReactTable, 
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
   getPaginationRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
@@ -46,13 +47,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   Table,
@@ -70,7 +71,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
@@ -92,20 +92,24 @@ type EnterpriseInvite = {
     status: string;
     expiresAt: string;
     paidAt: string | null;
+    industry?: string;
   };
   // Flat fields from detail view
   planName?: string;
   amount?: number;
+  industry?: string;
   billingCycle?: string;
   currency?: string;
   socialPlatforms?: string[];
   reelsPerMonth?: number;
   microReelsPerMonth?: number;
+  postsPerMonth?: number;
   proPhotoShootFrequency?: string;
   proPhotoShootLength?: string;
   captionHashtags?: boolean;
   scheduling?: boolean;
-  
+  internalNotes?: string;
+
   createdAt: string;
   expiresAt: string;
   viewedAt: string | null;
@@ -201,6 +205,9 @@ export default function EnterprisePlanPage() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [inviteToDelete, setInviteToDelete] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingInviteId, setEditingInviteId] = useState<string | null>(null);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [freqError, setFreqError] = useState<string | null>(null);
 
   // Form State for Create Invite
@@ -209,17 +216,47 @@ export default function EnterprisePlanPage() {
     companyName: "",
     fullName: "",
     email: "",
+    industry: "RESTAURANT_HOSPITALITY",
+    otherIndustry: "",
     socialPlatforms: ["INSTAGRAM", "FACEBOOK", "TIKTOK"],
+    postsPerMonth: 40,
     reelsPerMonth: 20,
     microReelsPerMonth: 30,
     proPhotoShootFrequency: "Monthly",
-    proPhotoShootLength: "4 hours",
+    proPhotoShootLength: "3 Hours",
+    otherPhotoShootLength: "",
     captionHashtags: true,
     scheduling: true,
     amount: 1250,
     billingCycle: "MONTHLY",
-    expiresInDays: 7
+    expiresInDays: 7,
+    internalNotes: ""
   });
+
+  const resetForm = () => {
+    setFormData({
+      planName: "Enterprise Growth",
+      companyName: "",
+      fullName: "",
+      email: "",
+      industry: "RESTAURANT_HOSPITALITY",
+      otherIndustry: "",
+      socialPlatforms: ["INSTAGRAM", "FACEBOOK", "TIKTOK"],
+      postsPerMonth: 40,
+      reelsPerMonth: 20,
+      microReelsPerMonth: 30,
+      proPhotoShootFrequency: "Monthly",
+      proPhotoShootLength: "3 Hours",
+      otherPhotoShootLength: "",
+      captionHashtags: true,
+      scheduling: true,
+      amount: 1250,
+      billingCycle: "MONTHLY",
+      expiresInDays: 7,
+      internalNotes: ""
+    });
+    setFreqError(null);
+  };
 
   // Queries
   const invitesQuery = useQuery({
@@ -234,7 +271,7 @@ export default function EnterprisePlanPage() {
         if (statusFilter && statusFilter !== "ALL") {
           params.append("status", statusFilter);
         }
-        
+
         // Using the singular proxy route with invites subpath
         const response = await apiGet<InviteListResponse>(`/api/admin/enterprise-plan/invites?${params.toString()}`);
         return response;
@@ -256,7 +293,7 @@ export default function EnterprisePlanPage() {
   const createInviteMutation = useMutation({
     mutationFn: (data: typeof formData) => apiPost("/api/admin/enterprise-plan/invites", data),
     onSuccess: () => {
-      toast({ title: "Enterprise invite created" });
+      toast({ title: "Enterprise Request Submitted Successfully" });
       setIsCreateModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
       setFormData({
@@ -264,24 +301,29 @@ export default function EnterprisePlanPage() {
         companyName: "",
         fullName: "",
         email: "",
+        industry: "RESTAURANT_HOSPITALITY",
+        otherIndustry: "",
         socialPlatforms: ["INSTAGRAM", "FACEBOOK", "TIKTOK"],
+        postsPerMonth: 40,
         reelsPerMonth: 20,
         microReelsPerMonth: 30,
         proPhotoShootFrequency: "Monthly",
-        proPhotoShootLength: "4 hours",
+        proPhotoShootLength: "3 Hours",
+        otherPhotoShootLength: "",
         captionHashtags: true,
         scheduling: true,
         amount: 1250,
         billingCycle: "MONTHLY",
-        expiresInDays: 7
+        expiresInDays: 7,
+        internalNotes: ""
       });
       setFreqError(null);
     },
     onError: (error: any) => {
-      toast({ 
-        title: "Create failed", 
+      toast({
+        title: "Create failed",
         description: error.message || "Request failed",
-        variant: "destructive" 
+        variant: "destructive"
       });
     }
   });
@@ -293,10 +335,10 @@ export default function EnterprisePlanPage() {
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
     },
     onError: (error: any) => {
-      toast({ 
-        title: "Resend failed", 
+      toast({
+        title: "Resend failed",
         description: error.message || "Unable to resend invite",
-        variant: "destructive" 
+        variant: "destructive"
       });
     }
   });
@@ -308,10 +350,10 @@ export default function EnterprisePlanPage() {
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
     },
     onError: (error: any) => {
-      toast({ 
-        title: "Cancel failed", 
+      toast({
+        title: "Cancel failed",
         description: error.message || "Unable to cancel invite",
-        variant: "destructive" 
+        variant: "destructive"
       });
     }
   });
@@ -325,6 +367,80 @@ export default function EnterprisePlanPage() {
       queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
     }
   });
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: any) => apiPatch(`/api/admin/enterprise-plan/invites/${editingInviteId}`, payload),
+    onSuccess: () => {
+      toast({ title: "Proposal updated successfully" });
+      setIsEditModalOpen(false);
+      setEditingInviteId(null);
+      queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] });
+    },
+    onError: (err: any) => {
+      toast({ title: "Update failed", description: err.message, variant: "destructive" });
+    }
+  });
+
+  const handleEditClick = async (inviteId: string) => {
+    setEditingInviteId(inviteId);
+    setIsDetailLoading(true);
+    try {
+      const response = await apiGet<any>(`/api/admin/enterprise-plan/invites/${inviteId}/details`);
+      const { invite, proposal } = response;
+
+      const standardIndustries = [
+        "RESTAURANT_HOSPITALITY", "JEWELRY", "FASHION_APPAREL", "BEAUTY_WELLNESS",
+        "HOME_LIFESTYLE", "HEALTH_FITNESS", "CORPORATE_PROFESSIONAL", "ECOMMERCE_PRODUCT"
+      ];
+      const standardLengths = ["0", "1 Hour", "1.5 Hours", "3 Hours"];
+
+      const isOtherIndustry = proposal?.industry && !standardIndustries.includes(proposal.industry);
+      const isCustomLength = proposal?.proPhotoShootLength && !standardLengths.includes(proposal.proPhotoShootLength);
+
+      setFormData({
+        planName: proposal?.planName || "Enterprise Growth",
+        companyName: invite.companyName,
+        fullName: invite.fullName,
+        email: invite.email,
+        industry: isOtherIndustry ? "OTHER" : (proposal?.industry || "RESTAURANT_HOSPITALITY"),
+        otherIndustry: isOtherIndustry ? (proposal?.industry || "") : "",
+        socialPlatforms: invite.socialPlatforms || ["INSTAGRAM", "FACEBOOK", "TIKTOK"],
+        postsPerMonth: proposal?.postsPerMonth || 40,
+        reelsPerMonth: proposal?.reelsPerMonth || 20,
+        microReelsPerMonth: proposal?.microReelsPerMonth || 30,
+        proPhotoShootFrequency: proposal?.proPhotoShootFrequency || "Monthly",
+        proPhotoShootLength: isCustomLength ? "Custom" : (proposal?.proPhotoShootLength || "3 Hours"),
+        otherPhotoShootLength: isCustomLength ? (proposal?.proPhotoShootLength || "") : "",
+        captionHashtags: proposal?.captionHashtags ?? true,
+        scheduling: proposal?.scheduling ?? true,
+        amount: proposal?.amount || 1250,
+        billingCycle: proposal?.billingCycle || "MONTHLY",
+        expiresInDays: 7,
+        internalNotes: proposal?.internalNotes || ""
+      });
+      setIsEditModalOpen(true);
+    } catch (err: any) {
+      toast({ title: "Fetch failed", description: "Could not load invite details", variant: "destructive" });
+    } finally {
+      setIsDetailLoading(false);
+    }
+  };
+
+  const handleUpdateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Prepare final data
+    const submissionData = {
+      ...formData,
+      industry: formData.industry === "OTHER" ? formData.otherIndustry : formData.industry,
+      proPhotoShootLength: formData.proPhotoShootLength === "Custom" ? formData.otherPhotoShootLength : formData.proPhotoShootLength
+    };
+
+    // Remove internal manual input fields
+    const { otherIndustry, otherPhotoShootLength, ...finalData } = submissionData;
+
+    updateMutation.mutate(finalData);
+  };
 
   // Table Columns
   const columns: ColumnDef<EnterpriseInvite>[] = [
@@ -342,6 +458,21 @@ export default function EnterprisePlanPage() {
           </div>
         </div>
       ),
+    },
+    {
+      accessorKey: "proposal.industry",
+      header: "Industry",
+      cell: ({ row }) => {
+        const industry = row.original.proposal?.industry || row.original.industry || "—";
+        const formattedIndustry = industry.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+        return (
+          <div className="flex items-center">
+            <span className="text-slate-200 font-bold text-[13px] tracking-tight">
+              {formattedIndustry}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "email",
@@ -409,8 +540,8 @@ export default function EnterprisePlanPage() {
           <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -419,24 +550,39 @@ export default function EnterprisePlanPage() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800 rounded-2xl p-2 shadow-2xl">
                 <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-500 tracking-widest px-3 py-2">Management</DropdownMenuLabel>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => router.push(`/admin/enterprise-plan/${invite.id}`)}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                 >
-                  <Eye className="mr-3 h-4 w-4 text-blue-400" /> 
+                  <Eye className="mr-3 h-4 w-4 text-blue-400" />
                   <span className="font-medium">View Details</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditClick(invite.id);
+                  }}
+                  className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
+                  disabled={invite.status === "PAYMENT_COMPLETED"}
+                >
+                  {isDetailLoading && editingInviteId === invite.id ? (
+                    <Loader2 className="mr-3 h-4 w-4 animate-spin text-lime-400" />
+                  ) : (
+                    <Edit3 className="mr-3 h-4 w-4 text-lime-400" />
+                  )}
+                  <span className="font-medium">Edit Proposal</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
                     copyInviteLink();
                   }}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                 >
-                  <Copy className="mr-3 h-4 w-4 text-lime-400" /> 
+                  <Copy className="mr-3 h-4 w-4 text-lime-400" />
                   <span className="font-medium">Copy Invite Link</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
                     resendMutation.mutate(invite.id);
@@ -444,26 +590,26 @@ export default function EnterprisePlanPage() {
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
                   disabled={invite.status === "PAYMENT_COMPLETED" || invite.status === "CANCELED"}
                 >
-                  <Mail className="mr-3 h-4 w-4 text-amber-400" /> 
+                  <Mail className="mr-3 h-4 w-4 text-amber-400" />
                   <span className="font-medium">Resend Email</span>
                 </DropdownMenuItem>
-                
+
                 <DropdownMenuSeparator className="bg-slate-800 my-1" />
-                
+
                 {invite.status !== "CANCELED" && invite.status !== "PAYMENT_COMPLETED" && (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={(e) => {
                       e.stopPropagation();
                       cancelMutation.mutate(invite.id);
                     }}
                     className="rounded-lg py-2.5 cursor-pointer focus:bg-amber-500/10 text-amber-400"
                   >
-                    <XCircle className="mr-3 h-4 w-4" /> 
+                    <XCircle className="mr-3 h-4 w-4" />
                     <span className="font-medium">Cancel Invite</span>
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
                     setInviteToDelete(invite.id);
@@ -471,7 +617,7 @@ export default function EnterprisePlanPage() {
                   }}
                   className="rounded-lg py-2.5 cursor-pointer focus:bg-red-500/10 text-red-400"
                 >
-                  <Trash2 className="mr-3 h-4 w-4" /> 
+                  <Trash2 className="mr-3 h-4 w-4" />
                   <span className="font-medium">Delete Permanently</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -491,13 +637,18 @@ export default function EnterprisePlanPage() {
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const freq = formData.proPhotoShootFrequency.trim().toLowerCase();
-    if (freq !== "monthly" && freq !== "yearly") {
-      setFreqError("Only \"Monthly\" or \"Yearly\" are allowed.");
-      return;
-    }
-    setFreqError(null);
-    createInviteMutation.mutate(formData);
+
+    // Prepare final data
+    const submissionData = {
+      ...formData,
+      industry: formData.industry === "OTHER" ? formData.otherIndustry : formData.industry,
+      proPhotoShootLength: formData.proPhotoShootLength === "Custom" ? formData.otherPhotoShootLength : formData.proPhotoShootLength
+    };
+
+    // Remove internal manual input fields
+    const { otherIndustry, otherPhotoShootLength, ...finalData } = submissionData;
+
+    createInviteMutation.mutate(finalData as any);
   };
 
   const togglePlatform = (platform: string) => {
@@ -525,18 +676,21 @@ export default function EnterprisePlanPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
             onClick={() => queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] })}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${invitesQuery.isFetching ? "animate-spin" : ""}`} />
             Sync Data
           </Button>
-          <Button 
+          <Button
             className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() => {
+              resetForm();
+              setIsCreateModalOpen(true);
+            }}
           >
             <Plus className="h-5 w-5 mr-2 stroke-[3px]" />
             New Proposal
@@ -579,8 +733,8 @@ export default function EnterprisePlanPage() {
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-900/60 p-2 rounded-[1.5rem] border border-white/5 backdrop-blur-md">
           <div className="relative flex-1 w-full lg:max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-            <Input 
-              placeholder="Search client pipeline..." 
+            <Input
+              placeholder="Search client pipeline..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -591,13 +745,13 @@ export default function EnterprisePlanPage() {
           </div>
           <div className="flex items-center gap-2 pr-2 w-full lg:w-auto">
             <div className="h-6 w-[1px] bg-slate-800 mx-2 hidden lg:block" />
-            <Select 
-              value={statusFilter} 
+            <select
+              value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300"
+              className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 px-3 outline-none"
             >
               <option value="ALL">All Categories</option>
               <option value="PENDING">PENDING</option>
@@ -606,7 +760,7 @@ export default function EnterprisePlanPage() {
               <option value="PAYMENT_COMPLETED">PAYMENT_COMPLETED</option>
               <option value="EXPIRED">EXPIRED</option>
               <option value="CANCELED">CANCELED</option>
-            </Select>
+            </select>
           </div>
         </div>
 
@@ -647,8 +801,8 @@ export default function EnterprisePlanPage() {
                             {(invitesQuery.error as any)?.message || "The neural link to the backend was interrupted unexpectedly."}
                           </p>
                         </div>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="mt-2 border-slate-800 bg-slate-900/50 text-slate-300 rounded-xl hover:bg-white hover:text-slate-950 transition-all font-black px-6 uppercase text-[10px] tracking-widest"
                           onClick={() => invitesQuery.refetch()}
                         >
@@ -660,8 +814,8 @@ export default function EnterprisePlanPage() {
                   </TableRow>
                 ) : (invitesQuery.data?.items ?? []).length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow 
-                      key={row.id} 
+                    <TableRow
+                      key={row.id}
                       className="border-white/5 hover:bg-white/[0.03] transition-all group border-b last:border-b-0 cursor-pointer"
                       onClick={() => router.push(`/admin/enterprise-plan/${row.original.id}`)}
                     >
@@ -683,8 +837,8 @@ export default function EnterprisePlanPage() {
                           <p className="text-white font-black text-xl tracking-tight">Pipeline Empty</p>
                           <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium">Add your first high-value client to begin tracking their lifecycle.</p>
                         </div>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="mt-2 border-slate-800 bg-slate-900/50 text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition-all font-bold px-6"
                           onClick={() => {
                             setSearch("");
@@ -741,222 +895,350 @@ export default function EnterprisePlanPage() {
       {/* --- Modals & Dialogs --- */}
 
       {/* Create Invite Modal */}
-      <Dialog 
-        open={isCreateModalOpen} 
+      <Dialog
+        open={isCreateModalOpen}
         onOpenChange={(open) => {
           setIsCreateModalOpen(open);
         }}
       >
-        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[900px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
-          <div className="px-5 py-4 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
+        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
+          <div className="px-6 py-5 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/5 blur-[100px] pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <div>
-                <DialogTitle className="text-xl font-black text-white tracking-tighter">New Enterprise Proposal</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Enterprise Proposal Forge</DialogTitle>
                 <DialogDescription className="text-slate-500 text-xs font-medium tracking-tight mt-0.5">
-                  Configure custom proposal details for high-value clients.
+                  Engineer a high-performance custom plan for priority enterprise clients.
                 </DialogDescription>
               </div>
-              <div className="h-9 w-9 rounded-xl bg-lime-400/10 flex items-center justify-center text-lime-400">
-                <ShieldCheck className="h-5 w-5" />
+              <div className="h-12 w-12 rounded-2xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
+                <ShieldCheck className="h-6 w-6" />
               </div>
             </div>
           </div>
 
-          <div className="px-5 py-4 bg-slate-950/40 overflow-y-auto max-h-[calc(85vh-130px)]">
-            <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Client Identity Section */}
-                <div className="md:col-span-3">
-                  <h3 className="text-[10px] font-black text-lime-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                    <User className="h-3 w-3" /> Client Identity
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Plan Name</Label>
-                      <Input 
-                        value={formData.planName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                        placeholder="e.g. OMEGA ELITE"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Company Name</Label>
-                      <Input 
-                        value={formData.companyName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                        placeholder="Legal Entity"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Contact Full Name</Label>
-                      <Input 
-                        value={formData.fullName}
-                        onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                        placeholder="Full Name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1 md:col-span-3">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Client Email</Label>
-                      <Input 
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                        placeholder="client@company.com"
-                        required
-                      />
-                    </div>
+          <div className="flex-1 px-6 py-6 bg-slate-950/40 overflow-y-auto">
+            <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-10">
+
+              {/* 1. Client Information */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-lime-400/10 flex items-center justify-center text-[10px]">1</span>
+                  Client Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Plan Name</Label>
+                    <Input
+                      value={formData.planName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Enter PlanName"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Company Name</Label>
+                    <Input
+                      value={formData.companyName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Enter CompanyName"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Full Name</Label>
+                    <Input
+                      value={formData.fullName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Enter FullName"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-3 space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Email Address</Label>
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder=" Enter Email"
+                      required
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* Service Logistics */}
-                <div className="md:col-span-2 space-y-3">
-                  <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                    <TrendingUp className="h-3 w-3" /> Service Strategy
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Reels / Month</Label>
-                      <Input 
-                        type="number"
-                        value={formData.reelsPerMonth}
-                        onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Micro Reels / Month</Label>
-                      <Input 
-                        type="number"
-                        value={formData.microReelsPerMonth}
-                        onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Photo Shoot Frequency</Label>
-                      <Input
-                        type="text"
-                        value={formData.proPhotoShootFrequency}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setFormData(prev => ({ ...prev, proPhotoShootFrequency: val }));
-                          const normalized = val.trim().toLowerCase();
-                          if (normalized === "" || normalized === "monthly" || normalized === "yearly") {
-                            setFreqError(null);
-                          } else {
-                            setFreqError('Only "Monthly" or "Yearly" are allowed.');
-                          }
-                        }}
-                        className={cn(
-                          "bg-slate-900/50 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm",
-                          freqError ? "border-red-500/60 focus-visible:ring-red-500/30" : "border-white/5"
-                        )}
-                        placeholder="Monthly or Yearly"
-                      />
-                      {freqError && (
-                        <p className="text-red-400 text-[10px] font-bold ml-1 flex items-center gap-1">
-                          <span>⚠</span> {freqError}
-                        </p>
+              {/* 2. Industry / Business Type */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-blue-400/10 flex items-center justify-center text-[10px]">2</span>
+                  Industry / Business Type
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[
+                    { label: "Restaurant / Hospitality", value: "RESTAURANT_HOSPITALITY" },
+                    { label: "Jewelry", value: "JEWELRY" },
+                    { label: "Fashion & Apparel", value: "FASHION_APPAREL" },
+                    { label: "Beauty & Wellness", value: "BEAUTY_WELLNESS" },
+                    { label: "Home & Lifestyle", value: "HOME_LIFESTYLE" },
+                    { label: "Health & Fitness", value: "HEALTH_FITNESS" },
+                    { label: "Corporate / Professional Services", value: "CORPORATE_PROFESSIONAL" },
+                    { label: "E-commerce / Product Brand", value: "ECOMMERCE_PRODUCT" },
+                    { label: "Other (Manual Input)", value: "OTHER" },
+                  ].map((ind) => (
+                    <div
+                      key={ind.value}
+                      onClick={() => setFormData(prev => ({ ...prev, industry: ind.value }))}
+                      className={cn(
+                        "flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer group",
+                        formData.industry === ind.value
+                          ? "bg-blue-400/10 border-blue-400/40 text-blue-400"
+                          : "bg-white/5 border-white/5 text-slate-400 hover:border-white/10"
                       )}
+                    >
+                      <div className={cn(
+                        "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all",
+                        formData.industry === ind.value ? "border-blue-400" : "border-slate-700"
+                      )}>
+                        {formData.industry === ind.value && <div className="h-2 w-2 rounded-full bg-blue-400" />}
+                      </div>
+                      <span className="text-[11px] font-bold">{ind.label}</span>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Photo Shoot Length (hrs)</Label>
-                      <Input
-                        type="text"
-                        value={formData.proPhotoShootLength}
-                        onChange={(e) => setFormData(prev => ({ ...prev, proPhotoShootLength: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
-                        placeholder="e.g. 4 hours"
-                      />
-                    </div>
-                  </div>
+                  ))}
+                </div>
+                {formData.industry === "OTHER" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-1.5"
+                  >
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Specify Industry</Label>
+                    <Input
+                      value={formData.otherIndustry}
+                      onChange={(e) => setFormData(prev => ({ ...prev, otherIndustry: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-white font-bold text-sm"
+                      placeholder="Enter business category..."
+                      required={formData.industry === "OTHER"}
+                    />
+                  </motion.div>
+                )}
+              </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-semibold text-slate-400 ml-1">Social Platforms</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {["INSTAGRAM", "FACEBOOK", "TIKTOK"].map((platform) => (
-                        <div 
-                          key={platform} 
-                          onClick={() => togglePlatform(platform)}
-                          className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all cursor-pointer",
-                            formData.socialPlatforms.includes(platform) 
-                            ? "bg-lime-400/10 border-lime-400/30 text-lime-400" 
+              {/* 3. Social Media Platforms */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-indigo-400/10 flex items-center justify-center text-[10px]">3</span>
+                  Social Media Platforms
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {["INSTAGRAM", "FACEBOOK", "TIKTOK"].map((platform) => (
+                    <div
+                      key={platform}
+                      onClick={() => togglePlatform(platform)}
+                      className={cn(
+                        "flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all cursor-pointer min-w-[160px]",
+                        formData.socialPlatforms.includes(platform)
+                          ? "bg-indigo-400/10 border-indigo-400/40 text-indigo-400 shadow-[0_0_20px_rgba(129,140,248,0.1)]"
+                          : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                      )}
+                    >
+                      <div className={cn(
+                        "h-5 w-5 rounded-md border flex items-center justify-center transition-colors",
+                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-slate-700"
+                      )}>
+                        {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
+                      </div>
+                      <span className="text-xs font-black tracking-widest">{platform}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Content Plan Details */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-amber-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-amber-400/10 flex items-center justify-center text-[10px]">4</span>
+                  Content Plan Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Posts per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.postsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, postsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Reels per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.reelsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Micro Reels per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.microReelsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Production Details */}
+              <div className="space-y-6">
+                <h3 className="text-[11px] font-black text-rose-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-rose-400/10 flex items-center justify-center text-[10px]">5</span>
+                  Production Details
+                </h3>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Frequency</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {["None", "Every 3 Months", "Every 2 Months", "Monthly"].map((freq) => (
+                      <div
+                        key={freq}
+                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootFrequency: freq }))}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
+                          formData.proPhotoShootFrequency === freq
+                            ? "bg-rose-400/10 border-rose-400/40 text-rose-400"
                             : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
-                          )}
-                        >
-                          <div className={cn(
-                            "h-3.5 w-3.5 rounded border flex items-center justify-center transition-colors",
-                            formData.socialPlatforms.includes(platform) ? "bg-lime-400 border-lime-400" : "border-slate-700"
-                          )}>
-                            {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-2.5 w-2.5 text-slate-950" />}
-                          </div>
-                          <span className="text-[10px] font-black tracking-wider">{platform}</span>
-                        </div>
-                      ))}
+                        )}
+                      >
+                        <Calendar className={cn("h-5 w-5 mb-2", formData.proPhotoShootFrequency === freq ? "text-rose-400" : "text-slate-600")} />
+                        <span className="text-[10px] font-black uppercase tracking-tight">{freq}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Length</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {["0", "1 Hour", "1.5 Hours", "3 Hours", "Custom"].map((len) => (
+                      <div
+                        key={len}
+                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootLength: len }))}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
+                          formData.proPhotoShootLength === len
+                            ? "bg-rose-400/10 border-rose-400/40 text-rose-400"
+                            : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                        )}
+                      >
+                        <Clock className={cn("h-5 w-5 mb-2", formData.proPhotoShootLength === len ? "text-rose-400" : "text-slate-600")} />
+                        <span className="text-[10px] font-black uppercase tracking-tight">{len}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {formData.proPhotoShootLength === "Custom" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-1.5"
+                    >
+                      <Input
+                        value={formData.otherPhotoShootLength}
+                        onChange={(e) => setFormData(prev => ({ ...prev, otherPhotoShootLength: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-rose-400/50 text-white font-bold text-sm"
+                        placeholder="e.g. 4 Hours, 8 Hours..."
+                        required={formData.proPhotoShootLength === "Custom"}
+                      />
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {/* 6. Additional Services */}
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                    <span className="h-5 w-5 rounded-md bg-cyan-400/10 flex items-center justify-center text-[10px]">6</span>
+                    Additional Services
+                  </h3>
+                  <div className="space-y-3">
+                    <div
+                      onClick={() => setFormData(prev => ({ ...prev, captionHashtags: !prev.captionHashtags }))}
+                      className={cn(
+                        "flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer",
+                        formData.captionHashtags ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5"
+                      )}
+                    >
+                      <div className="flex flex-col">
+                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-slate-400")}>Caption & Hashtags</span>
+                        <span className="text-[9px] text-slate-600 font-medium">Expert copywriting for all posts</span>
+                      </div>
+                      <div className={cn(
+                        "h-5 w-10 rounded-full relative transition-colors p-1",
+                        formData.captionHashtags ? "bg-cyan-400" : "bg-slate-800"
+                      )}>
+                        <div className={cn(
+                          "h-3 w-3 rounded-full bg-white transition-all shadow-sm",
+                          formData.captionHashtags ? "ml-5" : "ml-0"
+                        )} />
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setFormData(prev => ({ ...prev, scheduling: !prev.scheduling }))}
+                      className={cn(
+                        "flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer",
+                        formData.scheduling ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5"
+                      )}
+                    >
+                      <div className="flex flex-col">
+                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-slate-400")}>Auto Scheduling</span>
+                        <span className="text-[9px] text-slate-600 font-medium">Automated publishing pipeline</span>
+                      </div>
+                      <div className={cn(
+                        "h-5 w-10 rounded-full relative transition-colors p-1",
+                        formData.scheduling ? "bg-cyan-400" : "bg-slate-800"
+                      )}>
+                        <div className={cn(
+                          "h-3 w-3 rounded-full bg-white transition-all shadow-sm",
+                          formData.scheduling ? "ml-5" : "ml-0"
+                        )} />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Financials */}
-                <div className="space-y-3">
-                  <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
-                    <ShieldCheck className="h-3 w-3" /> Financials
+                {/* 7. Pricing & Validity */}
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                    <span className="h-5 w-5 rounded-md bg-emerald-400/10 flex items-center justify-center text-[10px]">7</span>
+                    Pricing & Validity
                   </h3>
-                  <div className="space-y-3 bg-white/5 p-3 rounded-2xl border border-white/5">
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Amount (USD)</Label>
-                      <Input 
-                        type="number"
-                        value={formData.amount}
-                        onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
-                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-lime-400 text-base font-black"
-                      />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Monthly Price (USD)</Label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400 font-black">$</span>
+                        <Input
+                          type="number"
+                          value={formData.amount}
+                          onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
+                          className="bg-slate-900/50 border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-white font-black text-sm"
+                        />
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Billing Cycle</Label>
-                      <Select 
-                        value={formData.billingCycle}
-                        onChange={(e) => setFormData(prev => ({ ...prev, billingCycle: e.target.value }))}
-                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus:ring-1 focus:ring-lime-400/50 text-white font-bold text-sm px-3"
-                      >
-                        <option value="MONTHLY">Monthly</option>
-                        <option value="YEARLY">Yearly</option>
-                      </Select>
-                    </div>
-                    <div className="flex items-center justify-between py-1">
-                      <Label className="text-[10px] font-semibold text-slate-400 cursor-pointer" htmlFor="captions">Caption & Hashtags</Label>
-                      <Checkbox 
-                        id="captions"
-                        checked={formData.captionHashtags} 
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, captionHashtags: !!checked }))}
-                        className="rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950" 
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label className="text-[10px] font-semibold text-slate-400 cursor-pointer" htmlFor="scheduling">Auto Scheduling</Label>
-                      <Checkbox 
-                        id="scheduling"
-                        checked={formData.scheduling} 
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, scheduling: !!checked }))}
-                        className="rounded-md border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950" 
-                      />
-                    </div>
-                    <div className="space-y-1 pt-2 border-t border-white/5">
-                      <Label className="text-[10px] font-semibold text-slate-400 ml-1">Invite Expires In (Days)</Label>
-                      <Input 
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Expires In (Days)</Label>
+                      <Input
                         type="number"
                         value={formData.expiresInDays}
                         onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))}
-                        className="bg-slate-950/50 border-white/5 h-9 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-white font-bold text-sm"
                         min={1}
                         required
                       />
@@ -964,31 +1246,52 @@ export default function EnterprisePlanPage() {
                   </div>
                 </div>
               </div>
+
+              {/* 8. Internal Notes */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-slate-400/10 flex items-center justify-center text-[10px]">8</span>
+                  Internal Notes (Admin Only)
+                </h3>
+                <textarea
+                  value={formData.internalNotes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, internalNotes: e.target.value }))}
+                  className="w-full bg-slate-900/50 border border-white/5 rounded-2xl p-4 text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 min-h-[100px] placeholder:text-slate-700"
+                  placeholder="Special instructions, priority notes, or follow-up requirements..."
+                />
+              </div>
+
             </form>
           </div>
 
-          <div className="px-5 py-3 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex items-center justify-end gap-3">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setIsCreateModalOpen(false)}
-              className="border-white/10 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
-            >
-              Cancel
-            </Button>
-            <Button 
-              form="enterprise-proposal-form"
-              type="submit" 
-              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-12 px-8 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95 uppercase tracking-widest text-[11px]"
-              disabled={createInviteMutation.isPending}
-            >
-              {createInviteMutation.isPending ? (
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4 mr-2" />
-              )}
-              Dispatch Proposal
-            </Button>
+          <div className="px-6 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+            <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Secure Proposal Dispatch
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsCreateModalOpen(false)}
+                className="border-white/5 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
+              >
+                Discard
+              </Button>
+              <Button
+                form="enterprise-proposal-form"
+                type="submit"
+                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(163,230,53,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]"
+                disabled={createInviteMutation.isPending}
+              >
+                {createInviteMutation.isPending ? (
+                  <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4 mr-3 stroke-[3px]" />
+                )}
+                Authorize & Send Proposal
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -1082,6 +1385,10 @@ export default function EnterprisePlanPage() {
                             <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Social Content</p>
                             <div className="space-y-1">
                               <div className="flex justify-between text-[11px]">
+                                <span className="text-slate-400">Monthly Posts</span>
+                                <span className="text-white font-bold">{invite.postsPerMonth || 0}</span>
+                              </div>
+                              <div className="flex justify-between text-[11px]">
                                 <span className="text-slate-400">Monthly Reels</span>
                                 <span className="text-white font-bold">{invite.reelsPerMonth || 0}</span>
                               </div>
@@ -1089,10 +1396,6 @@ export default function EnterprisePlanPage() {
                                 <span className="text-slate-400">Micro Content</span>
                                 <span className="text-white font-bold">{invite.microReelsPerMonth || 0}</span>
                               </div>
-                              {/* <div className="flex justify-between text-[11px]">
-                                <span className="text-slate-400">Industry</span>
-                                <span className="text-white font-bold">{invite.industry || "General"}</span>
-                              </div> */}
                             </div>
                           </div>
                           <div className="p-4 bg-white/5 rounded-xl border border-white/5">
@@ -1104,6 +1407,13 @@ export default function EnterprisePlanPage() {
                           </div>
                         </div>
 
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                            <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Industry / Category</p>
+                            <p className="text-sm text-white font-bold tracking-tight">{invite.industry?.replace(/_/g, ' ') || "GENERAL"}</p>
+                          </div>
+                        </div>
+
                         <div className="flex flex-wrap gap-4 pt-2">
                           <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.captionHashtags ? "text-lime-400" : "text-slate-700")}>
                             <div className={cn("h-1.5 w-1.5 rounded-full", invite.captionHashtags ? "bg-lime-400" : "bg-slate-800")} /> AI Captions
@@ -1112,6 +1422,13 @@ export default function EnterprisePlanPage() {
                             <div className={cn("h-1.5 w-1.5 rounded-full", invite.scheduling ? "bg-indigo-400" : "bg-slate-800")} /> Auto Scheduling
                           </div>
                         </div>
+
+                        {invite.internalNotes && (
+                          <div className="pt-4 border-t border-white/5">
+                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Internal Admin Notes</p>
+                            <p className="text-[11px] text-slate-400 leading-relaxed italic">"{invite.internalNotes}"</p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between px-2 text-[9px] font-bold text-slate-600 uppercase tracking-widest">
@@ -1123,8 +1440,8 @@ export default function EnterprisePlanPage() {
 
                   {/* Footer */}
                   <div className="p-8 pt-4 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex justify-end">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setIsDetailsModalOpen(false)}
                       className="border-white/10 bg-white/5 text-slate-400 h-11 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
                     >
@@ -1197,6 +1514,342 @@ export default function EnterprisePlanPage() {
             >
               Cancel
             </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Proposal Modal */}
+      <Dialog
+        open={isEditModalOpen}
+        onOpenChange={(open) => setIsEditModalOpen(open)}
+      >
+        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
+          <div className="px-6 py-5 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/5 blur-[100px] pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Modify Proposal</DialogTitle>
+                <DialogDescription className="text-slate-500 text-xs font-medium tracking-tight mt-0.5">
+                  Update project scope and pricing for priority enterprise clients.
+                </DialogDescription>
+              </div>
+              <div className="h-12 w-12 rounded-2xl bg-blue-400/10 flex items-center justify-center text-blue-400 border border-blue-400/20">
+                <Edit3 className="h-6 w-6" />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 px-6 py-6 bg-slate-950/40 overflow-y-auto scrollbar-hide">
+            <form id="enterprise-update-form" onSubmit={handleUpdateSubmit} className="space-y-10">
+              {/* 1. Client Information */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-lime-400/10 flex items-center justify-center text-[10px]">1</span>
+                  Client Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Plan Name</Label>
+                    <Input
+                      value={formData.planName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Enterprise Growth"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Company Name</Label>
+                    <Input
+                      value={formData.companyName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Company Name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Full Name</Label>
+                    <Input
+                      value={formData.fullName}
+                      onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="Full Name"
+                      required
+                    />
+                  </div>
+                  <div className="md:col-span-3 space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Email Address</Label>
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      placeholder="enterprise.client@example.com"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Industry / Business Type */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-blue-400/10 flex items-center justify-center text-[10px]">2</span>
+                  Industry / Business Type
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[
+                    { label: "Restaurant / Hospitality", value: "RESTAURANT_HOSPITALITY" },
+                    { label: "Jewelry", value: "JEWELRY" },
+                    { label: "Fashion & Apparel", value: "FASHION_APPAREL" },
+                    { label: "Beauty & Wellness", value: "BEAUTY_WELLNESS" },
+                    { label: "Home & Lifestyle", value: "HOME_LIFESTYLE" },
+                    { label: "Health & Fitness", value: "HEALTH_FITNESS" },
+                    { label: "Corporate / Professional Services", value: "CORPORATE_PROFESSIONAL" },
+                    { label: "E-commerce / Product Brand", value: "ECOMMERCE_PRODUCT" },
+                    { label: "Other (Manual Input)", value: "OTHER" },
+                  ].map((ind) => (
+                    <div
+                      key={ind.value}
+                      onClick={() => setFormData(prev => ({ ...prev, industry: ind.value }))}
+                      className={cn(
+                        "flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer group",
+                        formData.industry === ind.value
+                          ? "bg-blue-400/10 border-blue-400/40 text-blue-400"
+                          : "bg-white/5 border-white/5 text-slate-400 hover:border-white/10"
+                      )}
+                    >
+                      <div className={cn(
+                        "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all",
+                        formData.industry === ind.value ? "border-blue-400" : "border-slate-700"
+                      )}>
+                        {formData.industry === ind.value && <div className="h-2 w-2 rounded-full bg-blue-400" />}
+                      </div>
+                      <span className="text-[11px] font-bold">{ind.label}</span>
+                    </div>
+                  ))}
+                </div>
+                {formData.industry === "OTHER" && (
+                  <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Specify Industry</Label>
+                    <Input
+                      value={formData.otherIndustry}
+                      onChange={(e) => setFormData(prev => ({ ...prev, otherIndustry: e.target.value }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-white font-bold text-sm"
+                      placeholder="Enter business category..."
+                      required={formData.industry === "OTHER"}
+                    />
+                  </motion.div>
+                )}
+              </div>
+
+              {/* 3. Social Media Platforms */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-indigo-400/10 flex items-center justify-center text-[10px]">3</span>
+                  Social Media Platforms
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {["INSTAGRAM", "FACEBOOK", "TIKTOK"].map((platform) => (
+                    <div
+                      key={platform}
+                      onClick={() => togglePlatform(platform)}
+                      className={cn(
+                        "flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all cursor-pointer min-w-[160px]",
+                        formData.socialPlatforms.includes(platform)
+                          ? "bg-indigo-400/10 border-indigo-400/40 text-indigo-400 shadow-[0_0_20px_rgba(129,140,248,0.1)]"
+                          : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                      )}
+                    >
+                      <div className={cn(
+                        "h-5 w-5 rounded-md border flex items-center justify-center transition-colors",
+                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-slate-700"
+                      )}>
+                        {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
+                      </div>
+                      <span className="text-xs font-black tracking-widest">{platform}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Content Plan Details */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-amber-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-amber-400/10 flex items-center justify-center text-[10px]">4</span>
+                  Content Plan Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Posts per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.postsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, postsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Reels per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.reelsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Micro Reels per Month</Label>
+                    <Input
+                      type="number"
+                      value={formData.microReelsPerMonth}
+                      onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
+                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Production Details */}
+              <div className="space-y-6">
+                <h3 className="text-[11px] font-black text-rose-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-rose-400/10 flex items-center justify-center text-[10px]">5</span>
+                  Production Details
+                </h3>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Frequency</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {["None", "Every 3 Months", "Every 2 Months", "Monthly"].map((freq) => (
+                      <div
+                        key={freq}
+                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootFrequency: freq }))}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
+                          formData.proPhotoShootFrequency === freq
+                            ? "bg-rose-400/10 border-rose-400/40 text-rose-400"
+                            : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                        )}
+                      >
+                        <Calendar className={cn("h-5 w-5 mb-2", formData.proPhotoShootFrequency === freq ? "text-rose-400" : "text-slate-600")} />
+                        <span className="text-[10px] font-black uppercase tracking-tight">{freq}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Length</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {["0", "1 Hour", "1.5 Hours", "3 Hours", "Custom"].map((len) => (
+                      <div
+                        key={len}
+                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootLength: len }))}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
+                          formData.proPhotoShootLength === len
+                            ? "bg-rose-400/10 border-rose-400/40 text-rose-400"
+                            : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
+                        )}
+                      >
+                        <Clock className={cn("h-5 w-5 mb-2", formData.proPhotoShootLength === len ? "text-rose-400" : "text-slate-600")} />
+                        <span className="text-[10px] font-black uppercase tracking-tight">{len}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {formData.proPhotoShootLength === "Custom" && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
+                      <Input
+                        value={formData.otherPhotoShootLength}
+                        onChange={(e) => setFormData(prev => ({ ...prev, otherPhotoShootLength: e.target.value }))}
+                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-rose-400/50 text-white font-bold text-sm"
+                        placeholder="e.g. 4 Hours, 8 Hours..."
+                        required={formData.proPhotoShootLength === "Custom"}
+                      />
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                    <span className="h-5 w-5 rounded-md bg-cyan-400/10 flex items-center justify-center text-[10px]">6</span>
+                    Additional Services
+                  </h3>
+                  <div className="space-y-3">
+                    <div onClick={() => setFormData(prev => ({ ...prev, captionHashtags: !prev.captionHashtags }))} className={cn("flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer", formData.captionHashtags ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5")}>
+                      <div className="flex flex-col">
+                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-slate-400")}>Caption & Hashtags</span>
+                        <span className="text-[9px] text-slate-600 font-medium">Expert copywriting for all posts</span>
+                      </div>
+                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.captionHashtags ? "bg-cyan-400" : "bg-slate-800")}>
+                        <div className={cn("h-3 w-3 rounded-full bg-white transition-all shadow-sm", formData.captionHashtags ? "ml-5" : "ml-0")} />
+                      </div>
+                    </div>
+
+                    <div onClick={() => setFormData(prev => ({ ...prev, scheduling: !prev.scheduling }))} className={cn("flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer", formData.scheduling ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5")}>
+                      <div className="flex flex-col">
+                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-slate-400")}>Auto Scheduling</span>
+                        <span className="text-[9px] text-slate-600 font-medium">Automated publishing pipeline</span>
+                      </div>
+                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.scheduling ? "bg-cyan-400" : "bg-slate-800")}>
+                        <div className={cn("h-3 w-3 rounded-full bg-white transition-all shadow-sm", formData.scheduling ? "ml-5" : "ml-0")} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                    <span className="h-5 w-5 rounded-md bg-emerald-400/10 flex items-center justify-center text-[10px]">7</span>
+                    Pricing & Validity
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Monthly Price (USD)</Label>
+                      <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400 font-black">$</span>
+                        <Input type="number" value={formData.amount} onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))} className="bg-slate-900/50 border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-white font-black text-sm" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Expires In (Days)</Label>
+                      <Input type="number" value={formData.expiresInDays} onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))} className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-white font-bold text-sm" min={1} required />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 8. Internal Notes */}
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-slate-400/10 flex items-center justify-center text-[10px]">8</span>
+                  Internal Notes (Admin Only)
+                </h3>
+                <textarea
+                  value={formData.internalNotes}
+                  onChange={(e) => setFormData(prev => ({ ...prev, internalNotes: e.target.value }))}
+                  className="w-full bg-slate-900/50 border border-white/5 rounded-2xl p-4 text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 min-h-[100px] placeholder:text-slate-700"
+                  placeholder="Special instructions, priority notes, or follow-up requirements..."
+                />
+              </div>
+            </form>
+          </div>
+
+          <div className="px-6 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+            <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+              <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+              Update Authorization
+            </div>
+            <div className="flex items-center gap-3">
+              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)} className="border-white/5 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all">Discard</Button>
+              <Button form="enterprise-update-form" type="submit" className="bg-blue-500 hover:bg-blue-400 text-white font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(59,130,246,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]" disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? <Loader2 className="h-5 w-5 mr-3 animate-spin" /> : <ArrowRight className="h-4 w-4 mr-3 stroke-[3px]" />}
+                Confirm Updates
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

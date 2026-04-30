@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     // Fallback: If backend returns a token but cookie wasn't set properly, set it manually
     if (data.token) {
       response.cookies.set({
-        name: "token",
+        name: "auth-token",
         value: data.token,
         httpOnly: true,
         path: "/",

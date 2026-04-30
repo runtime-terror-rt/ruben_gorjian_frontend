@@ -68,12 +68,12 @@ export function OnboardingHeaderNav({
 
   const isCompleted = session
     ? (planCategory === "CALENDAR_ONLY" &&
-        session.calendarOnboardingCompleted) ||
-      (planCategory === "VISUAL_CALENDAR" &&
-        session.calendarOnboardingCompleted) ||
-      (planCategory === "VISUAL_ADD_ON" && session.visualOnboardingCompleted) ||
-      (planCategory === "FULL_MANAGEMENT" &&
-        session.fullManagementOnboardingCompleted)
+      session.calendarOnboardingCompleted) ||
+    (planCategory === "VISUAL_CALENDAR" &&
+      session.calendarOnboardingCompleted) ||
+    (planCategory === "VISUAL_ADD_ON" && session.visualOnboardingCompleted) ||
+    (planCategory === "FULL_MANAGEMENT" &&
+      session.fullManagementOnboardingCompleted)
     : false;
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -184,13 +184,12 @@ export function OnboardingHeaderNav({
                             return (
                               <div
                                 key={section.id}
-                                className={`px-3 py-2 rounded-md text-sm ${
-                                  isCurrent
+                                className={`px-3 py-2 rounded-md text-sm ${isCurrent
                                     ? "bg-lime-400/10 text-lime-300 font-medium"
                                     : isCompleted
                                       ? "text-slate-300"
                                       : "text-slate-500"
-                                }`}
+                                  }`}
                               >
                                 {isCompleted && <span className="mr-2">✓</span>}
                                 {section.id}. {section.title}

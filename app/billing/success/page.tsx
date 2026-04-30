@@ -91,26 +91,39 @@ function BillingSuccessContent() {
         }
 
         // Automatically redirect when active
-        if (session?.onboardingCompleted) {
+        // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
+        const pendingCode = session?.pendingPlanCode;
+        const activePlanCode = currentPlanCode || pendingCode || expectedPlanCode;
+        const isEnterprise =
+          pendingCode?.startsWith("ENT_") ||
+          pendingCode?.startsWith("ENT-") ||
+          activePlanCode?.startsWith("ENT_") ||
+          activePlanCode?.startsWith("ENT-") ||
+          session?.subscription?.planCategory === "ENTERPRISE";
+
+        // DEBUG LOGGING
+        console.group("[BillingSuccess] Redirecting from Success Page");
+        console.log("✓ currentPlanCode:", currentPlanCode);
+        console.log("✓ session.subscription.planCategory:", session?.subscription?.planCategory);
+        console.log("✓ session.pendingPlanCode:", pendingCode);
+        console.log("✓ activePlanCode:", activePlanCode);
+        console.log("✓ isEnterprise:", isEnterprise);
+        console.log("✓ session.brandBriefCompleted:", session?.brandBriefCompleted);
+        console.log("✓ session.onboardingCompleted:", session?.onboardingCompleted);
+        console.groupEnd();
+
+        if (isEnterprise) {
+          // For enterprise users, ALWAYS check brandBriefCompleted specifically
+          // even if the generic onboardingCompleted flag is true
+          if (session?.brandBriefCompleted) {
+            router.push("/dashboard");
+          } else {
+            router.push("/onboarding/brand-brief");
+          }
+        } else if (session?.onboardingCompleted) {
           router.push("/dashboard");
         } else {
-          // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
-          const pendingCode = session?.pendingPlanCode;
-          const activePlanCode = currentPlanCode || pendingCode || session?.pendingPlanCode || expectedPlanCode;
-          const isEnterprise = (pendingCode?.startsWith("ENT_") || pendingCode?.startsWith("ENT-")) || activePlanCode?.startsWith("ENT_") || activePlanCode?.startsWith("ENT-") || session?.subscription?.planCategory === "ENTERPRISE";
-          
-          // DEBUG LOGGING
-          console.group("[BillingSuccess] Redirecting from Success Page");
-          console.log("✓ currentPlanCode:", currentPlanCode);
-          console.log("✓ session.subscription.planCode:", session?.subscription?.planCode);
-          console.log("✓ session.subscription.planCategory:", session?.subscription?.planCategory);
-          console.log("✓ session.pendingPlanCode:", pendingCode);
-          console.log("✓ activePlanCode:", activePlanCode);
-          console.log("✓ isEnterprise:", isEnterprise);
-          console.log("✓ Redirecting to:", isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
-          console.groupEnd();
-          
-          router.push(isEnterprise ? "/onboarding/brand-brief" : "/onboarding");
+          router.push("/onboarding");
         }
       }
     };
@@ -204,21 +217,50 @@ function BillingSuccessContent() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {session?.onboardingCompleted ? (
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Go to Dashboard
-            </Link>
-          ) : (
-            <Link
-              href={session?.subscription?.planCode?.startsWith("ENT_") || session?.subscription?.planCode?.startsWith("ENT-") || session?.subscription?.planCategory === "ENTERPRISE" ? "/onboarding/brand-brief" : "/onboarding"}
-              className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Start Onboarding
-            </Link>
-          )}
+          {(() => {
+            const planCode = session?.subscription?.planCode || session?.pendingPlanCode;
+            const planCategory = session?.subscription?.planCategory;
+            const isEnterprise =
+              planCode?.startsWith("ENT_") ||
+              planCode?.startsWith("ENT-") ||
+              planCategory === "ENTERPRISE";
+
+            if (isEnterprise) {
+              // Enterprise: show Dashboard only when brandBriefCompleted, else show Brand Brief onboarding
+              return session?.brandBriefCompleted ? (
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/onboarding/brand-brief"
+                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Start Onboarding
+                </Link>
+              );
+            }
+
+            // Non-enterprise
+            return session?.onboardingCompleted ? (
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/onboarding"
+                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Start Onboarding
+              </Link>
+            );
+          })()}
         </div>
       </div>
     </div>
