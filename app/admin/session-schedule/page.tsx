@@ -49,6 +49,7 @@ import dayjs from "dayjs";
 
 import { useSocket } from "@/app/providers/SocketProvider";
 import { useTimezone } from "@/hooks/use-timezone";
+import { fromUTC } from "@/lib/timezone";
 import { useToast } from "@/hooks/use-toast";
 import { apiGet, apiPatch } from "@/lib/api";
 
@@ -86,29 +87,41 @@ export default function SessionSchedulePage() {
   const [view, setView] = useState<"table" | "calendar">("calendar");
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [selectedDay, setSelectedDay] = useState<dayjs.Dayjs | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
   const { socket } = useSocket();
-  const { timezoneAbbr } = useTimezone();
+  const { timezoneAbbr, timezone } = useTimezone();
 
   const fetchSessions = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
       // Fetching from unified posts endpoint with session filters
-      const startDate = dayjs().subtract(1, "year").toISOString();
-      const endDate = dayjs().add(5, "year").toISOString();
+      const isCalendar = view === "calendar";
+      const startDate = isCalendar
+        ? currentMonth.startOf('month').subtract(1, 'week').toISOString()
+        : dayjs().subtract(1, "year").toISOString();
+      const endDate = isCalendar
+        ? currentMonth.endOf('month').add(1, 'week').toISOString()
+        : dayjs().add(5, "year").toISOString();
       
       const queryParams = new URLSearchParams({
         all: "true",
-        page: view === "calendar" ? "1" : page.toString(),
-        pageSize: view === "calendar" ? "1000" : itemsPerPage.toString(),
         startDate,
         endDate,
         scheduleType: "PHOTO_SESSION,VIDEO_SESSION"
       });
+
+      if (!isCalendar) {
+        queryParams.set("page", page.toString());
+        queryParams.set("pageSize", itemsPerPage.toString());
+      } else {
+        queryParams.set("page", "1");
+        queryParams.set("pageSize", "100");
+      }
 
       const data = await apiGet<any>(`/api/scheduler/posts?${queryParams.toString()}`);
       const items = Array.isArray(data)
@@ -138,10 +151,10 @@ export default function SessionSchedulePage() {
             p.scheduleType === "VIDEO_SESSION",
         )
         .map((p: any) => {
-          // We'll keep it simple here, but ensuring we have a stable date property
+          const dateValue = p.scheduledFor || p.scheduledAt || p.date;
           return {
             ...p,
-            scheduledAt: p.scheduledFor || p.scheduledAt || p.date,
+            scheduledAt: dateValue ? fromUTC(dateValue, timezone).format() : dateValue,
           };
         });
 
@@ -157,7 +170,7 @@ export default function SessionSchedulePage() {
     } finally {
       setLoading(false);
     }
-  }, [toast, view, currentPage, itemsPerPage]);
+  }, [toast, view, currentPage, itemsPerPage, currentMonth, timezone]);
 
   useEffect(() => {
     fetchSessions(currentPage);
@@ -308,7 +321,10 @@ export default function SessionSchedulePage() {
   };
 
   const getSessionsForDay = (date: dayjs.Dayjs) => {
-    return sessions.filter((s) => dayjs(s.scheduledAt).isSame(date, "day"));
+    return sessions.filter((s) => {
+      if (!s.scheduledAt) return false;
+      return dayjs(s.scheduledAt).format("YYYY-MM-DD") === date.format("YYYY-MM-DD");
+    });
   };
 
   const currentItems = sessions;
@@ -468,9 +484,12 @@ export default function SessionSchedulePage() {
                         </button>
                       ))}
                       {daySessions.length > 3 && (
-                        <div className="text-[9px] text-slate-500 font-bold pl-1 pt-1">
+                        <button
+                          onClick={() => setSelectedDay(dateObj.date)}
+                          className="text-[10px] text-slate-400 hover:text-white font-bold pl-1 pt-1 cursor-pointer hover:underline text-left"
+                        >
                           + {daySessions.length - 3} more
-                        </div>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -659,97 +678,139 @@ export default function SessionSchedulePage() {
         </Card>
       )}
 
+      {/* Day View Modal */}
+      <Dialog
+        open={!!selectedDay}
+        onOpenChange={(o) => !o && setSelectedDay(null)}
+      >
+        <DialogContent className="max-w-md bg-[#0b0e14] border-slate-800/60 p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-6 pb-4 border-b border-slate-800/40">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-bold text-white font-sora">
+                Sessions on {selectedDay?.format("MMMM D, YYYY")}
+              </DialogTitle>
+            </div>
+          </DialogHeader>
+          <div className="p-4 max-h-[65vh] overflow-y-auto space-y-3">
+            {selectedDay && getSessionsForDay(selectedDay).map((s) => (
+              <div 
+                key={s.id} 
+                className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-3 hover:bg-slate-800/40 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {getSessionTypeBadge(s.scheduleType)}
+                    <span className="text-sm font-bold text-slate-200">
+                      {s.session?.title || s.sessionTitle || "Untitled Session"}
+                    </span>
+                  </div>
+                  {getStatusBadge(s.status)}
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> Time
+                    </span>
+                    <span className="text-xs font-semibold text-slate-300">
+                      {dayjs(s.scheduledAt).format("h:mm A")} <span className="text-[10px] text-slate-500">{timezoneAbbr}</span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1">
+                      <User className="h-3 w-3" /> Client
+                    </span>
+                    <span className="text-xs font-semibold text-slate-300 truncate">
+                      {s.owner?.fullName || s.owner?.name || s.user?.fullName || s.user?.name || "Unknown"}
+                    </span>
+                  </div>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2 h-8 text-xs bg-slate-950/50 border-slate-700 hover:bg-slate-800 hover:text-white transition-colors"
+                  onClick={() => {
+                    setSelectedSession(s);
+                    setSelectedDay(null);
+                  }}
+                >
+                  View Details
+                </Button>
+              </div>
+            ))}
+            {selectedDay && getSessionsForDay(selectedDay).length === 0 && (
+              <div className="text-center text-slate-500 py-8 text-sm">
+                No sessions found for this day.
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Details Modal */}
       <Dialog
         open={!!selectedSession}
         onOpenChange={(o) => !o && setSelectedSession(null)}
       >
-        <DialogContent className="max-w-lg bg-[#0b0e14] border-slate-800/60 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-4 border-b border-slate-800/40">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl font-bold text-white font-sora">
-                Session Details
-              </DialogTitle>
-              {selectedSession && getStatusBadge(selectedSession.status)}
-            </div>
-          </DialogHeader>
+        <DialogContent className="max-w-md bg-[#0a0d14] border-slate-800/60 p-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] sm:rounded-3xl">
+          {/* Header Area */}
+          <div className="relative h-36 w-full overflow-hidden bg-slate-900/50">
+             {/* Abstract background blobs for premium feel */}
+             <div className="absolute top-[-50%] left-[-20%] h-48 w-48 rounded-full bg-lime-500/10 blur-[50px]" />
+             <div className="absolute bottom-[-50%] right-[-20%] h-48 w-48 rounded-full bg-indigo-500/10 blur-[50px]" />
+             
+             <div className="absolute top-5 right-5 z-10">
+                {selectedSession && getStatusBadge(selectedSession.status)}
+             </div>
 
-          {selectedSession && (
-            <div className="p-6 space-y-8">
-              {/* Type & Title */}
-              <div className="flex items-start gap-4">
+             <div className="absolute bottom-6 left-6 flex items-center gap-4 z-10">
                 <div
                   className={cn(
-                    "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 border",
-                    selectedSession.scheduleType === "PHOTO_SESSION"
-                      ? "bg-lime-400/10 border-lime-400/20 text-lime-400"
-                      : "bg-indigo-400/10 border-indigo-400/20 text-indigo-400",
+                    "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-lg backdrop-blur-md",
+                    selectedSession?.scheduleType === "PHOTO_SESSION"
+                      ? "bg-lime-400/20 border-lime-400/30 text-lime-400 shadow-lime-500/10"
+                      : "bg-indigo-400/20 border-indigo-400/30 text-indigo-400 shadow-indigo-500/10",
                   )}
                 >
-                  {selectedSession.scheduleType === "PHOTO_SESSION" ? (
+                  {selectedSession?.scheduleType === "PHOTO_SESSION" ? (
                     <Camera className="h-6 w-6" />
                   ) : (
                     <Video className="h-6 w-6" />
                   )}
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-slate-100">
-                    {selectedSession.session?.title ||
-                      selectedSession.sessionTitle ||
+                  <h4 className="text-xl font-bold text-white tracking-tight">
+                    {selectedSession?.session?.title ||
+                      selectedSession?.sessionTitle ||
                       "Untitled Session"}
                   </h4>
-                  <p className="text-xs text-slate-500 uppercase font-black tracking-widest mt-1">
-                    {selectedSession.scheduleType.replace("_", " ")}
+                  <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-0.5">
+                    {selectedSession?.scheduleType.replace("_", " ")}
                   </p>
                 </div>
-              </div>
+             </div>
+          </div>
 
-              {/* Client Info */}
-              <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-400/80">
-                  Client Information
-                </h5>
-                <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
-                    <User className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-white">
-                      {selectedSession.owner?.fullName ||
-                        selectedSession.owner?.name ||
-                        selectedSession.user?.fullName ||
-                        selectedSession.user?.name ||
-                        "Unknown Client"}
-                    </p>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
-                      <Mail className="h-3 w-3" />
-                      {selectedSession.owner?.email ||
-                        selectedSession.user?.email}
+          {selectedSession && (
+            <div className="p-6 space-y-5 bg-[#0a0d14]">
+              
+              {/* Timing Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-slate-900/60">
+                    <div className="flex items-center gap-1.5 text-slate-500 mb-0.5">
+                       <CalendarDays className="h-3.5 w-3.5" />
+                       <span className="text-[10px] font-black uppercase tracking-widest">Date</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Timing */}
-              <div className="space-y-4">
-                <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">
-                  Schedule Timeline
-                </h5>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">
-                      Date
-                    </p>
                     <p className="text-sm font-bold text-slate-200">
-                      {dayjs(selectedSession.scheduledAt).format(
-                        "MMMM D, YYYY",
-                      )}
+                      {dayjs(selectedSession.scheduledAt).format("MMM D, YYYY")}
                     </p>
                   </div>
-                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">
-                      Time
-                    </p>
+                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-slate-900/60">
+                    <div className="flex items-center gap-1.5 text-slate-500 mb-0.5">
+                       <Clock className="h-3.5 w-3.5" />
+                       <span className="text-[10px] font-black uppercase tracking-widest">Time</span>
+                    </div>
                     <p className="text-sm font-bold text-slate-200">
                       {dayjs(selectedSession.scheduledAt).format("h:mm A")}
                       <span className="text-slate-500 ml-1.5 text-[10px]">
@@ -757,27 +818,48 @@ export default function SessionSchedulePage() {
                       </span>
                     </p>
                   </div>
-                </div>
+              </div>
+
+              {/* Client Info */}
+              <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex items-center justify-between transition-all hover:bg-slate-900/60">
+                  <div className="flex items-center gap-3.5">
+                    <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 ring-4 ring-slate-900/50">
+                      <User className="h-5 w-5" />
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-sm font-bold text-white">
+                        {selectedSession.owner?.fullName ||
+                          selectedSession.owner?.name ||
+                          selectedSession.user?.fullName ||
+                          selectedSession.user?.name ||
+                          "Unknown Client"}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
+                        <Mail className="h-3 w-3" />
+                        {selectedSession.owner?.email ||
+                          selectedSession.user?.email}
+                      </div>
+                    </div>
+                  </div>
               </div>
 
               {/* Notes */}
               {(selectedSession.session?.notes ||
                 selectedSession.sessionNotes) && (
-                <div className="space-y-4">
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                    Session Notes
+                <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500/30" />
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 flex items-center gap-1.5">
+                    <List className="h-3.5 w-3.5" /> Session Notes
                   </h5>
-                  <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 italic text-sm text-slate-400 leading-relaxed">
-                    "
+                  <p className="text-sm text-slate-300 leading-relaxed italic">
                     {selectedSession.session?.notes ||
                       selectedSession.sessionNotes}
-                    "
-                  </div>
+                  </p>
                 </div>
               )}
 
               {/* Actions */}
-              <div className="pt-4 flex items-center gap-3">
+              <div className="pt-3 flex items-center gap-3">
                 {selectedSession.status.toUpperCase() !== "COMPLETED" &&
                   selectedSession.status.toUpperCase() !== "COMPLETE" && (
                     <Button
@@ -785,24 +867,25 @@ export default function SessionSchedulePage() {
                         updateStatus(selectedSession.id, "COMPLETED");
                         setSelectedSession(null);
                       }}
-                      className="flex-1 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
+                      className="flex-1 h-12 rounded-xl bg-gradient-to-r from-lime-500 to-emerald-600 hover:from-lime-400 hover:to-emerald-500 text-white shadow-lg shadow-lime-500/20 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all"
                     >
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      Complete Session
+                      <CheckCircle2 className="h-4 w-4 mr-1.5 sm:mr-2" />
+                      Complete
                     </Button>
                   )}
                 {selectedSession.status.toUpperCase() !== "CANCELLED" &&
-                  selectedSession.status.toUpperCase() !== "CANCELED" && (
+                  selectedSession.status.toUpperCase() !== "CANCELED" &&
+                  selectedSession.status.toUpperCase() !== "REJECTED" && (
                     <Button
                       variant="outline"
                       onClick={() => {
                         updateStatus(selectedSession.id, "CANCELLED");
                         setSelectedSession(null);
                       }}
-                      className="flex-1 h-12 rounded-xl border-rose-500/30 bg-rose-500/5 text-rose-400 text-xs font-black uppercase tracking-widest hover:bg-rose-500/10 transition-all"
+                      className="flex-1 h-12 rounded-xl text-rose-400 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10 hover:text-rose-400 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all"
                     >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Cancel Session
+                      <XCircle className="h-4 w-4 mr-1.5 sm:mr-2" />
+                      Cancel
                     </Button>
                   )}
               </div>
