@@ -23,7 +23,7 @@ const AUTHORIZATION_BULLETS = [
 
 export function AuthorizationSection({ data, updateData, session }: AuthorizationSectionProps) {
   const submissionDate = new Date().toLocaleDateString();
-  const planName = session?.subscription?.planCategory?.split('_').map((word: string) => 
+  const planName = session?.subscription?.planCategory?.split('_').map((word: string) =>
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join(' ') || "Your Plan";
 

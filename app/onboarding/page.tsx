@@ -174,7 +174,7 @@ function OnboardingRouterContent() {
           const planCodeToResolve = session.subscription?.planCode || pendingPlanCode;
 
           // Check if it's an enterprise plan
-          if (planCodeToResolve?.startsWith("ENT_") || planCodeToResolve?.startsWith("ENT-")) {
+          if (planCodeToResolve?.toUpperCase().startsWith("ENT")) {
             console.log("[OnboardingRouter] Detected enterprise plan code:", planCodeToResolve);
             router.push("/onboarding/brand-brief");
             return;
@@ -201,15 +201,12 @@ function OnboardingRouterContent() {
       // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
       const pendingCode = session.pendingPlanCode;
       const isEnterprise =
-        pendingCode?.startsWith("ENT_") ||
-        pendingCode?.startsWith("ENT-") ||
-        session.subscription?.planCode?.startsWith("ENT_") ||
-        session.subscription?.planCode?.startsWith("ENT-") ||
-        selection?.planCode?.startsWith("ENT_") ||
-        selection?.planCode?.startsWith("ENT-") ||
-        planCategory === "ENTERPRISE" ||
-        planCategory === "BRAND_BRIEF" ||
-        planCategory === "BRAND_BRIF";
+        pendingCode?.toUpperCase().startsWith("ENT") ||
+        session.subscription?.planCode?.toUpperCase().startsWith("ENT") ||
+        selection?.planCode?.toUpperCase().startsWith("ENT") ||
+        planCategory?.toUpperCase() === "ENTERPRISE" ||
+        planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+        planCategory?.toUpperCase() === "BRAND_BRIF";
 
       const onboardingRoute = isEnterprise
         ? "/onboarding/brand-brief"

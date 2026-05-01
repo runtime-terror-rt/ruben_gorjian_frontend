@@ -40,7 +40,7 @@ function CheckoutContent() {
   
   // URL params
   const rawPlan = searchParams.get("plan");
-  const isEnterprise = rawPlan?.startsWith("ENT-") || rawPlan?.startsWith("ENT_");
+  const isEnterprise = rawPlan?.toUpperCase().startsWith("ENT");
   const planCode = isEnterprise ? rawPlan : (rawPlan && (PLAN_NAMES as any)[rawPlan] ? rawPlan : "FMP-35") as PlanKey;
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     (searchParams.get("cycle") as "monthly" | "yearly") || "monthly"

@@ -33,7 +33,10 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
   useEffect(() => {
     if (!data.planCode && session?.subscription?.planCode) {
-      updateData({ planCode: session.subscription.planCode });
+      // Don't use Stripe price IDs as the plan code, as it breaks backend enterprise lookups
+      if (!session.subscription.planCode.startsWith('price_')) {
+        updateData({ planCode: session.subscription.planCode });
+      }
     }
   }, [session, data.planCode]);
 
@@ -88,15 +91,14 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
               return (
                 <div
                   key={type}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
-                    isSelected 
-                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                       : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                  }`}
+                    }`}
                 >
                   <RadioGroupItem value={type} id={`type-${type}`} className={isSelected ? "border-lime-400" : ""} />
-                  <Label 
-                    htmlFor={`type-${type}`} 
+                  <Label
+                    htmlFor={`type-${type}`}
                     className={`text-sm cursor-pointer flex-1 py-1 transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
                   >
                     {type}
