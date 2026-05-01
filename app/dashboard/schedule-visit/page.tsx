@@ -29,6 +29,7 @@ import {
   Video,
 } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { VideoSessionUpsellModal } from "@/components/dashboard/VideoSessionUpsellModal";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -84,13 +85,16 @@ export default function ScheduleVisitPage() {
   const itemsPerPage = 5;
 
   const [hasVideoAddon, setHasVideoAddon] = useState(false);
+  const [showVideoUpsellModal, setShowVideoUpsellModal] = useState(false);
 
   useEffect(() => {
     async function checkVideoAddon() {
       try {
         const res = await apiGet<any>("/api/billing/current-plan");
         if (res?.success && res?.subscription) {
-          setHasVideoAddon(!!res.subscription.videoAddonEnabled);
+          const enabled = !!res.subscription.videoAddonEnabled;
+          console.log("[ScheduleVisit] Video addon status:", enabled);
+          setHasVideoAddon(enabled);
         }
       } catch (err) {
         console.error("Failed to fetch plan for video addon", err);
@@ -325,11 +329,16 @@ export default function ScheduleVisitPage() {
       // Wait for sessions to be refreshed before allowing another submission
       await fetchSessions();
     } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
+      const errorMsg = err.message || "";
+      if (errorMsg.toLowerCase().includes("no remaining video sessions")) {
+        setShowVideoUpsellModal(true);
+      } else {
+        toast({
+          title: "Error",
+          description: err.message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setSubmitting(false);
     }
@@ -771,11 +780,7 @@ export default function ScheduleVisitPage() {
                       type="button"
                       onClick={() => {
                         if (!hasVideoAddon && !isAdmin) {
-                          toast({
-                            title: "Upgrade Required",
-                            description: "You need to purchase the Video Addon to schedule a video session.",
-                            variant: "destructive",
-                          });
+                          setShowVideoUpsellModal(true);
                           return;
                         }
                         setSessionType("VIDEO_SESSION");
@@ -974,6 +979,12 @@ export default function ScheduleVisitPage() {
           </Card>
         </div>
       </div>
+
+      <VideoSessionUpsellModal
+        isOpen={showVideoUpsellModal}
+        onOpenChange={setShowVideoUpsellModal}
+        hasAddon={hasVideoAddon}
+      />
     </div>
   );
 }
