@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
-export default function SocialCallbackPage() {
+function SocialCallbackInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [status, setStatus] = useState("Finalizing your connection...");
   const hasRun = useRef(false);
@@ -15,13 +16,16 @@ export default function SocialCallbackPage() {
     hasRun.current = true;
 
     const finalize = async () => {
-      const platform = sessionStorage.getItem("pending_platform");
+      // Get platform from URL params first, then fallback to sessionStorage
+      const urlPlatform = searchParams.get("platform");
+      const sessionPlatform = sessionStorage.getItem("pending_platform");
+      const platform = urlPlatform || sessionPlatform;
 
       if (!platform) {
         setStatus("Invalid callback state. No pending platform found.");
         toast({ title: "Error", description: "No pending platform to connect.", variant: "destructive" });
         setTimeout(() => {
-          router.push("/dashboard/social");
+          window.location.href = "/dashboard/social";
         }, 2000);
         return;
       }
@@ -44,12 +48,13 @@ export default function SocialCallbackPage() {
       } finally {
         // cleanup
         sessionStorage.removeItem("pending_platform");
-        router.push("/dashboard/social");
+        // Force a hard navigation to bypass any client-side cache and ensure data refresh
+        window.location.href = "/dashboard/social";
       }
     };
 
     finalize();
-  }, [router, toast]);
+  }, [router, toast, searchParams]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-950 text-white">
@@ -58,5 +63,20 @@ export default function SocialCallbackPage() {
         <p className="text-lg font-semibold">{status}</p>
       </div>
     </div>
+  );
+}
+
+export default function SocialCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-slate-950 text-white">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+          <p className="text-lg font-semibold">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SocialCallbackInner />
+    </Suspense>
   );
 }
