@@ -349,13 +349,13 @@ export default function PostModal({
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Failed to publish to ${account.platform}`);
+          throw new Error(errData.message || `Failed to post. Please try again or contact support.`);
         }
       }
       toast({ title: "Published Successfully", description: "Your post has been published to the selected accounts." });
       onClose();
     } catch (err) {
-      toast({ title: "Publish Error", description: err instanceof Error ? err.message : "Failed to publish post", variant: "destructive" });
+      toast({ title: "Publish Error", description: err instanceof Error ? err.message : "Failed to post. Please try again or contact support.", variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
