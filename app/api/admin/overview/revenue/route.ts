@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     if (month && month !== "All") query.append("month", month);
 
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/overview/revenue?${query.toString()}`, {
       headers: {

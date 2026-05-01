@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/virtual-admins/${id}`, {
       headers: {
@@ -33,7 +33,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { id } = await params;
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/virtual-admins/${id}`, {
       method: "PATCH",
@@ -62,7 +62,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   try {
     const { id } = await params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/virtual-admins/${id}`, {
       method: "DELETE",

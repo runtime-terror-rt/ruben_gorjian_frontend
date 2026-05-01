@@ -10,7 +10,7 @@ export async function POST(
     const { id } = await context.params;
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/users/${id}/reset-password`, {
       method: "POST",

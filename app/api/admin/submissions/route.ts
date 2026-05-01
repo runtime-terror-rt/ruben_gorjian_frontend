@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const query = searchParams.toString();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/api/admin/submissions${query ? `?${query}` : ""}`, {
       headers: {

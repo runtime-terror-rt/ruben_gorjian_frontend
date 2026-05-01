@@ -7,7 +7,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { id } = await params;
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/coupons/${id}/status`, {
       method: "PATCH", // Backend likely expects PATCH for status updates even if frontend uses apiPost

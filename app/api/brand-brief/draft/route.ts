@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
-    const res = await fetch(`${getBackendUrl()}/onboarding/brand-brief/draft`, {
+    const res = await fetch(`${getBackendUrl()}/api/brand-brief/draft`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (err) {
-    console.error("Onboarding brand-brief draft proxy error", err);
+    console.error("Brand-brief draft proxy error", err);
     return NextResponse.json({ error: "Unable to save brand brief draft" }, { status: 500 });
   }
 }

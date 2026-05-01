@@ -39,6 +39,8 @@ export function getOnboardingRouteForPlanCategory(
       return "/onboarding/full-management";
 
     case "ENTERPRISE":
+    case "BRAND_BRIEF":
+    case "BRAND_BRIF":
       return "/onboarding/brand-brief";
 
     default:

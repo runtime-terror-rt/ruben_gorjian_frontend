@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function POST(req: Request) {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const body = await req.json();
 
     const res = await fetch(`${getBackendUrl()}/brand`, {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/brand`, {
       method: "GET",

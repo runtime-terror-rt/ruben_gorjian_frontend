@@ -97,9 +97,13 @@ function BillingSuccessContent() {
         const isEnterprise =
           pendingCode?.startsWith("ENT_") ||
           pendingCode?.startsWith("ENT-") ||
-          activePlanCode?.startsWith("ENT_") ||
-          activePlanCode?.startsWith("ENT-") ||
-          session?.subscription?.planCategory === "ENTERPRISE";
+          currentPlanCode?.startsWith("ENT_") ||
+          currentPlanCode?.startsWith("ENT-") ||
+          expectedPlanCode?.startsWith("ENT_") ||
+          expectedPlanCode?.startsWith("ENT-") ||
+          session?.subscription?.planCategory === "ENTERPRISE" ||
+          session?.subscription?.planCategory === "BRAND_BRIEF" ||
+          session?.subscription?.planCategory === "BRAND_BRIF";
 
         // DEBUG LOGGING
         console.group("[BillingSuccess] Redirecting from Success Page");
@@ -223,7 +227,9 @@ function BillingSuccessContent() {
             const isEnterprise =
               planCode?.startsWith("ENT_") ||
               planCode?.startsWith("ENT-") ||
-              planCategory === "ENTERPRISE";
+              planCategory === "ENTERPRISE" ||
+              planCategory === "BRAND_BRIEF" ||
+              planCategory === "BRAND_BRIF";
 
             if (isEnterprise) {
               // Enterprise: show Dashboard only when brandBriefCompleted, else show Brand Brief onboarding

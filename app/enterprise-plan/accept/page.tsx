@@ -82,13 +82,14 @@ function EnterpriseAcceptForm() {
         throw new Error(data.error || data.message || "Signup failed. Please try again.");
       }
 
-      // Show brief success toast and redirect to checkout
+      // Show success state and toast
+      setIsSuccess(true);
       toast({
         title: "Account Created",
-        description: "Redirecting to secure checkout...",
+        description: "Your account has been created. Please verify your email, check your inbox.",
       });
       
-      router.push(`/billing/checkout?plan=${planCode}`);
+      // router.push(`/billing/checkout?plan=${planCode}`); // Removed as per request
       
     } catch (err: any) {  
       setError(err.message || "Something went wrong. Please try again.");

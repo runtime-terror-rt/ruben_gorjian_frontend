@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const res = await fetch(`${getBackendUrl()}/user/settings`, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       credentials: "include",
@@ -26,7 +26,7 @@ export async function PATCH(req: Request) {
   try {
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const res = await fetch(`${getBackendUrl()}/user/settings`, {
       method: "PATCH",
       headers: {
@@ -47,7 +47,7 @@ export async function PATCH(req: Request) {
 export async function DELETE() {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const res = await fetch(`${getBackendUrl()}/user/settings/photo`, {
       method: "DELETE",
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,

@@ -129,9 +129,9 @@ function FullManagementOnboardingInner() {
         const raw = Array.isArray(accountsData)
           ? accountsData
           : accountsData.links ||
-            accountsData.accounts ||
-            accountsData.data ||
-            [];
+          accountsData.accounts ||
+          accountsData.data ||
+          [];
         const platforms = raw.map((a: any) => a.platform?.toUpperCase());
         setConnectedAccounts(platforms);
       }
@@ -556,13 +556,12 @@ function FullManagementOnboardingInner() {
                   return (
                     <div
                       key={section.id}
-                      className={`flex items-start gap-3 rounded-xl border p-3 ${
-                        active
-                          ? "border-lime-300/70 bg-lime-300/5"
-                          : done
-                            ? "border-lime-200/40 bg-slate-900/60"
-                            : "border-slate-800 bg-slate-900/40"
-                      }`}
+                      className={`flex items-start gap-3 rounded-xl border p-3 ${active
+                        ? "border-lime-300/70 bg-lime-300/5"
+                        : done
+                          ? "border-lime-200/40 bg-slate-900/60"
+                          : "border-slate-800 bg-slate-900/40"
+                        }`}
                     >
                       <div className="mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center text-xs font-semibold border-slate-700 bg-slate-800 text-slate-100">
                         {done ? <Check className="h-3 w-3" /> : section.id}
@@ -703,11 +702,11 @@ function FullManagementOnboardingInner() {
                                   className={clsx(
                                     "p-2 rounded-lg text-white",
                                     option.value === "FACEBOOK" &&
-                                      "bg-blue-600",
+                                    "bg-blue-600",
                                     option.value === "INSTAGRAM" &&
-                                      "bg-gradient-to-r from-pink-500 to-orange-400",
+                                    "bg-gradient-to-r from-pink-500 to-orange-400",
                                     option.value === "TIKTOK" &&
-                                      "bg-black border border-slate-700",
+                                    "bg-black border border-slate-700",
                                   )}
                                 >
                                   <Icon className="h-5 w-5" />
@@ -743,12 +742,12 @@ function FullManagementOnboardingInner() {
                                           ...f,
                                           platformsToManage: checked
                                             ? [
-                                                ...f.platformsToManage,
-                                                option.value as any,
-                                              ]
+                                              ...f.platformsToManage,
+                                              option.value as any,
+                                            ]
                                             : f.platformsToManage.filter(
-                                                (p) => p !== option.value,
-                                              ),
+                                              (p) => p !== option.value,
+                                            ),
                                         }))
                                       }
                                       className="border-lime-400 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-900"
@@ -1092,8 +1091,8 @@ function FullManagementOnboardingInner() {
                                   postingTimePreference: checked
                                     ? [...f.postingTimePreference, time]
                                     : f.postingTimePreference.filter(
-                                        (t) => t !== time,
-                                      ),
+                                      (t) => t !== time,
+                                    ),
                                 }))
                               }
                             />

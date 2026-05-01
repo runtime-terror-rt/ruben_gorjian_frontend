@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const response = await fetch(`${getBackendUrl()}/posts/calendar${url.search}`, {
       headers: {

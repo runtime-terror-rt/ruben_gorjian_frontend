@@ -6,7 +6,7 @@ async function proxyRequest(request: NextRequest, { params }: { params: Promise<
   try {
     const { path: pathSegments } = await params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const path = pathSegments.join("/");
     const query = request.nextUrl.search;
     const url = `${getBackendUrl()}/api/social-media/${path}${query}`;

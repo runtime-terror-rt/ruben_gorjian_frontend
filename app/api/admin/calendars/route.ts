@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/calendars`, {
       headers: {

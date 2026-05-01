@@ -48,17 +48,64 @@ function CalendarOnboardingInner() {
 
   const fetchConnectedAccounts = useCallback(async () => {
     try {
-      const accountsRes = await fetch("/api/social-media/platform/my-links", {
-        credentials: "include",
-      });
+      const accountsRes = await fetch(
+        `/api/social-media/platform/my-links?_t=${Date.now()}`,
+        {
+          credentials: "include",
+          cache: "no-store",
+          headers: {
+            Pragma: "no-cache",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+          },
+        },
+      );
       if (accountsRes.ok) {
         const accountsData = await accountsRes.json();
-        // Updated mapping to match dashboard Logic
-        const raw = Array.isArray(accountsData)
+        console.log("[fetchConnectedAccounts] accountsData:", accountsData);
+
+        // 1. Try to get raw list of link objects or strings from common keys
+        let raw = Array.isArray(accountsData)
           ? accountsData
-          : accountsData.links || accountsData.accounts || accountsData.data || [];
-        const platforms = raw.map((a: any) => a.platform?.toUpperCase());
+          : accountsData.links ||
+          accountsData.accounts ||
+          accountsData.data ||
+          [];
+
+        // 2. Map to platform names (handling both objects and strings)
+        let platforms = raw
+          .map((a: any) => (typeof a === "string" ? a : a.platform))
+          .filter(Boolean)
+          .map((p: string) => p.toUpperCase());
+
+        // 3. Fallback: Check for platforms array in profile or top level
+        if (platforms.length === 0) {
+          const fallbackPlatforms =
+            accountsData.platforms || accountsData.profile?.platforms;
+          if (Array.isArray(fallbackPlatforms)) {
+            platforms = fallbackPlatforms.map((p: any) =>
+              String(p).toUpperCase(),
+            );
+          }
+        }
+
+        // 4. Fallback: Check for social_accounts object (keys are platforms)
+        if (platforms.length === 0) {
+          const socialAccounts =
+            accountsData.social_accounts ||
+            accountsData.profile?.social_accounts;
+          if (socialAccounts && typeof socialAccounts === "object") {
+            platforms = Object.keys(socialAccounts).map((p) => p.toUpperCase());
+          }
+        }
+
+        console.log("[fetchConnectedAccounts] Final platforms:", platforms);
         setConnectedAccounts(platforms);
+      } else {
+        console.error(
+          "[fetchConnectedAccounts] API failed:",
+          accountsRes.status,
+          accountsRes.statusText,
+        );
       }
     } catch (err) {
       console.error("Failed to fetch connected accounts:", err);
@@ -312,213 +359,213 @@ function CalendarOnboardingInner() {
     label: string;
     icon: IconType;
   }> = [
-    { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
-    { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
-    { value: "TIKTOK", label: "TikTok", icon: SiTiktok },
-  ];
+      { value: "INSTAGRAM", label: "Instagram", icon: FaInstagram },
+      { value: "FACEBOOK", label: "Facebook", icon: FaFacebook },
+      { value: "TIKTOK", label: "TikTok", icon: SiTiktok },
+    ];
 
 
-if (sessionLoading) {
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+        <p className="text-slate-300">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <p className="text-slate-300">Loading...</p>
-    </div>
-  );
-}
-
-return (
-  <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-slate-900">
-    <OnboardingHeaderNav currentStep={1} totalSteps={1} sectionNames={[]} />
-    <div className="flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-2xl rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden relative z-10">
-        <div className="px-6 py-8 flex flex-col min-h-[500px]">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-white">
-                Calendar Setup
-              </h1>
-              <p className="mt-2 text-sm text-slate-300">
-                Configure your calendar access and preferences
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleManualRefresh}
-              disabled={refreshing}
-              className="text-slate-400 hover:text-white gap-2"
-            >
-              <RefreshCw className={clsx("h-3.5 w-3.5", refreshing && "animate-spin")} />
-              Refresh
-            </Button>
-          </div>
-
-          {error && (
-            <div className="mt-4 rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-xs text-red-100 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[60vh]">
-            <div className="space-y-2">
-              <Label
-                htmlFor="name"
-                className="text-sm font-semibold text-slate-300"
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-slate-900">
+      <OnboardingHeaderNav currentStep={1} totalSteps={1} sectionNames={[]} />
+      <div className="flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-2xl rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden relative z-10">
+          <div className="px-6 py-8 flex flex-col min-h-[500px]">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold text-white">
+                  Calendar Setup
+                </h1>
+                <p className="mt-2 text-sm text-slate-300">
+                  Configure your calendar access and preferences
+                </p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleManualRefresh}
+                disabled={refreshing}
+                className="text-slate-400 hover:text-white gap-2"
               >
-                Name <span className="text-red-400">*</span>
-              </Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, name: e.target.value }))
-                }
-                placeholder="Your name"
-                required
-              />
+                <RefreshCw className={clsx("h-3.5 w-3.5", refreshing && "animate-spin")} />
+                Refresh
+              </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">
-                Connect Social Media <span className="text-red-400">*</span>
-              </Label>
-              <div className="space-y-3">
-                {platformOptions.map((option) => {
-                  const Icon = option.icon;
-                  const isConnected = connectedAccounts.includes(option.value);
-                  return (
-                    <div
-                      key={option.value}
-                      className="flex items-center justify-between p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className={clsx(
-                          "p-2 rounded-lg text-white",
-                          option.value === "FACEBOOK" && "bg-blue-600",
-                          option.value === "INSTAGRAM" && "bg-gradient-to-r from-pink-500 to-orange-400",
-                          option.value === "TIKTOK" && "bg-black border border-slate-700"
-                        )}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-slate-200 block">
-                            {option.label}
-                          </span>
-                          <span className={clsx(
-                            "text-[10px] block",
-                            isConnected ? "text-lime-400" : "text-slate-400"
+            {error && (
+              <div className="mt-4 rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-xs text-red-100 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-6 space-y-6 flex-grow overflow-y-auto pr-2 max-h-[60vh]">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-semibold text-slate-300"
+                >
+                  Name <span className="text-red-400">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  value={form.name}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, name: e.target.value }))
+                  }
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-slate-300">
+                  Connect Social Media <span className="text-red-400">*</span>
+                </Label>
+                <div className="space-y-3">
+                  {platformOptions.map((option) => {
+                    const Icon = option.icon;
+                    const isConnected = connectedAccounts.includes(option.value);
+                    return (
+                      <div
+                        key={option.value}
+                        className="flex items-center justify-between p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className={clsx(
+                            "p-2 rounded-lg text-white",
+                            option.value === "FACEBOOK" && "bg-blue-600",
+                            option.value === "INSTAGRAM" && "bg-gradient-to-r from-pink-500 to-orange-400",
+                            option.value === "TIKTOK" && "bg-black border border-slate-700"
                           )}>
-                            {isConnected ? "Connected successfully" : "Not connected yet"}
-                          </span>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-slate-200 block">
+                              {option.label}
+                            </span>
+                            <span className={clsx(
+                              "text-[10px] block",
+                              isConnected ? "text-lime-400" : "text-slate-400"
+                            )}>
+                              {isConnected ? "Connected successfully" : "Not connected yet"}
+                            </span>
+                          </div>
                         </div>
+
+                        {isConnected ? (
+                          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-xs font-medium">
+                            <Check className="h-3 w-3" />
+                            Connected
+                          </div>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => connectPlatform(option.value)}
+                            disabled={connectingPlatform === option.value}
+                            className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs h-8"
+                          >
+                            {connectingPlatform === option.value ? "Connecting..." : "Connect"}
+                          </Button>
+                        )}
                       </div>
-
-                      {isConnected ? (
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-400 text-xs font-medium">
-                          <Check className="h-3 w-3" />
-                          Connected
-                        </div>
-                      ) : (
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => connectPlatform(option.value)}
-                          disabled={connectingPlatform === option.value}
-                          className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs h-8"
-                        >
-                          {connectingPlatform === option.value ? "Connecting..." : "Connect"}
-                        </Button>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">
-                Timezone
-              </Label>
-              <div className="space-y-3">
-                <label className="flex items-center space-x-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer">
-                  <Checkbox
-                    checked={form.timezoneAutoDetect}
-                    onCheckedChange={(checked: boolean) =>
-                      setForm((f) => ({ ...f, timezoneAutoDetect: checked }))
-                    }
-                  />
-                  <span className="text-sm text-slate-200">Auto-detect</span>
-                </label>
-                {!form.timezoneAutoDetect && (
-                  <Select
-                    value={form.timezone}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, timezone: e.target.value }))
-                    }
-                  >
-                    <option value="">Select timezone</option>
-                    <option value="America/New_York">
-                      Eastern Time (ET)
-                    </option>
-                    <option value="America/Chicago">Central Time (CT)</option>
-                    <option value="America/Denver">Mountain Time (MT)</option>
-                    <option value="America/Los_Angeles">
-                      Pacific Time (PT)
-                    </option>
-                    <option value="Europe/London">London (GMT)</option>
-                    <option value="Europe/Paris">Paris (CET)</option>
-                    <option value="Asia/Tokyo">Tokyo (JST)</option>
-                  </Select>
-                )}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-slate-300">
+                  Timezone
+                </Label>
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-3 p-3 rounded-lg border border-slate-800 bg-slate-900/60 cursor-pointer">
+                    <Checkbox
+                      checked={form.timezoneAutoDetect}
+                      onCheckedChange={(checked: boolean) =>
+                        setForm((f) => ({ ...f, timezoneAutoDetect: checked }))
+                      }
+                    />
+                    <span className="text-sm text-slate-200">Auto-detect</span>
+                  </label>
+                  {!form.timezoneAutoDetect && (
+                    <Select
+                      value={form.timezone}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, timezone: e.target.value }))
+                      }
+                    >
+                      <option value="">Select timezone</option>
+                      <option value="America/New_York">
+                        Eastern Time (ET)
+                      </option>
+                      <option value="America/Chicago">Central Time (CT)</option>
+                      <option value="America/Denver">Mountain Time (MT)</option>
+                      <option value="America/Los_Angeles">
+                        Pacific Time (PT)
+                      </option>
+                      <option value="Europe/London">London (GMT)</option>
+                      <option value="Europe/Paris">Paris (CET)</option>
+                      <option value="Asia/Tokyo">Tokyo (JST)</option>
+                    </Select>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-semibold text-slate-300">
-                Insight Goal (Optional)
-              </Label>
-              <Select
-                value={form.insightGoal}
-                onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    insightGoal: e.target.value as
-                      | "STAY_CONSISTENT"
-                      | "PLAN_AHEAD"
-                      | "REDUCE_LAST_MINUTE"
-                      | "",
-                  }))
-                }
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-slate-300">
+                  Insight Goal (Optional)
+                </Label>
+                <Select
+                  value={form.insightGoal}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      insightGoal: e.target.value as
+                        | "STAY_CONSISTENT"
+                        | "PLAN_AHEAD"
+                        | "REDUCE_LAST_MINUTE"
+                        | "",
+                    }))
+                  }
+                >
+                  <option value="">Select an option</option>
+                  <option value="STAY_CONSISTENT">Stay consistent</option>
+                  <option value="PLAN_AHEAD">Plan ahead</option>
+                  <option value="REDUCE_LAST_MINUTE">
+                    Reduce last-minute posting
+                  </option>
+                </Select>
+                <p className="text-xs text-slate-400 mt-1">
+                  This answer does not affect execution
+                </p>
+              </div>
+            </form>
+
+            <div className="flex justify-end pt-4 mt-auto border-t border-slate-800">
+              <Button
+                type="button"
+                onClick={(e: any) => handleSubmit(e)}
+                disabled={submitting}
+                className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold px-8 rounded-xl"
               >
-                <option value="">Select an option</option>
-                <option value="STAY_CONSISTENT">Stay consistent</option>
-                <option value="PLAN_AHEAD">Plan ahead</option>
-                <option value="REDUCE_LAST_MINUTE">
-                  Reduce last-minute posting
-                </option>
-              </Select>
-              <p className="text-xs text-slate-400 mt-1">
-                This answer does not affect execution
-              </p>
+                {submitting ? "Saving..." : "Complete Setup"}
+              </Button>
             </div>
-          </form>
-
-          <div className="flex justify-end pt-4 mt-auto border-t border-slate-800">
-            <Button
-              type="button"
-              onClick={(e: any) => handleSubmit(e)}
-              disabled={submitting}
-              className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold px-8 rounded-xl"
-            >
-              {submitting ? "Saving..." : "Complete Setup"}
-            </Button>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default function CalendarOnboardingPage() {

@@ -10,85 +10,124 @@ interface ProductsCollectionsSectionProps {
   updateData: (fields: any) => void;
 }
 
-const hashtagStyles = [
-  { value: "Niche", label: "Niche (tight, specific — e.g. #SapphireRing #BridalJewelry)" },
-  { value: "Broad", label: "Broad (wide reach — e.g. #JewelryLovers #OOTD)" },
-  { value: "Mixed", label: "Mixed (combination of both)" },
-];
-
 export function ProductsCollectionsSection({ data, updateData }: ProductsCollectionsSectionProps) {
+  const hashtagStyles = [
+    { value: "Branded and location tags", label: "Focus on your restaurant's name and city" },
+    { value: "Foodie & niche community tags", label: "Target specific food categories and trends" },
+    { value: "Minimal (1-3 tags only)", label: "Clean look, focusing on brand identity" },
+    { value: "Aggressive (20+ tags)", label: "Maximum reach using broad category tags" },
+  ];
+
+  const updateSignatureDish = (index: number, val: string) => {
+    const current = [...(data.signatureDishes || ["", "", "", "", ""])];
+    current[index] = val;
+    updateData({ signatureDishes: current });
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-6">
-        <h2 className="text-xl font-bold text-white uppercase tracking-wider">Products & Collections</h2>
-
         <div className="space-y-2">
-          <Label htmlFor="keyProducts" className="text-sm font-semibold text-slate-300">
-            Key Products / Collections
-            <span className="block text-xs font-normal text-slate-500 mt-1">List your main product categories, hero items, or named collections.</span>
+          <h2 className="text-xl font-bold text-white uppercase tracking-wider">04 Menu & Content Priorities</h2>
+          <p className="text-xs text-slate-500">Identify the heroes of your menu.</p>
+        </div>
+
+        <div className="space-y-4">
+          <Label className="text-sm font-semibold text-slate-300">
+            Your Top 5 Signature Dishes <span className="text-lime-400">*</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">List your most iconic, most ordered, or most visually impressive items. These get priority in every shoot.</span>
+          </Label>
+          <div className="grid grid-cols-1 gap-3">
+            {[0, 1, 2, 3, 4].map((idx) => (
+              <div key={idx} className="flex items-center gap-3">
+                <span className="text-xs font-bold text-slate-600 w-4">{idx + 1}.</span>
+                <Input
+                  value={(data.signatureDishes || [])[idx] || ""}
+                  onChange={(e) => updateSignatureDish(idx, e.target.value)}
+                  placeholder={`Dish #${idx + 1}`}
+                  className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2 pt-4">
+          <Label htmlFor="signatureDishDetails" className="text-sm font-semibold text-slate-300">
+            What makes your signature dishes special? <span className="text-lime-400">*</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">For each hero item above — describe the ingredients, technique, or story that makes it memorable. This goes directly into captions.</span>
           </Label>
           <Textarea
-            id="keyProducts"
-            value={data.keyProducts || ""}
-            onChange={(e) => updateData({ keyProducts: e.target.value })}
-            placeholder="List your products here..."
+            id="signatureDishDetails"
+            value={data.signatureDishDetails || ""}
+            onChange={(e) => updateData({ signatureDishDetails: e.target.value })}
+            placeholder="Details about your dishes..."
             className="min-h-[120px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
           />
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
+          <Label htmlFor="excludedItems" className="text-sm font-semibold text-slate-300">
+            Items or categories you do NOT want featured
+            <span className="block text-xs font-normal text-slate-500 mt-1">Discontinued items, low-margin dishes, or anything you're phasing out.</span>
+          </Label>
+          <Textarea
+            id="excludedItems"
+            value={data.excludedItems || ""}
+            onChange={(e) => updateData({ excludedItems: e.target.value })}
+            placeholder="What should we avoid?"
+            className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="upcomingPromotions" className="text-sm font-semibold text-slate-300">
+            Upcoming specials, seasonal items, or promotions we should know about
+          </Label>
+          <Textarea
+            id="upcomingPromotions"
+            value={data.upcomingPromotions || ""}
+            onChange={(e) => updateData({ upcomingPromotions: e.target.value })}
+            placeholder="Any upcoming events or specials?"
+            className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+          />
+        </div>
+
+        <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Hashtag Style
-            <span className="block text-xs font-normal text-slate-500 mt-1">Pick one:</span>
+            Hashtag Style <span className="text-lime-400">*</span>
           </Label>
           <RadioGroup
             value={data.hashtagStyle}
             onValueChange={(val) => updateData({ hashtagStyle: val })}
-            className="space-y-2"
+            className="grid grid-cols-1 md:grid-cols-2 gap-3"
           >
-            {hashtagStyles.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex items-start gap-3 p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors cursor-pointer"
-              >
-                <RadioGroupItem value={opt.value} id={`hashtag-${opt.value}`} className="mt-1" />
-                <div className="space-y-0.5">
-                  <span className="text-sm font-medium text-slate-200">{opt.value}</span>
-                  <span className="text-xs text-slate-500 block">{opt.label.split('(')[1]?.replace(')', '') || ''}</span>
+            {hashtagStyles.map((opt) => {
+              const isSelected = data.hashtagStyle === opt.value;
+              return (
+                <div
+                  key={opt.value}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${
+                    isSelected 
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
+                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value={opt.value} id={`hashtag-${opt.value}`} className={isSelected ? "border-lime-400" : ""} />
+                    <Label 
+                      htmlFor={`hashtag-${opt.value}`} 
+                      className={`text-sm font-semibold cursor-pointer transition-colors ${isSelected ? "text-white" : "text-slate-200"}`}
+                    >
+                      {opt.value}
+                    </Label>
+                  </div>
+                  <span className={`text-[10px] leading-relaxed ml-7 transition-colors ${isSelected ? "text-slate-300" : "text-slate-500"}`}>
+                    {opt.label}
+                  </span>
                 </div>
-              </label>
-            ))}
-          </RadioGroup>
-        </div>
-
-        <div className="space-y-3">
-          <Label className="text-sm font-semibold text-slate-300">
-            Language
-            <span className="block text-xs font-normal text-slate-500 mt-1">Pick one:</span>
-          </Label>
-          <RadioGroup
-            value={data.language}
-            onValueChange={(val) => updateData({ language: val })}
-            className="space-y-3"
-          >
-            <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors cursor-pointer">
-              <RadioGroupItem value="English only" id="lang-english" />
-              <span className="text-sm text-slate-200">English only</span>
-            </label>
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors cursor-pointer">
-                <RadioGroupItem value="Bilingual" id="lang-bilingual" />
-                <span className="text-sm text-slate-200">Bilingual — specify language:</span>
-              </label>
-              {data.language === "Bilingual" && (
-                <Input
-                  value={data.bilingualLanguage || ""}
-                  onChange={(e) => updateData({ bilingualLanguage: e.target.value })}
-                  placeholder="e.g. English & Spanish"
-                  className="ml-8 bg-slate-900/50 border-slate-800 h-9 w-[calc(100%-2rem)] text-sm"
-                />
-              )}
-            </div>
+              );
+            })}
           </RadioGroup>
         </div>
       </div>

@@ -12,27 +12,78 @@ import { BrandVoiceSection } from "@/components/onboarding/brand-brief/BrandVoic
 import { ProductsCollectionsSection } from "@/components/onboarding/brand-brief/ProductsCollectionsSection";
 import { SpecialNotesSection } from "@/components/onboarding/brand-brief/SpecialNotesSection";
 import { AuthorizationSection } from "@/components/onboarding/brand-brief/AuthorizationSection";
+import { ShootPreparationSection } from "@/components/onboarding/brand-brief/ShootPreparationSection";
+import { SocialMediaAccessSection } from "@/components/onboarding/brand-brief/SocialMediaAccessSection";
 import { AlertCircle, Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 const sections = [
   { id: 1, title: "Brand Identity" },
   { id: 2, title: "Online Presence" },
   { id: 3, title: "Brand Voice" },
-  { id: 4, title: "Products & Collections" },
-  { id: 5, title: "Special Notes" },
-  { id: 6, title: "Authorization" },
+  { id: 4, title: "Menu & Content Priorities" },
+  { id: 5, title: "Shoot Preparation" },
+  { id: 6, title: "Social Media Access" },
+  { id: 7, title: "Special Notes" },
+  { id: 8, title: "Authorization" },
 ];
 
 export default function BrandBriefPage() {
   const { session, loading, refresh } = useSessionContext();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<any>({
-    industries: [],
-    platforms: [],
-    tones: [],
+    // Step 1: Brand Identity
+    planCode: "",
+    restaurantName: "",
+    location: "",
+    businessType: "",
+    cuisineType: "",
+    dietaryCertifications: [],
+
+    // Step 2: Online Presence
+    websiteUrl: "",
+    instagramHandle: "",
+    facebookPageUrl: "",
+    tiktokHandle: "",
+    onlineOrderingUrl: "",
+
+    // Step 3: Brand Voice
+    foodDescription: "",
+    uniqueSellingPoint: "",
+    customerReviews: "",
+    forbiddenPhrases: "",
+    preferredPhrases: "",
+    captionSample1: "",
+    captionSample2: "",
+    captionSample3: "",
+    toneAndVoice: [],
+    captionTargeting: "",
+    language: "English",
+
+    // Step 4: Menu & Content
+    signatureDishes: ["", "", "", "", ""],
+    signatureDishDetails: "",
+    excludedItems: "",
+    upcomingPromotions: "",
+    hashtagStyle: "",
+
+    // Step 5: Shoot Preparation
+    confirmMinDishes: "",
+    actionShotsPossible: "",
+    actionShotDetails: "",
+    preferredShootTime: "",
+    physicalConstraints: "",
+
+    // Step 7: Special Notes
+    specialNotes: "",
+
+    // Step 8: Authorization
+    clientName: "",
+    restaurantNameAuth: "",
+    submissionDate: new Date().toISOString().split("T")[0],
+    talexiaPlan: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -54,7 +105,7 @@ export default function BrandBriefPage() {
 
     const loadDraft = async () => {
       try {
-        const res = await fetch("/api/onboarding/brand-brief", { credentials: "include" });
+        const res = await fetch("/api/brand-brief", { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           if (data.data) {
@@ -77,11 +128,11 @@ export default function BrandBriefPage() {
     if (fetching || submitting || !session) return;
     const timer = setTimeout(async () => {
       try {
-        await fetch("/api/onboarding/brand-brief/draft", {
+        await fetch("/api/brand-brief/draft", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ ...formData, currentStep }),
+          body: JSON.stringify(formData),
         });
       } catch (err) {
         console.warn("Failed to save draft", err);
@@ -95,6 +146,37 @@ export default function BrandBriefPage() {
   };
 
   const handleNext = () => {
+    // Basic validation for mandatory fields per step
+    if (currentStep === 1) {
+      if (!formData.restaurantName || !formData.location || !formData.businessType || !formData.cuisineType) {
+        setError("Please fill in all mandatory fields (marked with *).");
+        return;
+      }
+    } else if (currentStep === 2) {
+      if (!formData.instagramHandle) {
+        setError("Instagram handle is required.");
+        return;
+      }
+    } else if (currentStep === 3) {
+      const hasAllCaptions = formData.captionSample1 && formData.captionSample2 && formData.captionSample3;
+      if (!formData.foodDescription || !formData.uniqueSellingPoint || !formData.customerReviews || !hasAllCaptions || (formData.toneAndVoice?.length === 0) || !formData.captionTargeting) {
+        setError("Please complete all mandatory Brand Voice fields, including 3 sample captions.");
+        return;
+      }
+    } else if (currentStep === 4) {
+      const hasDishes = formData.signatureDishes?.filter((d: string) => d.trim().length > 0).length >= 2;
+      if (!hasDishes || !formData.signatureDishDetails || !formData.hashtagStyle) {
+        setError("Please list your Signature Dishes and their details.");
+        return;
+      }
+    } else if (currentStep === 5) {
+      if (!formData.confirmMinDishes) {
+        setError("Please confirm the shoot day requirements.");
+        return;
+      }
+    }
+
+    setError(null);
     if (currentStep < sections.length) {
       setCurrentStep(s => s + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -119,7 +201,7 @@ export default function BrandBriefPage() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/onboarding/brand-brief", {
+      const res = await fetch("/api/brand-brief", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -152,10 +234,17 @@ export default function BrandBriefPage() {
 
   if (loading || fetching) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
-          <p className="text-slate-400 text-sm">Loading your brief...</p>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-slate-900">
+        <OnboardingHeaderNav
+          currentStep={currentStep}
+          totalSteps={sections.length}
+          sectionNames={sections}
+        />
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
+            <p className="text-slate-400 text-sm">Loading your brief...</p>
+          </div>
         </div>
       </div>
     );
@@ -169,7 +258,7 @@ export default function BrandBriefPage() {
         sectionNames={sections}
       />
 
-      <div className="flex items-center justify-center px-4 py-10">
+      <div className="flex items-center justify-center px-4 pb-20 pt-10">
         <div className="w-full max-w-5xl rounded-3xl border border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-2xl overflow-hidden min-h-[700px]">
           <div className="grid md:grid-cols-4 h-full">
             {/* Sidebar Navigation */}
@@ -184,21 +273,19 @@ export default function BrandBriefPage() {
                   return (
                     <div
                       key={section.id}
-                      className={`flex items-start gap-4 rounded-2xl border p-4 transition-all duration-300 ${
-                        active
+                      className={`flex items-start gap-4 rounded-2xl border p-4 transition-all duration-300 ${active
                           ? "border-lime-400/50 bg-lime-400/5 shadow-[0_0_15px_rgba(163,230,53,0.05)]"
                           : done
                             ? "border-slate-800 bg-slate-900/60 opacity-60"
                             : "border-slate-900/50 bg-slate-900/20 opacity-40"
-                      }`}
+                        }`}
                     >
-                      <div className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-colors ${
-                        active 
-                          ? "border-lime-400 bg-lime-400 text-slate-950" 
-                          : done 
-                            ? "border-lime-400/50 bg-lime-400/20 text-lime-400" 
+                      <div className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-colors ${active
+                          ? "border-lime-400 bg-lime-400 text-slate-950"
+                          : done
+                            ? "border-lime-400/50 bg-lime-400/20 text-lime-400"
                             : "border-slate-700 bg-slate-800 text-slate-500"
-                      }`}>
+                        }`}>
                         {done ? <Check className="h-3 w-3" /> : section.id}
                       </div>
                       <div>
@@ -226,12 +313,14 @@ export default function BrandBriefPage() {
                 )}
 
                 <div className="max-w-2xl mx-auto">
-                  {currentStep === 1 && <BrandIdentitySection data={formData} updateData={updateData} />}
+                  {currentStep === 1 && <BrandIdentitySection data={formData} updateData={updateData} session={session} />}
                   {currentStep === 2 && <OnlinePresenceSection data={formData} updateData={updateData} />}
                   {currentStep === 3 && <BrandVoiceSection data={formData} updateData={updateData} />}
                   {currentStep === 4 && <ProductsCollectionsSection data={formData} updateData={updateData} />}
-                  {currentStep === 5 && <SpecialNotesSection data={formData} updateData={updateData} />}
-                  {currentStep === 6 && <AuthorizationSection data={formData} updateData={updateData} session={session} />}
+                  {currentStep === 5 && <ShootPreparationSection data={formData} updateData={updateData} />}
+                  {currentStep === 6 && <SocialMediaAccessSection data={formData} updateData={updateData} />}
+                  {currentStep === 7 && <SpecialNotesSection data={formData} updateData={updateData} />}
+                  {currentStep === 8 && <AuthorizationSection data={formData} updateData={updateData} session={session} />}
                 </div>
               </div>
 
