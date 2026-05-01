@@ -3,12 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
 
-  turbopack: {
-    // Ensure Turbopack treats this folder as the workspace root
-    root: __dirname,
-  },
   experimental: {
-    workerThreads: true,
+    // Disabling workerThreads to improve Turbopack stability
+    workerThreads: false,
   },
   images: {
     remotePatterns: [
