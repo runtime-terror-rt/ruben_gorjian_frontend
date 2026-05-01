@@ -79,8 +79,18 @@ function BillingSuccessContent() {
 
       const isStatusActive = status === "ACTIVE" || status === "TRIALING";
 
-      // If we expect a specific plan (from checkout), wait until the session matches it
-      const isPlanMatched = !expectedPlanCode || currentPlanCode === expectedPlanCode;
+      // For enterprise plans, the plan code might be generated dynamically, so we shouldn't strictly require a match
+      // if the current plan is an enterprise plan
+      const isExpectedEnterprise = expectedPlanCode?.toUpperCase().startsWith("ENT");
+      const isCurrentEnterprise = currentPlanCode?.toUpperCase().startsWith("ENT") || 
+                                  session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
+                                  session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+                                  session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
+                                  
+      const isPlanMatched = !expectedPlanCode || 
+                            currentPlanCode === expectedPlanCode || 
+                            (isExpectedEnterprise && isCurrentEnterprise) ||
+                            (!isExpectedEnterprise && isCurrentEnterprise); // If they upgraded to enterprise, consider it matched
 
       const isActive = isStatusActive && isPlanMatched;
 
@@ -95,15 +105,12 @@ function BillingSuccessContent() {
         const pendingCode = session?.pendingPlanCode;
         const activePlanCode = currentPlanCode || pendingCode || expectedPlanCode;
         const isEnterprise =
-          pendingCode?.startsWith("ENT_") ||
-          pendingCode?.startsWith("ENT-") ||
-          currentPlanCode?.startsWith("ENT_") ||
-          currentPlanCode?.startsWith("ENT-") ||
-          expectedPlanCode?.startsWith("ENT_") ||
-          expectedPlanCode?.startsWith("ENT-") ||
-          session?.subscription?.planCategory === "ENTERPRISE" ||
-          session?.subscription?.planCategory === "BRAND_BRIEF" ||
-          session?.subscription?.planCategory === "BRAND_BRIF";
+          pendingCode?.toUpperCase().startsWith("ENT") ||
+          currentPlanCode?.toUpperCase().startsWith("ENT") ||
+          expectedPlanCode?.toUpperCase().startsWith("ENT") ||
+          session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
+          session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+          session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
 
         // DEBUG LOGGING
         console.group("[BillingSuccess] Redirecting from Success Page");
@@ -225,11 +232,10 @@ function BillingSuccessContent() {
             const planCode = session?.subscription?.planCode || session?.pendingPlanCode;
             const planCategory = session?.subscription?.planCategory;
             const isEnterprise =
-              planCode?.startsWith("ENT_") ||
-              planCode?.startsWith("ENT-") ||
-              planCategory === "ENTERPRISE" ||
-              planCategory === "BRAND_BRIEF" ||
-              planCategory === "BRAND_BRIF";
+              planCode?.toUpperCase().startsWith("ENT") ||
+              planCategory?.toUpperCase() === "ENTERPRISE" ||
+              planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+              planCategory?.toUpperCase() === "BRAND_BRIF";
 
             if (isEnterprise) {
               // Enterprise: show Dashboard only when brandBriefCompleted, else show Brand Brief onboarding

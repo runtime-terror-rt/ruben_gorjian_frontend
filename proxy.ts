@@ -91,9 +91,10 @@ export async function proxy(req: NextRequest) {
     const planCode = session?.subscription?.planCode;
     const planCategory = session?.subscription?.planCategory;
     const isEnterprisePlan =
-      planCode?.startsWith("ENT_") ||
-      planCode?.startsWith("ENT-") ||
-      planCategory === "ENTERPRISE";
+      planCode?.toUpperCase().startsWith("ENT") ||
+      planCategory?.toUpperCase() === "ENTERPRISE" ||
+      planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+      planCategory?.toUpperCase() === "BRAND_BRIF";
 
     const isOnboardingCompleted = isEnterprisePlan
       ? session?.brandBriefCompleted // Enterprise users must complete brand brief

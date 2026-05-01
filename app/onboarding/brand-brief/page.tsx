@@ -219,7 +219,7 @@ export default function BrandBriefPage() {
       });
 
       await refresh();
-      router.push("/onboarding");
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);
       toast({
