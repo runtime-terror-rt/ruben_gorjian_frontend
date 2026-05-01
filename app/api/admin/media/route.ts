@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     // Proxy to the admin-specific assets endpoint in the backend
     const res = await fetch(`${getBackendUrl()}/admin/uploads/assets?${searchParams.toString()}`, {

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 export async function GET(req: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const query = req.nextUrl.search;
 
     const response = await fetch(`${getBackendUrl()}/posts${query}`, {
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const response = await fetch(`${getBackendUrl()}/posts`, {
       method: "POST",

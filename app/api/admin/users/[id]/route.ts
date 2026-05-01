@@ -6,7 +6,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ id: st
   try {
     const { id } = await context.params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/users/${id}`, {
       headers: {
@@ -33,7 +33,7 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
     const { id } = await context.params;
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/users/${id}`, {
       method: "PATCH",
@@ -62,7 +62,7 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
   try {
     const { id } = await context.params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/users/${id}`, {
       method: "DELETE",

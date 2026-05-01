@@ -6,7 +6,7 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
   try {
     const { id } = await context.params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/admin/users/${id}/cancel-subscription-schedule`, {
       method: "POST",

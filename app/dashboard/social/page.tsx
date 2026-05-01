@@ -254,11 +254,10 @@ function SocialPageInner() {
         </p>
         {inlineMessage && (
           <div
-            className={`mt-3 rounded-md border px-3 py-2 text-sm ${
-              inlineMessage.type === "error"
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-100"
-                : "border-lime-400/50 bg-lime-400/10 text-lime-100"
-            }`}
+            className={`mt-3 rounded-md border px-3 py-2 text-sm ${inlineMessage.type === "error"
+              ? "border-amber-500/50 bg-amber-500/10 text-amber-100"
+              : "border-lime-400/50 bg-lime-400/10 text-lime-100"
+              }`}
           >
             {inlineMessage.text}
           </div>
@@ -396,8 +395,8 @@ function SocialPageInner() {
                     Connected{" "}
                     {instagramAccount.createdAt
                       ? new Date(
-                          instagramAccount.createdAt,
-                        ).toLocaleDateString()
+                        instagramAccount.createdAt,
+                      ).toLocaleDateString()
                       : "just now"}
                   </p>
                 </div>

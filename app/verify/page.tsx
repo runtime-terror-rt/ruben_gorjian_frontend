@@ -63,6 +63,7 @@ function VerifyPageInner() {
         // Wait a bit to ensure backend has processed the verification
         await new Promise((resolve) => setTimeout(resolve, 500));
         await refresh();
+        setMessage("Verification complete! Redirecting...");
       } catch (err: unknown) {
         setStatus("error");
         const message =
@@ -108,12 +109,21 @@ function VerifyPageInner() {
         session.subscription?.planCode ||
         planSelection?.planCode;
       
-      // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
-      const isEnterprise = (pendingPlanCode?.startsWith("ENT_") || pendingPlanCode?.startsWith("ENT-")) || planCodeToUse?.startsWith("ENT_") || planCodeToUse?.startsWith("ENT-");
+      // Check all potential sources for enterprise plans
+      const isEnterprise = 
+        pendingPlanCode?.startsWith("ENT_") || 
+        pendingPlanCode?.startsWith("ENT-") || 
+        planCodeToUse?.startsWith("ENT_") || 
+        planCodeToUse?.startsWith("ENT-") ||
+        session.subscription?.planCode?.startsWith("ENT_") ||
+        session.subscription?.planCode?.startsWith("ENT-");
+
       let planCategoryToUse = planCategory;
       if (isEnterprise) {
         planCategoryToUse = "ENTERPRISE";
       }
+
+      console.log("[Verify] Routing decision:", { isEnterprise, planCodeToUse, planCategoryToUse });
 
       // Case 1: User needs to pay for the resolved plan
       // Trigger if: 

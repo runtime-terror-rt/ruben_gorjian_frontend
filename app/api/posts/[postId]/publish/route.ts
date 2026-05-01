@@ -6,7 +6,7 @@ export async function POST(_req: NextRequest, context: { params: Promise<{ postI
   try {
      const { postId } = await context.params;
       const cookieStore = await cookies();
-      const cookieHeader = cookieStore.toString();
+      const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     // const res = await fetch(`${getBackendUrl()}/posts/${params.postId}/publish`, {
     //   method: "POST",

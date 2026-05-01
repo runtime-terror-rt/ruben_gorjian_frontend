@@ -14,9 +14,9 @@ export function SpecialNotesSection({ data, updateData }: SpecialNotesSectionPro
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-6">
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-white uppercase tracking-wider">Special Notes</h2>
+          <h2 className="text-xl font-bold text-white uppercase tracking-wider">07 Special Notes</h2>
           <p className="text-xs text-slate-500">
-            Certifications, discontinued items, seasonal notes, sensitivities, or anything we must know before creating content.
+            Anything else we must know before creating your content?
           </p>
         </div>
 
@@ -25,21 +25,9 @@ export function SpecialNotesSection({ data, updateData }: SpecialNotesSectionPro
             id="specialNotes"
             value={data.specialNotes || ""}
             onChange={(e) => updateData({ specialNotes: e.target.value })}
-            placeholder="Enter any additional notes or instructions here..."
-            className="min-h-[200px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+            placeholder="Enter any additional notes, instructions, or specific sensitivities here..."
+            className="min-h-[250px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
           />
-        </div>
-
-        <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 space-y-3">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Info className="h-5 w-5" />
-            <h3 className="font-semibold text-sm uppercase tracking-wide">Social Media Access</h3>
-          </div>
-          <p className="text-sm text-slate-300 leading-relaxed">
-            You will receive a separate secure form to connect your platforms after submission. 
-            You log in directly — your credentials are never visible to or stored by Talexia. 
-            You can disconnect at any time.
-          </p>
         </div>
       </div>
     </div>

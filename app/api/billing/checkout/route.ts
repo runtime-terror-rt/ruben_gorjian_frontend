@@ -6,12 +6,23 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+
+    // Build a proper "name=value; name2=value2" cookie header.
+    // cookieStore.toString() does NOT produce a valid cookie string in Next.js —
+    // getAll() + map is the only reliable approach.
+    const allCookies = cookieStore.getAll();
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join("; ");
+
+    console.log(
+      "[Billing-Checkout] Forwarding cookies to backend:",
+      allCookies.map((c) => c.name).join(", ") || "(none)"
+    );
 
     const res = await fetch(`${getBackendUrl()}/billing/checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
         ...(cookieHeader ? { cookie: cookieHeader } : {}),
       },
       body: JSON.stringify(body),

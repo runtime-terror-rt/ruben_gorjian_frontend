@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
+  const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
   const res = await fetch(`${getBackendUrl()}/uploads/asset`, {
     method: "POST",

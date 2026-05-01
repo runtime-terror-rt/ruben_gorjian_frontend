@@ -60,7 +60,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (isProtected) {
-     if (!hasSession) {
+    if (!hasSession) {
       // Preserve full URL (path + query + hash) as returnTo
       const fullPath = url.pathname + url.search + url.hash;
       const returnTo = validateReturnTo(fullPath) || "/dashboard";
@@ -72,7 +72,7 @@ export async function proxy(req: NextRequest) {
     }
 
     const session = await fetchSession(req);
-     if (!session) {
+    if (!session) {
       // Preserve full URL (path + query + hash) as returnTo
       const fullPath = url.pathname + url.search + url.hash;
       const returnTo = validateReturnTo(fullPath) || "/dashboard";
@@ -81,7 +81,7 @@ export async function proxy(req: NextRequest) {
       // Also set cookie as backup for OAuth flows
       response.headers.append("Set-Cookie", setReturnToCookie(returnTo));
       return response;
-    } 
+    }
 
     if (session && session.emailVerified === false) {
       return NextResponse.redirect(new URL("/verify", req.url));
@@ -98,9 +98,9 @@ export async function proxy(req: NextRequest) {
     const isOnboardingCompleted = isEnterprisePlan
       ? session?.brandBriefCompleted // Enterprise users must complete brand brief
       : session?.onboardingCompleted ||
-        (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
-        (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
-        (planCategory === "FULL_MANAGEMENT" && session?.fullManagementOnboardingCompleted);
+      (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
+      (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
+      (planCategory === "FULL_MANAGEMENT" && session?.fullManagementOnboardingCompleted);
 
     if (!isOnboardingCompleted && !path.startsWith("/onboarding")) {
       const onboardingRoute = isEnterprisePlan ? "/onboarding/brand-brief" : "/onboarding";

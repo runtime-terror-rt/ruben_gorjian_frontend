@@ -9,7 +9,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const { faqId } = await params;
     const body = await req.json();
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/faq/${faqId}`, {
       method: "PATCH",
@@ -38,7 +38,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   try {
     const { faqId } = await params;
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore ? cookieStore.toString() : "";
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
     const res = await fetch(`${getBackendUrl()}/faq/${faqId}`, {
       method: "DELETE",

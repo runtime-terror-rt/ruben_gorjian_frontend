@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     const body = await request.json();
 
     const res = await fetch(`${getBackendUrl()}/social/connect`, {

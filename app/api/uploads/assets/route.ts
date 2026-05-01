@@ -5,7 +5,7 @@ import { getBackendUrl } from "@/lib/server-backend";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
+  const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
   const res = await fetch(`${getBackendUrl()}/uploads/assets?${searchParams.toString()}`, {
     method: "GET",
