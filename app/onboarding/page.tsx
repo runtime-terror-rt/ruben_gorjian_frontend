@@ -218,7 +218,7 @@ function OnboardingRouterContent() {
         }
         // Determine if completed
         const isCompleted = isEnterprise
-          ? session.brandBriefCompleted
+          ? (session.brandBriefCompleted || session.brandBriefOnboardingCompleted)
           : (
             ((planCategory === "CALENDAR_ONLY" ||
               planCategory === "VISUAL_CALENDAR" ||

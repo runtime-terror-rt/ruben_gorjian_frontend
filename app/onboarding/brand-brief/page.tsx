@@ -99,7 +99,7 @@ export default function BrandBriefPage() {
       return;
     }
 
-    if (session.brandBriefCompleted) {
+    if (session.brandBriefCompleted || session.brandBriefOnboardingCompleted) {
       // Completed, hard redirect to dashboard
       window.location.href = "/dashboard";
       return;

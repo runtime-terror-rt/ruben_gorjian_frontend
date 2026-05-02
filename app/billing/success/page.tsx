@@ -119,14 +119,14 @@ function BillingSuccessContent() {
         console.log("✓ session.pendingPlanCode:", pendingCode);
         console.log("✓ activePlanCode:", activePlanCode);
         console.log("✓ isEnterprise:", isEnterprise);
-        console.log("✓ session.brandBriefCompleted:", session?.brandBriefCompleted);
+        console.log("✓ session.brandBriefCompleted:", session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted);
         console.log("✓ session.onboardingCompleted:", session?.onboardingCompleted);
         console.groupEnd();
 
         if (isEnterprise) {
           // For enterprise users, ALWAYS check brandBriefCompleted specifically
           // even if the generic onboardingCompleted flag is true
-          if (session?.brandBriefCompleted) {
+          if (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) {
             router.push("/dashboard");
           } else {
             router.push("/onboarding/brand-brief");
@@ -239,7 +239,7 @@ function BillingSuccessContent() {
 
             if (isEnterprise) {
               // Enterprise: show Dashboard only when brandBriefCompleted, else show Brand Brief onboarding
-              return session?.brandBriefCompleted ? (
+              return (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) ? (
                 <Link
                   href="/dashboard"
                   className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"

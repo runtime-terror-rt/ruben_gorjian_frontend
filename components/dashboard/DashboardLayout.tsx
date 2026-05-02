@@ -51,7 +51,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
 
     // No active subscription but onboarding not finished - go to onboarding
-    const isCompleted = session.onboardingCompleted || session.brandBriefCompleted || session.fullManagementOnboardingCompleted || session.calendarOnboardingCompleted || session.visualOnboardingCompleted;
+    const isCompleted = session.onboardingCompleted || session.brandBriefCompleted || session.brandBriefOnboardingCompleted || session.fullManagementOnboardingCompleted || session.calendarOnboardingCompleted || session.visualOnboardingCompleted;
     if (hasActiveSubscription && !isCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
       router.replace("/onboarding");
     }
@@ -61,7 +61,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const hasActiveSubscription = session?.subscription?.planCode &&
     (session?.subscription?.status === "ACTIVE" || session?.subscription?.status === "TRIALING");
 
-  const isCompleted = session?.onboardingCompleted || session?.brandBriefCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
+  const isCompleted = session?.onboardingCompleted || session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
 
   const isAuthorized = !!session && (
     pathname === "/pricing" ||
