@@ -13,6 +13,7 @@ type Session = {
   onboardingCompleted?: boolean;
   onboardingStep?: number;
   brandBriefCompleted?: boolean;
+  brandBriefOnboardingCompleted?: boolean;
   calendarOnboardingCompleted?: boolean;
   visualOnboardingCompleted?: boolean;
   fullManagementOnboardingCompleted?: boolean;
@@ -98,7 +99,7 @@ export async function proxy(req: NextRequest) {
       planCategory?.toUpperCase() === "BRAND_BRIF";
 
     const isOnboardingCompleted = isEnterprisePlan
-      ? session?.brandBriefCompleted // Enterprise users must complete brand brief
+      ? (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) // Enterprise users must complete brand brief
       : session?.onboardingCompleted ||
       (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
       (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||

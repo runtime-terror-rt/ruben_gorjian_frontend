@@ -31,6 +31,7 @@ import {
   Edit3,
   FileText,
   ClipboardList,
+  Download,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -276,6 +277,38 @@ export default function EnterprisePlanPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPdf = async (id: string, name: string) => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch(`/api/brand-brief/admin/submissions/${id}/pdf`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.details || "Failed to generate PDF");
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `brand-brief-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error("Download error:", error);
+      toast({
+        title: "Download Failed",
+        description: error.message || "Could not generate PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   // State
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -350,12 +383,12 @@ export default function EnterprisePlanPage() {
 
   // Queries
   const invitesQuery = useQuery({
-    queryKey: ["enterprise-invites", page, pageSize, search, statusFilter],
+    queryKey: ["admin-invites", search, statusFilter, page],
     queryFn: async () => {
       try {
         const params = new URLSearchParams({
           page: page.toString(),
-          pageSize: pageSize.toString(),
+          limit: pageSize.toString(),
         });
         if (search) params.append("search", search);
         if (statusFilter && statusFilter !== "ALL") {
@@ -374,6 +407,7 @@ export default function EnterprisePlanPage() {
 
   // Details Query
   const inviteDetailsQuery = useQuery({
+    queryKey: ["admin-invite-details", selectedInvite?.id],
     queryFn: () => apiGet<{ invite: EnterpriseInvite }>(`/api/admin/enterprise-plan/invites/${selectedInvite?.id}/details`),
     enabled: !!selectedInvite?.id && isDetailsModalOpen,
   });
@@ -2087,8 +2121,24 @@ export default function EnterprisePlanPage() {
                     <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{details.user.email}</span>
                   </div>
                 </div>
-                <div className="h-14 w-14 rounded-3xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
-                  <FileText className="h-7 w-7" />
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => handleDownloadPdf(details.id, details.restaurantName)}
+                    disabled={isDownloading}
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isDownloading ? (
+                      <Loader2 className="h-4 w-4 text-lime-400 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 text-lime-400 group-hover:scale-110 transition-transform" />
+                    )}
+                    <span className="text-[11px] font-black uppercase tracking-widest">
+                      {isDownloading ? "Generating..." : "Download PDF"}
+                    </span>
+                  </button>
+                  <div className="h-14 w-14 rounded-3xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
+                    <FileText className="h-7 w-7" />
+                  </div>
                 </div>
               </div>
 

@@ -22,6 +22,7 @@ export type Session = {
   onboardingCompleted?: boolean;
   onboardingStep?: number;
   brandBriefCompleted?: boolean;
+  brandBriefOnboardingCompleted?: boolean;
   calendarOnboardingCompleted?: boolean;
   visualOnboardingCompleted?: boolean;
   fullManagementOnboardingCompleted?: boolean;
