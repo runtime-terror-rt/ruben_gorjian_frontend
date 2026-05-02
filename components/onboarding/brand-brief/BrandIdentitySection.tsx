@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 interface BrandIdentitySectionProps {
   data: any;
   updateData: (fields: any) => void;
@@ -13,11 +14,11 @@ interface BrandIdentitySectionProps {
 
 export function BrandIdentitySection({ data, updateData, session }: BrandIdentitySectionProps) {
   const businessTypes = [
-    "Restaurant",
-    "Bar & Lounge",
-    "Fast Casual",
-    "Ghost Kitchen",
-    "Catering",
+    { value: "Full-service restaurant", label: "Full-service restaurant" },
+    { value: "Bar & lounge", label: "Bar & lounge" },
+    { value: "Fast casual / takeout", label: "Fast casual / takeout" },
+    { value: "Ghost kitchen / delivery only", label: "Ghost kitchen / delivery only" },
+    { value: "Catering", label: "Catering" },
   ];
 
   const dietaryCerts = ["Kosher", "Halal", "Gluten-Free", "Vegan-Friendly", "None"];
@@ -33,8 +34,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
   useEffect(() => {
     if (!data.planCode && session?.subscription?.planCode) {
-      // Don't use Stripe price IDs as the plan code, as it breaks backend enterprise lookups
-      if (!session.subscription.planCode.startsWith('price_')) {
+      if (!session.subscription.planCode.startsWith("price_")) {
         updateData({ planCode: session.subscription.planCode });
       }
     }
@@ -77,49 +77,92 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
           />
         </div>
 
+        {/* Business Type */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold text-slate-300">
             Business Type <span className="text-lime-400">*</span>
           </Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {businessTypes.map((type) => {
-              const isSelected = data.businessType === type;
+            {businessTypes.map(({ value, label }) => {
+              const isSelected = data.businessType === value;
               return (
                 <div
-                  key={type}
-                  onClick={() => updateData({ businessType: type })}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
+                  key={value}
+                  onClick={() => updateData({ businessType: value, businessTypeOther: "" })}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                    isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                       : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                    }`}
+                  }`}
                 >
                   <Checkbox
-                    id={`type-${type}`}
+                    id={`type-${value}`}
                     checked={isSelected}
-                    onCheckedChange={() => updateData({ businessType: type })}
+                    onCheckedChange={() => updateData({ businessType: value, businessTypeOther: "" })}
                     onClick={(e) => e.stopPropagation()}
                   />
                   <Label
-                    htmlFor={`type-${type}`}
+                    htmlFor={`type-${value}`}
                     onClick={(e) => e.stopPropagation()}
-                    className={`text-sm cursor-pointer flex-1 py-1 transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
+                    className={`text-sm cursor-pointer flex-1 py-1 transition-colors ${
+                      isSelected ? "text-white font-bold" : "text-slate-200"
+                    }`}
                   >
-                    {type}
+                    {label}
                   </Label>
                 </div>
               );
             })}
+
+            {/* Other — toggle card */}
+            <div
+              onClick={() => {
+                if (data.businessType === "Other") {
+                  updateData({ businessType: "", businessTypeOther: "" });
+                } else {
+                  updateData({ businessType: "Other" });
+                }
+              }}
+              className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                data.businessType === "Other"
+                  ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                  : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+              }`}
+            >
+              <Checkbox
+                checked={data.businessType === "Other"}
+                onCheckedChange={(checked) => {
+                  if (!checked) {
+                    updateData({ businessType: "", businessTypeOther: "" });
+                  } else {
+                    updateData({ businessType: "Other" });
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <span
+                className={`text-sm flex-1 py-1 transition-colors ${
+                  data.businessType === "Other" ? "text-white font-bold" : "text-slate-400"
+                }`}
+              >
+                Other
+              </span>
+            </div>
           </div>
-          <div className="mt-2">
-            <Label htmlFor="businessTypeOther" className="text-xs text-slate-500">Other:</Label>
-            <Input
-              id="businessTypeOther"
-              value={data.businessTypeOther || ""}
-              onChange={(e) => updateData({ businessTypeOther: e.target.value })}
-              placeholder="Specify other business type"
-              className="mt-1 bg-slate-900/50 border-slate-800 h-9 text-sm"
-            />
-          </div>
+
+          {/* Other input — only shown when "Other" is selected */}
+          {data.businessType === "Other" && (
+            <div className="animate-in slide-in-from-top-2 duration-300">
+              <Input
+                id="businessTypeOther"
+                autoFocus
+                value={data.businessTypeOther || ""}
+                onChange={(e) => updateData({ businessTypeOther: e.target.value })}
+                placeholder="Describe your business type..."
+                className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11 text-sm"
+              />
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -149,10 +192,11 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
                 <div
                   key={cert}
                   onClick={() => handleDietaryChange(cert, !isSelected)}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                    isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                       : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                    }`}
+                  }`}
                 >
                   <Checkbox
                     id={`dietary-${cert}`}

@@ -59,6 +59,8 @@ export default function BrandBriefPage() {
     captionSample2: "",
     captionSample3: "",
     toneAndVoice: [],
+    toneOtherActive: false,
+    toneOther: "",
     captionTargeting: "",
     language: "English",
 
@@ -71,7 +73,7 @@ export default function BrandBriefPage() {
 
     // Step 5: Shoot Preparation
     confirmMinDishes: "",
-    actionShotsPossible: "",
+    actionShotsPossible: [],
     actionShotDetails: "",
     preferredShootTime: "",
     physicalConstraints: "",
@@ -98,8 +100,8 @@ export default function BrandBriefPage() {
     }
 
     if (session.brandBriefCompleted) {
-      // Completed, redirect to dashboard
-      router.push("/dashboard");
+      // Completed, hard redirect to dashboard
+      window.location.href = "/dashboard";
       return;
     }
 
@@ -218,8 +220,13 @@ export default function BrandBriefPage() {
         description: "Your brand brief has been saved.",
       });
 
+      // Session refresh and hard redirect
+      // Set flag so DashboardLayout allows entry even with stale session
+      if (typeof sessionStorage !== "undefined") {
+        sessionStorage.setItem("onboarding_just_completed", "1");
+      }
       await refresh();
-      window.location.href = "/dashboard";
+      window.location.replace("/dashboard");
     } catch (err: any) {
       setError(err.message);
       toast({
@@ -274,17 +281,17 @@ export default function BrandBriefPage() {
                     <div
                       key={section.id}
                       className={`flex items-start gap-4 rounded-2xl border p-4 transition-all duration-300 ${active
-                          ? "border-lime-400/50 bg-lime-400/5 shadow-[0_0_15px_rgba(163,230,53,0.05)]"
-                          : done
-                            ? "border-slate-800 bg-slate-900/60 opacity-60"
-                            : "border-slate-900/50 bg-slate-900/20 opacity-40"
+                        ? "border-lime-400/50 bg-lime-400/5 shadow-[0_0_15px_rgba(163,230,53,0.05)]"
+                        : done
+                          ? "border-slate-800 bg-slate-900/60 opacity-60"
+                          : "border-slate-900/50 bg-slate-900/20 opacity-40"
                         }`}
                     >
                       <div className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-colors ${active
-                          ? "border-lime-400 bg-lime-400 text-slate-950"
-                          : done
-                            ? "border-lime-400/50 bg-lime-400/20 text-lime-400"
-                            : "border-slate-700 bg-slate-800 text-slate-500"
+                        ? "border-lime-400 bg-lime-400 text-slate-950"
+                        : done
+                          ? "border-lime-400/50 bg-lime-400/20 text-lime-400"
+                          : "border-slate-700 bg-slate-800 text-slate-500"
                         }`}>
                         {done ? <Check className="h-3 w-3" /> : section.id}
                       </div>
