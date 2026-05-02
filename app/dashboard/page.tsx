@@ -521,9 +521,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Social Accounts - NEW UI */}
-      <Section title="Social Accounts">
+      {/* <Section title="Social Accounts">
         <div className="flex flex-col gap-4">
-          {/* Top Summary Bar */}
           <div className="rounded-2xl p-5 bg-slate-900/40 border border-slate-800 flex justify-between items-center">
             <div>
               <p className="text-xs text-slate-400">Total Connected</p>
@@ -540,7 +539,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Platform Pills */}
           <div className="flex flex-wrap gap-3">
             {overview?.socialAccounts.byPlatform &&
               Object.entries(overview.socialAccounts.byPlatform).map(
@@ -557,7 +555,7 @@ export default function DashboardPage() {
               )}
           </div>
         </div>
-      </Section>
+      </Section> */}
       {/* Alerts */}
       <Section title={`System Alerts (${alertsData.length})`}>
         {alertsData.length === 0 ? (
