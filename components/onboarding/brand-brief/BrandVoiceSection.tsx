@@ -189,16 +189,15 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
               return (
                 <div
                   key={opt.value}
-                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${
-                    isSelected 
-                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
-                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                  }`}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${isSelected
+                    ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                    : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <RadioGroupItem value={opt.value} id={`target-${opt.value}`} className={isSelected ? "border-lime-400" : ""} />
-                    <Label 
-                      htmlFor={`target-${opt.value}`} 
+                    <Label
+                      htmlFor={`target-${opt.value}`}
                       className={`text-sm font-semibold cursor-pointer transition-colors ${isSelected ? "text-white" : "text-slate-200"}`}
                     >
                       {opt.value}
@@ -224,17 +223,16 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
               const isSelected = data.language === lang;
               const id = `lang-${lang.toLowerCase()}`;
               return (
-                <div 
+                <div
                   key={lang}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
-                    isSelected 
-                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
-                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                  }`}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
+                    ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                    : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                    }`}
                 >
                   <RadioGroupItem value={lang} id={id} className={isSelected ? "border-lime-400" : ""} />
-                  <Label 
-                    htmlFor={id} 
+                  <Label
+                    htmlFor={id}
                     className={`text-sm cursor-pointer transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
                   >
                     {lang}

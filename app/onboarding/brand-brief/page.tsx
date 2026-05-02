@@ -219,7 +219,7 @@ export default function BrandBriefPage() {
       });
 
       await refresh();
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.message);
       toast({

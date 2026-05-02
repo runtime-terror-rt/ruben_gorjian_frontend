@@ -81,24 +81,27 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
           <Label className="text-sm font-semibold text-slate-300">
             Business Type <span className="text-lime-400">*</span>
           </Label>
-          <RadioGroup
-            value={data.businessType}
-            onValueChange={(val) => updateData({ businessType: val })}
-            className="grid grid-cols-1 md:grid-cols-2 gap-3"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {businessTypes.map((type) => {
               const isSelected = data.businessType === type;
               return (
                 <div
                   key={type}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
+                  onClick={() => updateData({ businessType: type })}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                       : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
                     }`}
                 >
-                  <RadioGroupItem value={type} id={`type-${type}`} className={isSelected ? "border-lime-400" : ""} />
+                  <Checkbox
+                    id={`type-${type}`}
+                    checked={isSelected}
+                    onCheckedChange={() => updateData({ businessType: type })}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <Label
                     htmlFor={`type-${type}`}
+                    onClick={(e) => e.stopPropagation()}
                     className={`text-sm cursor-pointer flex-1 py-1 transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
                   >
                     {type}
@@ -106,7 +109,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
           <div className="mt-2">
             <Label htmlFor="businessTypeOther" className="text-xs text-slate-500">Other:</Label>
             <Input
@@ -140,18 +143,33 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
             </span>
           </Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {dietaryCerts.map((cert) => (
-              <label
-                key={cert}
-                className="flex items-center gap-3 p-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors cursor-pointer"
-              >
-                <Checkbox
-                  checked={(data.dietaryCertifications || []).includes(cert)}
-                  onCheckedChange={(checked) => handleDietaryChange(cert, !!checked)}
-                />
-                <span className="text-sm text-slate-200">{cert}</span>
-              </label>
-            ))}
+            {dietaryCerts.map((cert) => {
+              const isSelected = (data.dietaryCertifications || []).includes(cert);
+              return (
+                <div
+                  key={cert}
+                  onClick={() => handleDietaryChange(cert, !isSelected)}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                    }`}
+                >
+                  <Checkbox
+                    id={`dietary-${cert}`}
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleDietaryChange(cert, !!checked)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <Label
+                    htmlFor={`dietary-${cert}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-sm text-slate-200 cursor-pointer flex-1 py-1"
+                  >
+                    {cert}
+                  </Label>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

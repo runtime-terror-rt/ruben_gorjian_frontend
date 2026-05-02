@@ -11,6 +11,7 @@ export async function GET() {
         ...(cookieHeader ? { cookie: cookieHeader } : {}),
       },
       credentials: "include",
+      cache: "no-store",
     });
     const data = await res.json();
     const response = NextResponse.json(data, { status: res.status });
