@@ -107,16 +107,15 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
               return (
                 <div
                   key={opt.value}
-                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${
-                    isSelected 
-                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]" 
-                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                  }`}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${isSelected
+                    ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                    : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <RadioGroupItem value={opt.value} id={`hashtag-${opt.value}`} className={isSelected ? "border-lime-400" : ""} />
-                    <Label 
-                      htmlFor={`hashtag-${opt.value}`} 
+                    <Label
+                      htmlFor={`hashtag-${opt.value}`}
                       className={`text-sm font-semibold cursor-pointer transition-colors ${isSelected ? "text-white" : "text-slate-200"}`}
                     >
                       {opt.value}

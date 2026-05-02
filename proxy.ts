@@ -35,6 +35,7 @@ async function fetchSession(req: NextRequest): Promise<Session | null> {
     const res = await fetch(`${backendBase}/auth/me`, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       credentials: "include",
+      cache: "no-store",
     });
     if (!res.ok) return null;
     const data = await res.json() as Session;
