@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import Image from "next/image";
-import { Camera, Eye, EyeOff, Trash2, User } from "lucide-react";
+import { Camera, Eye, EyeOff, Trash2, User, RefreshCw, FileText } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,8 @@ import {
   updateUserSettings,
   type UserSettingsResponse,
 } from "./utils";
+import { useQuery } from "@tanstack/react-query";
+import { apiGet } from "@/lib/api";
 
 const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_AVATAR_TYPES = new Set([
@@ -76,6 +78,43 @@ export default function SettingsPage() {
   const [showNextPw, setShowNextPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief">("profile");
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const brandBriefQuery = useQuery({
+    queryKey: ["my-brand-brief"],
+    queryFn: () => apiGet<{ success: boolean; items: any[] }>("/api/brand-brief/me"),
+    enabled: activeTab === "brand-brief",
+  });
+
+  const brief = brandBriefQuery.data?.items?.[0];
+
+  const handleDownloadPdf = async () => {
+    if (!brief) return;
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/brand-brief/me/pdf");
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.details || "Failed to generate PDF");
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `brand-brief-${(brief.restaurantName || "submission").replace(/\s+/g, '-').toLowerCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("Download error:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     async function load() {
@@ -263,351 +302,500 @@ export default function SettingsPage() {
             Settings
           </p>
           <h1 className="text-2xl font-semibold text-white">
-            Account & Business
+            {activeTab === "profile" ? "Account & Business" : "Brand Brief"}
           </h1>
           <p className="text-sm text-slate-300">
-            Keep your profile and business info up to date.
+            {activeTab === "profile" 
+              ? "Keep your profile and business info up to date." 
+              : "Review your submitted brand brief details."}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          className="rounded-full px-4 py-2 text-white/60 hover:text-white"
-          onClick={() => {
-            setForm(initialForm);
-            setMessage(null);
-            setError(null);
-          }}
-        >
-          Reset form
-        </Button>
+        {activeTab === "profile" && (
+          <Button
+            variant="ghost"
+            className="rounded-full px-4 py-2 text-white/60 hover:text-white"
+            onClick={() => {
+              setForm(initialForm);
+              setMessage(null);
+              setError(null);
+            }}
+          >
+            Reset form
+          </Button>
+        )}
       </div>
 
-      {loading ? (
-        <p className="text-xs text-slate-400">Loading settings...</p>
-      ) : null}
-      {error ? <p className="text-xs text-red-300">{error}</p> : null}
+      {/* Tabs Navigation */}
+      <div className="flex border-b border-slate-800">
+        <button
+          onClick={() => setActiveTab("profile")}
+          className={cn(
+            "px-6 py-3 text-sm font-medium transition-colors relative",
+            activeTab === "profile" ? "text-lime-400" : "text-slate-400 hover:text-white"
+          )}
+        >
+          Profile
+          {activeTab === "profile" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab("brand-brief")}
+          className={cn(
+            "px-6 py-3 text-sm font-medium transition-colors relative",
+            activeTab === "brand-brief" ? "text-lime-400" : "text-slate-400 hover:text-white"
+          )}
+        >
+          Brand Brief
+          {activeTab === "brand-brief" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+          )}
+        </button>
+      </div>
 
-      <form className="space-y-6" onSubmit={onSubmit}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <p className="text-xs text-slate-400">
-              Your contact details for notifications and support.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="relative h-16 w-16 rounded-full border border-slate-700 bg-slate-900 overflow-hidden flex items-center justify-center">
-                {avatarSrc ? (
-                  <Image
-                    src={avatarSrc}
-                    alt="Profile photo"
-                    width={64}
-                    height={64}
-                    className="h-full w-full object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <User className="h-6 w-6 text-slate-300" />
-                )}
-              </div>
+      {activeTab === "profile" ? (
+        <div className="space-y-6">
+          {loading ? (
+            <p className="text-xs text-slate-400">Loading settings...</p>
+          ) : null}
+          {error ? <p className="text-xs text-red-300">{error}</p> : null}
 
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  className="hidden"
-                  onChange={onAvatarFileChange}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={avatarUploading || avatarRemoving}
-                  className="rounded-full border-slate-700 text-slate-200 hover:bg-slate-800"
-                >
-                  <Camera className="mr-2.5 h-4 w-4 text-lime-400" />
-                  {avatarUploading ? "Uploading..." : "Upload photo"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={onRemoveAvatar}
-                  disabled={
-                    avatarRemoving ||
-                    avatarUploading ||
-                    (!settings?.profile.avatar.storageKey && !avatarPreviewUrl)
-                  }
-                  className="rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
-                >
-                  <Trash2 className="mr-2.5 h-4 w-4" />
-                  {avatarRemoving ? "Removing..." : "Remove photo"}
-                </Button>
-              </div>
-            </div>
-            <p className="text-xs text-slate-500">
-              Allowed: JPG, PNG, WEBP. Max file size: 5MB.
-            </p>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full name</Label>
-                <Input
-                  id="fullName"
-                  value={form.fullName}
-                  onChange={handleChange("fullName")}
-                  placeholder="Alex Founder"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Contact email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  readOnly
-                  className="bg-slate-950/60"
-                />
-                <p className="text-xs text-slate-500">
-                  Email is managed by your login provider.
+          <form className="space-y-6" onSubmit={onSubmit}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile</CardTitle>
+                <p className="text-xs text-slate-400">
+                  Your contact details for notifications and support.
                 </p>
-              </div>
-            </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="relative h-16 w-16 rounded-full border border-slate-700 bg-slate-900 overflow-hidden flex items-center justify-center">
+                    {avatarSrc ? (
+                      <Image
+                        src={avatarSrc}
+                        alt="Profile photo"
+                        width={64}
+                        height={64}
+                        className="h-full w-full object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <User className="h-6 w-6 text-slate-300" />
+                    )}
+                  </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="bio">Bio / About</Label>
-              <textarea
-                id="bio"
-                value={form.bio}
-                onChange={handleChange("bio")}
-                maxLength={300}
-                rows={3}
-                className={cn(
-                  "flex w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
-                  "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
-                )}
-                placeholder="Tell us a bit about your business or role."
-              />
-              <p className="text-xs text-slate-500">{form.bio.length}/300</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Business</CardTitle>
-            <p className="text-xs text-slate-400">
-              Tell us about your business for better recommendations.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="businessName">Business name</Label>
-                <Input
-                  id="businessName"
-                  value={form.businessName}
-                  onChange={handleChange("businessName")}
-                  placeholder="Talexia Studio"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="website">Website URL</Label>
-                <Input
-                  id="website"
-                  value={form.website}
-                  onChange={handleChange("website")}
-                  placeholder="https://yourstore.com"
-                />
-              </div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="industry">Industry</Label>
-                <Select
-                  id="industry"
-                  value={form.industry}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, industry: e.target.value }))
-                  }
-                  className={cn(
-                    "flex h-10 w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
-                    "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
-                  )}
-                >
-                  <option value="">Select industry</option>
-                  <option value="hospitality">Hospitality</option>
-                  <option value="retail">Retail</option>
-                  <option value="ecommerce">E-commerce</option>
-                  <option value="services">Services</option>
-                  <option value="other">Other</option>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
-                <Input
-                  id="timezone"
-                  value={form.timezone}
-                  onChange={handleChange("timezone")}
-                  placeholder="UTC"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Security</CardTitle>
-            <p className="text-xs text-slate-400">
-              Manage how you sign in and protect your account.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-white">Password</p>
-                  <p className="text-xs text-slate-400">
-                    Update your account password.
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={onAvatarFileChange}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={avatarUploading || avatarRemoving}
+                      className="rounded-full border-slate-700 text-slate-200 hover:bg-slate-800"
+                    >
+                      <Camera className="mr-2.5 h-4 w-4 text-lime-400" />
+                      {avatarUploading ? "Uploading..." : "Upload photo"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={onRemoveAvatar}
+                      disabled={
+                        avatarRemoving ||
+                        avatarUploading ||
+                        (!settings?.profile.avatar.storageKey && !avatarPreviewUrl)
+                      }
+                      className="rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                    >
+                      <Trash2 className="mr-2.5 h-4 w-4" />
+                      {avatarRemoving ? "Removing..." : "Remove photo"}
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="rounded-full"
-                  onClick={() => {
-                    setShowPwForm((v) => !v);
-                    setPwError(null);
-                    setPwMessage(null);
-                    setPwForm({ current: "", next: "", confirm: "" });
-                  }}
+                <p className="text-xs text-slate-500">
+                  Allowed: JPG, PNG, WEBP. Max file size: 5MB.
+                </p>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full name</Label>
+                    <Input
+                      id="fullName"
+                      value={form.fullName}
+                      onChange={handleChange("fullName")}
+                      placeholder="Alex Founder"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Contact email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={form.email}
+                      readOnly
+                      className="bg-slate-950/60"
+                    />
+                    <p className="text-xs text-slate-500">
+                      Email is managed by your login provider.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio / About</Label>
+                  <textarea
+                    id="bio"
+                    value={form.bio}
+                    onChange={handleChange("bio")}
+                    maxLength={300}
+                    rows={3}
+                    className={cn(
+                      "flex w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
+                      "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
+                    )}
+                    placeholder="Tell us a bit about your business or role."
+                  />
+                  <p className="text-xs text-slate-500">{form.bio.length}/300</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Business</CardTitle>
+                <p className="text-xs text-slate-400">
+                  Tell us about your business for better recommendations.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="businessName">Business name</Label>
+                    <Input
+                      id="businessName"
+                      value={form.businessName}
+                      onChange={handleChange("businessName")}
+                      placeholder="Talexia Studio"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website URL</Label>
+                    <Input
+                      id="website"
+                      value={form.website}
+                      onChange={handleChange("website")}
+                      placeholder="https://yourstore.com"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="industry">Industry</Label>
+                    <Select
+                      id="industry"
+                      value={form.industry}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, industry: e.target.value }))
+                      }
+                      className={cn(
+                        "flex h-10 w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
+                        "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
+                      )}
+                    >
+                      <option value="">Select industry</option>
+                      <option value="hospitality">Hospitality</option>
+                      <option value="retail">Retail</option>
+                      <option value="ecommerce">E-commerce</option>
+                      <option value="services">Services</option>
+                      <option value="other">Other</option>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Input
+                      id="timezone"
+                      value={form.timezone}
+                      onChange={handleChange("timezone")}
+                      placeholder="UTC"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Security</CardTitle>
+                <p className="text-xs text-slate-400">
+                  Manage how you sign in and protect your account.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-white">Password</p>
+                      <p className="text-xs text-slate-400">
+                        Update your account password.
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="rounded-full"
+                      onClick={() => {
+                        setShowPwForm((v) => !v);
+                        setPwError(null);
+                        setPwMessage(null);
+                        setPwForm({ current: "", next: "", confirm: "" });
+                      }}
+                    >
+                      {showPwForm ? "Cancel" : "Change password"}
+                    </Button>
+                  </div>
+
+                  {!showPwForm && pwMessage && (
+                    <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
+                  )}
+
+                  {showPwForm && (
+                    <div className="space-y-3 pt-2 border-t border-slate-800">
+                      {pwError && <p className="text-xs text-red-400">{pwError}</p>}
+                      {pwMessage && <p className="text-xs text-lime-400">{pwMessage}</p>}
+                      <div className="space-y-2">
+                        <Label htmlFor="currentPw">Current password</Label>
+                        <div className="relative">
+                          <Input
+                            id="currentPw"
+                            type={showCurrentPw ? "text" : "password"}
+                            value={pwForm.current}
+                            onChange={(e) => setPwForm((p) => ({ ...p, current: e.target.value }))}
+                            placeholder="Enter current password"
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowCurrentPw((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          >
+                            {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="newPw">New password</Label>
+                        <div className="relative">
+                          <Input
+                            id="newPw"
+                            type={showNextPw ? "text" : "password"}
+                            value={pwForm.next}
+                            onChange={(e) => setPwForm((p) => ({ ...p, next: e.target.value }))}
+                            placeholder="Minimum 8 characters"
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNextPw((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          >
+                            {showNextPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirmPw">Confirm new password</Label>
+                        <div className="relative">
+                          <Input
+                            id="confirmPw"
+                            type={showConfirmPw ? "text" : "password"}
+                            value={pwForm.confirm}
+                            onChange={(e) => setPwForm((p) => ({ ...p, confirm: e.target.value }))}
+                            placeholder="Re-enter new password"
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPw((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          >
+                            {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        className="rounded-full"
+                        disabled={pwSaving}
+                        onClick={async () => {
+                          setPwError(null);
+                          setPwMessage(null);
+                          if (!pwForm.current) { setPwError("Current password is required."); return; }
+                          if (pwForm.next.length < 8) { setPwError("New password must be at least 8 characters."); return; }
+                          if (pwForm.next !== pwForm.confirm) { setPwError("Passwords do not match."); return; }
+                          setPwSaving(true);
+                          try {
+                            const res = await fetch("/api/auth/change-password", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              credentials: "include",
+                              body: JSON.stringify({ "current-password": pwForm.current, "new-password": pwForm.next, "confirm-password": pwForm.confirm }),
+                            });
+                            const data = await res.json().catch(() => ({}));
+                            if (!res.ok) throw new Error(data?.error || "Failed to change password.");
+                            setPwMessage("Password changed successfully.");
+                            setPwForm({ current: "", next: "", confirm: "" });
+                            setShowPwForm(false);
+                          } catch (err: unknown) {
+                            setPwError(err instanceof Error ? err.message : "Unable to change password.");
+                          } finally {
+                            setPwSaving(false);
+                          }
+                        }}
+                      >
+                        {pwSaving ? "Saving..." : "Update password"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex items-center gap-3">
+              <Button
+                type="submit"
+                disabled={saving || loading}
+                className="rounded-full"
+              >
+                {saving ? "Saving..." : "Save settings"}
+              </Button>
+              {message ? <p className="text-xs text-slate-300">{message}</p> : null}
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {brandBriefQuery.isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <RefreshCw className="h-8 w-8 text-lime-400 animate-spin" />
+              <p className="text-sm text-slate-400">Fetching your brand brief...</p>
+            </div>
+          ) : !brief ? (
+            <Card className="border-slate-800 bg-slate-900/40">
+              <CardContent className="py-12 text-center">
+                <p className="text-slate-400">No brand brief found. Please complete your onboarding first.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-white">Submission Overview</h2>
+                <Button 
+                  onClick={handleDownloadPdf} 
+                  disabled={isDownloading}
+                  className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold rounded-full"
                 >
-                  {showPwForm ? "Cancel" : "Change password"}
+                  {isDownloading ? (
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileText className="mr-2 h-4 w-4" />
+                  )}
+                  {isDownloading ? "Generating..." : "Download PDF"}
                 </Button>
               </div>
 
-              {/* Success / Error messages shown outside the collapsible form */}
-              {!showPwForm && pwMessage && (
-                <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
-              )}
+              <div className="grid gap-6 md:grid-cols-2">
+                <DetailCard title="01. Brand Identity" items={[
+                  { label: "Restaurant Name", value: brief.restaurantName },
+                  { label: "Location", value: brief.location },
+                  { label: "Business Type", value: brief.businessType },
+                  { label: "Cuisine Type", value: brief.cuisineType },
+                  { label: "Dietary Certifications", value: brief.dietaryCertifications?.join(", ") },
+                  { label: "Talexia Plan", value: brief.talexiaPlan },
+                ]} />
 
-              {showPwForm && (
-                <div className="space-y-3 pt-2 border-t border-slate-800">
-                  {pwError && <p className="text-xs text-red-400">{pwError}</p>}
-                  {pwMessage && <p className="text-xs text-lime-400">{pwMessage}</p>}
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPw">Current password</Label>
-                    <div className="relative">
-                      <Input
-                        id="currentPw"
-                        type={showCurrentPw ? "text" : "password"}
-                        value={pwForm.current}
-                        onChange={(e) => setPwForm((p) => ({ ...p, current: e.target.value }))}
-                        placeholder="Enter current password"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowCurrentPw((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                      >
-                        {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="newPw">New password</Label>
-                    <div className="relative">
-                      <Input
-                        id="newPw"
-                        type={showNextPw ? "text" : "password"}
-                        value={pwForm.next}
-                        onChange={(e) => setPwForm((p) => ({ ...p, next: e.target.value }))}
-                        placeholder="Minimum 8 characters"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNextPw((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                      >
-                        {showNextPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPw">Confirm new password</Label>
-                    <div className="relative">
-                      <Input
-                        id="confirmPw"
-                        type={showConfirmPw ? "text" : "password"}
-                        value={pwForm.confirm}
-                        onChange={(e) => setPwForm((p) => ({ ...p, confirm: e.target.value }))}
-                        placeholder="Re-enter new password"
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPw((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                      >
-                        {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    className="rounded-full"
-                    disabled={pwSaving}
-                    onClick={async () => {
-                      setPwError(null);
-                      setPwMessage(null);
-                      if (!pwForm.current) { setPwError("Current password is required."); return; }
-                      if (pwForm.next.length < 8) { setPwError("New password must be at least 8 characters."); return; }
-                      if (pwForm.next !== pwForm.confirm) { setPwError("Passwords do not match."); return; }
-                      setPwSaving(true);
-                      try {
-                        const res = await fetch("/api/auth/change-password", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          credentials: "include",
-                          body: JSON.stringify({ "current-password": pwForm.current, "new-password": pwForm.next, "confirm-password": pwForm.confirm }),
-                        });
-                        const data = await res.json().catch(() => ({}));
-                        if (!res.ok) throw new Error(data?.error || "Failed to change password.");
-                        setPwMessage("Password changed successfully.");
-                        setPwForm({ current: "", next: "", confirm: "" });
-                        setShowPwForm(false);
-                      } catch (err: unknown) {
-                        setPwError(err instanceof Error ? err.message : "Unable to change password.");
-                      } finally {
-                        setPwSaving(false);
-                      }
-                    }}
-                  >
-                    {pwSaving ? "Saving..." : "Update password"}
-                  </Button>
-                </div>
-              )}
+                <DetailCard title="02. Online Presence" items={[
+                  { label: "Website URL", value: brief.websiteUrl },
+                  { label: "Instagram Handle", value: brief.instagramHandle },
+                  { label: "Facebook Page URL", value: brief.facebookPageUrl },
+                  { label: "TikTok Handle", value: brief.tiktokHandle },
+                  { label: "Online Ordering URL", value: brief.onlineOrderingUrl },
+                ]} />
+
+                <DetailCard title="03. Brand Voice" items={[
+                  { label: "Food Description", value: brief.foodDescription },
+                  { label: "Unique Selling Point", value: brief.uniqueSellingPoint },
+                  { label: "Customer Reviews", value: brief.customerReviews },
+                  { label: "Tone & Voice", value: brief.toneAndVoice?.join(", ") },
+                  { label: "Caption Targeting", value: brief.captionTargeting },
+                  { label: "Language", value: brief.language },
+                ]} />
+
+                <DetailCard title="04. Menu & Content" items={[
+                  { label: "Signature Dishes", value: brief.signatureDishes?.join(", ") },
+                  { label: "Signature Dish Details", value: brief.signatureDishDetails },
+                  { label: "Excluded Items", value: brief.excludedItems },
+                  { label: "Upcoming Promotions", value: brief.upcomingPromotions },
+                  { label: "Hashtag Style", value: brief.hashtagStyle },
+                ]} />
+                
+                <DetailCard title="05. Shoot & Extras" items={[
+                  { label: "Confirm Min Dishes", value: brief.confirmMinDishes },
+                  { label: "Action Shots Possible", value: brief.actionShotsPossible },
+                  { label: "Preferred Shoot Time", value: brief.preferredShootTime },
+                  { label: "Special Notes", value: brief.specialNotes },
+                ]} />
+
+                <Card className="border-slate-800 bg-[#0B0F19]">
+                  <CardHeader className="pb-3 border-b border-slate-800">
+                    <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-lime-400" />
+                      06. Sample Captions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4 space-y-4">
+                    {[brief.captionSample1, brief.captionSample2, brief.captionSample3].map((cap, i) => (
+                      <div key={i} className="p-3 rounded-lg bg-slate-900/60 border border-slate-800/50">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sample {i + 1}</p>
+                        <p className="text-sm text-slate-200 italic">"{cap || "N/A"}"</p>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex items-center gap-3">
-          <Button
-            type="submit"
-            disabled={saving || loading}
-            className="rounded-full"
-          >
-            {saving ? "Saving..." : "Save settings"}
-          </Button>
-          {message ? <p className="text-xs text-slate-300">{message}</p> : null}
+          )}
         </div>
-      </form>
+      )}
     </div>
+  );
+}
+
+function DetailCard({ title, items }: { title: string, items: { label: string, value: any }[] }) {
+  return (
+    <Card className="border-slate-800 bg-[#0B0F19]">
+      <CardHeader className="pb-3 border-b border-slate-800">
+        <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-lime-400" />
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-4 space-y-3">
+        {items.map((item, i) => (
+          <div key={i}>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.label}</p>
+            <p className="text-sm text-white mt-0.5">{item.value || "—"}</p>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 }
 
