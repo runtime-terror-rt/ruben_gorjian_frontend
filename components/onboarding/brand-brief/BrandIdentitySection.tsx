@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
 
 interface BrandIdentitySectionProps {
   data: any;
@@ -23,12 +24,28 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
   const dietaryCerts = ["Kosher", "Halal", "Gluten-Free", "Vegan-Friendly", "None"];
 
+  const handleBusinessTypeChange = (type: string, checked: boolean) => {
+    if (checked) {
+      updateData({ businessType: type });
+    } else {
+      updateData({ businessType: "" });
+    }
+  };
+
   const handleDietaryChange = (cert: string, checked: boolean) => {
     const current = data.dietaryCertifications || [];
     if (checked) {
       updateData({ dietaryCertifications: [...current, cert] });
     } else {
       updateData({ dietaryCertifications: current.filter((c: string) => c !== cert) });
+    }
+  };
+
+  const setOtherBusinessType = () => {
+    if (data.businessTypeOther && data.businessTypeOther.trim()) {
+      updateData({
+        businessType: data.businessTypeOther.trim(),
+      });
     }
   };
 
@@ -88,7 +105,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
               return (
                 <div
                   key={value}
-                  onClick={() => updateData({ businessType: value, businessTypeOther: "" })}
+                  onClick={() => handleBusinessTypeChange(value, !isSelected)}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
                     isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
@@ -98,7 +115,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
                   <Checkbox
                     id={`type-${value}`}
                     checked={isSelected}
-                    onCheckedChange={() => updateData({ businessType: value, businessTypeOther: "" })}
+                    onCheckedChange={(checked) => handleBusinessTypeChange(value, !!checked)}
                     onClick={(e) => e.stopPropagation()}
                   />
                   <Label
@@ -116,33 +133,21 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
             {/* Other — toggle card */}
             <div
-              onClick={() => {
-                if (data.businessType === "Other") {
-                  updateData({ businessType: "", businessTypeOther: "" });
-                } else {
-                  updateData({ businessType: "Other" });
-                }
-              }}
+              onClick={() => updateData({ businessTypeOtherActive: !data.businessTypeOtherActive })}
               className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
-                data.businessType === "Other"
+                data.businessTypeOtherActive
                   ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                   : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
               }`}
             >
               <Checkbox
-                checked={data.businessType === "Other"}
-                onCheckedChange={(checked) => {
-                  if (!checked) {
-                    updateData({ businessType: "", businessTypeOther: "" });
-                  } else {
-                    updateData({ businessType: "Other" });
-                  }
-                }}
+                checked={!!data.businessTypeOtherActive}
+                onCheckedChange={(checked) => updateData({ businessTypeOtherActive: !!checked })}
                 onClick={(e) => e.stopPropagation()}
               />
               <span
                 className={`text-sm flex-1 py-1 transition-colors ${
-                  data.businessType === "Other" ? "text-white font-bold" : "text-slate-400"
+                  data.businessTypeOtherActive ? "text-white font-bold" : "text-slate-400"
                 }`}
               >
                 Other
@@ -150,14 +155,15 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
             </div>
           </div>
 
-          {/* Other input — only shown when "Other" is selected */}
-          {data.businessType === "Other" && (
+          {/* Other input — only shown when "Other" is toggled */}
+          {data.businessTypeOtherActive && (
             <div className="animate-in slide-in-from-top-2 duration-300">
               <Input
                 id="businessTypeOther"
-                autoFocus
                 value={data.businessTypeOther || ""}
-                onChange={(e) => updateData({ businessTypeOther: e.target.value })}
+                onChange={(e) => {
+                  updateData({ businessTypeOther: e.target.value, businessType: e.target.value });
+                }}
                 placeholder="Describe your business type..."
                 className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11 text-sm"
               />

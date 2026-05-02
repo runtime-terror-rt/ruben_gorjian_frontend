@@ -41,11 +41,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
             Minimum 5-7 hero dishes must be ready and styled at the start of your shoot. <span className="text-lime-400">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">Confirmed?</span>
           </Label>
-          <RadioGroup
-            value={data.confirmMinDishes}
-            onValueChange={(val) => updateData({ confirmMinDishes: val })}
-            className="flex flex-wrap gap-4"
-          >
+          <div className="flex flex-wrap gap-4">
             {[
               { id: "confirm-yes", value: "Minimum 6 dishes ready", label: "Yes, I understand" },
               { id: "confirm-no", value: "No, I have questions", label: "No, I have questions" }
@@ -54,12 +50,16 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
               return (
                 <div
                   key={opt.id}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
+                  onClick={() => updateData({ confirmMinDishes: opt.value })}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                     ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                     : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
                     }`}
                 >
-                  <RadioGroupItem value={opt.value} id={opt.id} className={isSelected ? "border-lime-400" : ""} />
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) => checked && updateData({ confirmMinDishes: opt.value })}
+                  />
                   <Label
                     htmlFor={opt.id}
                     className={`text-sm cursor-pointer transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
@@ -69,7 +69,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
         </div>
 
         <div className="space-y-3 pt-4">
@@ -77,11 +77,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
             Will action shots be possible? <span className="text-lime-400">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">e.g. pouring, drizzling, chef interaction.</span>
           </Label>
-          <RadioGroup
-            value={data.actionShotsPossible}
-            onValueChange={(val) => updateData({ actionShotsPossible: val })}
-            className="flex flex-wrap gap-4"
-          >
+          <div className="flex flex-wrap gap-4">
             {[
               { id: "action-yes", value: "Yes", label: "Yes" },
               { id: "action-no", value: "No", label: "No" }
@@ -90,12 +86,16 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
               return (
                 <div
                   key={opt.id}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
+                  onClick={() => updateData({ actionShotsPossible: opt.value })}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                     ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                     : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
                     }`}
                 >
-                  <RadioGroupItem value={opt.value} id={opt.id} className={isSelected ? "border-lime-400" : ""} />
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={(checked) => checked && updateData({ actionShotsPossible: opt.value })}
+                  />
                   <Label
                     htmlFor={opt.id}
                     className={`text-sm cursor-pointer transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
@@ -105,7 +105,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
           {data.actionShotsPossible === "Yes" && (
             <div className="mt-3 space-y-2 animate-in slide-in-from-top-2 duration-300">
               <Label htmlFor="actionShotDetails" className="text-xs text-slate-500 font-medium uppercase tracking-wider">Specify Action Shots:</Label>

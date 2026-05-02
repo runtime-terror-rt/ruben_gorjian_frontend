@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 
 interface BrandVoiceSectionProps {
   data: any;
@@ -44,6 +45,36 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
       updateData({ toneAndVoice: [...current, tone] });
     } else {
       updateData({ toneAndVoice: current.filter((t: string) => t !== tone) });
+    }
+  };
+
+  const addOtherTone = () => {
+    if (data.toneOther && data.toneOther.trim()) {
+      const current = data.toneAndVoice || [];
+      if (!current.includes(data.toneOther.trim())) {
+        updateData({
+          toneAndVoice: [...current, data.toneOther.trim()],
+          toneOther: ""
+        });
+      } else {
+        updateData({ toneOther: "" });
+      }
+    }
+  };
+
+  const handleTargetingChange = (val: string, checked: boolean) => {
+    if (checked) {
+      updateData({ captionTargeting: val });
+    } else {
+      updateData({ captionTargeting: "" });
+    }
+  };
+
+  const handleLanguageChange = (val: string, checked: boolean) => {
+    if (checked) {
+      updateData({ language: val });
+    } else {
+      updateData({ language: "" });
     }
   };
 
@@ -233,35 +264,55 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
 
           {/* Other input — only visible when Other is toggled on */}
           {data.toneOtherActive && (
-            <div className="animate-in slide-in-from-top-2 duration-300">
+            <div className="flex gap-2 animate-in slide-in-from-top-2 duration-300">
               <Input
                 id="toneOther"
-                autoFocus
                 value={data.toneOther || ""}
                 onChange={(e) => updateData({ toneOther: e.target.value })}
-                placeholder="Describe your brand's tone & voice..."
-                className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11 text-sm"
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addOtherTone())}
+                placeholder="Type and press Enter or click '+'"
+                className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11 text-sm flex-1"
               />
+              <button
+                type="button"
+                onClick={addOtherTone}
+                className="h-11 px-4 rounded-xl bg-lime-400 text-slate-950 font-bold hover:bg-lime-300 transition-colors"
+              >
+                +
+              </button>
+            </div>
+          )}
+
+          {/* Display added "Other" tones if any are not in the main list */}
+          {(data.toneAndVoice || []).filter((t: string) => !tones.includes(t)).length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              {(data.toneAndVoice || []).filter((t: string) => !tones.includes(t)).map((tone: string) => (
+                <Badge key={tone} className="bg-slate-800 text-slate-200 border-slate-700 py-1 px-3 rounded-lg flex gap-2 items-center">
+                  {tone}
+                  <button 
+                    onClick={() => handleToneChange(tone, false)}
+                    className="hover:text-rose-400 transition-colors"
+                  >
+                    ×
+                  </button>
+                </Badge>
+              ))}
             </div>
           )}
         </div>
 
-        {/* Caption Targeting — spec-matching options */}
+        {/* Caption Targeting — checkbox-grid options */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
             Caption Targeting <span className="text-lime-400">*</span>
           </Label>
-          <RadioGroup
-            value={data.captionTargeting}
-            onValueChange={(val) => updateData({ captionTargeting: val })}
-            className="grid grid-cols-1 gap-3"
-          >
+          <div className="grid grid-cols-1 gap-3">
             {captionTargetingOptions.map((opt) => {
               const isSelected = data.captionTargeting === opt.value;
               return (
                 <div
                   key={opt.value}
-                  onClick={() => updateData({ captionTargeting: opt.value })}
+                  onClick={() => handleTargetingChange(opt.value, !isSelected)}
                   className={`flex flex-col gap-1 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
                     isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
@@ -269,10 +320,10 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem
-                      value={opt.value}
+                    <Checkbox
+                      checked={isSelected}
                       id={`target-${opt.value}`}
-                      className={isSelected ? "border-lime-400" : ""}
+                      onCheckedChange={(checked) => handleTargetingChange(opt.value, !!checked)}
                       onClick={(e) => e.stopPropagation()}
                     />
                     <Label
@@ -295,17 +346,13 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
         </div>
 
-        {/* Language */}
+        {/* Language — checkbox-grid */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">Language</Label>
-          <RadioGroup
-            value={data.language}
-            onValueChange={(val) => updateData({ language: val })}
-            className="flex flex-wrap gap-3"
-          >
+          <div className="flex flex-wrap gap-3">
             {[
               { value: "English only", label: "English only" },
               { value: "Bilingual", label: "Bilingual" },
@@ -315,17 +362,17 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
               return (
                 <div
                   key={lang.value}
-                  onClick={() => updateData({ language: lang.value })}
+                  onClick={() => handleLanguageChange(lang.value, !isSelected)}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
                     isSelected
                       ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                       : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
                   }`}
                 >
-                  <RadioGroupItem
-                    value={lang.value}
+                  <Checkbox
+                    checked={isSelected}
                     id={id}
-                    className={isSelected ? "border-lime-400" : ""}
+                    onCheckedChange={(checked) => handleLanguageChange(lang.value, !!checked)}
                     onClick={(e) => e.stopPropagation()}
                   />
                   <Label
@@ -340,13 +387,12 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
 
           {/* Bilingual specify input — hidden until Bilingual is selected */}
           {data.language === "Bilingual" && (
             <div className="animate-in slide-in-from-top-2 duration-300">
               <Input
-                autoFocus
                 value={data.languageSpecify || ""}
                 onChange={(e) => updateData({ languageSpecify: e.target.value })}
                 placeholder="Specify language(s) e.g. English + Spanish..."

@@ -29,6 +29,8 @@ import {
   CheckSquare,
   Camera,
   Edit3,
+  FileText,
+  ClipboardList,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -47,6 +49,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -118,11 +126,84 @@ type EnterpriseInvite = {
   sentByAdminEmail: string;
 };
 
+type BrandBriefSubmission = {
+  id: string;
+  restaurantName: string;
+  location: string;
+  businessType: string;
+  createdAt: string;
+  submissionDate: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  proposal?: {
+    id: string;
+    planCode: string;
+    planName: string;
+    companyName: string;
+  };
+};
+
+type BrandBriefDetail = BrandBriefSubmission & {
+  userId: string;
+  proposalId: string;
+  updatedAt: string;
+  cuisineType: string;
+  dietaryCertifications: string[];
+  websiteUrl: string;
+  instagramHandle: string;
+  facebookPageUrl: string;
+  tiktokHandle: string;
+  onlineOrderingUrl: string;
+  foodDescription: string;
+  uniqueSellingPoint: string;
+  customerReviews: string;
+  forbiddenPhrases: string;
+  preferredPhrases: string;
+  captionSample1: string;
+  captionSample2: string;
+  captionSample3: string;
+  toneAndVoice: string[];
+  captionTargeting: string;
+  language: string;
+  signatureDishes: string[];
+  signatureDishDetails: string;
+  excludedItems: string;
+  upcomingPromotions: string;
+  hashtagStyle: string;
+  confirmMinDishes: string;
+  actionShotsPossible: string;
+  preferredShootTime: string;
+  physicalConstraints: string;
+  specialNotes: string;
+  clientName: string;
+  restaurantNameAuth: string;
+  talexiaPlan: string;
+  proposal?: {
+    amount: string;
+    billingCycle: string;
+    createdByAdminEmail: string;
+  } & NonNullable<BrandBriefSubmission['proposal']>;
+};
+
 type InviteListResponse = {
   items: EnterpriseInvite[];
   total: number;
   page: number;
   pageSize: number;
+};
+
+type BrandBriefListResponse = {
+  success: boolean;
+  data: {
+    items: BrandBriefSubmission[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 };
 
 // --- Helper Components ---
@@ -210,6 +291,15 @@ export default function EnterprisePlanPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [freqError, setFreqError] = useState<string | null>(null);
 
+  // Tabs State
+  const [activeTab, setActiveTab] = useState("enterprise");
+
+  // Brand Brief State
+  const [bbPage, setBbPage] = useState(1);
+  const [bbLimit] = useState(20);
+  const [selectedBbId, setSelectedBbId] = useState<string | null>(null);
+  const [isBbDetailsOpen, setIsBbDetailsOpen] = useState(false);
+
   // Form State for Create Invite
   const [formData, setFormData] = useState({
     planName: "Enterprise Growth",
@@ -284,10 +374,24 @@ export default function EnterprisePlanPage() {
 
   // Details Query
   const inviteDetailsQuery = useQuery({
-    queryKey: ["enterprise-invite-details", selectedInvite?.id],
     queryFn: () => apiGet<{ invite: EnterpriseInvite }>(`/api/admin/enterprise-plan/invites/${selectedInvite?.id}/details`),
     enabled: !!selectedInvite?.id && isDetailsModalOpen,
   });
+
+  // Brand Brief Queries
+  const brandBriefsQuery = useQuery({
+    queryKey: ["admin-brand-briefs", bbPage, bbLimit],
+    queryFn: () => apiGet<BrandBriefListResponse>(`/api/brand-brief/admin/submissions?page=${bbPage}&limit=${bbLimit}`),
+    enabled: activeTab === "brand-brief",
+  });
+
+  const bbDetailsQuery = useQuery({
+    queryKey: ["admin-brand-brief-details", selectedBbId],
+    queryFn: () => apiGet<{ success: boolean; data?: BrandBriefDetail; item?: BrandBriefDetail }>(`/api/brand-brief/admin/submissions/${selectedBbId}`),
+    enabled: !!selectedBbId && isBbDetailsOpen,
+  });
+
+  const details = bbDetailsQuery.data?.data || bbDetailsQuery.data?.item;
 
   // Mutations
   const createInviteMutation = useMutation({
@@ -672,132 +776,140 @@ export default function EnterprisePlanPage() {
             <h1 className="text-3xl font-black text-white tracking-tight">Enterprise Plan</h1>
           </div>
           <p className="text-slate-400 text-sm font-medium ml-1">
-            Manage custom enterprise proposals and high-value client onboarding.
+            Manage custom enterprise proposals and brand brief submissions.
           </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
-            onClick={() => queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] })}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${invitesQuery.isFetching ? "animate-spin" : ""}`} />
-            Sync Data
-          </Button>
-          <Button
-            className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
-            onClick={() => {
-              resetForm();
-              setIsCreateModalOpen(true);
-            }}
-          >
-            <Plus className="h-5 w-5 mr-2 stroke-[3px]" />
-            New Proposal
-          </Button>
         </div>
       </div>
 
-      {/* Metrics Section */}
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Value", value: formatAmount((invitesQuery.data?.items || []).reduce((acc, curr) => acc + (curr.proposal?.amount || curr.amount || 0), 0), "usd"), icon: TrendingUp, color: "text-lime-400", bg: "bg-lime-400/10" },
-          { label: "Active Proposals", value: (invitesQuery.data?.items || []).filter(i => i.status === "PENDING" || i.status === "VIEWED").length, icon: Send, color: "text-blue-400", bg: "bg-blue-400/10" },
-          { label: "Successful Converts", value: (invitesQuery.data?.items || []).filter(i => i.status === "PAYMENT_COMPLETED").length, icon: ShieldCheck, color: "text-indigo-400", bg: "bg-indigo-400/10" },
-          { label: "Pipeline Health", value: "98%", icon: Building2, color: "text-emerald-400", bg: "bg-emerald-400/10" },
-        ].map((stat, i) => (
-          <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Card className="bg-slate-900/40 border-white/5 overflow-hidden group">
-              <CardContent className="p-5 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
-                  <p className="text-2xl font-black text-white tracking-tighter">{stat.value}</p>
-                </div>
-                <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-6", stat.bg, stat.color)}>
-                  <stat.icon className="h-6 w-6" />
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div> */}
-
-      {/* Main Content Area */}
-      <div className="space-y-4">
-        {/* Filters Bar */}
-        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-900/60 p-2 rounded-[1.5rem] border border-white/5 backdrop-blur-md">
-          <div className="relative flex-1 w-full lg:max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-            <Input
-              placeholder="Search client pipeline..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-11 bg-transparent border-none focus-visible:ring-0 h-10 text-sm text-slate-200 placeholder:text-slate-600 font-medium"
-            />
-          </div>
-          <div className="flex items-center gap-2 pr-2 w-full lg:w-auto">
-            <div className="h-6 w-[1px] bg-slate-800 mx-2 hidden lg:block" />
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 px-3 outline-none"
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <TabsList className="bg-slate-900/50 border border-white/5 p-1 rounded-2xl h-14">
+            <TabsTrigger 
+              value="enterprise" 
+              className="rounded-xl px-6 h-full data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
             >
-              <option value="ALL">All Categories</option>
-              <option value="PENDING">PENDING</option>
-              <option value="VIEWED">VIEWED</option>
-              <option value="SIGNED_UP">SIGNED_UP</option>
-              <option value="PAYMENT_COMPLETED">PAYMENT_COMPLETED</option>
-              <option value="EXPIRED">EXPIRED</option>
-              <option value="CANCELED">CANCELED</option>
-            </select>
-          </div>
+              <ClipboardList className="h-4 w-4 mr-2" />
+              Enterprise Plan
+            </TabsTrigger>
+            <TabsTrigger 
+              value="brand-brief" 
+              className="rounded-xl px-6 h-full data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Brand Brief
+            </TabsTrigger>
+          </TabsList>
+
+          {activeTab === "enterprise" && (
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] })}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${invitesQuery.isFetching ? "animate-spin" : ""}`} />
+                Sync Data
+              </Button>
+              <Button
+                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
+                onClick={() => {
+                  resetForm();
+                  setIsCreateModalOpen(true);
+                }}
+              >
+                <Plus className="h-5 w-5 mr-2 stroke-[3px]" />
+                New Proposal
+              </Button>
+            </div>
+          )}
+          {activeTab === "brand-brief" && (
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-brand-briefs"] })}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${brandBriefsQuery.isFetching ? "animate-spin" : ""}`} />
+                Refresh List
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Table Container */}
-        <Card className="border-white/5 bg-slate-950/20 backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
-          <div className="overflow-x-auto scrollbar-hide">
-            <Table>
-              <TableHeader className="bg-slate-900/60 border-b border-white/5">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center first:text-left">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
+        <TabsContent value="enterprise" className="space-y-8 mt-0 outline-none">
+          {/* Main Content Area */}
+          <div className="space-y-4">
+            {/* Filters Bar */}
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-900/60 p-2 rounded-[1.5rem] border border-white/5 backdrop-blur-md">
+              <div className="relative flex-1 w-full lg:max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <Input
+                  placeholder="Search client pipeline..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  className="pl-11 bg-transparent border-none focus-visible:ring-0 h-10 text-sm text-slate-200 placeholder:text-slate-600 font-medium"
+                />
+              </div>
+              <div className="flex items-center gap-2 pr-2 w-full lg:w-auto">
+                <div className="h-6 w-[1px] bg-slate-800 mx-2 hidden lg:block" />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 px-3 outline-none"
+                >
+                  <option value="ALL">All Categories</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="VIEWED">VIEWED</option>
+                  <option value="SIGNED_UP">SIGNED_UP</option>
+                  <option value="PAYMENT_COMPLETED">PAYMENT_COMPLETED</option>
+                  <option value="EXPIRED">EXPIRED</option>
+                  <option value="CANCELED">CANCELED</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Table Container */}
+            <Card className="border-white/5 bg-slate-950/20 backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
+              <div className="overflow-x-auto scrollbar-hide">
+                <Table>
+                  <TableHeader className="bg-slate-900/60 border-b border-white/5">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center first:text-left">
+                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
                     ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {invitesQuery.isLoading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i} className="border-white/5 animate-pulse hover:bg-transparent">
-                      <TableCell colSpan={columns.length} className="py-8 px-6">
-                        <div className="h-12 bg-white/5 rounded-2xl w-full" />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : invitesQuery.isError ? (
-                  <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={columns.length} className="h-80 text-center">
-                      <div className="flex flex-col items-center justify-center gap-4">
-                        <div className="h-20 w-20 rounded-3xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 rotate-12">
-                          <AlertCircle className="h-10 w-10 text-rose-500 -rotate-12" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-white font-black text-xl tracking-tight">Sync Failure</p>
-                          <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium">
+                  </TableHeader>
+                  <TableBody>
+                    {invitesQuery.isLoading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i} className="border-white/5 animate-pulse hover:bg-transparent">
+                          <TableCell colSpan={columns.length} className="py-8 px-6">
+                            <div className="h-12 bg-white/5 rounded-2xl w-full" />
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : invitesQuery.isError ? (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={columns.length} className="h-80 text-center">
+                          <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="h-20 w-20 rounded-3xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 rotate-12">
+                              <AlertCircle className="h-10 w-10 text-rose-500 -rotate-12" />
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-white font-black text-xl tracking-tight">Sync Failure</p>
+                              <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium">
                             {(invitesQuery.error as any)?.message || "The neural link to the backend was interrupted unexpectedly."}
                           </p>
                         </div>
@@ -890,7 +1002,109 @@ export default function EnterprisePlanPage() {
             </div>
           </div>
         </Card>
-      </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="brand-brief" className="space-y-8 mt-0 outline-none">
+          <Card className="border-white/5 bg-slate-950/20 backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
+            <div className="overflow-x-auto scrollbar-hide">
+              <Table>
+                <TableHeader className="bg-slate-900/60 border-b border-white/5">
+                  <TableRow className="hover:bg-transparent border-none">
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-left">Restaurant / Brand</TableHead>
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">Location</TableHead>
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">Business Type</TableHead>
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">Submission Date</TableHead>
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">User</TableHead>
+                    <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {brandBriefsQuery.isLoading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i} className="border-white/5 animate-pulse">
+                        <TableCell colSpan={6} className="py-8 px-6">
+                          <div className="h-12 bg-white/5 rounded-2xl w-full" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : brandBriefsQuery.data?.data?.items?.length ? (
+                    brandBriefsQuery.data.data.items.map((bb) => (
+                      <TableRow key={bb.id} className="border-white/5 hover:bg-white/[0.03] transition-all group border-b last:border-b-0">
+                        <TableCell className="py-6 px-6">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-white tracking-tight">{bb.restaurantName}</span>
+                            <span className="text-[10px] text-lime-400 font-bold uppercase tracking-wider">{bb.proposal?.planName || "Enterprise"}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-6 px-6 text-center text-slate-300 text-sm">{bb.location}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-slate-300 text-sm">{bb.businessType}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-slate-400 text-xs">{formatDate(bb.submissionDate)}</TableCell>
+                        <TableCell className="py-6 px-6 text-center">
+                          <div className="flex flex-col">
+                            <span className="text-slate-200 font-medium text-sm">{bb.user.name}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">{bb.user.email}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-6 px-6 text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 w-9 p-0 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-xl"
+                            onClick={() => {
+                              setSelectedBbId(bb.id);
+                              setIsBbDetailsOpen(true);
+                            }}
+                          >
+                            <Eye className="h-5 w-5" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-80 text-center text-slate-500">No brand brief submissions found.</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            
+            {/* BB Pagination Footer */}
+            <div className="flex items-center justify-between p-6 border-t border-white/5 bg-black/40">
+              <div className="flex items-center gap-4">
+                <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  Total Submissions: {brandBriefsQuery.data?.data?.total ?? 0}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setBbPage(p => Math.max(1, p - 1))}
+                  disabled={bbPage === 1}
+                  className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white"
+                >
+                  Prev
+                </Button>
+                <div className="text-[11px] font-black text-white px-3">
+                  {bbPage} / {brandBriefsQuery.data?.data?.totalPages || 1}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setBbPage(p => p + 1)}
+                  disabled={bbPage >= (brandBriefsQuery.data?.data?.totalPages || 1)}
+                  className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* --- Modals & Dialogs --- */}
 
@@ -1851,6 +2065,150 @@ export default function EnterprisePlanPage() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Brand Brief Details Modal */}
+      <Dialog open={isBbDetailsOpen} onOpenChange={setIsBbDetailsOpen}>
+        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1100px] rounded-[2.5rem] p-0 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          {bbDetailsQuery.isLoading ? (
+            <div className="h-96 flex flex-col items-center justify-center gap-4">
+              <Loader2 className="h-12 w-12 animate-spin text-lime-400" />
+              <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Decrypting Brand Data...</p>
+            </div>
+          ) : details ? (
+            <>
+              {/* Header */}
+              <div className="px-8 py-6 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 flex items-center justify-between">
+                <div>
+                  <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Brand Brief Intel</DialogTitle>
+                  <div className="flex items-center gap-3 mt-1">
+                    <Badge className="bg-lime-400 text-slate-950 font-black px-2 py-0.5 rounded-md text-[9px] tracking-widest">{details.restaurantName}</Badge>
+                    <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{details.user.email}</span>
+                  </div>
+                </div>
+                <div className="h-14 w-14 rounded-3xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
+                  <FileText className="h-7 w-7" />
+                </div>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-8 space-y-10 scrollbar-hide bg-slate-950/20">
+                {/* Section Generator */}
+                {[
+                  {
+                    title: "01 Identity & Presence",
+                    color: "text-lime-400",
+                    bg: "bg-lime-400/10",
+                    fields: [
+                      { label: "Restaurant Name", value: details.restaurantName },
+                      { label: "Location", value: details.location },
+                      { label: "Business Type", value: details.businessType },
+                      { label: "Cuisine Type", value: details.cuisineType },
+                      { label: "Website", value: details.websiteUrl, isLink: true },
+                      { label: "Instagram", value: details.instagramHandle, isLink: true },
+                      { label: "Dietary Certs", value: details.dietaryCertifications?.join(", ") },
+                    ]
+                  },
+                  {
+                    title: "02 Social Media Handles",
+                    color: "text-blue-400",
+                    bg: "bg-blue-400/10",
+                    fields: [
+                      { label: "Facebook", value: details.facebookPageUrl, isLink: true },
+                      { label: "TikTok", value: details.tiktokHandle, isLink: true },
+                      { label: "Online Ordering", value: details.onlineOrderingUrl, isLink: true },
+                    ]
+                  },
+                  {
+                    title: "03 Brand Voice & Content",
+                    color: "text-indigo-400",
+                    bg: "bg-indigo-400/10",
+                    fields: [
+                      { label: "Tone & Voice", value: details.toneAndVoice?.join(" | ") },
+                      { label: "Targeting", value: details.captionTargeting },
+                      { label: "Language", value: details.language },
+                      { label: "Hashtag Style", value: details.hashtagStyle },
+                      { label: "Unique Selling Point", value: details.uniqueSellingPoint },
+                    ]
+                  },
+                  {
+                    title: "04 Messaging & Samples",
+                    color: "text-amber-400",
+                    bg: "bg-amber-400/10",
+                    fields: [
+                      { label: "Forbidden Phrases", value: details.forbiddenPhrases },
+                      { label: "Preferred Phrases", value: details.preferredPhrases },
+                      { label: "Sample Caption 1", value: details.captionSample1 },
+                      { label: "Sample Caption 2", value: details.captionSample2 },
+                      { label: "Sample Caption 3", value: details.captionSample3 },
+                    ]
+                  },
+                  {
+                    title: "05 Operations & Production",
+                    color: "text-rose-400",
+                    bg: "bg-rose-400/10",
+                    fields: [
+                      { label: "Signature Dishes", value: details.signatureDishes?.join(", ") },
+                      { label: "Dish Details", value: details.signatureDishDetails },
+                      { label: "Excluded Items", value: details.excludedItems },
+                      { label: "Upcoming Promos", value: details.upcomingPromotions },
+                      { label: "Shoot Frequency", value: details.confirmMinDishes },
+                      { label: "Action Shots Possible", value: details.actionShotsPossible },
+                      { label: "Preferred Shoot Time", value: details.preferredShootTime },
+                    ]
+                  },
+                  {
+                    title: "06 Admin & Authorization",
+                    color: "text-cyan-400",
+                    bg: "bg-cyan-400/10",
+                    fields: [
+                      { label: "Client Name (Auth)", value: details.clientName },
+                      { label: "Talexia Plan", value: details.talexiaPlan },
+                      { label: "Authorization Date", value: formatDate(details.submissionDate) },
+                    ]
+                  },
+                ].map((section, idx) => (
+                  <div key={idx} className="space-y-4">
+                    <h4 className={cn("text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-3", section.color)}>
+                      <span className={cn("h-6 w-6 rounded-lg flex items-center justify-center text-[10px] border border-white/5", section.bg)}>{idx + 1}</span>
+                      {section.title}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {section.fields.map((field, fIdx) => (
+                        <div key={fIdx} className="space-y-1 bg-white/[0.02] border border-white/5 p-4 rounded-2xl">
+                          <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{field.label}</p>
+                          {field.isLink && field.value ? (
+                            <a href={field.value} target="_blank" rel="noreferrer" className="text-sm font-bold text-blue-400 hover:underline break-all">
+                              {field.value}
+                            </a>
+                          ) : (
+                            <p className="text-sm font-medium text-slate-200 leading-relaxed">{field.value || "—"}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="px-8 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+                <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                  <div className="h-2 w-2 rounded-full bg-lime-400" />
+                  Intel Verified • {formatDate(details.createdAt)}
+                </div>
+                <Button 
+                  onClick={() => setIsBbDetailsOpen(false)}
+                  className="bg-white/5 hover:bg-white/10 text-white font-black h-12 px-10 rounded-2xl border border-white/10 uppercase tracking-widest text-[10px]"
+                >
+                  Close Intel
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="h-96 flex items-center justify-center text-slate-500 font-bold uppercase tracking-widest">Error fetching intel.</div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
