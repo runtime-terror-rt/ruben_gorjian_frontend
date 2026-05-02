@@ -13,9 +13,22 @@ export async function POST(req: Request) {
     const data = await res.json();
     const response = NextResponse.json(data, { status: res.status });
 
-    const setCookie = res.headers.get("set-cookie");
-    if (setCookie) {
-      response.headers.set("set-cookie", setCookie);
+    const setCookies = res.headers.getSetCookie();
+    for (const cookie of setCookies) {
+      response.headers.append("set-cookie", cookie);
+    }
+
+    // Fallback: If backend returns a token in body but set-cookie didn't work
+    if (data.token) {
+      response.cookies.set({
+        name: "token",
+        value: data.token,
+        httpOnly: true,
+        path: "/",
+        secure: req.headers.get("x-forwarded-proto") === "https",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
     }
 
     return response;

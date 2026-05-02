@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSessionContext } from "@/context/SessionContext";
 import logo from "@/components/assets/talexia_ai_logo.png";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +49,9 @@ const planBadgeMap: Record<string, string> = {
   VISUAL_CALENDAR: "Visual Calendar",
   VISUAL_ADD_ON: "Visual Only",
   FULL_MANAGEMENT: "Full Management",
+  ENTERPRISE: "Brand Brief",
+  BRAND_BRIEF: "Brand Brief",
+  BRAND_BRIF: "Brand Brief",
 };
 
 export function OnboardingHeaderNav({
@@ -59,11 +62,16 @@ export function OnboardingHeaderNav({
 }: OnboardingHeaderNavProps) {
   const { session, refresh } = useSessionContext();
   const router = useRouter();
+  const pathname = usePathname();
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
   const [showSectionsSheet, setShowSectionsSheet] = useState(false);
 
   const planCategory = session?.subscription?.planCategory || "";
-  const planBadge = planBadgeMap[planCategory] || "Onboarding";
+  let planBadge = planBadgeMap[planCategory] || "Onboarding";
+
+  if (pathname?.includes("/onboarding/brand-brief")) {
+    planBadge = "Brand Brief";
+  }
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
   const isCompleted = session
@@ -185,10 +193,10 @@ export function OnboardingHeaderNav({
                               <div
                                 key={section.id}
                                 className={`px-3 py-2 rounded-md text-sm ${isCurrent
-                                    ? "bg-lime-400/10 text-lime-300 font-medium"
-                                    : isCompleted
-                                      ? "text-slate-300"
-                                      : "text-slate-500"
+                                  ? "bg-lime-400/10 text-lime-300 font-medium"
+                                  : isCompleted
+                                    ? "text-slate-300"
+                                    : "text-slate-500"
                                   }`}
                               >
                                 {isCompleted && <span className="mr-2">✓</span>}
