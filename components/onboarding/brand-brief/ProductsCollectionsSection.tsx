@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -12,11 +13,18 @@ interface ProductsCollectionsSectionProps {
 
 export function ProductsCollectionsSection({ data, updateData }: ProductsCollectionsSectionProps) {
   const hashtagStyles = [
-    { value: "Branded and location tags", label: "Focus on your restaurant's name and city" },
-    { value: "Foodie & niche community tags", label: "Target specific food categories and trends" },
-    { value: "Minimal (1-3 tags only)", label: "Clean look, focusing on brand identity" },
-    { value: "Aggressive (20+ tags)", label: "Maximum reach using broad category tags" },
+    { value: "Niche", label: "tight and specific (e.g. #KosherPizza #GreatNeckEats)" },
+    { value: "Broad", label: "wide reach (e.g. #FoodLovers #NYCFood)" },
+    { value: "Mixed", label: "combination of both (recommended)" },
   ];
+
+  const handleHashtagChange = (val: string, checked: boolean) => {
+    if (checked) {
+      updateData({ hashtagStyle: val });
+    } else {
+      updateData({ hashtagStyle: "" });
+    }
+  };
 
   const updateSignatureDish = (index: number, val: string) => {
     const current = [...(data.signatureDishes || ["", "", "", "", ""])];
@@ -97,25 +105,28 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
           <Label className="text-sm font-semibold text-slate-300">
             Hashtag Style <span className="text-lime-400">*</span>
           </Label>
-          <RadioGroup
-            value={data.hashtagStyle}
-            onValueChange={(val) => updateData({ hashtagStyle: val })}
-            className="grid grid-cols-1 md:grid-cols-2 gap-3"
-          >
+          <div className="grid grid-cols-1 gap-3">
             {hashtagStyles.map((opt) => {
               const isSelected = data.hashtagStyle === opt.value;
               return (
                 <div
                   key={opt.value}
-                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${isSelected
+                  onClick={() => handleHashtagChange(opt.value, !isSelected)}
+                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                     ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
                     : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
                     }`}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value={opt.value} id={`hashtag-${opt.value}`} className={isSelected ? "border-lime-400" : ""} />
+                    <Checkbox
+                      checked={isSelected}
+                      id={`hashtag-${opt.value}`}
+                      onCheckedChange={(checked) => handleHashtagChange(opt.value, !!checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                     <Label
                       htmlFor={`hashtag-${opt.value}`}
+                      onClick={(e) => e.stopPropagation()}
                       className={`text-sm font-semibold cursor-pointer transition-colors ${isSelected ? "text-white" : "text-slate-200"}`}
                     >
                       {opt.value}
@@ -127,7 +138,7 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
                 </div>
               );
             })}
-          </RadioGroup>
+          </div>
         </div>
       </div>
     </div>

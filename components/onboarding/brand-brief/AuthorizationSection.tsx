@@ -75,12 +75,16 @@ export function AuthorizationSection({ data, updateData, session }: Authorizatio
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-slate-300">
+            <Label htmlFor="restaurantNameAuth" className="text-sm font-semibold text-slate-300">
               Restaurant Name
             </Label>
-            <div className="px-3 py-2 rounded-xl bg-slate-800/30 border border-slate-800 text-slate-400 text-sm h-11 flex items-center">
-              {data.restaurantNameAuth || data.restaurantName || "Enter Name in Step 1"}
-            </div>
+            <Input
+              id="restaurantNameAuth"
+              value={data.restaurantNameAuth || data.restaurantName || ""}
+              onChange={(e) => updateData({ restaurantNameAuth: e.target.value })}
+              placeholder="Restaurant name"
+              className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11"
+            />
           </div>
 
           <div className="space-y-2">
@@ -93,12 +97,16 @@ export function AuthorizationSection({ data, updateData, session }: Authorizatio
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-slate-300">
+            <Label htmlFor="talexiaPlan" className="text-sm font-semibold text-slate-300">
               Talexia Plan
             </Label>
-            <div className="px-3 py-2 rounded-xl bg-slate-800/30 border border-slate-800 text-slate-400 text-sm h-11 flex items-center">
-              {data.talexiaPlan || planName}
-            </div>
+            <Input
+              id="talexiaPlan"
+              value={data.talexiaPlan || ""}
+              onChange={(e) => updateData({ talexiaPlan: e.target.value })}
+              placeholder="e.g. Pro, Enterprise..."
+              className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11"
+            />
           </div>
         </div>
 
