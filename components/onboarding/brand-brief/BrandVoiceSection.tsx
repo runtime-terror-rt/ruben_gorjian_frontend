@@ -20,13 +20,22 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
     "Minimal & clean — let the food speak, no excess words",
   ];
 
-  const targetingOptions = [
-    { value: "Local food lovers", label: "Target residents and foodies in your immediate area" },
-    { value: "Tourists & Visitors", label: "Speak to people visiting your city/landmark" },
-    { value: "Corporate/Events", label: "Target event planners and business lunch crowds" },
-    { value: "Food Influencers", label: "Focus on aesthetic, high-engagement content" },
-    { value: "Family/Groups", label: "Highlight sharing, kids' menus, and large tables" },
-    { value: "Late Night/Social", label: "Focus on drinks, music, and after-hours energy" },
+  const captionTargetingOptions = [
+    {
+      value: "B2C only — captions speak directly to hungry customers",
+      label: "B2C only",
+      sub: "Captions speak directly to hungry customers",
+    },
+    {
+      value: "B2B only — captions target event planners, corporate clients",
+      label: "B2B only",
+      sub: "Captions target event planners, corporate clients",
+    },
+    {
+      value: "Mix of both — alternate between consumer and business angles",
+      label: "Mix of both",
+      sub: "Alternate between consumer and business angles",
+    },
   ];
 
   const handleToneChange = (tone: string, checked: boolean) => {
@@ -43,13 +52,18 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
       <div className="space-y-6">
         <div className="space-y-2">
           <h2 className="text-xl font-bold text-white uppercase tracking-wider">03 Brand Voice</h2>
-          <p className="text-xs text-slate-500">This section directly determines how your captions sound.</p>
+          <p className="text-xs text-slate-500">
+            ★ Most Important Section — This section directly determines how your captions sound.
+            Vague answers produce generic captions. Specific answers produce captions that sound like YOU.
+          </p>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="foodDescription" className="text-sm font-semibold text-slate-300">
             How would you describe your food in your own words? <span className="text-lime-400">*</span>
-            <span className="block text-xs font-normal text-slate-500 mt-1">Write like you're telling a friend about your restaurant. Not marketing language — YOUR words.</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">
+              Write like you&apos;re telling a friend about your restaurant. Not marketing language — YOUR words.
+            </span>
           </Label>
           <Textarea
             id="foodDescription"
@@ -63,7 +77,9 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
         <div className="space-y-2">
           <Label htmlFor="uniqueSellingPoint" className="text-sm font-semibold text-slate-300">
             What makes your restaurant different from every other place on the block? <span className="text-lime-400">*</span>
-            <span className="block text-xs font-normal text-slate-500 mt-1">Could be a secret recipe, family history, technique, atmosphere, or loyal community. Be specific.</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">
+              Could be a secret recipe, family history, technique, atmosphere, or loyal community. Be specific.
+            </span>
           </Label>
           <Textarea
             id="uniqueSellingPoint"
@@ -77,7 +93,9 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
         <div className="space-y-2">
           <Label htmlFor="customerReviews" className="text-sm font-semibold text-slate-300">
             What do your regulars say about you? <span className="text-lime-400">*</span>
-            <span className="block text-xs font-normal text-slate-500 mt-1">Paste real Google/Yelp review quotes, or write what you hear customers say most often.</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">
+              Paste real Google/Yelp review quotes, or write what you hear customers say most often.
+            </span>
           </Label>
           <Textarea
             id="customerReviews"
@@ -92,7 +110,9 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
           <div className="space-y-2">
             <Label htmlFor="forbiddenPhrases" className="text-sm font-semibold text-slate-300">
               Words or phrases you NEVER want us to use
-              <span className="block text-xs font-normal text-slate-500 mt-1">e.g. 'premium ingredients', 'culinary journey' — list any language that feels fake or generic to you.</span>
+              <span className="block text-xs font-normal text-slate-500 mt-1">
+                e.g. &apos;premium ingredients&apos;, &apos;culinary journey&apos; — list any language that feels fake or generic to you.
+              </span>
             </Label>
             <Textarea
               id="forbiddenPhrases"
@@ -105,7 +125,9 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
           <div className="space-y-2">
             <Label htmlFor="preferredPhrases" className="text-sm font-semibold text-slate-300">
               Words or phrases you LOVE and want us to use often
-              <span className="block text-xs font-normal text-slate-500 mt-1">Any slogan, tagline, inside joke, or language your regulars would recognize immediately.</span>
+              <span className="block text-xs font-normal text-slate-500 mt-1">
+                Any slogan, tagline, inside joke, or language your regulars would recognize immediately.
+              </span>
             </Label>
             <Textarea
               id="preferredPhrases"
@@ -117,64 +139,114 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
           </div>
         </div>
 
+        {/* 3 Sample Captions */}
         <div className="space-y-4">
           <Label className="text-sm font-semibold text-slate-300">
             3 Sample Captions — MANDATORY <span className="text-lime-400">*</span>
-            <span className="block text-xs font-normal text-slate-500 mt-1">Paste 3 captions from your existing Instagram or any account whose tone you want to match. If you have none, write 3 sentences about your restaurant the way you'd say them out loud. NO EXCEPTIONS.</span>
+            <span className="block text-xs font-normal text-slate-500 mt-1">
+              Paste 3 captions from your existing Instagram or any account whose tone you want to match.
+              If you have none, write 3 sentences about your restaurant the way you&apos;d say them out loud.
+              NO EXCEPTIONS — briefs submitted without this will be returned.
+            </span>
           </Label>
           <div className="space-y-3">
-            <Textarea
-              value={data.captionSample1 || ""}
-              onChange={(e) => updateData({ captionSample1: e.target.value })}
-              placeholder="Enter caption sample 1..."
-              className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
-            />
-            <Textarea
-              value={data.captionSample2 || ""}
-              onChange={(e) => updateData({ captionSample2: e.target.value })}
-              placeholder="Enter caption sample 2..."
-              className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
-            />
-            <Textarea
-              value={data.captionSample3 || ""}
-              onChange={(e) => updateData({ captionSample3: e.target.value })}
-              placeholder="Enter caption sample 3..."
-              className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
-            />
+            {[
+              { key: "captionSample1", placeholder: "Caption Sample 1..." },
+              { key: "captionSample2", placeholder: "Caption Sample 2..." },
+              { key: "captionSample3", placeholder: "Caption Sample 3..." },
+            ].map(({ key, placeholder }) => (
+              <Textarea
+                key={key}
+                value={data[key] || ""}
+                onChange={(e) => updateData({ [key]: e.target.value })}
+                placeholder={placeholder}
+                className="min-h-[80px] bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+              />
+            ))}
           </div>
         </div>
 
+        {/* Tone & Voice */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Tone & Voice <span className="text-lime-400">*</span>
+            Tone &amp; Voice <span className="text-lime-400">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">Select all that apply:</span>
           </Label>
           <div className="grid grid-cols-1 gap-3">
-            {tones.map((tone) => (
-              <label
-                key={tone}
-                className="flex items-center gap-3 p-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/60 transition-colors cursor-pointer"
+            {tones.map((tone) => {
+              const isChecked = (data.toneAndVoice || []).includes(tone);
+              return (
+                <label
+                  key={tone}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                    isChecked
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                  }`}
+                >
+                  <Checkbox
+                    checked={isChecked}
+                    onCheckedChange={(checked) => handleToneChange(tone, !!checked)}
+                  />
+                  <span className={`text-sm ${isChecked ? "text-white font-bold" : "text-slate-200"}`}>
+                    {tone}
+                  </span>
+                </label>
+              );
+            })}
+
+            {/* Other — toggle card, hidden by default */}
+            <div
+              onClick={() => {
+                if (data.toneOtherActive) {
+                  updateData({ toneOtherActive: false, toneOther: "" });
+                } else {
+                  updateData({ toneOtherActive: true });
+                }
+              }}
+              className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                data.toneOtherActive
+                  ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                  : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+              }`}
+            >
+              <Checkbox
+                checked={!!data.toneOtherActive}
+                onCheckedChange={(checked) => {
+                  if (!checked) {
+                    updateData({ toneOtherActive: false, toneOther: "" });
+                  } else {
+                    updateData({ toneOtherActive: true });
+                  }
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <span
+                className={`text-sm flex-1 py-1 transition-colors ${
+                  data.toneOtherActive ? "text-white font-bold" : "text-slate-400"
+                }`}
               >
-                <Checkbox
-                  checked={(data.toneAndVoice || []).includes(tone)}
-                  onCheckedChange={(checked) => handleToneChange(tone, !!checked)}
-                />
-                <span className="text-sm text-slate-200">{tone}</span>
-              </label>
-            ))}
+                Other — specify your tone
+              </span>
+            </div>
           </div>
-          <div className="mt-2">
-            <Label htmlFor="toneOther" className="text-xs text-slate-500">Other:</Label>
-            <Input
-              id="toneOther"
-              value={data.toneOther || ""}
-              onChange={(e) => updateData({ toneOther: e.target.value })}
-              placeholder="Specify other tone"
-              className="mt-1 bg-slate-900/50 border-slate-800 h-9 text-sm"
-            />
-          </div>
+
+          {/* Other input — only visible when Other is toggled on */}
+          {data.toneOtherActive && (
+            <div className="animate-in slide-in-from-top-2 duration-300">
+              <Input
+                id="toneOther"
+                autoFocus
+                value={data.toneOther || ""}
+                onChange={(e) => updateData({ toneOther: e.target.value })}
+                placeholder="Describe your brand's tone & voice..."
+                className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11 text-sm"
+              />
+            </div>
+          )}
         </div>
 
+        {/* Caption Targeting — spec-matching options */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
             Caption Targeting <span className="text-lime-400">*</span>
@@ -182,29 +254,43 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
           <RadioGroup
             value={data.captionTargeting}
             onValueChange={(val) => updateData({ captionTargeting: val })}
-            className="grid grid-cols-1 md:grid-cols-2 gap-3"
+            className="grid grid-cols-1 gap-3"
           >
-            {targetingOptions.map((opt) => {
+            {captionTargetingOptions.map((opt) => {
               const isSelected = data.captionTargeting === opt.value;
               return (
                 <div
                   key={opt.value}
-                  className={`flex flex-col gap-2 p-4 rounded-xl border transition-all duration-200 ${isSelected
-                    ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
-                    : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                    }`}
+                  onClick={() => updateData({ captionTargeting: opt.value })}
+                  className={`flex flex-col gap-1 p-4 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                    isSelected
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                  }`}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value={opt.value} id={`target-${opt.value}`} className={isSelected ? "border-lime-400" : ""} />
+                    <RadioGroupItem
+                      value={opt.value}
+                      id={`target-${opt.value}`}
+                      className={isSelected ? "border-lime-400" : ""}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                     <Label
                       htmlFor={`target-${opt.value}`}
-                      className={`text-sm font-semibold cursor-pointer transition-colors ${isSelected ? "text-white" : "text-slate-200"}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className={`text-sm font-semibold cursor-pointer transition-colors ${
+                        isSelected ? "text-white" : "text-slate-200"
+                      }`}
                     >
-                      {opt.value}
+                      {opt.label}
                     </Label>
                   </div>
-                  <span className={`text-[10px] leading-relaxed ml-7 transition-colors ${isSelected ? "text-slate-300" : "text-slate-500"}`}>
-                    {opt.label}
+                  <span
+                    className={`text-[11px] leading-relaxed ml-7 transition-colors ${
+                      isSelected ? "text-slate-300" : "text-slate-500"
+                    }`}
+                  >
+                    {opt.sub}
                   </span>
                 </div>
               );
@@ -212,43 +298,62 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
           </RadioGroup>
         </div>
 
+        {/* Language */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">Language</Label>
           <RadioGroup
             value={data.language}
             onValueChange={(val) => updateData({ language: val })}
-            className="flex flex-wrap gap-4"
+            className="flex flex-wrap gap-3"
           >
-            {["English", "Bilingual"].map((lang) => {
-              const isSelected = data.language === lang;
-              const id = `lang-${lang.toLowerCase()}`;
+            {[
+              { value: "English only", label: "English only" },
+              { value: "Bilingual", label: "Bilingual" },
+            ].map((lang) => {
+              const isSelected = data.language === lang.value;
+              const id = `lang-${lang.value.toLowerCase().replace(/\s+/g, "-")}`;
               return (
                 <div
-                  key={lang}
-                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${isSelected
-                    ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
-                    : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
-                    }`}
+                  key={lang.value}
+                  onClick={() => updateData({ language: lang.value })}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
+                    isSelected
+                      ? "border-lime-400 bg-lime-400/10 shadow-[0_0_15px_rgba(163,230,53,0.1)]"
+                      : "border-slate-800 bg-slate-900/40 hover:bg-slate-900/60"
+                  }`}
                 >
-                  <RadioGroupItem value={lang} id={id} className={isSelected ? "border-lime-400" : ""} />
+                  <RadioGroupItem
+                    value={lang.value}
+                    id={id}
+                    className={isSelected ? "border-lime-400" : ""}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <Label
                     htmlFor={id}
-                    className={`text-sm cursor-pointer transition-colors ${isSelected ? "text-white font-bold" : "text-slate-200"}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className={`text-sm cursor-pointer transition-colors ${
+                      isSelected ? "text-white font-bold" : "text-slate-200"
+                    }`}
                   >
-                    {lang}
+                    {lang.label}
                   </Label>
                 </div>
               );
             })}
-            {data.language === "Bilingual" && (
+          </RadioGroup>
+
+          {/* Bilingual specify input — hidden until Bilingual is selected */}
+          {data.language === "Bilingual" && (
+            <div className="animate-in slide-in-from-top-2 duration-300">
               <Input
+                autoFocus
                 value={data.languageSpecify || ""}
                 onChange={(e) => updateData({ languageSpecify: e.target.value })}
-                placeholder="Specify language(s)..."
-                className="flex-1 min-w-[200px] bg-slate-900/50 border-slate-800 h-11"
+                placeholder="Specify language(s) e.g. English + Spanish..."
+                className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50 h-11"
               />
-            )}
-          </RadioGroup>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -37,7 +37,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
 
     // No active subscription
-    const hasActiveSubscription = session.subscription?.planCode && 
+    const hasActiveSubscription = session.subscription?.planCode &&
       (session.subscription?.status === "ACTIVE" || session.subscription?.status === "TRIALING");
     const isPricingPage = pathname === "/pricing";
     const isCheckoutPage = pathname.startsWith("/billing/checkout");
@@ -58,16 +58,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [session, sessionLoading, pathname, router]);
 
   // Derived authorization state for cleaner rendering
-  const hasActiveSubscription = session?.subscription?.planCode && 
+  const hasActiveSubscription = session?.subscription?.planCode &&
     (session?.subscription?.status === "ACTIVE" || session?.subscription?.status === "TRIALING");
-  
+
   const isCompleted = session?.onboardingCompleted || session?.brandBriefCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
-  
+
   const isAuthorized = !!session && (
-    pathname === "/pricing" || 
-    pathname.startsWith("/billing/checkout") || 
-    pathname.startsWith("/verify") || 
-    pathname.startsWith("/onboarding") || 
+    pathname === "/pricing" ||
+    pathname.startsWith("/billing/checkout") ||
+    pathname.startsWith("/verify") ||
+    pathname.startsWith("/onboarding") ||
     (hasActiveSubscription && isCompleted)
   );
 
@@ -157,7 +157,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <DashboardSidebar
         isOpen={isMobileSidebarOpen}
         isCollapsed={false}
-        onToggleCollapse={() => {}}
+        onToggleCollapse={() => { }}
         onClose={() => setIsMobileSidebarOpen(false)}
         isMobile={true}
       />
