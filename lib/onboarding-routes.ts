@@ -24,24 +24,26 @@ export function getOnboardingRouteForPlanCategory(
   const category = planCategory.toUpperCase();
 
   switch (category) {
-    case "CALENDAR_ONLY":
-    case "JEWELRY_CALENDAR_ONLY":
-    case "VISUAL_CALENDAR":
-      return "/onboarding/calendar";
-
-    case "VISUAL_ADD_ON":
-    case "REGULAR_VISUAL":
-    case "JEWELRY_VISUAL":
-      return "/onboarding/visual";
-
-    case "FULL_MANAGEMENT":
-    case "JEWELRY_FULL_MANAGEMENT":
-      return "/onboarding/full-management";
-
     case "ENTERPRISE":
     case "BRAND_BRIEF":
     case "BRAND_BRIF":
       return "/onboarding/brand-brief";
+
+    // "normal pricing" plans all route to full-management
+    case "FULL_MANAGEMENT":
+    case "JEWELRY_FULL_MANAGEMENT":
+    case "VISUAL_ADD_ON":
+    case "REGULAR_VISUAL":
+    case "JEWELRY_VISUAL":
+    // Baki calendar onboarding thakbe na comment out kore daw
+    // case "CALENDAR_ONLY":
+    // case "JEWELRY_CALENDAR_ONLY":
+    // case "VISUAL_CALENDAR":
+    //   return "/onboarding/calendar";
+    case "CALENDAR_ONLY":
+    case "JEWELRY_CALENDAR_ONLY":
+    case "VISUAL_CALENDAR":
+      return "/onboarding/full-management";
 
     default:
       return null;

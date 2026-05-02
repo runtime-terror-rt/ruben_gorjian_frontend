@@ -98,8 +98,8 @@ export default function BrandBriefPage() {
     }
 
     if (session.brandBriefCompleted) {
-      // Logic to continue to plan-specific onboarding
-      router.push("/onboarding");
+      // Completed, redirect to dashboard
+      router.push("/dashboard");
       return;
     }
 

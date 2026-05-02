@@ -315,11 +315,10 @@ export default function PricingPage() {
                 {fullPlans.map((plan, idx) => (
                   <div
                     key={plan.code}
-                    className={`bg-slate-900/60 border rounded-2xl p-6 hover:border-lime-400/50 transition-all relative ${
-                      idx === 1
+                    className={`bg-slate-900/60 border rounded-2xl p-6 hover:border-lime-400/50 transition-all relative ${idx === 1
                         ? "border-lime-400 shadow-lg shadow-lime-400/20"
                         : "border-slate-800"
-                    }`}
+                      }`}
                   >
                     {idx === 1 && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-slate-950 px-4 py-1 rounded-full text-sm font-semibold">
@@ -366,11 +365,10 @@ export default function PricingPage() {
                     <button
                       onClick={() => handleStartCheckout(plan.code)}
                       disabled={ctaLoading === plan.code}
-                      className={`block w-full text-center font-semibold py-3 rounded-full transition-colors disabled:opacity-60 ${
-                        idx === 1
+                      className={`block w-full text-center font-semibold py-3 rounded-full transition-colors disabled:opacity-60 ${idx === 1
                           ? "bg-lime-400 hover:bg-lime-300 text-slate-950"
                           : "bg-slate-800 hover:bg-slate-700 text-white"
-                      }`}
+                        }`}
                     >
                       {currentPlanCode === plan.code
                         ? "Current Plan"
@@ -509,11 +507,10 @@ export default function PricingPage() {
                     {jewelryFullPlans.map((plan, idx) => (
                       <div
                         key={plan.code}
-                        className={`bg-slate-900/60 border rounded-2xl p-6 hover:border-lime-400/50 transition-all relative ${
-                          idx === 1
+                        className={`bg-slate-900/60 border rounded-2xl p-6 hover:border-lime-400/50 transition-all relative ${idx === 1
                             ? "border-lime-400 shadow-lg shadow-lime-400/20"
                             : "border-slate-800"
-                        }`}
+                          }`}
                       >
                         {idx === 1 && (
                           <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-slate-950 px-4 py-1 rounded-full text-sm font-semibold">

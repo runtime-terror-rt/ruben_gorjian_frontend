@@ -1,8 +1,8 @@
 "use client";
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { GoogleLoginButton } from "@/components/google-login-button";
 import { getReturnToFromQuery } from "@/lib/return-to";
 
@@ -12,7 +12,20 @@ function SignupPageInner() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const returnTo = getReturnToFromQuery(searchParams, "/dashboard");
+
+  // Professional redirect with error message if no plan is selected
+  useEffect(() => {
+    const plan = searchParams.get("plan");
+    if (!plan) {
+      setError("Please select a plan to continue. Redirecting to pricing...");
+      const timer = setTimeout(() => {
+        router.push("/pricing");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, router]);
 
   // Store returnTo in sessionStorage for after email verification
   if (typeof window !== "undefined" && returnTo !== "/dashboard") {
@@ -29,12 +42,10 @@ function SignupPageInner() {
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
 
-    // Get plan selection from localStorage or query params
-    const { getPlanSelection } = await import("@/lib/plan-selection");
-    const planSelection = getPlanSelection(searchParams);
-    const pendingPlanCode = planSelection?.planCode || null;
+    // Strictly get plan from query params to avoid auto-selecting stale localStorage plans
+    const pendingPlanCode = searchParams.get("plan");
 
-  
+
 
     // If no plan selected, redirect to pricing
     if (!pendingPlanCode) {
@@ -158,7 +169,7 @@ function SignupPageInner() {
                 <span className="bg-white px-2 text-primary">or</span>
               </div>
             </div>
-            <GoogleLoginButton returnTo={returnTo} />
+            <GoogleLoginButton returnTo={returnTo} requirePlan={true} />
           </div>
         </form>
 

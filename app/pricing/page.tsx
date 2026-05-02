@@ -200,12 +200,25 @@ function PricingPageContent() {
           cache: "no-store",
           credentials: "include",
         });
-        setIsAuthenticated(res.ok);
+        const authenticated = res.ok;
+        setIsAuthenticated(authenticated);
+
+        if (authenticated && typeof window !== "undefined") {
+          const { getPlanSelection, clearPlanSelection } = await import("@/lib/plan-selection");
+          const selection = getPlanSelection();
+          if (selection && selection.planCode) {
+            clearPlanSelection();
+            setTimeout(() => {
+              router.push(`/billing/checkout?plan=${selection.planCode}&cycle=monthly`);
+            }, 500);
+          }
+        }
       } catch {
         setIsAuthenticated(false);
       }
     }
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const plans = useMemo(() => {

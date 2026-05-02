@@ -12,9 +12,9 @@ declare global {
   }
 }
 
-type Props = { returnTo?: string; redirect?: string };
+type Props = { returnTo?: string; redirect?: string; requirePlan?: boolean };
 
-export function GoogleLoginButton({ returnTo, redirect }: Props) {
+export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
   const finalReturnTo = returnTo || redirect || "/dashboard";
   const [loading, setLoading] = useState(false);
   const { refresh } = useSessionContext();
@@ -32,7 +32,7 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
         // Render the official button inside our hidden container
         window.google.accounts.id.renderButton(
           document.getElementById("google-button-hidden"),
-          { 
+          {
             type: "standard",
             shape: "rectangular",
             theme: "outline",
@@ -63,20 +63,33 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
     setLoading(true);
     try {
       const idToken = response.credential;
-      
+
       let pendingPlanCode: string | null = null;
       try {
-        const { getPlanSelection } = await import("@/lib/plan-selection");
-        const planSelection = getPlanSelection();
-        pendingPlanCode = planSelection?.planCode || null;
+        const searchParams = new URLSearchParams(window.location.search);
+        if (requirePlan) {
+          // Strictly use query params to avoid auto-selecting stale localStorage plans
+          pendingPlanCode = searchParams.get("plan");
+        } else {
+          // Fallback to localStorage for normal logins
+          const { getPlanSelection } = await import("@/lib/plan-selection");
+          const planSelection = getPlanSelection(searchParams);
+          pendingPlanCode = planSelection?.planCode || null;
+        }
       } catch (e) {
         console.error("Error getting plan selection:", e);
+      }
+
+      // If requirePlan is true and no plan is found, redirect to pricing
+      if (requirePlan && !pendingPlanCode) {
+        window.location.href = "/pricing";
+        return;
       }
 
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           idToken,
           pendingPlanCode: pendingPlanCode || undefined
         }),
@@ -90,7 +103,7 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
 
       // Success! Refresh session context to ensure global state is updated
       await refresh();
-      
+
       toast.success("Successfully logged in with Google!");
 
       // Determine redirection destination
@@ -105,7 +118,7 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
 
       const subscription = session?.subscription;
       const planCategory = subscription?.planCategory;
-      const onboardingCompleted = 
+      const onboardingCompleted =
         session?.onboardingCompleted ||
         (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
         (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
@@ -184,8 +197,8 @@ export function GoogleLoginButton({ returnTo, redirect }: Props) {
         This ensures that a real user interaction triggers the Google popup,
         which is required for security and avoids popup blockers.
       */}
-      <div 
-        id="google-button-hidden" 
+      <div
+        id="google-button-hidden"
         className="absolute inset-0 opacity-[0.01] overflow-hidden pointer-events-auto"
         title="Continue with Google"
       ></div>
