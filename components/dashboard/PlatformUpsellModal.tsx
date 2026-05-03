@@ -36,7 +36,7 @@ export function PlatformUpsellModal({
   const { toast } = useToast();
 
   // User can buy up to 2 additional slots (Total 3 platforms across the app)
-  const maxAvailable = 2; 
+  const maxAvailable: number = 2; 
   const totalAmount = quantity * PLATFORM_UNIT_PRICE;
 
   const handlePayNow = async () => {
