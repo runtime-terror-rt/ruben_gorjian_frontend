@@ -12,12 +12,21 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ExternalLink, Unlink } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { apiGet } from "@/lib/api";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
 } from "react-icons/fa";
 import { SiTiktok as Tiktok } from "react-icons/si";
+import { PlatformUpsellModal } from "@/components/dashboard/PlatformUpsellModal";
+
+interface PlanInfo {
+  platformLimit: number;
+  addonPlatformQty: number;
+  code: string;
+}
+
 
 interface SocialAccount {
   id: string;
@@ -49,6 +58,9 @@ function SocialPageInner() {
   const searchParams = useSearchParams();
   const handledQueryKeyRef = useRef<string | null>(null);
   const refetchRetryIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [plan, setPlan] = useState<PlanInfo | null>(null);
+  const [isUpsellModalOpen, setIsUpsellModalOpen] = useState(false);
+  const [pendingConnectPlatform, setPendingConnectPlatform] = useState<SocialAccount["platform"] | null>(null);
   const queryKey = searchParams.toString();
 
   // Fetch once on mount; keep this outside dependencies so changes to toast don't retrigger repeatedly
@@ -99,9 +111,30 @@ function SocialPageInner() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const fetchPlanInfo = useCallback(async () => {
+    try {
+      const data = await apiGet<{
+        success: boolean;
+        plan: any;
+        subscription: any;
+      }>("/api/billing/current-plan");
+
+      if (data.success && data.plan) {
+        setPlan({
+          platformLimit: data.plan.platformQty || data.plan.platformLimit || 0,
+          addonPlatformQty: data.subscription?.addonPlatformQty || 0,
+          code: data.plan.code,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch plan info:", error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchAccounts();
-  }, [fetchAccounts]);
+    fetchPlanInfo();
+  }, [fetchAccounts, fetchPlanInfo]);
 
   // Clear delayed refetch on unmount
   useEffect(() => {
@@ -112,8 +145,43 @@ function SocialPageInner() {
       }
     };
   }, []);
-
   const connectPlatform = async (platform: SocialAccount["platform"]) => {
+    // Strictly follow plan limits
+    if (plan) {
+      const totalAllowed = plan.platformLimit;
+      const connectedCount = accounts.length;
+
+      console.log("Connect attempt:", { 
+        platform, 
+        connectedCount, 
+        totalAllowed, 
+        plan,
+        willShowModal: connectedCount >= totalAllowed 
+      });
+
+      // strictly follow the 3-platform limit rule
+      if (connectedCount >= totalAllowed && totalAllowed < 3) {
+        setPendingConnectPlatform(platform);
+        setIsUpsellModalOpen(true);
+        return;
+      }
+      
+      if (totalAllowed >= 3 && connectedCount >= totalAllowed) {
+        toast({
+          title: "Limit Reached",
+          description: "You have reached the maximum limit of 3 platforms.",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      console.log("Plan not loaded yet, allowing connection attempt...");
+    }
+
+    await performConnect(platform);
+  };
+
+  const performConnect = async (platform: SocialAccount["platform"]) => {
     sessionStorage.setItem("pending_platform", platform.toLowerCase());
     setConnectingPlatform(platform);
     setConnectErrors((prev) => ({ ...prev, [platform]: undefined }));
@@ -163,6 +231,26 @@ function SocialPageInner() {
             ? JSON.stringify(data)
             : null) ||
           `HTTP ${response.status}: ${response.statusText}`;
+
+        console.error("BACKEND REJECTED CONNECTION:", { 
+          platform, 
+          errorMsg, 
+          httpStatus: response.status,
+          planDataInFrontend: plan 
+        });
+
+        // Falls back to upsell modal if backend says limit reached AND user truly has < 3 slots
+        if (errorMsg.toLowerCase().includes("limit reached")) {
+          const currentTotalAllowed = plan?.platformLimit || 0;
+          if (currentTotalAllowed < 3) {
+            setPendingConnectPlatform(platform);
+            setIsUpsellModalOpen(true);
+            return;
+          } else {
+             // If plan says they have slots, but backend rejects, it's a sync issue
+             // We show the error banner but NOT the modal
+          }
+        }
 
         setConnectErrors((prev) => ({ ...prev, [platform]: errorMsg }));
         toast({
@@ -615,6 +703,26 @@ function SocialPageInner() {
           </CardContent>
         </Card>
       )}
+      
+      <PlatformUpsellModal 
+        isOpen={isUpsellModalOpen} 
+        onOpenChange={setIsUpsellModalOpen} 
+        currentTotalAllowed={plan?.platformLimit || 0}
+        onSuccess={async () => {
+          // 1. Refresh plan info to get the new limit
+          await fetchPlanInfo();
+          
+          // 2. Automatically resume the connection process
+          if (pendingConnectPlatform) {
+            const platformToConnect = pendingConnectPlatform;
+            setPendingConnectPlatform(null);
+            // Small delay to ensure state and backend are in sync
+            setTimeout(() => {
+              performConnect(platformToConnect);
+            }, 500);
+          }
+        }}
+      />
     </div>
   );
 }
