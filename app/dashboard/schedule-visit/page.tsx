@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSessionContext } from "@/context/SessionContext";
 import { useTimezone } from "@/hooks/use-timezone";
 import { useToast } from "@/hooks/use-toast";
+import { useUpload } from "@/hooks/use-upload";
 import { apiGet, apiPatch, apiPost } from "@/lib/api";
 import clsx from "clsx";
 import dayjs from "dayjs";
@@ -52,6 +53,14 @@ type Session = {
   sessionTitle?: string;
   sessionNotes?: string;
   sessionDurationMinutes?: number;
+  media?: {
+    id: string;
+    storageKey: string;
+    url: string;
+    mimeType: string;
+    mediaType: string;
+  }[];
+  assets?: string[];
 };
 
 export default function ScheduleVisitPage() {
@@ -61,6 +70,11 @@ export default function ScheduleVisitPage() {
   const { socket } = useSocket();
   const isAdmin =
     userSession?.role === "ADMIN" || userSession?.role === "SUPER_ADMIN";
+
+  type UploadedAsset = { id: string; storageKey: string; name?: string };
+  const [assets, setAssets] = useState<UploadedAsset[]>([]);
+  const [assetIds, setAssetIds] = useState<string[]>([]);
+  const { uploadFile, uploading } = useUpload();
 
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
@@ -235,6 +249,8 @@ export default function ScheduleVisitPage() {
     setEditingSession(null);
     setAdminReason("");
     setTargetUserId("");
+    setAssets([]);
+    setAssetIds([]);
   };
 
   const handleEditSession = (session: Session) => {
@@ -248,6 +264,19 @@ export default function ScheduleVisitPage() {
     setDuration(
       session.session?.durationMinutes || session.sessionDurationMinutes || 60,
     );
+    
+    // Load existing assets if they exist in the session
+    if (session.media && session.media.length > 0) {
+      setAssets(session.media.map(m => ({
+        id: m.id,
+        storageKey: m.storageKey,
+        name: m.storageKey.split('/').pop() || 'Existing Media'
+      })));
+      setAssetIds(session.media.map(m => m.id));
+    } else {
+      setAssets([]);
+      setAssetIds([]);
+    }
 
     // Scroll to form
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -301,6 +330,18 @@ export default function ScheduleVisitPage() {
         sessionDurationMinutes: duration,
         status: "PENDING",
       };
+
+      if (sessionType === "PHOTO_SESSION" && assetIds.length > 0) {
+        payload.uploadedAssetIds = assetIds;
+        // Also provide assetIds and assetId for unified backend compatibility
+        payload.assetIds = assetIds;
+        payload.assetId = assetIds[0];
+      } else {
+        // Explicitly clear these for Video Sessions to prevent accidental attachment
+        payload.uploadedAssetIds = [];
+        payload.assetIds = [];
+        payload.assetId = null;
+      }
 
       if (isAdmin) {
         if (targetUserId.trim()) payload.userId = targetUserId.trim();
@@ -391,6 +432,28 @@ export default function ScheduleVisitPage() {
   //     return ownerId === userSession?.id;
   //   });
   // }, [sessions, userSession?.id, isAdmin]);
+
+  const handleFiles = async (files?: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const uploaded: UploadedAsset[] = [];
+    for (const file of Array.from(files)) {
+      try {
+        const asset = await uploadFile(file);
+        uploaded.push({
+          id: asset.id,
+          storageKey: asset.storageKey,
+          name: file.name,
+        });
+      } catch (err) {
+        toast({ title: "Upload Failed", description: err instanceof Error ? err.message : "Upload failed", variant: "destructive" });
+        break;
+      }
+    }
+    if (uploaded.length > 0) {
+      setAssets((prev) => [...prev, ...uploaded]);
+      setAssetIds((prev) => [...prev, ...uploaded.map((a) => a.id)]);
+    }
+  };
 
   return (
     <div className="max-w-9xl mx-auto space-y-8 pb-12">
@@ -622,6 +685,53 @@ export default function ScheduleVisitPage() {
                               {s.status}
                             </span>
                           </div>
+
+                          {/* Media Display */}
+                          {((s.media && s.media.length > 0) || (s.assets && s.assets.length > 0)) && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {s.media && s.media.length > 0 ? (
+                                s.media.slice(0, 4).map((m, i) => (
+                                  <a 
+                                    key={m.id} 
+                                    href={m.url} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
+                                  >
+                                    {m.mediaType === "IMAGE" ? (
+                                      <img src={m.url} alt="Media" className="h-full w-full object-cover" />
+                                    ) : (
+                                      <div className="h-full w-full flex items-center justify-center bg-slate-800">
+                                        <Video className="h-4 w-4 text-lime-400" />
+                                      </div>
+                                    )}
+                                    {i === 3 && (s.media?.length || 0) > 4 && (
+                                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                        +{(s.media?.length || 0) - 4}
+                                      </div>
+                                    )}
+                                  </a>
+                                ))
+                              ) : (
+                                s.assets?.slice(0, 4).map((url, i) => (
+                                  <a 
+                                    key={i} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
+                                  >
+                                    <img src={url} alt="Asset" className="h-full w-full object-cover" />
+                                    {i === 3 && (s.assets?.length || 0) > 4 && (
+                                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                        +{(s.assets?.length || 0) - 4}
+                                      </div>
+                                    )}
+                                  </a>
+                                ))
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -784,6 +894,9 @@ export default function ScheduleVisitPage() {
                           return;
                         }
                         setSessionType("VIDEO_SESSION");
+                        // Clear any uploaded assets when switching to video session
+                        setAssets([]);
+                        setAssetIds([]);
                       }}
                       className={clsx(
                         "flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300 relative",
@@ -885,6 +998,65 @@ export default function ScheduleVisitPage() {
                     />
                   </div>
 
+                  {sessionType === "PHOTO_SESSION" && (
+                    <div className="space-y-2">
+                      <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <Camera className="h-3 w-3 text-lime-400" /> Upload Photos / Videos (Optional)
+                      </Label>
+                      <div className="rounded-lg border border-dashed border-slate-700 bg-slate-800/30 p-3">
+                        <input
+                          type="file"
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={(e) => handleFiles(e.target.files)}
+                          className={clsx(
+                            "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700"
+                          )}
+                        />
+                        <div className="mt-2 text-xs text-slate-400">
+                          {uploading && <span>Uploading...</span>}
+                          {assets.length > 0 && !uploading && (
+                            <span className="text-lime-300">
+                              {assets.length} file(s) uploaded
+                            </span>
+                          )}
+                        </div>
+                        {assets.length > 0 && (
+                          <div className="mt-3 space-y-1 max-h-28 overflow-auto">
+                            {assets.map((asset) => {
+                              const isSelected = assetIds.includes(asset.id);
+                              return (
+                                <label
+                                  key={asset.id}
+                                  className={clsx(
+                                    "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50",
+                                    isSelected && "bg-slate-800/70 border border-lime-400/50"
+                                  )}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="asset"
+                                    value={asset.id}
+                                    checked={isSelected}
+                                    onChange={() => {
+                                      setAssetIds((prev) =>
+                                        prev.includes(asset.id)
+                                          ? prev.filter((id) => id !== asset.id)
+                                          : [...prev, asset.id]
+                                      );
+                                    }}
+                                    className="accent-lime-400"
+                                  />
+                                  <span className="truncate flex-1">{asset.name || asset.storageKey}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {isAdmin && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
@@ -937,6 +1109,7 @@ export default function ScheduleVisitPage() {
                   type="submit"
                   disabled={
                     submitting ||
+                    uploading ||
                     !selectedDate ||
                     (isDayBlocked() && !editingSession)
                   }
@@ -953,6 +1126,11 @@ export default function ScheduleVisitPage() {
                     <span className="flex items-center gap-3">
                       <Loader2 className="h-5 w-5 animate-spin" />{" "}
                       {editingSession ? "Updating..." : "Scheduling..."}
+                    </span>
+                  ) : uploading ? (
+                    <span className="flex items-center gap-3">
+                      <Loader2 className="h-5 w-5 animate-spin" />{" "}
+                      Uploading Media...
                     </span>
                   ) : isDayBlocked() && !editingSession ? (
                     "Date Already Booked"

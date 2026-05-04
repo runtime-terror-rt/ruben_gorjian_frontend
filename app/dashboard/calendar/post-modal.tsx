@@ -30,9 +30,10 @@ interface PostModalProps {
     scheduledFor: string;
     socialAccountIds: string[];
     platforms: string[];
-    assetId?: string;
     assetIds?: string[];
     hashtags?: string[];
+    mediaUrl?: string;
+    mediaUrls?: string[];
   }) => Promise<void>;
   onUpload: (file: File) => Promise<{ id: string; storageKey: string }>;
   uploading?: boolean;
@@ -169,6 +170,11 @@ export default function PostModal({
   };
 
   const handleSubmit = async () => {
+    if (!caption.trim()) {
+      toast({ title: "Caption Required", description: "Please add a caption", variant: "destructive" });
+      return;
+    }
+
     if (!datetime) {
       toast({ title: "Input Required", description: "Please choose a date and time", variant: "destructive" });
       return;
@@ -201,18 +207,41 @@ export default function PostModal({
       return;
     }
 
+    const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
+    const hasVideo = selectedAssets.some(a => {
+      const key = a.storageKey.toLowerCase();
+      return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
+    });
+    const hasImage = selectedAssets.some(a => {
+      const key = a.storageKey.toLowerCase();
+      return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+    });
+
+    if (hasVideo && hasImage) {
+      toast({
+        title: "Mixed Media",
+        description: "You cannot mix photos and videos in a single post.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (hasVideo && selectedAssets.length > 1) {
+      toast({
+        title: "Video Limit",
+        description: "You can only upload one video per post.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     // TikTok specific: Video only
     const hasTikTok = socialAccounts
       .filter((acc) => selectedAccounts.includes(acc.id))
       .some((acc) => acc.platform === "TIKTOK");
     
     if (hasTikTok) {
-      const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-      const hasNonVideo = selectedAssets.some(a => {
-        const key = a.storageKey.toLowerCase();
-        return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
-      });
-      if (hasNonVideo) {
+      if (hasImage) {
         toast({ title: "Format Error", description: "TikTok only supports video uploads. Please remove any images.", variant: "destructive" });
         return;
       }
@@ -229,12 +258,18 @@ export default function PostModal({
       );
       const hashtags = normalizeHashtags(hashtagsInput);
       await onCreate({
-        caption: caption.trim() || ".",
+        caption: caption.trim(),
         scheduledFor: datetime,
         socialAccountIds: selectedAccounts,
         platforms,
         ...(assetIds.length > 0 ? { assetIds } : {}),
         ...(hashtags.length > 0 ? { hashtags } : {}),
+        ...(selectedAssets.length > 0 
+          ? selectedAssets.length > 1 
+            ? { mediaUrls: selectedAssets.map(a => buildStorageUrl(STORAGE_BASE_URL, a.storageKey)).filter((url): url is string => !!url) }
+            : { mediaUrl: buildStorageUrl(STORAGE_BASE_URL, selectedAssets[0].storageKey) || undefined }
+          : {}
+        ),
       });
       onClose();
     } catch (err: any) {
@@ -271,7 +306,7 @@ export default function PostModal({
           )
         );
         await onPublish({
-          caption: caption.trim() || ".",
+          caption: caption.trim(),
           scheduledFor: datetime,
           socialAccountIds: selectedAccounts,
           platforms,
@@ -283,18 +318,35 @@ export default function PostModal({
         return;
       }
 
+      const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
+      const hasVideo = selectedAssets.some(a => {
+        const key = a.storageKey.toLowerCase();
+        return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
+      });
+      const hasImage = selectedAssets.some(a => {
+        const key = a.storageKey.toLowerCase();
+        return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+      });
+
+      if (hasVideo && hasImage) {
+        toast({ title: "Mixed Media", description: "You cannot mix photos and videos in a single post.", variant: "destructive" });
+        setSubmitting(false);
+        return;
+      }
+
+      if (hasVideo && selectedAssets.length > 1) {
+        toast({ title: "Video Limit", description: "You can only upload one video per post.", variant: "destructive" });
+        setSubmitting(false);
+        return;
+      }
+
       // TikTik specific check
       const hasTikTok = socialAccounts
         .filter((acc) => selectedAccounts.includes(acc.id))
         .some((acc) => acc.platform === "TIKTOK");
       
       if (hasTikTok) {
-        const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-        const hasNonVideo = selectedAssets.some(a => {
-          const key = a.storageKey.toLowerCase();
-          return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
-        });
-        if (hasNonVideo) {
+        if (hasImage) {
           toast({ title: "Format Error", description: "TikTok only supports video uploads. Please remove any images.", variant: "destructive" });
           setSubmitting(false);
           return;
@@ -379,12 +431,10 @@ export default function PostModal({
     }
     if (uploaded.length > 0) {
       setAssets((prev) => [...prev, ...uploaded]);
-      if (assetIds.length === 0) {
-        if (allowsMultipleMedia) {
-          setAssetIds(uploaded.map((a) => a.id));
-        } else {
-          setAssetIds([uploaded[uploaded.length - 1].id]);
-        }
+      if (allowsMultipleMedia) {
+        setAssetIds((prev) => [...prev, ...uploaded.map((a) => a.id)]);
+      } else {
+        setAssetIds([uploaded[uploaded.length - 1].id]);
       }
     }
   };

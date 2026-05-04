@@ -107,6 +107,8 @@ interface CreatePostData {
   hashtags?: string[];
   userId?: string; // For admin
   adminReason?: string; // For admin
+  mediaUrl?: string;
+  mediaUrls?: string[];
 }
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
@@ -380,12 +382,22 @@ export function CalendarProvider({
           ...data,
           scheduledAt: dateISO,
           scheduledFor: dateISO,
+          ...(data.assetIds && data.assetIds.length > 0
+            ? { 
+                assetIds: data.assetIds,
+                assetId: data.assetIds[0] 
+              }
+            : data.assetId
+              ? { assetId: data.assetId, assetIds: [data.assetId] }
+              : {}),
           ...(targetUserId
             ? {
                 userId: targetUserId,
                 adminReason: "Created from admin dashboard",
               }
             : {}),
+          mediaUrl: data.mediaUrl,
+          mediaUrls: data.mediaUrls,
         };
 
         const response = await fetch("/api/scheduler/posts", {
@@ -430,6 +442,14 @@ export function CalendarProvider({
                 ).toISOString(),
               }
             : {}),
+          ...(data.assetIds && data.assetIds.length > 0
+            ? { 
+                assetIds: data.assetIds,
+                assetId: data.assetIds[0] 
+              }
+            : data.assetId
+              ? { assetId: data.assetId, assetIds: [data.assetId] }
+              : {}),
           ...(targetUserId
             ? {
                 userId: targetUserId,
