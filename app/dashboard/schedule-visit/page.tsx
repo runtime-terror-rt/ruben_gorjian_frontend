@@ -481,9 +481,9 @@ export default function ScheduleVisitPage() {
         </p>
       </motion.div>
 
-      <div className="grid gap-8 lg:grid-cols-12">
+      <div className="grid gap-8 lg:grid-cols-12 items-start">
         {/* Left Column: Calendar Selection */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-8 space-y-6">
           <Card className="border-slate-800 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl">
             <CardHeader className="border-b border-slate-800 bg-slate-800/20 px-6 py-4">
               <div className="flex items-center justify-between">
@@ -595,243 +595,13 @@ export default function ScheduleVisitPage() {
             </CardContent>
           </Card>
 
-          {/* Bookings List */}
-          <Card className="border-slate-800 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-xl">
-            <CardHeader className="border-b border-slate-800 bg-slate-800/20 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-400/10 rounded-lg">
-                    <History className="h-5 w-5 text-indigo-400" />
-                  </div>
-                  <CardTitle className="text-xl font-bold text-white">
-                    Your Bookings
-                  </CardTitle>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {loadingSessions ? (
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
-                  <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
-                    Loading sessions...
-                  </p>
-                </div>
-              ) : userBookings.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                  <div className="p-4 bg-slate-800/50 rounded-full mb-4">
-                    <CalendarDays className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-slate-400 font-medium">
-                    No sessions scheduled yet.
-                  </p>
-                  <p className="text-slate-600 text-sm mt-1">
-                    Book your first professional photoshoot today!
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-slate-800/50">
-                  {paginatedBookings.map((s) => (
-                    <div
-                      key={s.id}
-                      className={clsx(
-                        "group flex items-center justify-between p-4 transition-all duration-300",
-                        editingSession?.id === s.id
-                          ? "bg-lime-400/5 border-l-4 border-lime-400"
-                          : "hover:bg-slate-800/30 border-l-4 border-transparent",
-                      )}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={clsx(
-                            "p-3 rounded-xl",
-                            s.scheduleType === "PHOTO_SESSION"
-                              ? "bg-amber-400/10 text-amber-400"
-                              : "bg-indigo-400/10 text-indigo-400",
-                          )}
-                        >
-                          {s.scheduleType === "PHOTO_SESSION" ? (
-                            <Camera className="h-5 w-5" />
-                          ) : (
-                            <Video className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="text-white font-bold">
-                            {s.session?.title ||
-                              s.sessionTitle ||
-                              "Untitled Session"}
-                          </h4>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-xs text-slate-400 flex items-center gap-1">
-                              <CalendarIcon className="h-3 w-3" />
-                              {dayjs(s.scheduledAt).format("MMM D, YYYY")}
-                            </span>
-                            <span className="text-xs text-slate-400 flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {dayjs(s.scheduledAt).format("HH:mm")}
-                            </span>
-                            <span
-                              className={clsx(
-                                "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
-                                s.status?.toUpperCase() === "SCHEDULED" ||
-                                  s.status?.toUpperCase() === "COMPLETED"
-                                  ? "bg-green-500/10 text-green-500"
-                                  : s.status?.toUpperCase() === "PENDING"
-                                    ? "bg-amber-500/10 text-amber-500 animate-pulse"
-                                    : "bg-slate-700/30 text-slate-500",
-                              )}
-                            >
-                              {s.status}
-                            </span>
-                          </div>
-
-                          {/* Media Display */}
-                          {((s.media && s.media.length > 0) || (s.assets && s.assets.length > 0)) && (
-                            <div className="flex flex-wrap gap-2 mt-3">
-                              {s.media && s.media.length > 0 ? (
-                                s.media.slice(0, 4).map((m, i) => (
-                                  <a 
-                                    key={m.id} 
-                                    href={m.url} 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
-                                  >
-                                    {m.mediaType === "IMAGE" ? (
-                                      <img src={m.url} alt="Media" className="h-full w-full object-cover" />
-                                    ) : (
-                                      <div className="h-full w-full flex items-center justify-center bg-slate-800">
-                                        <Video className="h-4 w-4 text-lime-400" />
-                                      </div>
-                                    )}
-                                    {i === 3 && (s.media?.length || 0) > 4 && (
-                                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
-                                        +{(s.media?.length || 0) - 4}
-                                      </div>
-                                    )}
-                                  </a>
-                                ))
-                              ) : (
-                                s.assets?.slice(0, 4).map((url, i) => (
-                                  <a 
-                                    key={i} 
-                                    href={url} 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
-                                  >
-                                    <img src={url} alt="Asset" className="h-full w-full object-cover" />
-                                    {i === 3 && (s.assets?.length || 0) > 4 && (
-                                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
-                                        +{(s.assets?.length || 0) - 4}
-                                      </div>
-                                    )}
-                                  </a>
-                                ))
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {isAdmin && (
-                          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
-                            {["pending", "completed", "canceled"].map(
-                              (status) => (
-                                <Button
-                                  key={status}
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    try {
-                                      await apiPatch(
-                                        `/api/scheduler/sessions/${s.id}/status`,
-                                        {
-                                          status: status.toLowerCase(),
-                                          adminReason:
-                                            "Status updated by admin",
-                                        },
-                                      );
-                                      toast({
-                                        title: "Status Updated",
-                                        description: `Session marked as ${status.toLowerCase()}`,
-                                      });
-                                      fetchSessions();
-                                    } catch (err: any) {
-                                      toast({
-                                        title: "Update Failed",
-                                        description: err.message,
-                                        variant: "destructive",
-                                      });
-                                    }
-                                  }}
-                                  className={clsx(
-                                    "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
-                                    s.status === status
-                                      ? "bg-lime-400 text-slate-900"
-                                      : "text-slate-500 hover:text-white hover:bg-slate-700",
-                                  )}
-                                >
-                                  {status === "SCHEDULED"
-                                    ? "Sch"
-                                    : status === "COMPLETED"
-                                      ? "Done"
-                                      : "Can"}
-                                </Button>
-                              ),
-                            )}
-                          </div>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditSession(s)}
-                          className="h-9 text-slate-400 hover:text-lime-400 hover:bg-lime-400/10 font-bold"
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 py-4">
-                      <Button
-                        variant="outline"
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage((p) => p - 1)}
-                        className="border-slate-700 text-white"
-                      >
-                        Prev
-                      </Button>
-
-                      <div className="text-slate-400 text-sm">
-                        Page {currentPage} of {totalPages}
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage((p) => p + 1)}
-                        className="border-slate-700 text-white"
-                      >
-                        Next
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
 
         {/* Right Column: Session Details */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
           <Card
             className={clsx(
-              "border-slate-800 bg-slate-900/40 backdrop-blur-xl h-full border-l-4 transition-all duration-500 shadow-2xl",
+              "border-slate-800 bg-slate-900/40 backdrop-blur-xl border-l-4 transition-all duration-500 shadow-2xl",
               editingSession ? "border-l-indigo-400" : "border-l-lime-400",
             )}
           >
@@ -1157,6 +927,237 @@ export default function ScheduleVisitPage() {
           </Card>
         </div>
       </div>
+
+      {/* Bookings List (Moved below for better layout balance) */}
+      <Card className="border-slate-800 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-xl mt-8">
+        <CardHeader className="border-b border-slate-800 bg-slate-800/20 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-400/10 rounded-lg">
+                <History className="h-5 w-5 text-indigo-400" />
+              </div>
+              <CardTitle className="text-xl font-bold text-white">
+                Your Bookings
+              </CardTitle>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loadingSessions ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
+              <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+                Loading sessions...
+              </p>
+            </div>
+          ) : userBookings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+              <div className="p-4 bg-slate-800/50 rounded-full mb-4">
+                <CalendarDays className="h-8 w-8 text-slate-600" />
+              </div>
+              <p className="text-slate-400 font-medium">
+                No sessions scheduled yet.
+              </p>
+              <p className="text-slate-600 text-sm mt-1">
+                Book your first professional photoshoot today!
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-800/50">
+              {paginatedBookings.map((s) => (
+                <div
+                  key={s.id}
+                  className={clsx(
+                    "group flex items-center justify-between p-4 transition-all duration-300",
+                    editingSession?.id === s.id
+                      ? "bg-lime-400/5 border-l-4 border-lime-400"
+                      : "hover:bg-slate-800/30 border-l-4 border-transparent",
+                  )}
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={clsx(
+                        "p-3 rounded-xl",
+                        s.scheduleType === "PHOTO_SESSION"
+                          ? "bg-amber-400/10 text-amber-400"
+                          : "bg-indigo-400/10 text-indigo-400",
+                      )}
+                    >
+                      {s.scheduleType === "PHOTO_SESSION" ? (
+                        <Camera className="h-5 w-5" />
+                      ) : (
+                        <Video className="h-5 w-5" />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold">
+                        {s.session?.title ||
+                          s.sessionTitle ||
+                          "Untitled Session"}
+                      </h4>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-xs text-slate-400 flex items-center gap-1">
+                          <CalendarIcon className="h-3 w-3" />
+                          {dayjs(s.scheduledAt).format("MMM D, YYYY")}
+                        </span>
+                        <span className="text-xs text-slate-400 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {dayjs(s.scheduledAt).format("HH:mm")}
+                        </span>
+                        <span
+                          className={clsx(
+                            "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+                            s.status?.toUpperCase() === "SCHEDULED" ||
+                              s.status?.toUpperCase() === "COMPLETED"
+                              ? "bg-green-500/10 text-green-500"
+                              : s.status?.toUpperCase() === "PENDING"
+                                ? "bg-amber-500/10 text-amber-500 animate-pulse"
+                                : "bg-slate-700/30 text-slate-500",
+                          )}
+                        >
+                          {s.status}
+                        </span>
+                      </div>
+
+                      {/* Media Display */}
+                      {((s.media && s.media.length > 0) || (s.assets && s.assets.length > 0)) && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {s.media && s.media.length > 0 ? (
+                            s.media.slice(0, 4).map((m, i) => (
+                              <a 
+                                key={m.id} 
+                                href={m.url} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
+                              >
+                                {m.mediaType === "IMAGE" ? (
+                                  <img src={m.url} alt="Media" className="h-full w-full object-cover" />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center bg-slate-800">
+                                    <Video className="h-4 w-4 text-lime-400" />
+                                  </div>
+                                )}
+                                {i === 3 && (s.media?.length || 0) > 4 && (
+                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                    +{(s.media?.length || 0) - 4}
+                                  </div>
+                                )}
+                              </a>
+                            ))
+                          ) : (
+                            s.assets?.slice(0, 4).map((url, i) => (
+                              <a 
+                                key={i} 
+                                href={url} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
+                              >
+                                <img src={url} alt="Asset" className="h-full w-full object-cover" />
+                                {i === 3 && (s.assets?.length || 0) > 4 && (
+                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                    +{(s.assets?.length || 0) - 4}
+                                  </div>
+                                )}
+                              </a>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {isAdmin && (
+                      <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
+                        {["pending", "completed", "canceled"].map(
+                          (status) => (
+                            <Button
+                              key={status}
+                              variant="ghost"
+                              size="sm"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  await apiPatch(
+                                    `/api/scheduler/sessions/${s.id}/status`,
+                                    {
+                                      status: status.toLowerCase(),
+                                      adminReason:
+                                        "Status updated by admin",
+                                    },
+                                  );
+                                  toast({
+                                    title: "Status Updated",
+                                    description: `Session marked as ${status.toLowerCase()}`,
+                                  });
+                                  fetchSessions();
+                                } catch (err: any) {
+                                  toast({
+                                    title: "Update Failed",
+                                    description: err.message,
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                              className={clsx(
+                                "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
+                                s.status === status
+                                  ? "bg-lime-400 text-slate-900"
+                                  : "text-slate-500 hover:text-white hover:bg-slate-700",
+                              )}
+                            >
+                              {status === "SCHEDULED"
+                                ? "Sch"
+                                : status === "COMPLETED"
+                                  ? "Done"
+                                  : "Can"}
+                            </Button>
+                          ),
+                        )}
+                      </div>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEditSession(s)}
+                      className="h-9 text-slate-400 hover:text-lime-400 hover:bg-lime-400/10 font-bold"
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 py-4">
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => p - 1)}
+                    className="border-slate-700 text-white"
+                  >
+                    Prev
+                  </Button>
+
+                  <div className="text-slate-400 text-sm">
+                    Page {currentPage} of {totalPages}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => p + 1)}
+                    className="border-slate-700 text-white"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <VideoSessionUpsellModal
         isOpen={showVideoUpsellModal}

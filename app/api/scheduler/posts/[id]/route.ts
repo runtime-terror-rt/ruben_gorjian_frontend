@@ -50,7 +50,8 @@ export async function PATCH(
         "Content-Type": "application/json",
         ...(token ? { Cookie: `token=${token}` } : {}),
       },
-      body: JSON.stringify({ data: patchData }),
+      // Send the payload directly — backend expects flat fields, NOT { data: ... }
+      body: JSON.stringify(patchData),
     });
 
     const data = await res.json().catch(() => null);
