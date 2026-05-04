@@ -560,12 +560,17 @@ export default function PostModal({
             </div>
           </div>
 
-          <MarkdownEditor
-            value={caption}
-            onChange={setCaption}
-            placeholder="Write your caption... (Optional)"
-            rows={6}
-          />
+          <div className="space-y-2">
+            <label className="text-sm text-slate-300 flex items-center gap-1">
+              Caption <span className="text-rose-500">*</span>
+            </label>
+            <MarkdownEditor
+              value={caption}
+              onChange={setCaption}
+              placeholder="Write your caption..."
+              rows={6}
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm text-slate-300">Hashtags</label>

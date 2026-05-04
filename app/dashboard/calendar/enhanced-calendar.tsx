@@ -920,21 +920,21 @@ export default function EnhancedCalendar() {
                 {display === "day" && (
                   <DayView
                     onAddPost={handleAddPost}
-                    onEdit={handleEditPost}
+                    onEdit={handleViewPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
                 {display === "week" && (
                   <WeekView
                     onAddPost={handleAddPost}
-                    onEdit={handleEditPost}
+                    onEdit={handleViewPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
                 {display === "month" && (
                   <MonthView
                     onAddPost={handleAddPost}
-                    onEdit={handleEditPost}
+                    onEdit={handleViewPost}
                     onDragEnd={handleDragEnd}
                   />
                 )}
