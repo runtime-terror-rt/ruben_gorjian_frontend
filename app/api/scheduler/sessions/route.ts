@@ -26,6 +26,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.json().catch(() => ({}));
+
+    // Prevent uploading assets for Video Sessions
+    if (rawBody.scheduleType === "VIDEO_SESSION" && rawBody.uploadedAssetIds && rawBody.uploadedAssetIds.length > 0) {
+      return NextResponse.json(
+        { error: "Assets (photos/videos) cannot be uploaded for Video Sessions." },
+        { status: 400 }
+      );
+    }
     const headers = await getBackendHeaders();
     headers["Content-Type"] = "application/json";
 

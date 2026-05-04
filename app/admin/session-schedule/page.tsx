@@ -77,6 +77,21 @@ type Session = {
     fullName: string | null;
     email: string;
   };
+  assets?: {
+    id: string;
+    storageKey: string;
+    name?: string;
+    url?: string;
+    mediaType?: string;
+  }[];
+  media?: {
+    id: string;
+    storageKey: string;
+    url: string;
+    mimeType: string;
+    mediaType: string;
+  }[];
+  uploadedAssetIds?: string[];
 };
 
 export default function SessionSchedulePage() {
@@ -855,6 +870,72 @@ export default function SessionSchedulePage() {
                     {selectedSession.session?.notes ||
                       selectedSession.sessionNotes}
                   </p>
+                </div>
+              )}
+
+              {/* Attached Assets */}
+              {((selectedSession.assets && selectedSession.assets.length > 0) || 
+                (selectedSession.media && selectedSession.media.length > 0) || 
+                (selectedSession.uploadedAssetIds && selectedSession.uploadedAssetIds.length > 0)) && (
+                <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-lime-500/30" />
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 flex items-center gap-1.5">
+                    <Camera className="h-3.5 w-3.5" /> Attached Media
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
+                    {selectedSession.media && selectedSession.media.length > 0 ? (
+                      selectedSession.media.map((m, i) => (
+                        <div key={m.id} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
+                          <div className="aspect-square bg-slate-900">
+                            {m.mediaType === "IMAGE" ? (
+                              <img src={m.url} alt="Media" className="h-full w-full object-cover transition-transform group-hover:scale-110" />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center">
+                                <Video className="h-6 w-6 text-slate-500" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="p-2 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm">
+                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
+                              {m.mediaType}
+                            </span>
+                            <a 
+                              href={m.url} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="text-[9px] font-black text-lime-400 uppercase tracking-widest hover:text-lime-300"
+                            >
+                              View
+                            </a>
+                          </div>
+                        </div>
+                      ))
+                    ) : selectedSession.assets && selectedSession.assets.length > 0 ? (
+                      selectedSession.assets.map((asset, i) => (
+                        <div key={asset.id || i} className="flex flex-col gap-1 text-xs bg-slate-800/40 p-2 rounded-lg border border-slate-700/50">
+                          <span className="text-slate-300 font-medium truncate" title={asset.name || asset.storageKey}>
+                            {asset.name || asset.storageKey?.split('/').pop() || `Asset ${i + 1}`}
+                          </span>
+                          <a 
+                             href={asset.url || `https://talexia.s3.us-east-2.amazonaws.com/${asset.storageKey}`} 
+                             target="_blank" 
+                             rel="noreferrer" 
+                             className="text-indigo-400 hover:text-indigo-300 font-semibold uppercase tracking-widest text-[9px]"
+                           >
+                             View File
+                           </a>
+                        </div>
+                      ))
+                    ) : (
+                      selectedSession.uploadedAssetIds?.map((assetId, i) => (
+                        <div key={assetId || i} className="flex flex-col gap-1 text-xs bg-slate-800/40 p-2 rounded-lg border border-slate-700/50">
+                          <span className="text-slate-300 font-medium truncate" title={assetId}>
+                            Asset ID: {assetId}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
               )}
 
