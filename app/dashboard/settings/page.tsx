@@ -45,7 +45,7 @@ type FormState = {
 };
 
 export default function SettingsPage() {
-  const { session, refresh } = useSessionContext();
+  const { session, refresh, updateSession } = useSessionContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const initialForm = useMemo<FormState>(
@@ -79,7 +79,8 @@ export default function SettingsPage() {
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief" | "full-management" | "security">("profile");
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const brandBriefQuery = useQuery({
@@ -89,6 +90,23 @@ export default function SettingsPage() {
   });
 
   const brief = brandBriefQuery.data?.items?.[0];
+
+  const isEnterprise =
+    session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
+    session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+    session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF" ||
+    session?.subscription?.planCode?.toUpperCase().startsWith("ENT");
+
+  const hasFullManagement = !isEnterprise && (session?.fullManagementOnboardingCompleted || session?.subscription?.planCategory === "FULL_MANAGEMENT");
+
+  const fullManagementQuery = useQuery({
+    queryKey: ["my-full-management"],
+    queryFn: () => apiGet<{ data: any; businessName: string; completed: boolean }>("/api/onboarding/full-management"),
+    enabled: activeTab === "full-management",
+  });
+
+  const fullManagementData = fullManagementQuery.data?.data;
+  const fmBusinessName = fullManagementQuery.data?.businessName;
 
   const handleDownloadPdf = async () => {
     if (!brief) return;
@@ -105,6 +123,32 @@ export default function SettingsPage() {
       const a = document.createElement("a");
       a.href = url;
       a.download = `brand-brief-${(brief.restaurantName || "submission").replace(/\s+/g, '-').toLowerCase()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("Download error:", err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadFullManagementPdf = async () => {
+    if (!fullManagementData) return;
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/onboarding/full-management/pdf");
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.details || "Failed to generate PDF");
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `full-management-${(fmBusinessName || "onboarding").replace(/\s+/g, '-').toLowerCase()}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -167,9 +211,13 @@ export default function SettingsPage() {
       website: form.website.trim(),
       timezone: form.timezone.trim(),
       avatar: overrides,
+      avatarFile: selectedAvatarFile,
     };
     const data = await updateUserSettings(payload);
     setSettings(data);
+    updateSession(data as any);
+    setSelectedAvatarFile(null);
+    setAvatarPreviewUrl(null);
     await refresh();
     return data;
   }
@@ -222,57 +270,9 @@ export default function SettingsPage() {
       return;
     }
 
-    setAvatarUploading(true);
-    try {
-      const presignRes = await fetch("/api/uploads/presign", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          fileName: file.name,
-          contentType: file.type,
-          fileSize: file.size,
-          purpose: "avatar",
-        }),
-      });
-      const presignData = await presignRes.json();
-      if (!presignRes.ok) {
-        throw new Error(presignData?.error || "Failed to create upload URL.");
-      }
-      const { uploadUrl, storageKey } = presignData as {
-        uploadUrl: string | null;
-        storageKey: string;
-      };
-      if (!storageKey) {
-        throw new Error("Upload key was not returned.");
-      }
-
-      if (uploadUrl) {
-        const uploadRes = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-        });
-        if (!uploadRes.ok) {
-          throw new Error("Failed to upload image to storage.");
-        }
-      }
-
-      const localPreview = URL.createObjectURL(file);
-      setAvatarPreviewUrl(localPreview);
-
-      await persistForm({
-        storageKey,
-        contentType: file.type,
-      });
-      setMessage("Profile photo updated.");
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Unable to upload profile photo.",
-      );
-    } finally {
-      setAvatarUploading(false);
-    }
+    setSelectedAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreviewUrl(previewUrl);
   };
 
   const onRemoveAvatar = async () => {
@@ -302,12 +302,22 @@ export default function SettingsPage() {
             Settings
           </p>
           <h1 className="text-2xl font-semibold text-white">
-            {activeTab === "profile" ? "Account & Business" : "Brand Brief"}
+            {activeTab === "profile" 
+              ? "Account & Business" 
+              : activeTab === "brand-brief" 
+                ? "Brand Brief" 
+                : activeTab === "full-management"
+                  ? "Full Management"
+                  : "Security"}
           </h1>
           <p className="text-sm text-slate-300">
             {activeTab === "profile" 
               ? "Keep your profile and business info up to date." 
-              : "Review your submitted brand brief details."}
+              : activeTab === "brand-brief"
+                ? "Review your submitted brand brief details."
+                : activeTab === "full-management"
+                  ? "Review your full management details."
+                  : "Manage your account security and password."}
           </p>
         </div>
         {activeTab === "profile" && (
@@ -339,21 +349,49 @@ export default function SettingsPage() {
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
           )}
         </button>
+        {isEnterprise && (
+          <button
+            onClick={() => setActiveTab("brand-brief")}
+            className={cn(
+              "px-6 py-3 text-sm font-medium transition-colors relative",
+              activeTab === "brand-brief" ? "text-lime-400" : "text-slate-400 hover:text-white"
+            )}
+          >
+            Brand Brief
+            {activeTab === "brand-brief" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+            )}
+          </button>
+        )}
+        {hasFullManagement && (
+          <button
+            onClick={() => setActiveTab("full-management")}
+            className={cn(
+              "px-6 py-3 text-sm font-medium transition-colors relative",
+              activeTab === "full-management" ? "text-lime-400" : "text-slate-400 hover:text-white"
+            )}
+          >
+            Full Management
+            {activeTab === "full-management" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+            )}
+          </button>
+        )}
         <button
-          onClick={() => setActiveTab("brand-brief")}
+          onClick={() => setActiveTab("security")}
           className={cn(
             "px-6 py-3 text-sm font-medium transition-colors relative",
-            activeTab === "brand-brief" ? "text-lime-400" : "text-slate-400 hover:text-white"
+            activeTab === "security" ? "text-lime-400" : "text-slate-400 hover:text-white"
           )}
         >
-          Brand Brief
-          {activeTab === "brand-brief" && (
+          Security
+          {activeTab === "security" && (
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
           )}
         </button>
       </div>
 
-      {activeTab === "profile" ? (
+      {activeTab === "profile" && (
         <div className="space-y-6">
           {loading ? (
             <p className="text-xs text-slate-400">Loading settings...</p>
@@ -531,143 +569,6 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Security</CardTitle>
-                <p className="text-xs text-slate-400">
-                  Manage how you sign in and protect your account.
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-semibold text-white">Password</p>
-                      <p className="text-xs text-slate-400">
-                        Update your account password.
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      className="rounded-full"
-                      onClick={() => {
-                        setShowPwForm((v) => !v);
-                        setPwError(null);
-                        setPwMessage(null);
-                        setPwForm({ current: "", next: "", confirm: "" });
-                      }}
-                    >
-                      {showPwForm ? "Cancel" : "Change password"}
-                    </Button>
-                  </div>
-
-                  {!showPwForm && pwMessage && (
-                    <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
-                  )}
-
-                  {showPwForm && (
-                    <div className="space-y-3 pt-2 border-t border-slate-800">
-                      {pwError && <p className="text-xs text-red-400">{pwError}</p>}
-                      {pwMessage && <p className="text-xs text-lime-400">{pwMessage}</p>}
-                      <div className="space-y-2">
-                        <Label htmlFor="currentPw">Current password</Label>
-                        <div className="relative">
-                          <Input
-                            id="currentPw"
-                            type={showCurrentPw ? "text" : "password"}
-                            value={pwForm.current}
-                            onChange={(e) => setPwForm((p) => ({ ...p, current: e.target.value }))}
-                            placeholder="Enter current password"
-                            className="pr-10"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowCurrentPw((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                          >
-                            {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="newPw">New password</Label>
-                        <div className="relative">
-                          <Input
-                            id="newPw"
-                            type={showNextPw ? "text" : "password"}
-                            value={pwForm.next}
-                            onChange={(e) => setPwForm((p) => ({ ...p, next: e.target.value }))}
-                            placeholder="Minimum 8 characters"
-                            className="pr-10"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowNextPw((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                          >
-                            {showNextPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPw">Confirm new password</Label>
-                        <div className="relative">
-                          <Input
-                            id="confirmPw"
-                            type={showConfirmPw ? "text" : "password"}
-                            value={pwForm.confirm}
-                            onChange={(e) => setPwForm((p) => ({ ...p, confirm: e.target.value }))}
-                            placeholder="Re-enter new password"
-                            className="pr-10"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowConfirmPw((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                          >
-                            {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        className="rounded-full"
-                        disabled={pwSaving}
-                        onClick={async () => {
-                          setPwError(null);
-                          setPwMessage(null);
-                          if (!pwForm.current) { setPwError("Current password is required."); return; }
-                          if (pwForm.next.length < 8) { setPwError("New password must be at least 8 characters."); return; }
-                          if (pwForm.next !== pwForm.confirm) { setPwError("Passwords do not match."); return; }
-                          setPwSaving(true);
-                          try {
-                            const res = await fetch("/api/auth/change-password", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              credentials: "include",
-                              body: JSON.stringify({ "current-password": pwForm.current, "new-password": pwForm.next, "confirm-password": pwForm.confirm }),
-                            });
-                            const data = await res.json().catch(() => ({}));
-                            if (!res.ok) throw new Error(data?.error || "Failed to change password.");
-                            setPwMessage("Password changed successfully.");
-                            setPwForm({ current: "", next: "", confirm: "" });
-                            setShowPwForm(false);
-                          } catch (err: unknown) {
-                            setPwError(err instanceof Error ? err.message : "Unable to change password.");
-                          } finally {
-                            setPwSaving(false);
-                          }
-                        }}
-                      >
-                        {pwSaving ? "Saving..." : "Update password"}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
             <div className="flex items-center gap-3">
               <Button
                 type="submit"
@@ -680,7 +581,9 @@ export default function SettingsPage() {
             </div>
           </form>
         </div>
-      ) : (
+      )}
+
+      {activeTab === "brand-brief" && (
         <div className="space-y-6">
           {brandBriefQuery.isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
@@ -772,6 +675,207 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === "full-management" && (
+        <div className="space-y-6">
+          {fullManagementQuery.isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <RefreshCw className="h-8 w-8 text-lime-400 animate-spin" />
+              <p className="text-sm text-slate-400">Fetching your full management details...</p>
+            </div>
+          ) : !fullManagementData ? (
+            <Card className="border-slate-800 bg-slate-900/40">
+              <CardContent className="py-12 text-center">
+                <p className="text-slate-400">No full management details found. Please complete your onboarding first.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-white">Full Management Overview</h2>
+                <Button 
+                  onClick={handleDownloadFullManagementPdf} 
+                  disabled={isDownloading}
+                  className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold rounded-full"
+                >
+                  {isDownloading ? (
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <FileText className="mr-2 h-4 w-4" />
+                  )}
+                  {isDownloading ? "Generating..." : "Download PDF"}
+                </Button>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <DetailCard title="01. Business Info" items={[
+                  { label: "Business Name", value: fmBusinessName },
+                  { label: "Industry", value: fullManagementData.industry },
+                  { label: "Website URL", value: fullManagementData.websiteUrl },
+                ]} />
+
+                <DetailCard title="02. Strategy & Content" items={[
+                  { label: "Target Audience", value: fullManagementData.targetAudience?.join(", ") },
+                  { label: "Brand Personality", value: fullManagementData.brandPersonality?.join(", ") },
+                  { label: "Sales Model", value: fullManagementData.salesModel?.join(", ") },
+                  { label: "Visual Style", value: fullManagementData.visualStylePreference },
+                  { label: "Outline Frame", value: fullManagementData.outlineFrame },
+                ]} />
+
+                <DetailCard title="03. Platform & Posting" items={[
+                  { label: "Platforms to Manage", value: fullManagementData.platformsToManage?.join(", ") },
+                  { label: "Posting Frequency", value: fullManagementData.postingFrequencyPreference },
+                  { label: "Posting Time", value: fullManagementData.postingTimePreference?.join(", ") },
+                  { label: "Posting Access Granted", value: fullManagementData.postingAccessGranted },
+                  { label: "Allow CTAs", value: fullManagementData.allowCtas },
+                  { label: "Image Usage Permission", value: fullManagementData.imageUsagePermission },
+                ]} />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "security" && (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Security</CardTitle>
+              <p className="text-xs text-slate-400">
+                Manage how you sign in and protect your account.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-white">Password</p>
+                    <p className="text-xs text-slate-400">
+                      Update your account password.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="rounded-full"
+                    onClick={() => {
+                      setShowPwForm((v) => !v);
+                      setPwError(null);
+                      setPwMessage(null);
+                      setPwForm({ current: "", next: "", confirm: "" });
+                    }}
+                  >
+                    {showPwForm ? "Cancel" : "Change password"}
+                  </Button>
+                </div>
+
+                {!showPwForm && pwMessage && (
+                  <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
+                )}
+
+                {showPwForm && (
+                  <div className="space-y-3 pt-2 border-t border-slate-800">
+                    {pwError && <p className="text-xs text-red-400">{pwError}</p>}
+                    {pwMessage && <p className="text-xs text-lime-400">{pwMessage}</p>}
+                    <div className="space-y-2">
+                      <Label htmlFor="currentPw">Current password</Label>
+                      <div className="relative">
+                        <Input
+                          id="currentPw"
+                          type={showCurrentPw ? "text" : "password"}
+                          value={pwForm.current}
+                          onChange={(e) => setPwForm((p) => ({ ...p, current: e.target.value }))}
+                          placeholder="Enter current password"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPw((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                        >
+                          {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="newPw">New password</Label>
+                      <div className="relative">
+                        <Input
+                          id="newPw"
+                          type={showNextPw ? "text" : "password"}
+                          value={pwForm.next}
+                          onChange={(e) => setPwForm((p) => ({ ...p, next: e.target.value }))}
+                          placeholder="Minimum 8 characters"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNextPw((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                        >
+                          {showNextPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPw">Confirm new password</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPw"
+                          type={showConfirmPw ? "text" : "password"}
+                          value={pwForm.confirm}
+                          onChange={(e) => setPwForm((p) => ({ ...p, confirm: e.target.value }))}
+                          placeholder="Re-enter new password"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPw((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                        >
+                          {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      className="rounded-full"
+                      disabled={pwSaving}
+                      onClick={async () => {
+                        setPwError(null);
+                        setPwMessage(null);
+                        if (!pwForm.current) { setPwError("Current password is required."); return; }
+                        if (pwForm.next.length < 8) { setPwError("New password must be at least 8 characters."); return; }
+                        if (pwForm.next !== pwForm.confirm) { setPwError("Passwords do not match."); return; }
+                        setPwSaving(true);
+                        try {
+                          const res = await fetch("/api/auth/change-password", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            credentials: "include",
+                            body: JSON.stringify({ "current-password": pwForm.current, "new-password": pwForm.next, "confirm-password": pwForm.confirm }),
+                          });
+                          const data = await res.json().catch(() => ({}));
+                          if (!res.ok) throw new Error(data?.error || "Failed to change password.");
+                          setPwMessage("Password changed successfully.");
+                          setPwForm({ current: "", next: "", confirm: "" });
+                          setShowPwForm(false);
+                        } catch (err: unknown) {
+                          setPwError(err instanceof Error ? err.message : "Unable to change password.");
+                        } finally {
+                          setPwSaving(false);
+                        }
+                      }}
+                    >
+                      {pwSaving ? "Saving..." : "Update password"}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

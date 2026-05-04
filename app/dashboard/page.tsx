@@ -262,7 +262,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
-              value={overview?.plan.platformLimit}
+              value={overview?.plan.platformLimit ?? 4}
             />
             <FeatureBox label="Posts" value={overview?.plan.postQuota} />
             <FeatureBox label="Video" value="Enabled" />
@@ -311,7 +311,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Usage Metrics - NEW UI */}
-      <Section title="Usage Metrics">
+      {/* <Section title="Usage Metrics">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-2xl p-5 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/20">
             <p className="text-xs text-slate-400">Posts</p>
@@ -328,13 +328,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
+          <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
             <p className="text-xs text-slate-400">Platforms</p>
             <p className="text-2xl font-bold text-white">
               {overview?.usage.platformsUsed} /{" "}
               {overview?.usage.platformsRemaining}
             </p>
-          </div> */}
+          </div>
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
             <p className="text-xs text-slate-400">Bonus Visuals</p>
@@ -351,7 +351,7 @@ export default function DashboardPage() {
             </p>
           </div>
         </div>
-      </Section>
+      </Section> */}
 
       {/* Plan Details */}
       {/* <Section title="Plan Details">
@@ -403,7 +403,7 @@ export default function DashboardPage() {
           />
           <MetricCard
             label="Platform Limit"
-            value={overview?.plan.platformLimit}
+            value={overview?.plan.platformLimit ?? 4}
             loading={isLoading}
           />
           <MetricCard
@@ -609,7 +609,7 @@ export default function DashboardPage() {
       </Section>
 
       {/* ================= INSIGHTS STRIP ================= */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MiniStat label="Posts Used" value={overview?.usage.postsUsed} />
         <MiniStat
           label="Remaining Posts"
@@ -620,7 +620,7 @@ export default function DashboardPage() {
           label="Connected Accounts"
           value={overview?.socialAccounts.connectedTotal}
         />
-      </div>
+      </div> */}
 
       {/* Links */}
       <div className="flex flex-wrap gap-2 text-sm text-slate-400">
