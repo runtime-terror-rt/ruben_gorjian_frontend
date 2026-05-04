@@ -101,7 +101,7 @@ function useUpcomingPosts(enabled: boolean) {
     queryKey: ["upcoming-posts"],
     queryFn: () =>
       apiGet<{ success: boolean; data: { items: UpcomingPost[] } }>(
-        "/api/dashboard/overview/upcoming-posts",
+        "/api/dashboard/overview/upcoming-posts?days=7&limit=5",
       ),
     enabled,
   });
@@ -166,7 +166,7 @@ function useUpcomingSessions(enabled: boolean) {
 
 export default function DashboardPage() {
   const { session } = useSessionContext();
-  const enabled = !!session?.subscription?.planCode;
+  const enabled = !!session;
 
   const [activityPage, setActivityPage] = useState(1);
   const overviewQ = useDashboardOverview(enabled);
@@ -180,17 +180,16 @@ export default function DashboardPage() {
   const pipelineQ = usePostPipeline(enabled);
   const alertsQ = useSystemAlerts(enabled);
 
-  const overview = overviewQ.data?.data;
-
-  const activity = activityQ.data?.data.items || [];
-  const activityTotalPages = activityQ.data?.data.totalPages || 1;
-  const upcoming = upcomingQ.data?.data.items || [];
-  const sessions = Array.isArray(sessionsQ.data) ? sessionsQ.data : (sessionsQ.data?.items || sessionsQ.data?.sessions || []);
-  const pipeline = pipelineQ.data?.data;
-  const alerts = alertsQ.data?.data.items || [];
+  const overview = overviewQ.data?.data || (overviewQ.data as any);
+  const activity = activityQ.data?.data?.items || (activityQ.data as any)?.items || [];
+  const activityTotalPages = activityQ.data?.data?.totalPages || (activityQ.data as any)?.totalPages || 1;
+  const upcoming = upcomingQ.data?.data?.items || (upcomingQ.data as any)?.items || [];
+  const sessions = Array.isArray(sessionsQ.data) ? sessionsQ.data : (sessionsQ.data?.items || sessionsQ.data?.sessions || sessionsQ.data?.data || []);
+  const pipeline = pipelineQ.data?.data || (pipelineQ.data as any);
+  const alerts = alertsQ.data?.data?.items || (alertsQ.data as any)?.items || (alertsQ.data as any)?.alerts || [];
 
   const activityData = activity;
-  const upcomingData = upcoming;
+  const upcomingData: UpcomingPost[] = upcoming;
   const alertsData = alerts;
   const pipelineData = pipeline || {};
 
@@ -247,27 +246,25 @@ export default function DashboardPage() {
           </div>
 
           <h2 className="text-2xl font-bold mb-2">
-            {overview?.plan.planCategory}
+            {overview?.plan?.planCategory || "N/A"}
           </h2>
           <p className="text-xs text-slate-500 mb-6">
-            CODE: {overview?.plan.planCode}
+            CODE: {overview?.plan?.planCode}
           </p>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-slate-400 text-xs">SUBSCRIPTION PERIOD</p>
               <p className="font-semibold">
-                {new Date(
-                  overview?.usage.periodStart || "",
-                ).toLocaleDateString()}{" "}
+                {overview?.usage?.periodStart ? new Date(overview.usage.periodStart).toLocaleDateString() : "N/A"}{" "}
                 -{" "}
-                {new Date(overview?.usage.periodEnd || "").toLocaleDateString()}
+                {overview?.usage?.periodEnd ? new Date(overview.usage.periodEnd).toLocaleDateString() : "N/A"}
               </p>
             </div>
 
             <div>
               <p className="text-slate-400 text-xs">PAYMENT</p>
-              <p className="font-semibold">{overview?.plan.billingCycle}</p>
+              <p className="font-semibold">{overview?.plan?.billingCycle || "N/A"}</p>
             </div>
           </div>
 
@@ -275,15 +272,15 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
-              value={overview?.plan.platformLimit ?? 4}
+              value={overview?.plan?.platformLimit ?? 4}
             />
-            <FeatureBox label="Posts" value={overview?.plan.postQuota} />
+            <FeatureBox label="Posts" value={overview?.plan?.postQuota} />
             <FeatureBox label="Video" value="Enabled" />
             <FeatureBox
               label="Video Session Hours"
-              value={overview?.plan.videoSessionHours}
+              value={overview?.plan?.videoSessionHours}
             />
-            <FeatureBox label="Days Left" value={overview?.plan.daysLeft} />
+            <FeatureBox label="Days Left" value={overview?.plan?.daysLeft} />
           </div>
         </div>
 
@@ -441,13 +438,13 @@ export default function DashboardPage() {
       </Section> */}
 
       {/* ================= PIPELINE + UPCOMING + SESSION ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* PIPELINE */}
         <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
           <h2 className="text-white font-semibold mb-4">Post Pipeline</h2>
 
           <div className="space-y-2">
-            {Object.entries(pipelineData).map(([key, val]) => (
+            {Object.entries(pipelineData).map(([key, val]: [string, any]) => (
               <div
                 key={key}
                 className="flex justify-between items-center p-2 rounded bg-slate-900/40"
@@ -469,11 +466,18 @@ export default function DashboardPage() {
             {upcomingData.length === 0 ? (
               <p className="text-xs text-slate-500 italic">No upcoming posts</p>
             ) : (
-              upcomingData.slice(0, 3).map((p) => (
+              upcomingData.map((p: UpcomingPost) => (
                 <div key={p.postId} className="p-3 rounded-lg bg-slate-900/40">
-                  <p className="text-sm text-white">{p.postId}</p>
-                  <p className="text-xs text-slate-400">
-                    {new Date(p.scheduledFor).toLocaleString()}
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-bold text-lime-400">
+                      {p.targets?.map((t: any) => t.platform).join(' & ') || 'General Post'}
+                    </p>
+                    <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded uppercase font-medium">
+                      {p.status}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    {p.scheduledFor ? dayjs(p.scheduledFor).format("MMM D, YYYY • h:mm A") : 'No date set'}
                   </p>
                 </div>
               ))
@@ -482,7 +486,7 @@ export default function DashboardPage() {
         </div>
 
         {/* UPCOMING SESSION (ONLY ONE) */}
-        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
+        {/* <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
           <h2 className="text-white font-semibold mb-4">Upcoming Session</h2>
           
           {nextSession ? (
@@ -530,7 +534,7 @@ export default function DashboardPage() {
               </Link>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Social Accounts - NEW UI */}
@@ -576,7 +580,7 @@ export default function DashboardPage() {
             <p className="text-sm text-slate-400">No data available</p>
           ) : (
             <div className="space-y-3">
-              {alertsData.map((a, i) => (
+              {alertsData.map((a: any, i: number) => (
                 <div
                   key={i}
                   className="flex items-start justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
@@ -608,7 +612,7 @@ export default function DashboardPage() {
               "space-y-3 min-h-[380px] transition-opacity duration-200",
               activityQ.isFetching ? "opacity-50 pointer-events-none" : "opacity-100"
             )}>
-              {activityData.map((a) => (
+              {activityData.map((a: RecentActivity) => (
                 <div
                   key={a.id}
                   className="flex gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
