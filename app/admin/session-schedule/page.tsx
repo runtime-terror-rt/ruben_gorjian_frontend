@@ -212,18 +212,27 @@ export default function SessionSchedulePage() {
         status === "COMPLETED"
           ? "completed"
           : status === "CANCELLED" || status === "FAILED"
-            ? "canceled"
-            : "failed"; // Fallback to failed if not matched
+            ? "cancelled"
+            : "pending";
 
       await apiPatch(`/api/scheduler/sessions/${id}/status`, {
         status: apiStatus,
         adminReason: `Status updated to ${status} by Administrator`,
       });
+
+      // Optimistically update local state immediately so UI doesn't
+      // revert to PENDING while the background refetch is in-flight
+      setSessions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status } : s))
+      );
+
       toast({
         title: "Success",
         description: `Session marked as ${status}`,
       });
-      fetchSessions();
+
+      // Sync with backend after a short delay to allow propagation
+      setTimeout(() => fetchSessions(), 800);
     } catch (err: any) {
       toast({
         title: "Error",
@@ -636,18 +645,7 @@ export default function SessionSchedulePage() {
                                 Complete Session
                               </DropdownMenuItem>
                             )}
-                            {s.status.toUpperCase() !== "CANCELLED" &&
-                              s.status.toUpperCase() !== "REJECTED" && (
-                                <DropdownMenuItem
-                                  className="hover:bg-rose-500/10 focus:bg-rose-500/10 cursor-pointer text-rose-400"
-                                  onClick={() =>
-                                    updateStatus(s.id, "CANCELLED")
-                                  }
-                                >
-                                  <XCircle className="h-4 w-4 mr-2" />
-                                  Cancel Session
-                                </DropdownMenuItem>
-                              )}
+
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -954,21 +952,7 @@ export default function SessionSchedulePage() {
                       Complete
                     </Button>
                   )}
-                {selectedSession.status.toUpperCase() !== "CANCELLED" &&
-                  selectedSession.status.toUpperCase() !== "CANCELED" &&
-                  selectedSession.status.toUpperCase() !== "REJECTED" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        updateStatus(selectedSession.id, "CANCELLED");
-                        setSelectedSession(null);
-                      }}
-                      className="flex-1 h-12 rounded-xl text-rose-400 border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10 hover:text-rose-400 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all"
-                    >
-                      <XCircle className="h-4 w-4 mr-1.5 sm:mr-2" />
-                      Cancel
-                    </Button>
-                  )}
+
               </div>
             </div>
           )}
