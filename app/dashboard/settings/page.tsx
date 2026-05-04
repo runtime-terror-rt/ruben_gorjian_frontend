@@ -537,26 +537,14 @@ export default function SettingsPage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="industry">Industry</Label>
-                    <Select
+                    <Input
                       id="industry"
                       value={form.industry}
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, industry: e.target.value }))
-                      }
-                      className={cn(
-                        "flex h-10 w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
-                        "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
-                      )}
-                    >
-                      <option value="">Select industry</option>
-                      <option value="hospitality">Hospitality</option>
-                      <option value="retail">Retail</option>
-                      <option value="ecommerce">E-commerce</option>
-                      <option value="services">Services</option>
-                      <option value="other">Other</option>
-                    </Select>
+                      onChange={handleChange("industry")}
+                      placeholder="e.g. Hospitality, Retail, Tech"
+                    />
                   </div>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="timezone">Timezone</Label>
                     <Input
                       id="timezone"
@@ -564,7 +552,7 @@ export default function SettingsPage() {
                       onChange={handleChange("timezone")}
                       placeholder="UTC"
                     />
-                  </div>
+                  </div> */}
                 </div>
               </CardContent>
             </Card>

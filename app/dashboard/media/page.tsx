@@ -4,20 +4,32 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Download, ExternalLink } from "lucide-react";
 import Image  from "next/image";
 import dayjs from "dayjs";
 
 type Asset = {
   id: string;
   storageKey: string;
-  type: "IMAGE" | "VIDEO";
+  mediaType: "image" | "video";
+  url?: string | null;
+  fileName?: string | null;
   contentType?: string | null;
   createdAt: string;
 };
 
-type ApiResponse = { assets: Asset[]; baseUrl?: string | null };
+type ApiResponse = { 
+  items: Asset[]; 
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  baseUrl?: string | null 
+};
 
 function buildAssetUrl(asset: Asset, baseUrl?: string | null) {
+  if (asset.url) return asset.url;
   if (asset.storageKey.startsWith("http")) return asset.storageKey;
   if (baseUrl) return `${baseUrl.replace(/\/$/, "")}/${asset.storageKey}`;
   const fallback = process.env.NEXT_PUBLIC_STORAGE_BASE_URL;
@@ -29,20 +41,32 @@ export default function MediaLibraryPage() {
   const [baseUrl, setBaseUrl] = useState<string | undefined | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/uploads/assets", { credentials: "include" });
+        const params = new URLSearchParams();
+        params.set("type", activeTab);
+        params.set("page", page.toString());
+        params.set("limit", "50");
+
+        const res = await fetch(`/api/uploads/assets?${params.toString()}`, { 
+          credentials: "include" 
+        });
         const data: ApiResponse | { error: string } = await res.json();
         if (!res.ok) {
           throw new Error((data && typeof data === "object" && "error" in data && typeof (data as { error?: string }).error === "string" ? (data as { error: string }).error : null) || "Failed to load media");
         }
         const payload = data as ApiResponse;
-        setAssets(payload.assets || []);
+        setAssets(payload.items || []);
         setBaseUrl(payload.baseUrl);
+        setTotalPages(payload.totalPages || 1);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load media");
       } finally {
@@ -50,7 +74,12 @@ export default function MediaLibraryPage() {
       }
     };
     load();
-  }, []);
+  }, [activeTab, page]);
+
+  // Reset to page 1 when tab changes
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
 
   const grouped = useMemo(() => {
     const groups: Record<string, Asset[]> = {};
@@ -64,15 +93,42 @@ export default function MediaLibraryPage() {
       .sort((a, b) => (a.day < b.day ? 1 : -1));
   }, [assets]);
 
+  const handleDownload = async (url: string, fileName: string, id: string) => {
+    try {
+      setDownloadingId(id);
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = fileName || "download";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed:", err);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Media Library</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Media Library</h1>
           <p className="text-sm text-slate-400">Review your uploaded images and videos, grouped by upload date.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs text-slate-400">
+        <div className="flex items-center gap-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit">
+            <TabsList className="bg-slate-900 border border-slate-800 h-10 p-1 rounded-xl">
+              <TabsTrigger value="all" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">All</TabsTrigger>
+              <TabsTrigger value="image" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">Images</TabsTrigger>
+              <TabsTrigger value="video" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">Videos</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Badge variant="outline" className="h-10 px-4 rounded-xl border-slate-800 bg-slate-900/50 text-slate-400 text-xs font-medium flex items-center">
             Total {assets.length}
           </Badge>
         </div>
@@ -113,13 +169,13 @@ export default function MediaLibraryPage() {
                       className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 space-y-2"
                     >
                       <div className="aspect-video w-full overflow-hidden rounded-md bg-slate-900 flex items-center justify-center">
-                        {asset.type === "IMAGE" ? (
+                        {asset.mediaType?.toLowerCase() === "image" ? (
                           <Image
                             src={url}
-                            alt={asset.storageKey}
+                            alt={asset.fileName || asset.storageKey}
                             className="h-full w-full object-cover"
-                            width={100}
-                            height={100}
+                            width={300}
+                            height={200}
                           />
                         ) : (
                           <video
@@ -130,10 +186,10 @@ export default function MediaLibraryPage() {
                         )}
                       </div>
                       <div className="flex items-center justify-between text-xs text-slate-300">
-                         <span className="truncate" title={asset.storageKey}>
-                          {asset.storageKey.split("/").pop()}
+                         <span className="truncate" title={asset.fileName || asset.storageKey}>
+                          {asset.fileName || asset.storageKey.split("/").pop()}
                         </span> 
-                        <span className="uppercase text-slate-400">{asset.type}</span>
+                        <span className="uppercase text-slate-400">{asset.mediaType}</span>
                       </div>
                       <div className="text-[11px] text-slate-500">
                         {dayjs(asset.createdAt).format("h:mm A")}
@@ -148,12 +204,14 @@ export default function MediaLibraryPage() {
                           Open
                         </Button>
                         <Button
-                          onClick={() => navigator.clipboard.writeText(url)}
+                          onClick={() => handleDownload(url, asset.fileName || asset.storageKey.split('/').pop() || 'file', asset.id)}
+                          disabled={downloadingId === asset.id}
                           variant="ghost"
                           size="sm"
                           className="text-xs text-slate-200"
                         >
-                          Copy URL
+                          <Download className="mr-2 h-3.5 w-3.5" />
+                          {downloadingId === asset.id ? "..." : "Download"}
                         </Button>
                       </div>
                     </div>
@@ -163,6 +221,33 @@ export default function MediaLibraryPage() {
             </CardContent>
           </Card>
         ))
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4 pt-4 pb-8">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1 || loading}
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            className="border-slate-800 text-slate-300 hover:bg-slate-800"
+          >
+            Previous
+          </Button>
+          <div className="text-sm text-slate-400 font-medium">
+            Page {page} of {totalPages}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= totalPages || loading}
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            className="border-slate-800 text-slate-300 hover:bg-slate-800"
+          >
+            Next
+          </Button>
+        </div>
       )}
     </div>
   );

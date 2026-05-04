@@ -7,7 +7,7 @@ export async function GET(req: Request) {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
-  const res = await fetch(`${getBackendUrl()}/uploads/assets?${searchParams.toString()}`, {
+  const res = await fetch(`${getBackendUrl()}/uploads/files?${searchParams.toString()}`, {
     method: "GET",
     headers: {
       ...(cookieHeader ? { cookie: cookieHeader } : {}),

@@ -13,7 +13,11 @@ export async function GET(
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
     
-    const res = await fetch(`${getBackendUrl()}/dashboard/overview/${pathString}`, {
+    const { searchParams } = new URL(req.url);
+    const queryString = searchParams.toString();
+    const url = `${getBackendUrl()}/dashboard/overview/${pathString}${queryString ? `?${queryString}` : ""}`;
+    
+    const res = await fetch(url, {
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       credentials: "include",
     });
