@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, ExternalLink } from "lucide-react";
 import Image  from "next/image";
 import dayjs from "dayjs";
+import { cn } from "@/lib/utils";
 
 type Asset = {
   id: string;
@@ -44,6 +45,7 @@ export default function MediaLibraryPage() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function MediaLibraryPage() {
         const params = new URLSearchParams();
         params.set("type", activeTab);
         params.set("page", page.toString());
-        params.set("limit", "50");
+        params.set("limit", "3");
 
         const res = await fetch(`/api/uploads/assets?${params.toString()}`, { 
           credentials: "include" 
@@ -67,6 +69,7 @@ export default function MediaLibraryPage() {
         setAssets(payload.items || []);
         setBaseUrl(payload.baseUrl);
         setTotalPages(payload.totalPages || 1);
+        setTotalItems(payload.total || 0);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load media");
       } finally {
@@ -129,7 +132,7 @@ export default function MediaLibraryPage() {
             </TabsList>
           </Tabs>
           <Badge variant="outline" className="h-10 px-4 rounded-xl border-slate-800 bg-slate-900/50 text-slate-400 text-xs font-medium flex items-center">
-            Total {assets.length}
+            Total {totalItems}
           </Badge>
         </div>
       </div>
@@ -140,16 +143,19 @@ export default function MediaLibraryPage() {
         </div>
       )}
 
-      {loading ? (
-        <Card>
-          <CardContent className="p-6 text-slate-300">Loading media...</CardContent>
-        </Card>
-      ) : grouped.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-slate-300">No uploads yet. Add media from the Calendar post modal.</CardContent>
-        </Card>
-      ) : (
-        grouped.map(({ day, items }) => (
+      <div className={cn(
+        "min-h-[400px] transition-opacity duration-300",
+        loading ? "opacity-50 pointer-events-none" : "opacity-100"
+      )}>
+        {assets.length === 0 && !loading ? (
+          <Card>
+            <CardContent className="p-12 text-center text-slate-400">
+              <p className="text-lg font-medium text-white mb-1">No media found</p>
+              <p className="text-sm">Add media from the Calendar post modal to see them here.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          grouped.map(({ day, items }) => (
           <Card key={day} className="border-slate-800 bg-slate-900/60">
             <CardHeader className="flex items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm text-white">
@@ -222,10 +228,11 @@ export default function MediaLibraryPage() {
           </Card>
         ))
       )}
+    </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 pt-4 pb-8">
+        <div className="flex items-center justify-end gap-4 pt-4 pb-8">
           <Button
             variant="outline"
             size="sm"
@@ -233,7 +240,7 @@ export default function MediaLibraryPage() {
             onClick={() => setPage(p => Math.max(1, p - 1))}
             className="border-slate-800 text-slate-300 hover:bg-slate-800"
           >
-            Previous
+           <ChevronLeft className="mr-2 h-3.5 w-3.5" />
           </Button>
           <div className="text-sm text-slate-400 font-medium">
             Page {page} of {totalPages}
@@ -245,7 +252,7 @@ export default function MediaLibraryPage() {
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             className="border-slate-800 text-slate-300 hover:bg-slate-800"
           >
-            Next
+           <ChevronRight className="ml-2 h-3.5 w-3.5" />
           </Button>
         </div>
       )}
