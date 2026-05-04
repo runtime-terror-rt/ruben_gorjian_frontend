@@ -60,11 +60,11 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/dashboard/media",
         icon: ImageIcon,
       },
-      {
-        label: "Submissions",
-        href: "/dashboard/submissions",
-        icon: FileText,
-      },
+      // {
+      //   label: "Submissions",
+      //   href: "/dashboard/submissions",
+      //   icon: FileText,
+      // },
     ],
   },
   {
