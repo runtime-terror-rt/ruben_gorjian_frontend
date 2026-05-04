@@ -13,6 +13,7 @@ import {
   User,
   Shield,
 } from "lucide-react";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -147,8 +148,18 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2 rounded-lg p-2 text-slate-300 hover:bg-slate-800 hover:text-white">
-              <div className="h-8 w-8 rounded-full bg-lime-400/20 border border-lime-400 flex items-center justify-center">
-                <User className="h-4 w-4 text-lime-400" />
+              <div className="h-8 w-8 rounded-full bg-lime-400/20 border border-lime-400 flex items-center justify-center overflow-hidden">
+                {session?.avatarUrl ? (
+                  <Image
+                    width={32}
+                    height={32}
+                    src={`${session.avatarUrl}${session.avatarVersion ? `?v=${session.avatarVersion}` : ""}`}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="h-4 w-4 text-lime-400" />
+                )}
               </div>
               <div className="hidden lg:block text-left">
                 <div className="text-sm font-medium text-white">

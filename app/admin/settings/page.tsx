@@ -15,6 +15,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { useSessionContext } from "@/context/SessionContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Card,
@@ -77,6 +78,7 @@ type GlobalRoutingSummary = {
 
 export default function AdminSettingsPage() {
   const queryClient = useQueryClient();
+  const { updateSession } = useSessionContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // --- State for Profile ---
@@ -85,6 +87,7 @@ export default function AdminSettingsPage() {
     bio: "",
   });
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // --- State for Password Change ---
   const [passwordForm, setPasswordForm] = useState({
@@ -133,6 +136,7 @@ export default function AdminSettingsPage() {
         position: "top-right",
       });
       queryClient.setQueryData(["user-settings"], data);
+      updateSession(data as any);
       setAvatarPreview(null);
     },
     onError: (err: Error) => {
@@ -192,12 +196,51 @@ export default function AdminSettingsPage() {
   });
 
   // --- Handlers ---
-  const handleProfileSubmit = (e: React.FormEvent) => {
+  const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("profile", JSON.stringify({
+        fullName: profileForm.fullName,
+        bio: profileForm.bio || null,
+      }));
+      // Admins don't have business info as per user request
+      formData.append("avatar", selectedFile);
+
+      try {
+        const response = await fetch("/api/user/settings", {
+          method: "PATCH",
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || "Failed to update admin profile");
+        }
+        
+        const data = await response.json();
+        toast.success("Profile updated", {
+          description: "Your administrative profile has been saved.",
+          position: "top-right",
+        });
+        queryClient.setQueryData(["user-settings"], data);
+        updateSession(data as any);
+        setAvatarPreview(null);
+        setSelectedFile(null);
+      } catch (err: any) {
+        toast.error("Update failed", {
+          description: err.message,
+          position: "top-right",
+        });
+      }
+      return;
+    }
+
     updateProfileMutation.mutate({
       profile: {
-        ...profileForm,
-        avatar: { remove: false },
+        fullName: profileForm.fullName,
+        bio: profileForm.bio || null,
       },
     });
   };
@@ -234,14 +277,8 @@ export default function AdminSettingsPage() {
       return;
     }
 
+    setSelectedFile(file);
     setAvatarPreview(URL.createObjectURL(file));
-
-    // Logic for actual upload would go here (presign -> upload -> patch)
-    // For now, mirroring the user dashboard's logic if possible,
-    // but the user requirement just mentioned the first 2 APIs.
-    // I'll stick to the PATCH with storageKey if we had one,
-    // but without the upload flow here it's just a demo.
-    // Actually, I'll just implement the PATCH part.
   };
 
   const onRemoveAvatar = () => {

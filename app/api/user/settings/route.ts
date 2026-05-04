@@ -24,20 +24,38 @@ export async function PUT(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const body = await req.json();
+    const contentType = req.headers.get("content-type") || "";
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
-    const res = await fetch(`${getBackendUrl()}/user/settings`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-      },
-      credentials: "include",
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
+    
+    let body: any;
+    let headers: Record<string, string> = {
+      ...(cookieHeader ? { cookie: cookieHeader } : {}),
+    };
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      // Forward the formData to backend
+      const res = await fetch(`${getBackendUrl()}/user/settings`, {
+        method: "PATCH",
+        headers: headers, // fetch will automatically set the boundary for FormData
+        credentials: "include",
+        body: formData,
+      });
+      const data = await res.json();
+      return NextResponse.json(data, { status: res.status });
+    } else {
+      body = await req.json();
+      headers["Content-Type"] = "application/json";
+      const res = await fetch(`${getBackendUrl()}/user/settings`, {
+        method: "PATCH",
+        headers: headers,
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      return NextResponse.json(data, { status: res.status });
+    }
   } catch (err) {
     console.error("Settings PATCH proxy error", err);
     return NextResponse.json({ error: "Unable to update settings" }, { status: 500 });

@@ -489,7 +489,7 @@ export default function BillingPage() {
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Platforms</p>
                   <p className="text-sm font-semibold text-slate-200">
-                    {(plan.platformLimit || 0) + (plan.addonPlatformQty || 0)} included
+                    {plan.platformLimit ?? 4} included
                   </p>
                 </div>
                 <div>
@@ -784,8 +784,8 @@ export default function BillingPage() {
             <PlanDetail
               label="Platforms"
               value={
-                (plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0) > 0
-                  ? `${(plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)} platform${((plan?.platformLimit || 0) + (plan?.addonPlatformQty || 0)) > 1 ? "s" : ""}`
+                (plan?.platformLimit ?? 4) > 0
+                  ? `${plan?.platformLimit ?? 4} platform${(plan?.platformLimit ?? 4) > 1 ? "s" : ""}`
                   : "—"
               }
             />

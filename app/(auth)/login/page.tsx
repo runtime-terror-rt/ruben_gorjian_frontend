@@ -139,9 +139,13 @@ function LoginPageInner() {
 
         <p className="mt-4 text-sm text-primary text-center">
           Don&apos;t have an account?{" "}
+          {/* OLD: href={`/signup?redirect=${encodeURIComponent(redirect)}`} */}
           <Link
             className="text-primary underline underline-offset-2"
-            href={`/signup?redirect=${encodeURIComponent(redirect)}`}
+            href={`/signup?plan=${
+              searchParams.get("plan") || 
+              (redirect.includes("plan=") ? redirect.split("plan=")[1].split("&")[0] : "")
+            }&returnTo=${encodeURIComponent(redirect)}`}
           >
             Sign up
           </Link>
