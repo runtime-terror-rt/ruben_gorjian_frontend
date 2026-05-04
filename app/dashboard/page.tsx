@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Calendar, FileText, AlertTriangle, Camera, Video, Clock } from "lucide-react";
+import { RefreshCw, Calendar, FileText, AlertTriangle, Camera, Video, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
 import dayjs from "dayjs";
 import { cn } from "@/lib/utils";
@@ -74,14 +75,24 @@ function useDashboardOverview(enabled: boolean) {
   });
 }
 
-function useRecentActivity(enabled: boolean) {
+function useRecentActivity(enabled: boolean, page: number = 1, limit: number = 5) {
   return useQuery({
-    queryKey: ["recent-activity"],
+    queryKey: ["recent-activity", page, limit],
     queryFn: () =>
-      apiGet<{ success: boolean; data: { items: RecentActivity[] } }>(
-        "/api/dashboard/overview/recent-activity",
+      apiGet<{ 
+        success: boolean; 
+        data: { 
+          items: RecentActivity[]; 
+          total: number;
+          page: number;
+          limit: number;
+          totalPages: number;
+        } 
+      }>(
+        `/api/dashboard/overview/recent-activity?page=${page}&limit=${limit}`,
       ),
     enabled,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -157,8 +168,9 @@ export default function DashboardPage() {
   const { session } = useSessionContext();
   const enabled = !!session?.subscription?.planCode;
 
+  const [activityPage, setActivityPage] = useState(1);
   const overviewQ = useDashboardOverview(enabled);
-  const activityQ = useRecentActivity(enabled);
+  const activityQ = useRecentActivity(enabled, activityPage, 5);
 
   const progressQ = useSubscriptionProgress(enabled);
   const progress = progressQ.data?.data.chart;
@@ -171,6 +183,7 @@ export default function DashboardPage() {
   const overview = overviewQ.data?.data;
 
   const activity = activityQ.data?.data.items || [];
+  const activityTotalPages = activityQ.data?.data.totalPages || 1;
   const upcoming = upcomingQ.data?.data.items || [];
   const sessions = Array.isArray(sessionsQ.data) ? sessionsQ.data : (sessionsQ.data?.items || sessionsQ.data?.sessions || []);
   const pipeline = pipelineQ.data?.data;
@@ -558,29 +571,31 @@ export default function DashboardPage() {
       </Section> */}
       {/* Alerts */}
       <Section title={`System Alerts (${alertsData.length})`}>
-        {alertsData.length === 0 ? (
-          <p className="text-sm text-slate-400">No data available</p>
-        ) : (
-          <div className="space-y-3">
-            {alertsData.map((a, i) => (
-              <div
-                key={i}
-                className="flex items-start justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
-              >
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="h-4 w-4 mt-1 text-yellow-400" />
-                  <div>
-                    <p className="text-sm text-slate-200">{a.message}</p>
-                    <span className="text-xs text-slate-500">{a.code}</span>
+        <div className="min-h-[120px]">
+          {alertsData.length === 0 ? (
+            <p className="text-sm text-slate-400">No data available</p>
+          ) : (
+            <div className="space-y-3">
+              {alertsData.map((a, i) => (
+                <div
+                  key={i}
+                  className="flex items-start justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
+                >
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 mt-1 text-yellow-400" />
+                    <div>
+                      <p className="text-sm text-slate-200">{a.message}</p>
+                      <span className="text-xs text-slate-500">{a.code}</span>
+                    </div>
                   </div>
+                  <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                    {a.type}
+                  </span>
                 </div>
-                <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                  {a.type}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </Section>
 
       {/* Recent Activity */}
@@ -588,23 +603,55 @@ export default function DashboardPage() {
         {activityData.length === 0 ? (
           <p className="text-sm text-slate-400">No data available</p>
         ) : (
-          <div className="space-y-3">
-            {activityData.map((a) => (
-              <div
-                key={a.id}
-                className="flex gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
-              >
-                <div className="mt-1 h-2 w-2 rounded-full bg-lime-400" />
-                <div>
-                  <p className="text-sm text-white">{a.title}</p>
-                  <p className="text-xs text-slate-400">{a.description}</p>
-                  <p className="text-xs text-slate-500">
-                    {new Date(a.createdAt).toLocaleString()}
-                  </p>
+          <>
+            <div className={cn(
+              "space-y-3 min-h-[380px] transition-opacity duration-200",
+              activityQ.isFetching ? "opacity-50 pointer-events-none" : "opacity-100"
+            )}>
+              {activityData.map((a) => (
+                <div
+                  key={a.id}
+                  className="flex gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
+                >
+                  <div className="mt-1 h-2 w-2 rounded-full bg-lime-400" />
+                  <div>
+                    <p className="text-sm text-white">{a.title}</p>
+                    <p className="text-xs text-slate-400">{a.description}</p>
+                    <p className="text-xs text-slate-500">
+                      {new Date(a.createdAt).toLocaleString()}
+                    </p>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Pagination controls */}
+            {activityTotalPages > 1 && (
+              <div className="flex items-center justify-end gap-4 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={activityPage <= 1 || activityQ.isFetching}
+                  onClick={() => setActivityPage(p => Math.max(1, p - 1))}
+                  className="h-8 border-slate-800 text-xs"
+                >
+                 <ChevronLeft className="h-3 w-3" />
+                </Button>
+                <span className="text-xs text-slate-500">
+                  Page {activityPage} of {activityTotalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={activityPage >= activityTotalPages || activityQ.isFetching}
+                  onClick={() => setActivityPage(p => Math.min(activityTotalPages, p + 1))}
+                  className="h-8 border-slate-800 text-xs"
+                >
+                  <ChevronRight className="h-3 w-3" />
+                </Button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </Section>
 
