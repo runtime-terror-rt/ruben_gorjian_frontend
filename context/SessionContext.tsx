@@ -30,6 +30,7 @@ export type Session = {
   avatarStorageKey?: string | null;
   avatarUrl?: string | null;
   avatarVersion?: number | null;
+  businessName?: string | null;
   permissions?: string[];
   subscription?: {
     planCode?: string;
