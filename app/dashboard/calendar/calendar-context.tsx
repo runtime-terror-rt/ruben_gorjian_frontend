@@ -299,7 +299,7 @@ export function CalendarProvider({
         : dayjs(endDate).endOf("day");
 
       // Use the scheduler API and pass targetUserId if it exists
-      let url = `/api/scheduler/posts?startDate=${rangeStart.toISOString()}&endDate=${rangeEnd.toISOString()}`;
+      let url = `/api/scheduler/posts?startDate=${rangeStart.toISOString()}&endDate=${rangeEnd.toISOString()}&scheduleType=POSTING`;
       if (targetUserId) {
         url += `&userId=${targetUserId}`;
       }
@@ -383,9 +383,9 @@ export function CalendarProvider({
           scheduledAt: dateISO,
           scheduledFor: dateISO,
           ...(data.assetIds && data.assetIds.length > 0
-            ? { 
+            ? {
                 assetIds: data.assetIds,
-                assetId: data.assetIds[0] 
+                assetId: data.assetIds[0],
               }
             : data.assetId
               ? { assetId: data.assetId, assetIds: [data.assetId] }
@@ -443,9 +443,9 @@ export function CalendarProvider({
               }
             : {}),
           ...(data.assetIds && data.assetIds.length > 0
-            ? { 
+            ? {
                 assetIds: data.assetIds,
-                assetId: data.assetIds[0] 
+                assetId: data.assetIds[0],
               }
             : data.assetId
               ? { assetId: data.assetId, assetIds: [data.assetId] }

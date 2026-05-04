@@ -18,13 +18,21 @@ import { useToast } from "@/hooks/use-toast";
 import { getEnvVarWithDefault } from "@/lib/env-utils";
 import { buildStorageUrl } from "@/lib/storage-utils";
 
-const STORAGE_BASE_URL = getEnvVarWithDefault("NEXT_PUBLIC_STORAGE_BASE_URL", "");
+const STORAGE_BASE_URL = getEnvVarWithDefault(
+  "NEXT_PUBLIC_STORAGE_BASE_URL",
+  "",
+);
 
 interface PostModalProps {
   open: boolean;
   onClose: () => void;
   initialDate: dayjs.Dayjs | null;
-  socialAccounts: Array<{ id: string; platform: string; displayName: string; externalAccountId?: string }>;
+  socialAccounts: Array<{
+    id: string;
+    platform: string;
+    displayName: string;
+    externalAccountId?: string;
+  }>;
   onCreate: (payload: {
     caption: string;
     scheduledFor: string;
@@ -72,10 +80,7 @@ export default function PostModal({
   const [assets, setAssets] = useState<UploadedAsset[]>([]);
   const [hashtagsInput, setHashtagsInput] = useState("");
   const isEditing = !!editingPost;
-  const {
-    timezone: userTimezone,
-    timezoneAbbr,
-  } = useTimezone();
+  const { timezone: userTimezone, timezoneAbbr } = useTimezone();
   const { toast } = useToast();
 
   const scrollHandlers = useScrollPropagation({ scrollWindowAtBoundary: true });
@@ -98,8 +103,10 @@ export default function PostModal({
     () =>
       socialAccounts
         .filter((acc) => selectedAccounts.includes(acc.id))
-        .some((acc) => acc.platform === "INSTAGRAM" || acc.platform === "TIKTOK"),
-    [selectedAccounts, socialAccounts]
+        .some(
+          (acc) => acc.platform === "INSTAGRAM" || acc.platform === "TIKTOK",
+        ),
+    [selectedAccounts, socialAccounts],
   );
 
   const hasFacebook = useMemo(
@@ -107,13 +114,13 @@ export default function PostModal({
       socialAccounts
         .filter((acc) => selectedAccounts.includes(acc.id))
         .some((acc) => acc.platform === "FACEBOOK"),
-    [selectedAccounts, socialAccounts]
+    [selectedAccounts, socialAccounts],
   );
 
   // Instagram allows only one media file; Facebook supports multiple
   const allowsMultipleMedia = useMemo(
     () => !requiresMedia && (hasFacebook || assets.length > 1),
-    [assets.length, hasFacebook, requiresMedia]
+    [assets.length, hasFacebook, requiresMedia],
   );
 
   const storageConfigured = useMemo(() => {
@@ -123,7 +130,7 @@ export default function PostModal({
 
   useEffect(() => {
     if (editingPost) {
-      setCaption(editingPost.caption === "." ? "" : (editingPost.caption || ""));
+      setCaption(editingPost.caption === "." ? "" : editingPost.caption || "");
       // Convert from UTC to user timezone for display
       const scheduledDate = fromUTC(editingPost.scheduledFor, userTimezone);
       setDatetime(formatForDateTimeLocal(scheduledDate, userTimezone));
@@ -139,7 +146,7 @@ export default function PostModal({
       setHashtagsInput(
         editingPost.hashtags && Array.isArray(editingPost.hashtags)
           ? editingPost.hashtags.join(" ")
-          : ""
+          : "",
       );
     } else if (initialDate) {
       // initialDate is already in user timezone from calendar
@@ -165,63 +172,83 @@ export default function PostModal({
 
     // Users can now change platforms even during editing
     setSelectedAccounts((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 
   const handleSubmit = async () => {
     if (!caption.trim()) {
-      toast({ title: "Caption Required", description: "Please add a caption", variant: "destructive" });
+      toast({
+        title: "Caption Required",
+        description: "Please add a caption",
+        variant: "destructive",
+      });
       return;
     }
 
     if (!datetime) {
-      toast({ title: "Input Required", description: "Please choose a date and time", variant: "destructive" });
+      toast({
+        title: "Input Required",
+        description: "Please choose a date and time",
+        variant: "destructive",
+      });
       return;
     }
 
     // Validate past dates
     const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
-    const selectedDate = userTimezone ? dayjs.tz(datetime, userTimezone) : dayjs(datetime);
-    
+    const selectedDate = userTimezone
+      ? dayjs.tz(datetime, userTimezone)
+      : dayjs(datetime);
+
     if (selectedDate.isBefore(now, "minute")) {
       toast({
         title: "Invalid Date",
-        description: "Cannot schedule posts in the past. Please select a future date and time.",
-        variant: "destructive"
+        description:
+          "Cannot schedule posts in the past. Please select a future date and time.",
+        variant: "destructive",
       });
       return;
     }
 
     if (selectedAccounts.length === 0) {
-      toast({ title: "Account Required", description: "Select at least one social account", variant: "destructive" });
+      toast({
+        title: "Account Required",
+        description: "Select at least one social account",
+        variant: "destructive",
+      });
       return;
     }
 
     if (requiresMedia && assetIds.length > 1) {
       toast({
         title: "Media Limit",
-        description: "Instagram and TikTok only support a single media file. Please select only one asset.",
-        variant: "destructive"
+        description:
+          "Instagram and TikTok only support a single media file. Please select only one asset.",
+        variant: "destructive",
       });
       return;
     }
 
     const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-    const hasVideo = selectedAssets.some(a => {
+    const hasVideo = selectedAssets.some((a) => {
       const key = a.storageKey.toLowerCase();
-      return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
+      return (
+        key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm")
+      );
     });
-    const hasImage = selectedAssets.some(a => {
+    const hasImage = selectedAssets.some((a) => {
       const key = a.storageKey.toLowerCase();
-      return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+      return (
+        !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm")
+      );
     });
 
     if (hasVideo && hasImage) {
       toast({
         title: "Mixed Media",
         description: "You cannot mix photos and videos in a single post.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -230,7 +257,7 @@ export default function PostModal({
       toast({
         title: "Video Limit",
         description: "You can only upload one video per post.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -239,10 +266,15 @@ export default function PostModal({
     const hasTikTok = socialAccounts
       .filter((acc) => selectedAccounts.includes(acc.id))
       .some((acc) => acc.platform === "TIKTOK");
-    
+
     if (hasTikTok) {
       if (hasImage) {
-        toast({ title: "Format Error", description: "TikTok only supports video uploads. Please remove any images.", variant: "destructive" });
+        toast({
+          title: "Format Error",
+          description:
+            "TikTok only supports video uploads. Please remove any images.",
+          variant: "destructive",
+        });
         return;
       }
     }
@@ -253,8 +285,8 @@ export default function PostModal({
         new Set(
           socialAccounts
             .filter((acc) => selectedAccounts.includes(acc.id))
-            .map((acc) => acc.platform)
-        )
+            .map((acc) => acc.platform),
+        ),
       );
       const hashtags = normalizeHashtags(hashtagsInput);
       await onCreate({
@@ -264,17 +296,26 @@ export default function PostModal({
         platforms,
         ...(assetIds.length > 0 ? { assetIds } : {}),
         ...(hashtags.length > 0 ? { hashtags } : {}),
-        ...(selectedAssets.length > 0 
-          ? selectedAssets.length > 1 
-            ? { mediaUrls: selectedAssets.map(a => buildStorageUrl(STORAGE_BASE_URL, a.storageKey)).filter((url): url is string => !!url) }
-            : { mediaUrl: buildStorageUrl(STORAGE_BASE_URL, selectedAssets[0].storageKey) || undefined }
-          : {}
-        ),
+        ...(selectedAssets.length > 0
+          ? selectedAssets.length > 1
+            ? {
+                mediaUrls: selectedAssets
+                  .map((a) => buildStorageUrl(STORAGE_BASE_URL, a.storageKey))
+                  .filter((url): url is string => !!url),
+              }
+            : {
+                mediaUrl:
+                  buildStorageUrl(
+                    STORAGE_BASE_URL,
+                    selectedAssets[0].storageKey,
+                  ) || undefined,
+              }
+          : {}),
       });
       onClose();
     } catch (err: any) {
-       // Error will be caught by EnhancedCalendar and toasted there, 
-       // but we'll toast here too for redundancy if preferred
+      // Error will be caught by EnhancedCalendar and toasted there,
+      // but we'll toast here too for redundancy if preferred
     } finally {
       setSubmitting(false);
     }
@@ -282,15 +323,27 @@ export default function PostModal({
 
   const handlePublishNow = async () => {
     if (!caption.trim()) {
-      toast({ title: "Caption Required", description: "Please add a caption", variant: "destructive" });
+      toast({
+        title: "Caption Required",
+        description: "Please add a caption",
+        variant: "destructive",
+      });
       return;
     }
     if (selectedAccounts.length === 0) {
-      toast({ title: "Account Required", description: "Select at least one social account", variant: "destructive" });
+      toast({
+        title: "Account Required",
+        description: "Select at least one social account",
+        variant: "destructive",
+      });
       return;
     }
     if (requiresMedia && assetIds.length === 0) {
-      toast({ title: "Media Required", description: "Instagram and TikTok require media to publish.", variant: "destructive" });
+      toast({
+        title: "Media Required",
+        description: "Instagram and TikTok require media to publish.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -302,8 +355,8 @@ export default function PostModal({
           new Set(
             socialAccounts
               .filter((acc) => selectedAccounts.includes(acc.id))
-              .map((acc) => acc.platform)
-          )
+              .map((acc) => acc.platform),
+          ),
         );
         await onPublish({
           caption: caption.trim(),
@@ -313,29 +366,46 @@ export default function PostModal({
           ...(assetIds.length > 0 ? { assetIds } : {}),
           ...(hashtags.length > 0 ? { hashtags } : {}),
         });
-        toast({ title: "Successfully Published", description: "Your post is being published." });
+        toast({
+          title: "Successfully Published",
+          description: "Your post is being published.",
+        });
         onClose();
         return;
       }
 
       const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-      const hasVideo = selectedAssets.some(a => {
+      const hasVideo = selectedAssets.some((a) => {
         const key = a.storageKey.toLowerCase();
-        return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
+        return (
+          key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm")
+        );
       });
-      const hasImage = selectedAssets.some(a => {
+      const hasImage = selectedAssets.some((a) => {
         const key = a.storageKey.toLowerCase();
-        return !key.endsWith(".mp4") && !key.endsWith(".mov") && !key.endsWith(".webm");
+        return (
+          !key.endsWith(".mp4") &&
+          !key.endsWith(".mov") &&
+          !key.endsWith(".webm")
+        );
       });
 
       if (hasVideo && hasImage) {
-        toast({ title: "Mixed Media", description: "You cannot mix photos and videos in a single post.", variant: "destructive" });
+        toast({
+          title: "Mixed Media",
+          description: "You cannot mix photos and videos in a single post.",
+          variant: "destructive",
+        });
         setSubmitting(false);
         return;
       }
 
       if (hasVideo && selectedAssets.length > 1) {
-        toast({ title: "Video Limit", description: "You can only upload one video per post.", variant: "destructive" });
+        toast({
+          title: "Video Limit",
+          description: "You can only upload one video per post.",
+          variant: "destructive",
+        });
         setSubmitting(false);
         return;
       }
@@ -344,27 +414,38 @@ export default function PostModal({
       const hasTikTok = socialAccounts
         .filter((acc) => selectedAccounts.includes(acc.id))
         .some((acc) => acc.platform === "TIKTOK");
-      
+
       if (hasTikTok) {
         if (hasImage) {
-          toast({ title: "Format Error", description: "TikTok only supports video uploads. Please remove any images.", variant: "destructive" });
+          toast({
+            title: "Format Error",
+            description:
+              "TikTok only supports video uploads. Please remove any images.",
+            variant: "destructive",
+          });
           setSubmitting(false);
           return;
         }
       }
 
       const hashtags = normalizeHashtags(hashtagsInput);
-      const fullCaption = hashtags.length > 0 ? `${caption.trim()}\n\n${hashtags.join(" ")}` : caption.trim();
+      const fullCaption =
+        hashtags.length > 0
+          ? `${caption.trim()}\n\n${hashtags.join(" ")}`
+          : caption.trim();
 
       for (const accountId of selectedAccounts) {
         const account = socialAccounts.find((a) => a.id === accountId);
         if (!account) continue;
 
         let technicalUsername = account.displayName || account.id;
-        
+
         if (account.externalAccountId) {
           if (account.externalAccountId.startsWith("upload-post:")) {
-            technicalUsername = account.externalAccountId.replace("upload-post:", "");
+            technicalUsername = account.externalAccountId.replace(
+              "upload-post:",
+              "",
+            );
           } else {
             technicalUsername = account.externalAccountId;
           }
@@ -372,7 +453,7 @@ export default function PostModal({
 
         const isFacebook = account.platform === "FACEBOOK";
         const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-        
+
         const payload: any = {
           username: technicalUsername,
           platform: account.platform.toLowerCase(),
@@ -382,15 +463,21 @@ export default function PostModal({
 
         if (selectedAssets.length > 0) {
           if (isFacebook && selectedAssets.length > 1) {
-            payload.mediaUrls = selectedAssets.map(a => buildStorageUrl(STORAGE_BASE_URL, a.storageKey));
+            payload.mediaUrls = selectedAssets.map((a) =>
+              buildStorageUrl(STORAGE_BASE_URL, a.storageKey),
+            );
           } else {
-            payload.mediaUrl = buildStorageUrl(STORAGE_BASE_URL, selectedAssets[0].storageKey);
+            payload.mediaUrl = buildStorageUrl(
+              STORAGE_BASE_URL,
+              selectedAssets[0].storageKey,
+            );
           }
         }
 
-        const endpoint = account.platform === "TIKTOK" 
-          ? "/api/tiktok/publish-now"
-          : "/api/social-media/publish-now";
+        const endpoint =
+          account.platform === "TIKTOK"
+            ? "/api/tiktok/publish-now"
+            : "/api/social-media/publish-now";
 
         const response = await fetch(endpoint, {
           method: "POST",
@@ -401,13 +488,26 @@ export default function PostModal({
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || `Failed to post. Please try again or contact support.`);
+          throw new Error(
+            errData.message ||
+              `Failed to post. Please try again or contact support.`,
+          );
         }
       }
-      toast({ title: "Published Successfully", description: "Your post has been published to the selected accounts." });
+      toast({
+        title: "Published Successfully",
+        description: "Your post has been published to the selected accounts.",
+      });
       onClose();
     } catch (err) {
-      toast({ title: "Publish Error", description: err instanceof Error ? err.message : "Failed to post. Please try again or contact support.", variant: "destructive" });
+      toast({
+        title: "Publish Error",
+        description:
+          err instanceof Error
+            ? err.message
+            : "Failed to post. Please try again or contact support.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -425,7 +525,11 @@ export default function PostModal({
           name: file.name,
         });
       } catch (err) {
-        toast({ title: "Upload Failed", description: err instanceof Error ? err.message : "Upload failed", variant: "destructive" });
+        toast({
+          title: "Upload Failed",
+          description: err instanceof Error ? err.message : "Upload failed",
+          variant: "destructive",
+        });
         break;
       }
     }
@@ -445,12 +549,22 @@ export default function PostModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden">
       <style jsx>{`
         @keyframes modalFade {
-          from { opacity: 0; transform: translateY(8px) scale(0.98); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
+          from {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
         @keyframes overlayFade {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
       `}</style>
       <div
@@ -492,7 +606,9 @@ export default function PostModal({
             <label className="text-sm text-slate-300">
               Media{" "}
               {requiresMedia && (
-                <span className="text-amber-400/70">(Optional for scheduling)</span>
+                <span className="text-amber-400/70">
+                  (Optional for scheduling)
+                </span>
               )}
             </label>
             <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/60 p-3">
@@ -502,7 +618,7 @@ export default function PostModal({
                 multiple
                 onChange={(e) => handleFiles(e.target.files)}
                 className={clsx(
-                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700"
+                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
                 )}
               />
               <div className="mt-2 text-xs text-slate-400">
@@ -519,7 +635,9 @@ export default function PostModal({
               {assets.length > 0 && (
                 <div className="mt-3 space-y-1">
                   <div className="text-xs text-slate-300 font-medium">
-                    {allowsMultipleMedia ? "Select media (multiple allowed)" : "Select one asset"}
+                    {allowsMultipleMedia
+                      ? "Select media (multiple allowed)"
+                      : "Select one asset"}
                   </div>
                   <div className="space-y-1 max-h-28 overflow-auto">
                     {assets.map((asset) => {
@@ -529,7 +647,8 @@ export default function PostModal({
                           key={asset.id}
                           className={clsx(
                             "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50",
-                            isSelected && "bg-slate-800/70 border border-lime-400/50"
+                            isSelected &&
+                              "bg-slate-800/70 border border-lime-400/50",
                           )}
                         >
                           <input
@@ -542,7 +661,7 @@ export default function PostModal({
                                 setAssetIds((prev) =>
                                   prev.includes(asset.id)
                                     ? prev.filter((id) => id !== asset.id)
-                                    : [...prev, asset.id]
+                                    : [...prev, asset.id],
                                 );
                               } else {
                                 setAssetIds([asset.id]);
@@ -550,7 +669,9 @@ export default function PostModal({
                             }}
                             className="accent-lime-400"
                           />
-                          <span className="truncate flex-1">{asset.name || asset.storageKey}</span>
+                          <span className="truncate flex-1">
+                            {asset.name || asset.storageKey}
+                          </span>
                         </label>
                       );
                     })}
@@ -595,7 +716,10 @@ export default function PostModal({
               <label className="text-sm text-slate-300">Accounts</label>
               <div className="max-h-32 overflow-y-auto rounded-lg border border-slate-800 bg-slate-950/60 p-2 space-y-1">
                 {socialAccounts.map((acc) => (
-                  <label key={acc.id} className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer">
+                  <label
+                    key={acc.id}
+                    className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       checked={selectedAccounts.includes(acc.id)}
@@ -605,7 +729,9 @@ export default function PostModal({
                     <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
                       {acc.platform}
                     </span>
-                    <span className="truncate text-sm text-slate-100">{acc.displayName || acc.id}</span>
+                    <span className="truncate text-sm text-slate-100">
+                      {acc.displayName || acc.id}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -614,7 +740,11 @@ export default function PostModal({
         </div>
 
         <div className="flex justify-end gap-2 px-5 py-4 border-t border-slate-800 flex-shrink-0">
-          <Button variant="ghost" onClick={onClose} className="text-slate-300 hover:text-white">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="text-slate-300 hover:text-white"
+          >
             Cancel
           </Button>
           <Button
@@ -622,7 +752,13 @@ export default function PostModal({
             disabled={submitting}
             className="bg-lime-400 text-slate-900 hover:bg-lime-300"
           >
-            {submitting ? (isEditing ? "Updating..." : "Scheduling...") : (isEditing ? "Update" : "Schedule")}
+            {submitting
+              ? isEditing
+                ? "Updating..."
+                : "Scheduling..."
+              : isEditing
+                ? "Update"
+                : "Schedule"}
           </Button>
           {(isAdmin || onPublish) && (
             <Button

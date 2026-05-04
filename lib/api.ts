@@ -47,6 +47,16 @@ async function apiRequest<T>(
       (obj && typeof obj.error !== "undefined" && String(obj.error)) ||
       (obj && typeof obj.message !== "undefined" && String(obj.message)) ||
       "Request failed";
+
+    // GLOBAL INTERCEPTOR FOR AUTH ERRORS
+    if (res.status === 401 || message.toLowerCase().includes("invalid token") || message.toLowerCase().includes("token expired")) {
+      if (typeof window !== "undefined" && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+        // Stop execution by returning a never-resolving promise
+        return new Promise(() => {}) as T;
+      }
+    }
+
     const error = new Error(message) as Error & {
       status?: number;
       code?: string;
