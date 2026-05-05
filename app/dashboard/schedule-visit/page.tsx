@@ -244,7 +244,7 @@ export default function ScheduleVisitPage() {
     setNotes("");
     setTitle("");
     setSelectedDate(null);
-    setSelectedTime("10:00");
+    setSelectedTime(""); // Reset to empty to force selection
     setDuration(60);
     setEditingSession(null);
     setAdminReason("");
@@ -331,13 +331,11 @@ export default function ScheduleVisitPage() {
         status: "PENDING",
       };
 
-      if (sessionType === "PHOTO_SESSION" && assetIds.length > 0) {
+      if (assetIds.length > 0) {
         payload.uploadedAssetIds = assetIds;
-        // Also provide assetIds and assetId for unified backend compatibility
         payload.assetIds = assetIds;
         payload.assetId = assetIds[0];
       } else {
-        // Explicitly clear these for Video Sessions to prevent accidental attachment
         payload.uploadedAssetIds = [];
         payload.assetIds = [];
         payload.assetId = null;
@@ -421,17 +419,59 @@ export default function ScheduleVisitPage() {
     });
   };
 
+  const availableSlots = useMemo(() => {
+    if (!selectedDate) return [];
+
+    const slots = [];
+    const startHour = 9; // 9 AM
+    const endHour = 20; // 8 PM
+    
+    let current = selectedDate.hour(startHour).minute(0).second(0);
+    const end = selectedDate.hour(endHour).minute(0).second(0);
+
+    const now = dayjs().tz(userTimezone);
+
+    while (current.isBefore(end) || current.isSame(end)) {
+      const timeStr = current.format("HH:mm");
+      
+      // Check if this time slot is in the past
+      const isPast = current.isBefore(now, "minute");
+      
+      // Check for conflicts
+      const hasConflict = sessions.some((s) => {
+        if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
+        if (editingSession && s.id === editingSession.id) return false;
+
+        const existingStart = dayjs.tz(s.scheduledAt, userTimezone);
+        const existingDuration = s.session?.durationMinutes || s.sessionDurationMinutes || 60;
+        const existingEnd = existingStart.add(existingDuration, "minute");
+
+        // 90 min buffer rule
+        const bufferStart = existingStart.subtract(90, "minute");
+        const bufferEnd = existingEnd.add(90, "minute");
+
+        const slotStart = current;
+        const slotEnd = current.add(duration, "minute");
+
+        return slotStart.isBefore(bufferEnd) && slotEnd.isAfter(bufferStart);
+      });
+
+      slots.push({
+        time: timeStr,
+        label: current.format("h:mm A"),
+        available: !hasConflict && !isPast,
+        reason: isPast ? "Past" : hasConflict ? "Conflict" : null
+      });
+
+      current = current.add(30, "minute");
+    }
+
+    return slots;
+  }, [selectedDate, sessions, editingSession, userTimezone, duration]);
+
   const isDayInPast = (day: dayjs.Dayjs) => {
     return day.isBefore(dayjs(), "day");
   };
-
-  // const userBookings = useMemo(() => {
-  //   if (isAdmin) return sessions;
-  //   return sessions.filter((s) => {
-  //     const ownerId = (s as any).userId || (s as any).user?.id;
-  //     return ownerId === userSession?.id;
-  //   });
-  // }, [sessions, userSession?.id, isAdmin]);
 
   const handleFiles = async (files?: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -714,20 +754,44 @@ export default function ScheduleVisitPage() {
                         className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50 transition-all"
                       />
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <Label
-                        htmlFor="time"
                         className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
                       >
-                        <Clock className="h-3 w-3 text-lime-400" /> Start Time
+                        <Clock className="h-3 w-3 text-lime-400" /> Select Time Slot
                       </Label>
-                      <Input
-                        id="time"
-                        type="time"
-                        value={selectedTime}
-                        onChange={(e) => setSelectedTime(e.target.value)}
-                        className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50"
-                      />
+                      {!selectedDate ? (
+                        <div className="p-4 bg-slate-800/30 border border-dashed border-slate-700 rounded-xl text-center">
+                          <p className="text-xs text-slate-500">Please select a date first</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 scrollbar-hide">
+                          {availableSlots.map((slot) => (
+                            <button
+                              key={slot.time}
+                              type="button"
+                              disabled={!slot.available}
+                              onClick={() => setSelectedTime(slot.time)}
+                              className={clsx(
+                                "py-2 px-1 rounded-lg text-[11px] font-bold transition-all border",
+                                selectedTime === slot.time
+                                  ? "bg-lime-400 border-lime-400 text-slate-900 shadow-[0_0_15px_rgba(163,230,53,0.3)]"
+                                  : slot.available
+                                    ? "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-lime-400/50 hover:bg-lime-400/5"
+                                    : "bg-slate-900/20 border-transparent text-slate-600 cursor-not-allowed opacity-50"
+                              )}
+                            >
+                              {slot.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {selectedTime && (
+                        <div className="flex items-center gap-2 px-3 py-2 bg-lime-400/10 border border-lime-400/20 rounded-lg">
+                           <Clock className="h-3 w-3 text-lime-400" />
+                           <span className="text-xs font-bold text-lime-400">Selected: {availableSlots.find(s => s.time === selectedTime)?.label || selectedTime}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -739,15 +803,30 @@ export default function ScheduleVisitPage() {
                       <Loader2 className="h-3 w-3 text-lime-400" /> Duration
                       (Minutes)
                     </Label>
-                    <Input
-                      id="duration"
-                      type="number"
-                      min="15"
-                      step="15"
-                      value={duration}
-                      onChange={(e) => setDuration(Number(e.target.value))}
-                      className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50"
-                    />
+                    <div className="relative group">
+                      <Input
+                        id="duration"
+                        type="number"
+                        min="15"
+                        value={duration === 0 ? "" : duration}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "") {
+                            setDuration(0);
+                          } else {
+                            const num = parseInt(val, 10);
+                            setDuration(isNaN(num) ? 0 : num);
+                          }
+                        }}
+                        onBlur={() => {
+                          if (duration < 15) setDuration(15);
+                        }}
+                        className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50 pr-12"
+                      />
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500 uppercase">
+                        Min
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -1023,15 +1102,15 @@ export default function ScheduleVisitPage() {
                       {((s.media && s.media.length > 0) || (s.assets && s.assets.length > 0)) && (
                         <div className="flex flex-wrap gap-2 mt-3">
                           {s.media && s.media.length > 0 ? (
-                            s.media.slice(0, 4).map((m, i) => (
+                            s.media.slice(0, 4).map((m: any, i: number) => (
                               <a 
-                                key={m.id} 
+                                key={m.id || i} 
                                 href={m.url} 
                                 target="_blank" 
                                 rel="noreferrer"
                                 className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
                               >
-                                {m.mediaType === "IMAGE" ? (
+                                {m.mediaType === "IMAGE" || m.mimeType?.startsWith('image/') ? (
                                   <img src={m.url} alt="Media" className="h-full w-full object-cover" />
                                 ) : (
                                   <div className="h-full w-full flex items-center justify-center bg-slate-800">
@@ -1046,22 +1125,32 @@ export default function ScheduleVisitPage() {
                               </a>
                             ))
                           ) : (
-                            s.assets?.slice(0, 4).map((url, i) => (
-                              <a 
-                                key={i} 
-                                href={url} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
-                              >
-                                <img src={url} alt="Asset" className="h-full w-full object-cover" />
-                                {i === 3 && (s.assets?.length || 0) > 4 && (
-                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
-                                    +{(s.assets?.length || 0) - 4}
-                                  </div>
-                                )}
-                              </a>
-                            ))
+                            s.assets?.slice(0, 4).map((asset: any, i: number) => {
+                              const url = typeof asset === 'string' ? asset : asset.url;
+                              const isVideo = url?.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/);
+                              return (
+                                <a 
+                                  key={i} 
+                                  href={url} 
+                                  target="_blank" 
+                                  rel="noreferrer"
+                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
+                                >
+                                  {isVideo ? (
+                                     <div className="h-full w-full flex items-center justify-center bg-slate-800">
+                                       <Video className="h-4 w-4 text-lime-400" />
+                                     </div>
+                                  ) : (
+                                    <img src={url} alt="Asset" className="h-full w-full object-cover" />
+                                  )}
+                                  {i === 3 && (s.assets?.length || 0) > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                      +{(s.assets?.length || 0) - 4}
+                                    </div>
+                                  )}
+                                </a>
+                              );
+                            })
                           )}
                         </div>
                       )}

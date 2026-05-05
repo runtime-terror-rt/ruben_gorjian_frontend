@@ -91,6 +91,7 @@ type AdminPost = {
       displayName: string;
     };
   }>;
+  media?: any[];
 };
 
 export default function AdminPostsPage() {
@@ -390,6 +391,15 @@ export default function AdminPostsPage() {
         scheduledFor: post.scheduledFor,
         assetId: post.asset?.id,
         socialAccountIds: accountIds,
+        existingMedia: post.asset ? [{
+          id: post.asset.id,
+          storageKey: post.asset.storageKey,
+          name: post.asset.storageKey.split('/').pop() || 'Media'
+        }] : (post.media || []).map((m: any) => ({
+          id: m.id || m.storageKey,
+          storageKey: m.storageKey || m.url,
+          name: (m.storageKey || m.url || "").split('/').pop() || 'Media'
+        }))
       });
       setEditModalOpen(true);
     } catch (err) {
@@ -404,26 +414,24 @@ export default function AdminPostsPage() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          data: JSON.stringify({
-            caption: payload.caption || ".",
-            scheduledAt: toUTC(
-              dayjs(payload.scheduledFor),
-              userTimezone || "UTC",
-            ).toISOString(),
-            scheduledFor: toUTC(
-              dayjs(payload.scheduledFor),
-              userTimezone || "UTC",
-            ).toISOString(),
-            userId: extractUserIdFromPost(
-              posts.find((p) => p.id === editingPost.id),
-            ),
-            adminReason: "Modified by Administrator",
-            assetIds:
-              payload.assetIds || (payload.assetId ? [payload.assetId] : []),
-            hashtags: payload.hashtags || [],
-            platforms: payload.platforms,
-            socialAccountIds: payload.socialAccountIds,
-          }),
+          caption: payload.caption || ".",
+          scheduledAt: toUTC(
+            dayjs(payload.scheduledFor),
+            userTimezone || "UTC",
+          ).toISOString(),
+          scheduledFor: toUTC(
+            dayjs(payload.scheduledFor),
+            userTimezone || "UTC",
+          ).toISOString(),
+          userId: extractUserIdFromPost(
+            posts.find((p) => p.id === editingPost.id),
+          ),
+          adminReason: "Modified by Administrator",
+          assetIds:
+            payload.assetIds || (payload.assetId ? [payload.assetId] : []),
+          hashtags: payload.hashtags || [],
+          platforms: payload.platforms,
+          socialAccountIds: payload.socialAccountIds,
         }),
       });
 

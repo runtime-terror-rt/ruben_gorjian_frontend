@@ -883,9 +883,9 @@ export default function SessionSchedulePage() {
                   <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
                     {selectedSession.media && selectedSession.media.length > 0 ? (
                       selectedSession.media.map((m, i) => (
-                        <div key={m.id} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
+                        <div key={m.id || i} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
                           <div className="aspect-square bg-slate-900">
-                            {m.mediaType === "IMAGE" ? (
+                            {m.mediaType === "IMAGE" || m.mimeType?.startsWith('image/') ? (
                               <img src={m.url} alt="Media" className="h-full w-full object-cover transition-transform group-hover:scale-110" />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
@@ -895,7 +895,7 @@ export default function SessionSchedulePage() {
                           </div>
                           <div className="p-2 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm">
                             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
-                              {m.mediaType}
+                              {m.mediaType || (m.mimeType?.startsWith('video/') ? "VIDEO" : "IMAGE")}
                             </span>
                             <a 
                               href={m.url} 
@@ -909,21 +909,38 @@ export default function SessionSchedulePage() {
                         </div>
                       ))
                     ) : selectedSession.assets && selectedSession.assets.length > 0 ? (
-                      selectedSession.assets.map((asset, i) => (
-                        <div key={asset.id || i} className="flex flex-col gap-1 text-xs bg-slate-800/40 p-2 rounded-lg border border-slate-700/50">
-                          <span className="text-slate-300 font-medium truncate" title={asset.name || asset.storageKey}>
-                            {asset.name || asset.storageKey?.split('/').pop() || `Asset ${i + 1}`}
-                          </span>
-                          <a 
-                             href={asset.url || `https://talexia.s3.us-east-2.amazonaws.com/${asset.storageKey}`} 
-                             target="_blank" 
-                             rel="noreferrer" 
-                             className="text-indigo-400 hover:text-indigo-300 font-semibold uppercase tracking-widest text-[9px]"
-                           >
-                             View File
-                           </a>
-                        </div>
-                      ))
+                      selectedSession.assets.map((asset: any, i) => {
+                        const url = typeof asset === 'string' ? asset : (asset.url || `https://talexia.s3.us-east-2.amazonaws.com/${asset.storageKey}`);
+                        const name = typeof asset === 'string' ? url.split('/').pop() : (asset.name || asset.storageKey?.split('/').pop() || `Asset ${i + 1}`);
+                        const isVideo = url?.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/);
+
+                        return (
+                          <div key={i} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
+                            <div className="aspect-square bg-slate-900">
+                              {isVideo ? (
+                                <div className="h-full w-full flex items-center justify-center">
+                                  <Video className="h-6 w-6 text-slate-400" />
+                                </div>
+                              ) : (
+                                <img src={url} alt={name} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
+                              )}
+                            </div>
+                            <div className="p-2 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm">
+                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
+                                {isVideo ? "VIDEO" : "IMAGE"}
+                              </span>
+                              <a 
+                                href={url} 
+                                target="_blank" 
+                                rel="noreferrer" 
+                                className="text-[9px] font-black text-lime-400 uppercase tracking-widest hover:text-lime-300"
+                              >
+                                View
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })
                     ) : (
                       selectedSession.uploadedAssetIds?.map((assetId, i) => (
                         <div key={assetId || i} className="flex flex-col gap-1 text-xs bg-slate-800/40 p-2 rounded-lg border border-slate-700/50">
