@@ -100,36 +100,13 @@ function BillingSuccessContent() {
           clearTimeout(timeoutRef.current);
         }
 
-        // Automatically redirect when active after a short delay (e.g., 3 seconds)
-        // so the user can actually see the success message.
-        setTimeout(() => {
-          // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
-          const pendingCode = session?.pendingPlanCode;
-          const isEnterprise =
-            pendingCode?.toUpperCase().startsWith("ENT") ||
-            currentPlanCode?.toUpperCase().startsWith("ENT") ||
-            expectedPlanCode?.toUpperCase().startsWith("ENT") ||
-            session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
-            session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
-            session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
-
-          if (isEnterprise) {
-            if (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) {
-              router.push("/dashboard");
-            } else {
-              router.push("/onboarding/brand-brief");
-            }
-          } else if (session?.onboardingCompleted) {
-            router.push("/dashboard");
-          } else {
-            router.push("/onboarding");
-          }
-        }, 3000);
+        // We removed the automatic redirect to give the user full control.
+        // They can now read the success message and proceed by clicking the button below.
       }
     };
 
     checkStatus();
-  }, [session, checking, router]);
+  }, [session, checking]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
