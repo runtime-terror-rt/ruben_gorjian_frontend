@@ -401,7 +401,7 @@ export default function ScheduleVisitPage() {
     return sessions.some((s) => {
       if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
 
-      // নিজের session edit করলে ignore
+      // Ignore if editing own session
       if (editingSession && s.id === editingSession.id) return false;
 
       const existingStart = dayjs.tz(s.scheduledAt, userTimezone);
