@@ -590,43 +590,26 @@ export default function EnhancedCalendar() {
   }, [userTimezone]);
 
   const handleCreatePost = useCallback(
-    async (payload: {
-      caption: string;
-      scheduledFor: string;
-      socialAccountIds: string[];
-      platforms: string[];
-      assetId?: string;
-      assetIds?: string[];
-      hashtags?: string[];
-    }) => {
+    async (
+      payload: {
+        caption: string;
+        scheduledFor: string;
+        socialAccountIds: string[];
+        platforms: string[];
+        assetId?: string;
+        assetIds?: string[];
+        hashtags?: string[];
+        mediaUrl?: string;
+        mediaUrls?: string[];
+      },
+      files?: File[],
+    ) => {
       try {
         if (editingPost) {
-          await updatePost(editingPost.id, {
-            caption: payload.caption,
-            scheduledFor: payload.scheduledFor,
-            socialAccountIds: payload.socialAccountIds,
-            platforms: payload.platforms,
-            ...(payload.assetIds && payload.assetIds.length > 0
-              ? { assetIds: payload.assetIds }
-              : payload.assetId
-                ? { assetId: payload.assetId }
-                : {}),
-            ...(payload.hashtags ? { hashtags: payload.hashtags } : {}),
-          });
+          await updatePost(editingPost.id, payload, files);
           setEditingPost(null);
         } else {
-          await createPost({
-            caption: payload.caption,
-            scheduledFor: payload.scheduledFor,
-            socialAccountIds: payload.socialAccountIds,
-            platforms: payload.platforms,
-            ...(payload.assetIds && payload.assetIds.length > 0
-              ? { assetIds: payload.assetIds }
-              : payload.assetId
-                ? { assetId: payload.assetId }
-                : {}),
-            ...(payload.hashtags ? { hashtags: payload.hashtags } : {}),
-          });
+          await createPost(payload, files);
         }
         toast({
           title: editingPost ? "Post Updated" : "Post Scheduled",
