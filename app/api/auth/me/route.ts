@@ -16,9 +16,18 @@ export async function GET() {
     const data = await res.json();
     const response = NextResponse.json(data, { status: res.status });
 
-    const setCookies = res.headers.getSetCookie();
-    for (const cookie of setCookies) {
-      response.headers.append("set-cookie", cookie);
+    // Only proxy cookies if the backend request was successful (authenticated)
+    if (res.ok) {
+      const setCookies = res.headers.getSetCookie();
+      for (const cookie of setCookies) {
+        response.headers.append("set-cookie", cookie);
+      }
+    } 
+    // If the backend returns 401, it means the session is invalid or non-existent.
+    // We clear the cookies to keep the frontend state clean and professional.
+    else if (res.status === 401) {
+      response.cookies.delete("token");
+      response.cookies.delete("auth-token");
     }
 
     return response;
