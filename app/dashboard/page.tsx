@@ -9,6 +9,8 @@ import { useSessionContext } from "@/context/SessionContext";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { apiGet } from "@/lib/api";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 import { cn } from "@/lib/utils";
 
 // ---------------- Types ----------------
@@ -79,15 +81,15 @@ function useRecentActivity(enabled: boolean, page: number = 1, limit: number = 5
   return useQuery({
     queryKey: ["recent-activity", page, limit],
     queryFn: () =>
-      apiGet<{ 
-        success: boolean; 
-        data: { 
-          items: RecentActivity[]; 
+      apiGet<{
+        success: boolean;
+        data: {
+          items: RecentActivity[];
           total: number;
           page: number;
           limit: number;
           totalPages: number;
-        } 
+        }
       }>(
         `/api/dashboard/overview/recent-activity?page=${page}&limit=${limit}`,
       ),
@@ -101,7 +103,7 @@ function useUpcomingPosts(enabled: boolean) {
     queryKey: ["upcoming-posts"],
     queryFn: () =>
       apiGet<{ success: boolean; data: { items: UpcomingPost[] } }>(
-        "/api/dashboard/overview/upcoming-posts?days=7&limit=5",
+        "/api/dashboard/overview/upcoming-posts?days=7&limit=3",
       ),
     enabled,
   });
@@ -477,7 +479,7 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-400">
-                    {p.scheduledFor ? dayjs(p.scheduledFor).format("MMM D, YYYY • h:mm A") : 'No date set'}
+                    {p.scheduledFor ? dayjs.utc(p.scheduledFor).format("MMM D, YYYY • h:mm A") : 'No date set'}
                   </p>
                 </div>
               ))
@@ -620,7 +622,9 @@ export default function DashboardPage() {
                   <div className="mt-1 h-2 w-2 rounded-full bg-lime-400" />
                   <div>
                     <p className="text-sm text-white">{a.title}</p>
-                    <p className="text-xs text-slate-400">{a.description}</p>
+                    <p className="text-xs text-slate-400">
+                      {a.description.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, (match) => dayjs.utc(match).format("MMM D, YYYY • h:mm A"))}
+                    </p>
                     <p className="text-xs text-slate-500">
                       {new Date(a.createdAt).toLocaleString()}
                     </p>
@@ -639,7 +643,7 @@ export default function DashboardPage() {
                   onClick={() => setActivityPage(p => Math.max(1, p - 1))}
                   className="h-8 border-slate-800 text-xs"
                 >
-                 <ChevronLeft className="h-3 w-3" />
+                  <ChevronLeft className="h-3 w-3" />
                 </Button>
                 <span className="text-xs text-slate-500">
                   Page {activityPage} of {activityTotalPages}

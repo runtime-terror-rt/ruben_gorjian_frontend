@@ -193,7 +193,7 @@ function WeekView({
         >
           <div className="z-10 bg-slate-900/80 flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 border border-slate-800/50"></div>
           {localizedDays.map((day) => {
-            const isToday = userTimezone 
+            const isToday = userTimezone
               ? day.date.isSame(dayjs().tz(userTimezone), "day")
               : day.date.isSame(dayjs(), "day");
             return (
@@ -317,7 +317,7 @@ function MonthView({
       const currentDayMonth = currentDay.month();
       if (currentDayMonth < currentMonth) label = "previous-month";
       else if (currentDayMonth > currentMonth) label = "next-month";
-      
+
       calendarDays.push({
         day: userTimezone ? dayjs.tz(currentDay, userTimezone) : currentDay,
         label,
@@ -350,7 +350,7 @@ function MonthView({
         className="flex-1 relative overflow-auto pb-12 [scrollbar-width:thin] [scrollbar-color:theme(colors.slate.700)_transparent]"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div 
+        <div
           className={gridClassName}
           style={{ gridAutoRows: 'minmax(110px, auto)' }}
         >
@@ -367,7 +367,7 @@ function MonthView({
           {calendarDays.map((date, index) => {
             const isCurrentMonth = date.label === "current-month";
             const dayDate = userTimezone ? dayjs.tz(date.day, userTimezone).startOf("day") : dayjs(date.day).startOf("day");
-            const isToday = userTimezone 
+            const isToday = userTimezone
               ? dayDate.isSame(dayjs().tz(userTimezone), "day")
               : dayDate.isSame(dayjs(), "day");
 
@@ -437,8 +437,8 @@ function DayView({
         return pDate.isSame(selectedDate, "day");
       })
       .forEach((post) => {
-        const hour = userTimezone 
-          ? dayjs.tz(post.scheduledFor, userTimezone).hour() 
+        const hour = userTimezone
+          ? dayjs.tz(post.scheduledFor, userTimezone).hour()
           : dayjs(post.scheduledFor).hour();
         if (!grouped[hour]) {
           grouped[hour] = [];
@@ -520,7 +520,7 @@ function DayView({
             return (
               <div key={hour} className="flex gap-3 items-start">
                 {/* Timestamp on left */}
-            <div className="w-16 flex-shrink-0 pt-3 text-right pr-2">
+                <div className="w-16 flex-shrink-0 pt-3 text-right pr-2">
                   <span className="text-xs font-black uppercase tracking-tighter text-slate-500">
                     {convertTimeFormat(hour)}
                   </span>
@@ -739,9 +739,9 @@ export default function EnhancedCalendar() {
         <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-amber-200 text-xs font-mono space-y-1 relative group">
           <div className="flex justify-between items-start">
             <h4 className="font-bold text-amber-400 mb-2">Timezone Debugger</h4>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowDebug(false)}
               className="h-6 w-6 p-0 hover:bg-amber-500/20 text-amber-400"
             >
@@ -897,41 +897,41 @@ export default function EnhancedCalendar() {
         {/* Calendar Area */}
         <div className="mt-8">
           <Card className="border-slate-800/50 bg-slate-900/40">
-          <CardContent className="p-4 sm:p-6 min-h-[600px]">
-            {loading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-8 w-8 text-amber-500 animate-spin" />
-                  <div className="text-slate-400">Loading calendar...</div>
+            <CardContent className="p-4 sm:p-6 min-h-[600px]">
+              {loading ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="h-8 w-8 text-amber-500 animate-spin" />
+                    <div className="text-slate-400">Loading calendar...</div>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="min-h-[600px] flex flex-col">
-                {display === "day" && (
-                  <DayView
-                    onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
-                    onDragEnd={handleDragEnd}
-                  />
-                )}
-                {display === "week" && (
-                  <WeekView
-                    onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
-                    onDragEnd={handleDragEnd}
-                  />
-                )}
-                {display === "month" && (
-                  <MonthView
-                    onAddPost={handleAddPost}
-                    onEdit={handleViewPost}
-                    onDragEnd={handleDragEnd}
-                  />
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              ) : (
+                <div className="min-h-[600px] flex flex-col">
+                  {display === "day" && (
+                    <DayView
+                      onAddPost={handleAddPost}
+                      onEdit={handleViewPost}
+                      onDragEnd={handleDragEnd}
+                    />
+                  )}
+                  {display === "week" && (
+                    <WeekView
+                      onAddPost={handleAddPost}
+                      onEdit={handleViewPost}
+                      onDragEnd={handleDragEnd}
+                    />
+                  )}
+                  {display === "month" && (
+                    <MonthView
+                      onAddPost={handleAddPost}
+                      onEdit={handleViewPost}
+                      onDragEnd={handleDragEnd}
+                    />
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <PostModal
