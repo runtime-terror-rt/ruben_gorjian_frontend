@@ -82,15 +82,15 @@ function BillingSuccessContent() {
       // For enterprise plans, the plan code might be generated dynamically, so we shouldn't strictly require a match
       // if the current plan is an enterprise plan
       const isExpectedEnterprise = expectedPlanCode?.toUpperCase().startsWith("ENT");
-      const isCurrentEnterprise = currentPlanCode?.toUpperCase().startsWith("ENT") || 
-                                  session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
-                                  session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
-                                  session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
-                                  
-      const isPlanMatched = !expectedPlanCode || 
-                            currentPlanCode === expectedPlanCode || 
-                            (isExpectedEnterprise && isCurrentEnterprise) ||
-                            (!isExpectedEnterprise && isCurrentEnterprise); // If they upgraded to enterprise, consider it matched
+      const isCurrentEnterprise = currentPlanCode?.toUpperCase().startsWith("ENT") ||
+        session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
+        session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+        session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
+
+      const isPlanMatched = !expectedPlanCode ||
+        currentPlanCode === expectedPlanCode ||
+        (isExpectedEnterprise && isCurrentEnterprise) ||
+        (!isExpectedEnterprise && isCurrentEnterprise); // If they upgraded to enterprise, consider it matched
 
       const isActive = isStatusActive && isPlanMatched;
 
@@ -100,42 +100,31 @@ function BillingSuccessContent() {
           clearTimeout(timeoutRef.current);
         }
 
-        // Automatically redirect when active
-        // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
-        const pendingCode = session?.pendingPlanCode;
-        const activePlanCode = currentPlanCode || pendingCode || expectedPlanCode;
-        const isEnterprise =
-          pendingCode?.toUpperCase().startsWith("ENT") ||
-          currentPlanCode?.toUpperCase().startsWith("ENT") ||
-          expectedPlanCode?.toUpperCase().startsWith("ENT") ||
-          session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
-          session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
-          session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
+        // Automatically redirect when active after a short delay (e.g., 3 seconds)
+        // so the user can actually see the success message.
+        setTimeout(() => {
+          // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
+          const pendingCode = session?.pendingPlanCode;
+          const isEnterprise =
+            pendingCode?.toUpperCase().startsWith("ENT") ||
+            currentPlanCode?.toUpperCase().startsWith("ENT") ||
+            expectedPlanCode?.toUpperCase().startsWith("ENT") ||
+            session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
+            session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+            session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF";
 
-        // DEBUG LOGGING
-        console.group("[BillingSuccess] Redirecting from Success Page");
-        console.log("✓ currentPlanCode:", currentPlanCode);
-        console.log("✓ session.subscription.planCategory:", session?.subscription?.planCategory);
-        console.log("✓ session.pendingPlanCode:", pendingCode);
-        console.log("✓ activePlanCode:", activePlanCode);
-        console.log("✓ isEnterprise:", isEnterprise);
-        console.log("✓ session.brandBriefCompleted:", session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted);
-        console.log("✓ session.onboardingCompleted:", session?.onboardingCompleted);
-        console.groupEnd();
-
-        if (isEnterprise) {
-          // For enterprise users, ALWAYS check brandBriefCompleted specifically
-          // even if the generic onboardingCompleted flag is true
-          if (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) {
+          if (isEnterprise) {
+            if (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) {
+              router.push("/dashboard");
+            } else {
+              router.push("/onboarding/brand-brief");
+            }
+          } else if (session?.onboardingCompleted) {
             router.push("/dashboard");
           } else {
-            router.push("/onboarding/brand-brief");
+            router.push("/onboarding");
           }
-        } else if (session?.onboardingCompleted) {
-          router.push("/dashboard");
-        } else {
-          router.push("/onboarding");
-        }
+        }, 3000);
       }
     };
 
