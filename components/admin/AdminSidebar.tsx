@@ -19,6 +19,7 @@ import {
   Tag,
   ShieldCheck,
   MessageSquare,
+  AlertCircle,
 } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
 
@@ -82,6 +83,12 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Posts",
         href: "/admin/posts",
         icon: FileText,
+        permission: "POST_MANAGE",
+      },
+      {
+        label: "Scheduler Failures",
+        href: "/admin/scheduler-failures",
+        icon: AlertCircle,
         permission: "POST_MANAGE",
       },
       {
