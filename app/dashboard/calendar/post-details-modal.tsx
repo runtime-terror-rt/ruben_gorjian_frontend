@@ -88,6 +88,13 @@ type PostDetails = {
     email: string;
     name: string;
   };
+  // Add common fields from different API versions
+  media?: Array<{
+    url?: string;
+    storageKey?: string;
+    mediaType?: "IMAGE" | "VIDEO";
+  }>;
+  assets?: string[];
 };
 
 interface PostDetailsModalProps {
@@ -121,7 +128,48 @@ export default function PostDetailsModal({
     return posts.find((p) => p.id === postId) || null;
   }, [open, postId, posts]);
 
-  if (!open) return null;
+  // Improved media detection logic
+  const allMediaUrls = useMemo(() => {
+    if (!post) return [];
+    
+    const urls: string[] = [];
+    
+    // 1. Check plural assets array
+    if (post.assets && post.assets.length > 0) {
+      post.assets.forEach(asset => {
+        if (asset) urls.push(asset);
+      });
+    }
+    
+    // 2. Check media array
+    if (post.media && post.media.length > 0) {
+      post.media.forEach(m => {
+        if (m.url) {
+          urls.push(m.url);
+        } else if (m.storageKey) {
+          const url = buildStorageUrl(STORAGE_BASE_URL, m.storageKey);
+          if (url) urls.push(url);
+        }
+      });
+    }
+    
+    // 3. Check single asset
+    if (post.asset?.storageKey && urls.length === 0) {
+      const url = buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey);
+      if (url) urls.push(url);
+    }
+    
+    return Array.from(new Set(urls)).filter((url): url is string => !!url);
+  }, [post]);
+
+  const isVideo = useMemo(() => {
+    if (!post) return false;
+    if (post.asset?.type === "VIDEO") return true;
+    if (post.media?.some(m => m.mediaType === "VIDEO")) return true;
+    
+    // Check key patterns in URLs
+    return allMediaUrls.some(url => url.toLowerCase().match(/\.(mp4|mov|webm)$/));
+  }, [post, allMediaUrls]);
 
   const handleEdit = () => {
     if (postId) {
@@ -145,17 +193,9 @@ export default function PostDetailsModal({
     }
   };
 
-  const anyPost = post as any;
-  let mediaUrl = null;
-  if (post?.asset?.storageKey) {
-    mediaUrl = buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey);
-  } else if (anyPost?.media && anyPost.media.length > 0) {
-    mediaUrl = anyPost.media[0].url || buildStorageUrl(STORAGE_BASE_URL, anyPost.media[0].storageKey);
-  } else if (anyPost?.assets && anyPost.assets.length > 0) {
-    mediaUrl = anyPost.assets[0];
-  }
+  if (!open) return null;
 
-  const scheduledDate = post?.scheduledFor 
+  const scheduledDate = (post?.scheduledFor && userTimezone)
     ? dayjs.tz(post.scheduledFor, userTimezone) 
     : null;
 
@@ -200,12 +240,12 @@ export default function PostDetailsModal({
             <div className="flex items-center gap-3 text-xs text-slate-400">
                <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  {scheduledDate?.format('MMM D, HH:mm')}
+                  {scheduledDate ? scheduledDate.format('MMM D, HH:mm') : "Pending"}
                </span>
                <span className="w-1 h-1 rounded-full bg-slate-700" />
                <span className="flex items-center gap-1.5">
                   <CalendarIcon className="w-3.5 h-3.5" />
-                  {scheduledDate?.fromNow()}
+                  {scheduledDate ? scheduledDate.fromNow() : "Scheduled"}
                </span>
             </div>
           </div>
@@ -248,7 +288,7 @@ export default function PostDetailsModal({
                  </div>
                  <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Media</span>
-                    <span className="text-sm font-semibold text-white">{mediaUrl ? "Attached" : "Null"}</span>
+                    <span className="text-sm font-semibold text-white">{allMediaUrls.length > 0 ? `${allMediaUrls.length} file(s)` : "Null"}</span>
                  </div>
                  <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">TZ</span>
@@ -300,9 +340,9 @@ export default function PostDetailsModal({
                          </label>
                          <div className="flex flex-wrap gap-2">
                             {post.hashtags.map((tag, idx) => (
-                              <span key={idx} className="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-xl text-xs font-medium hover:scale-105 transition-transform cursor-default">
+                               <span key={idx} className="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-xl text-xs font-medium hover:scale-105 transition-transform cursor-default">
                                 {tag}
-                              </span>
+                               </span>
                             ))}
                          </div>
                       </div>
@@ -315,26 +355,38 @@ export default function PostDetailsModal({
                        <ImageIcon className="w-4 h-4 text-pink-400" />
                        Media Asset
                     </label>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden group relative aspect-[4/5] sm:aspect-square">
-                       {mediaUrl ? (
-                         <>
-                            {(post.asset?.type === "VIDEO" || (anyPost?.media && anyPost.media[0]?.mediaType === "VIDEO")) ? (
-                              <video src={mediaUrl} controls className="w-full h-full object-cover" />
-                            ) : (
-                              <NextImage 
-                                src={mediaUrl} 
-                                alt="Post media" 
-                                fill 
-                                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                                unoptimized
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                               <span className="text-xs text-white font-medium drop-shadow-md">Original Media File</span>
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden group relative min-h-[200px]">
+                       {allMediaUrls.length > 0 ? (
+                         <div className={clsx(
+                           "grid gap-1 w-full h-full",
+                           allMediaUrls.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                         )}>
+                            {allMediaUrls.map((url, idx) => {
+                              const isThisVideo = url.toLowerCase().match(/\.(mp4|mov|webm)$/);
+                              return (
+                                <div key={idx} className="relative aspect-square w-full h-full">
+                                  {isThisVideo ? (
+                                    <video src={url} controls className="w-full h-full object-cover" />
+                                  ) : (
+                                    <NextImage 
+                                      src={url} 
+                                      alt={`Post media ${idx + 1}`} 
+                                      fill 
+                                      className="object-cover transition-transform duration-700 hover:scale-110" 
+                                      unoptimized
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4 pointer-events-none">
+                               <span className="text-xs text-white font-medium drop-shadow-md">
+                                 {allMediaUrls.length > 1 ? `${allMediaUrls.length} Media Files` : "Original Media File"}
+                               </span>
                             </div>
-                         </>
+                         </div>
                        ) : (
-                         <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-slate-900/50">
+                         <div className="w-full h-full min-h-[200px] flex flex-col items-center justify-center gap-3 bg-slate-900/50">
                             <AlertCircle className="w-10 h-10 text-slate-800" />
                             <span className="text-xs text-slate-600">Visual post component empty.</span>
                          </div>
