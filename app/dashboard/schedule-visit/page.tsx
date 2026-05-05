@@ -1,6 +1,7 @@
 "use client";
 
 import { useSocket } from "@/app/providers/SocketProvider";
+import { VideoSessionUpsellModal } from "@/components/dashboard/VideoSessionUpsellModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,7 +31,6 @@ import {
   Video,
 } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { VideoSessionUpsellModal } from "@/components/dashboard/VideoSessionUpsellModal";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
