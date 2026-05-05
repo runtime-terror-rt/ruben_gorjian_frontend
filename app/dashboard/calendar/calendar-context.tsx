@@ -78,8 +78,8 @@ interface CalendarContextType {
   navigateToDate: (date: dayjs.Dayjs) => void;
 
   // Post operations
-  createPost: (data: CreatePostData) => Promise<void>;
-  updatePost: (id: string, data: Partial<CreatePostData>) => Promise<void>;
+  createPost: (data: CreatePostData, files?: File[]) => Promise<void>;
+  updatePost: (id: string, data: Partial<CreatePostData>, files?: File[]) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
   duplicatePost: (id: string) => Promise<void>;
   movePost: (id: string, newDate: dayjs.Dayjs) => Promise<void>;
@@ -100,6 +100,7 @@ interface CalendarContextType {
 interface CreatePostData {
   caption: string;
   scheduledFor: string;
+  scheduledAt?: string;
   platforms: string[];
   socialAccountIds: string[];
   assetId?: string;
@@ -107,8 +108,8 @@ interface CreatePostData {
   hashtags?: string[];
   userId?: string; // For admin
   adminReason?: string; // For admin
-  mediaUrl?: string;
-  mediaUrls?: string[];
+  mediaUrl?: string; // Add mediaUrl
+  mediaUrls?: string[]; // Add mediaUrls
 }
 
 const CalendarContext = createContext<CalendarContextType | null>(null);
@@ -319,15 +320,17 @@ export function CalendarProvider({
             [];
 
         // Convert post dates from UTC to user timezone for display
-        const postsWithTimezone = rawPosts.map((post: any) => {
-          const dateValue = post.scheduledFor || post.scheduledAt;
-          return {
-            ...post,
-            scheduledFor: dateValue
-              ? fromUTC(dateValue, userTimezone).format()
-              : dateValue,
-          };
-        });
+        const postsWithTimezone = (Array.isArray(rawPosts) ? rawPosts : [])
+          .filter((post: any) => post.scheduleType === "POSTING" || !post.scheduleType) // Safeguard filter
+          .map((post: any) => {
+            const dateValue = post.scheduledFor || post.scheduledAt;
+            return {
+              ...post,
+              scheduledFor: dateValue
+                ? fromUTC(dateValue, userTimezone).format()
+                : dateValue,
+            };
+          });
         setPosts(postsWithTimezone);
       }
     } catch (error) {
@@ -367,117 +370,136 @@ export function CalendarProvider({
     }
   }, [targetUserId]);
 
-  const createPost = useCallback(
-    async (data: CreatePostData) => {
-      try {
-        if (!userTimezone) {
-          throw new Error("Timezone not ready. Please try again.");
-        }
-        // Convert scheduledFor from user timezone to UTC
-        const dateISO = parseDateTimeLocal(
-          data.scheduledFor,
-          userTimezone,
-        ).toISOString();
-        const payload = {
-          ...data,
-          scheduledAt: dateISO,
-          scheduledFor: dateISO,
-          ...(data.assetIds && data.assetIds.length > 0
-            ? {
-                assetIds: data.assetIds,
-                assetId: data.assetIds[0],
-              }
-            : data.assetId
-              ? { assetId: data.assetId, assetIds: [data.assetId] }
+    const createPost = useCallback(
+      async (data: CreatePostData, files?: File[]) => {
+        try {
+          if (!userTimezone) {
+            throw new Error("Timezone not ready. Please try again.");
+          }
+
+          // Convert scheduledFor from user timezone to UTC
+          const dateISO = parseDateTimeLocal(
+            data.scheduledFor,
+            userTimezone,
+          ).toISOString();
+
+          const payload = {
+            ...data,
+            scheduledAt: dateISO,
+            scheduledFor: dateISO,
+            ...(data.assetIds && data.assetIds.length > 0
+              ? {
+                  assetIds: data.assetIds,
+                  assetId: data.assetIds[0],
+                }
+              : data.assetId
+                ? { assetId: data.assetId, assetIds: [data.assetId] }
+                : {}),
+            ...(targetUserId
+              ? {
+                  userId: targetUserId,
+                  adminReason: "Created from admin dashboard",
+                }
               : {}),
-          ...(targetUserId
-            ? {
-                userId: targetUserId,
-                adminReason: "Created from admin dashboard",
-              }
-            : {}),
-          mediaUrl: data.mediaUrl,
-          mediaUrls: data.mediaUrls,
-        };
+          };
 
-        const response = await fetch("/api/scheduler/posts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        });
+          const formData = new FormData();
+          formData.append("data", JSON.stringify(payload));
+          if (files && files.length > 0) {
+            files.forEach((file) => formData.append("files", file));
+          }
 
-        if (response.ok) {
-          await fetchPosts();
-        } else {
-          const error = await response.json();
-          throw new Error(error.error || "Failed to create post");
+          const response = await fetch("/api/scheduler/posts", {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          });
+
+          if (response.ok) {
+            await fetchPosts();
+          } else {
+            const error = await response.json().catch(() => ({}));
+            let msg = error.error || error.message || "Failed to create post";
+            if (error.details?.issues) {
+              msg += ": " + error.details.issues.map((i: any) => i.message).join(", ");
+            }
+            throw new Error(msg);
+          }
+        } catch (error) {
+          console.error("Failed to create post:", error);
+          throw error;
         }
-      } catch (error) {
-        console.error("Failed to create post:", error);
-        throw error;
-      }
-    },
-    [fetchPosts, userTimezone, targetUserId],
-  );
+      },
+      [fetchPosts, userTimezone, targetUserId],
+    );
 
-  const updatePost = useCallback(
-    async (id: string, data: Partial<CreatePostData>) => {
-      try {
-        if (!userTimezone) {
-          throw new Error("Timezone not ready. Please try again.");
-        }
-        const payload = {
-          ...data,
-          caption: data.caption || ".",
-          ...(data.scheduledFor
-            ? {
-                scheduledAt: parseDateTimeLocal(
-                  data.scheduledFor,
-                  userTimezone,
-                ).toISOString(),
-                scheduledFor: parseDateTimeLocal(
-                  data.scheduledFor,
-                  userTimezone,
-                ).toISOString(),
-              }
-            : {}),
-          ...(data.assetIds && data.assetIds.length > 0
-            ? {
-                assetIds: data.assetIds,
-                assetId: data.assetIds[0],
-              }
-            : data.assetId
-              ? { assetId: data.assetId, assetIds: [data.assetId] }
+    const updatePost = useCallback(
+      async (id: string, data: Partial<CreatePostData>, files?: File[]) => {
+        try {
+          if (!userTimezone) {
+            throw new Error("Timezone not ready. Please try again.");
+          }
+
+          const payload = {
+            ...data,
+            caption: data.caption || (data.hasOwnProperty('caption') ? "." : undefined),
+            ...(data.scheduledFor
+              ? {
+                  scheduledAt: parseDateTimeLocal(
+                    data.scheduledFor,
+                    userTimezone,
+                  ).toISOString(),
+                  scheduledFor: parseDateTimeLocal(
+                    data.scheduledFor,
+                    userTimezone,
+                  ).toISOString(),
+                }
               : {}),
-          ...(targetUserId
-            ? {
-                userId: targetUserId,
-                adminReason: data.adminReason || "Updated from admin dashboard",
-              }
-            : {}),
-        };
+            ...(data.assetIds && data.assetIds.length > 0
+              ? {
+                  assetIds: data.assetIds,
+                  assetId: data.assetIds[0],
+                }
+              : data.assetId
+                ? { assetId: data.assetId, assetIds: [data.assetId] }
+                : {}),
+            ...(targetUserId
+              ? {
+                  userId: targetUserId,
+                  adminReason: data.adminReason || "Updated from admin dashboard",
+                }
+              : {}),
+          };
 
-        const response = await fetch(`/api/scheduler/posts/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        });
+          const formData = new FormData();
+          formData.append("data", JSON.stringify(payload));
+          if (files && files.length > 0) {
+            files.forEach((file) => formData.append("files", file));
+          }
 
-        if (response.ok) {
-          await fetchPosts();
-        } else {
-          const error = await response.json();
-          throw new Error(error.error || "Failed to update post");
+          const response = await fetch(`/api/scheduler/posts/${id}`, {
+            method: "PATCH",
+            credentials: "include",
+            body: formData,
+          });
+
+          if (response.ok) {
+            await fetchPosts();
+          } else {
+            const error = await response.json().catch(() => ({}));
+            let msg = error.error || error.message || "Failed to update post";
+            if (error.details?.issues) {
+              msg += ": " + error.details.issues.map((i: any) => i.message).join(", ");
+            }
+            throw new Error(msg);
+          }
+        } catch (error) {
+          console.error("Failed to update post:", error);
+          throw error;
         }
-      } catch (error) {
-        console.error("Failed to update post:", error);
-        throw error;
-      }
-    },
-    [fetchPosts, userTimezone, targetUserId],
-  );
+      },
+      [fetchPosts, userTimezone, targetUserId],
+    );
 
   const deletePost = useCallback(
     async (id: string) => {
