@@ -44,6 +44,8 @@ import {
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
+import { apiGet } from "@/lib/api";
+import PostFilters, { FilterState } from "@/components/admin/PostFilters";
 
 const STORAGE_BASE_URL = getEnvVarWithDefault(
   "NEXT_PUBLIC_STORAGE_BASE_URL",
@@ -108,6 +110,15 @@ export default function AdminPostsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
   
+  // Filter State
+  const [filters, setFilters] = useState<FilterState>({
+    sessionStatus: "all",
+    status: "all",
+    platform: "all",
+    userId: "",
+    userEmail: "",
+  });
+  
   // For admin posts page, we want only POSTING type items
   const currentPosts = posts;
 
@@ -121,7 +132,7 @@ export default function AdminPostsPage() {
   const { socket } = useSocket();
   const { timezone: userTimezone, timezoneAbbr } = useTimezone();
 
-  const fetchPosts = useCallback(async (page = currentPage) => {
+  const fetchPosts = useCallback(async (page = currentPage, currentFilters = filters) => {
     try {
       setLoading(true);
       setError(null);
@@ -134,17 +145,32 @@ export default function AdminPostsPage() {
         all: "true",
         page: page.toString(),
         pageSize: itemsPerPage.toString(),
-        startDate,
-        endDate,
         scheduleType: "POSTING"
       });
 
-      const res = await fetch(`/api/scheduler/posts?${queryParams.toString()}`, {
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to fetch posts");
+      // Only add date range if no specific user is targeted (to see full history of a user)
+      if (!currentFilters.userId && !currentFilters.userEmail) {
+        queryParams.set("startDate", dayjs().subtract(1, "year").toISOString());
+        queryParams.set("endDate", dayjs().add(5, "year").toISOString());
+      }
 
-      const data = await res.json();
+      if (currentFilters.sessionStatus && currentFilters.sessionStatus !== "all") {
+        queryParams.set("sessionStatus", currentFilters.sessionStatus);
+      }
+      if (currentFilters.status && currentFilters.status !== "all") {
+        queryParams.set("status", currentFilters.status);
+      }
+      if (currentFilters.platform && currentFilters.platform !== "all") {
+        queryParams.set("platform", currentFilters.platform);
+      }
+      if (currentFilters.userId) {
+        queryParams.set("userId", currentFilters.userId);
+      }
+      if (currentFilters.userEmail) {
+        queryParams.set("userEmail", currentFilters.userEmail);
+      }
+
+      const data = await apiGet<any>(`/api/scheduler/posts?${queryParams.toString()}`);
       const items = Array.isArray(data)
         ? data
         : data.items || data.data?.items || data.data?.posts || data.data || [];
@@ -190,11 +216,11 @@ export default function AdminPostsPage() {
     } finally {
       setLoading(false);
     }
-  }, [userTimezone, toast]);
+  }, [userTimezone, toast, filters]);
 
   useEffect(() => {
-    fetchPosts(currentPage);
-  }, [currentPage]); // Re-fetch when page changes
+    fetchPosts(currentPage, filters);
+  }, [currentPage, filters, fetchPosts]); // Re-fetch when page or filters change
 
   useEffect(() => {
     if (!socket) return;
@@ -559,6 +585,15 @@ export default function AdminPostsPage() {
           Refresh
         </Button>
       </div>
+
+      <PostFilters 
+        type="posts"
+        onFilterChange={(newFilters) => {
+          setFilters(newFilters);
+          setCurrentPage(1);
+        }} 
+        initialFilters={filters}
+      />
 
       <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <CardHeader className="pb-3 border-b border-slate-800">

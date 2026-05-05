@@ -1,22 +1,14 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
-const BACKEND_URL =
-  process.env.BACKEND_API_URL ||
-  process.env.ANOTHER_BACKEND_API_URL ||
-  "http://localhost:4000";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams.toString();
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const headers = await getBackendHeaders();
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/posts${searchParams ? `?${searchParams}` : ''}`, {
+    const res = await fetch(`${getBackendUrl()}/api/scheduler/posts${searchParams ? `?${searchParams}` : ''}`, {
       method: "GET",
-      headers: {
-        ...(token ? { Cookie: `token=${token}` } : {}),
-      },
+      headers,
     });
 
     const data = await res.json().catch(() => null);
@@ -34,27 +26,23 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const contentType = request.headers.get("content-type") || "";
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const headers = await getBackendHeaders();
 
     let body: BodyInit | null;
-    const headers: Record<string, string> = {
-      ...(token ? { Cookie: `token=${token}` } : {}),
-    };
 
     if (contentType.includes("application/json")) {
       const postData = await request.json().catch(() => ({}));
       const formData = new FormData();
       formData.append("data", JSON.stringify(postData));
       body = formData;
+      // Note: We don't set Content-Type header here because FormData will set it with the boundary
     } else {
       // For multipart/form-data (files), we forward the body as-is (readable stream)
-      // and let the backend deal with the boundary
       body = request.body;
       headers["Content-Type"] = contentType;
     }
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/posts`, {
+    const res = await fetch(`${getBackendUrl()}/api/scheduler/posts`, {
       method: "POST",
       headers,
       body,

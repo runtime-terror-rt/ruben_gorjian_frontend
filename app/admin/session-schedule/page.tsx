@@ -51,7 +51,9 @@ import { useSocket } from "@/app/providers/SocketProvider";
 import { useTimezone } from "@/hooks/use-timezone";
 import { fromUTC } from "@/lib/timezone";
 import { useToast } from "@/hooks/use-toast";
+import { useUpload } from "@/hooks/use-upload";
 import { apiGet, apiPatch } from "@/lib/api";
+import PostFilters, { FilterState } from "@/components/admin/PostFilters";
 
 type Session = {
   id: string;
@@ -107,11 +109,21 @@ export default function SessionSchedulePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const { uploadFile, uploading } = useUpload();
   const itemsPerPage = 10;
   const { socket } = useSocket();
-  const { timezoneAbbr, timezone } = useTimezone();
+  const { timezone, timezoneAbbr } = useTimezone();
+  
+  // Filter State
+  const [filters, setFilters] = useState<FilterState>({
+    sessionStatus: "all",
+    status: "all",
+    platform: "all",
+    userId: "",
+    userEmail: "",
+  });
 
-  const fetchSessions = useCallback(async (page = currentPage) => {
+  const fetchSessions = useCallback(async (page = currentPage, currentFilters = filters) => {
     try {
       setLoading(true);
       // Fetching from unified posts endpoint with session filters
@@ -125,8 +137,6 @@ export default function SessionSchedulePage() {
       
       const queryParams = new URLSearchParams({
         all: "true",
-        startDate,
-        endDate,
         scheduleType: "PHOTO_SESSION,VIDEO_SESSION"
       });
 
@@ -136,6 +146,29 @@ export default function SessionSchedulePage() {
       } else {
         queryParams.set("page", "1");
         queryParams.set("pageSize", "100");
+      }
+
+      // Only add date range if no specific user is targeted
+      if (!currentFilters.userId && !currentFilters.userEmail) {
+        queryParams.set("startDate", startDate);
+        queryParams.set("endDate", endDate);
+      }
+
+      // Add custom filters
+      if (currentFilters.sessionStatus && currentFilters.sessionStatus !== "all") {
+        queryParams.set("sessionStatus", currentFilters.sessionStatus);
+      }
+      if (currentFilters.platform && currentFilters.platform !== "all") {
+        queryParams.set("platform", currentFilters.platform);
+      }
+      if (currentFilters.status && currentFilters.status !== "all") {
+        queryParams.set("status", currentFilters.status);
+      }
+      if (currentFilters.userId) {
+        queryParams.set("userId", currentFilters.userId);
+      }
+      if (currentFilters.userEmail) {
+        queryParams.set("userEmail", currentFilters.userEmail);
       }
 
       const data = await apiGet<any>(`/api/scheduler/posts?${queryParams.toString()}`);
@@ -185,11 +218,11 @@ export default function SessionSchedulePage() {
     } finally {
       setLoading(false);
     }
-  }, [toast, view, currentPage, itemsPerPage, currentMonth, timezone]);
+  }, [toast, view, currentPage, itemsPerPage, currentMonth, timezone, filters]);
 
   useEffect(() => {
-    fetchSessions(currentPage);
-  }, [currentPage, fetchSessions]); // Re-fetch when page or view (via fetchSessions) changes
+    fetchSessions(currentPage, filters);
+  }, [currentPage, filters, fetchSessions]); // Re-fetch when page or filters change
 
   useEffect(() => {
     if (!socket) return;
@@ -410,6 +443,15 @@ export default function SessionSchedulePage() {
           </Button>
         </div>
       </div>
+
+      <PostFilters 
+        type="sessions"
+        onFilterChange={(newFilters) => {
+          setFilters(newFilters);
+          setCurrentPage(1); // Reset to first page when filters change
+        }} 
+        initialFilters={filters}
+      />
 
       {view === "calendar" ? (
         <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm overflow-hidden">
