@@ -53,6 +53,7 @@ interface PostModalProps {
     assetIds?: string[];
     socialAccountIds: string[];
     hashtags?: string[];
+    existingMedia?: any[];
   } | null;
   isAdmin?: boolean;
   onPublish?: (payload: any) => Promise<void>;
@@ -151,6 +152,9 @@ export default function PostModal({
           ? editingPost.hashtags.join(" ")
           : "",
       );
+      if (editingPost.existingMedia) {
+        setAssets(editingPost.existingMedia);
+      }
     } else if (initialDate) {
       // initialDate is already in user timezone from calendar
       setDatetime(formatForDateTimeLocal(initialDate, userTimezone));
@@ -669,15 +673,26 @@ export default function PostModal({
                     {[...assets, ...selectedFiles.map(f => ({ id: f.name, name: f.name, storageKey: f.name, isLocal: true, file: f }))].map((asset) => {
                       const id = 'isLocal' in asset ? asset.name : asset.id;
                       const isSelected = 'isLocal' in asset || assetIds.includes(asset.id);
+                      
+                      let thumbUrl = null;
+                      if (!('isLocal' in asset) && asset.storageKey) {
+                        thumbUrl = buildStorageUrl(STORAGE_BASE_URL, asset.storageKey);
+                      }
+
                       return (
                         <label
                           key={id}
                           className={clsx(
-                            "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50",
+                            "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50 transition-all",
                             isSelected &&
                               "bg-slate-800/70 border border-lime-400/50",
                           )}
                         >
+                          {thumbUrl && (
+                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700">
+                               <img src={thumbUrl} alt="" className="w-full h-full object-cover" />
+                            </div>
+                          )}
                           <input
                             type={allowsMultipleMedia ? "checkbox" : "radio"}
                             name="asset"

@@ -561,6 +561,7 @@ export default function EnhancedCalendar() {
     createPost,
     updatePost,
     movePost,
+    publishPost,
     // Explicitly destructure timezone as userTimezone to be used in children
     timezone: userTimezone,
   } = useCalendar();
@@ -576,6 +577,7 @@ export default function EnhancedCalendar() {
     assetIds?: string[];
     socialAccountIds: string[];
     hashtags?: string[];
+    existingMedia?: any[];
   } | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);
@@ -663,6 +665,11 @@ export default function EnhancedCalendar() {
           : post.hashtags
             ? [post.hashtags]
             : [],
+        existingMedia: post.asset ? [{
+          id: post.asset.id,
+          storageKey: post.asset.storageKey,
+          name: post.asset.storageKey.split('/').pop() || 'Media'
+        }] : [],
       });
       // post.scheduledFor is already in user timezone from fetchPosts conversion
       setModalDate(userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor));
@@ -945,6 +952,7 @@ export default function EnhancedCalendar() {
           onUpload={uploadFile}
           uploading={uploading}
           isAdmin={isAdmin}
+          onPublish={isAdmin ? (payload) => publishPost(editingPost?.id || "") : undefined}
         />
 
         <PostDetailsModal
