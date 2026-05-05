@@ -133,7 +133,7 @@ export default function PostDetailsModal({
   const handleDelete = async () => {
     if (!postId || !onDelete) return;
     if (!confirm("Are you sure you want to delete this post?")) return;
-    
+
     setIsDeleting(true);
     try {
       await onDelete(postId);
@@ -155,8 +155,8 @@ export default function PostDetailsModal({
     mediaUrl = anyPost.assets[0];
   }
 
-  const scheduledDate = post?.scheduledFor 
-    ? dayjs.tz(post.scheduledFor, userTimezone) 
+  const scheduledDate = post?.scheduledFor
+    ? dayjs.tz(post.scheduledFor, userTimezone)
     : null;
 
   return (
@@ -175,219 +175,219 @@ export default function PostDetailsModal({
         className="absolute inset-0 bg-black/70 backdrop-blur-md transition-opacity duration-300"
         onClick={onClose}
       />
-      
+
       <div
         className="relative w-full max-w-2xl bg-slate-900/90 border border-slate-800 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh] overflow-hidden"
         style={{ animation: 'modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1)' }}
       >
         {/* Top Accent Strip */}
         <div className={clsx(
-           "h-1.5 w-full shrink-0",
-           post?.status === 'POSTED' ? "bg-gradient-to-r from-emerald-500 to-teal-400" :
-           post?.status === 'FAILED' ? "bg-gradient-to-r from-rose-500 to-pink-500" :
-           "bg-gradient-to-r from-amber-400 to-orange-500"
+          "h-1.5 w-full shrink-0",
+          post?.status === 'POSTED' ? "bg-gradient-to-r from-emerald-500 to-teal-400" :
+            post?.status === 'FAILED' ? "bg-gradient-to-r from-rose-500 to-pink-500" :
+              "bg-gradient-to-r from-amber-400 to-orange-500"
         )} />
 
         {/* Header */}
         <div className="flex items-start justify-between p-6 pb-4 shrink-0 transition-all">
           <div className="space-y-1">
             <h3 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-               Post Intelligence
-               {post?.status === 'PUBLISHING' && (
-                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping inline-block" />
-               )}
+              Post Intelligence
+              {post?.status === 'PUBLISHING' && (
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-ping inline-block" />
+              )}
             </h3>
             <div className="flex items-center gap-3 text-xs text-slate-400">
-               <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  {scheduledDate?.format('MMM D, HH:mm')}
-               </span>
-               <span className="w-1 h-1 rounded-full bg-slate-700" />
-               <span className="flex items-center gap-1.5">
-                  <CalendarIcon className="w-3.5 h-3.5" />
-                  {scheduledDate?.fromNow()}
-               </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                {scheduledDate?.format('MMM D, HH:mm')}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-slate-700" />
+              <span className="flex items-center gap-1.5">
+                <CalendarIcon className="w-3.5 h-3.5" />
+                {scheduledDate?.fromNow()}
+              </span>
             </div>
           </div>
-          <button 
-             onClick={onClose}
-             className="p-2 rounded-full hover:bg-slate-800 text-slate-500 hover:text-white transition-all transform hover:rotate-90"
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-slate-800 text-slate-500 hover:text-white transition-all transform hover:rotate-90"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Content Area */}
-        <div 
+        <div
           className="flex-1 overflow-y-auto px-6 py-2 space-y-6 scrollbar-hide overscroll-contain"
           {...scrollHandlers}
         >
           {loading ? (
-             <div className="py-20 flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-slate-800 border-t-amber-400 rounded-full animate-spin" />
-                <span className="text-slate-400 animate-pulse">Analyzing Post Data...</span>
-             </div>
+            <div className="py-20 flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-4 border-slate-800 border-t-amber-400 rounded-full animate-spin" />
+              <span className="text-slate-400 animate-pulse">Analyzing Post Data...</span>
+            </div>
           ) : !post ? (
-             <div className="py-20 text-center">
-                <AlertCircle className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-                <h4 className="text-xl text-slate-300 font-medium">Data Sync Error</h4>
-                <p className="text-slate-500 text-sm mt-1">This post record could not be retrieved from the cluster.</p>
-             </div>
+            <div className="py-20 text-center">
+              <AlertCircle className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+              <h4 className="text-xl text-slate-300 font-medium">Data Sync Error</h4>
+              <p className="text-slate-500 text-sm mt-1">This post record could not be retrieved from the cluster.</p>
+            </div>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              
+
               {/* Core Analytics / Status */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                 <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Status</span>
-                    <StatusPill status={post.status} />
-                 </div>
-                 <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Platforms</span>
-                    <span className="text-sm font-semibold text-white">{post.targets.length} connected</span>
-                 </div>
-                 <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Media</span>
-                    <span className="text-sm font-semibold text-white">{mediaUrl ? "Attached" : "Null"}</span>
-                 </div>
-                 <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">TZ</span>
-                    <span className="text-sm font-semibold text-amber-400">{timezoneAbbr}</span>
-                 </div>
+                <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Status</span>
+                  <StatusPill status={post.status} />
+                </div>
+                <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Platforms</span>
+                  <span className="text-sm font-semibold text-white">{post.targets.length} connected</span>
+                </div>
+                <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Media</span>
+                  <span className="text-sm font-semibold text-white">{mediaUrl ? "Attached" : "Null"}</span>
+                </div>
+                <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">TZ</span>
+                  <span className="text-sm font-semibold text-amber-400">{timezoneAbbr}</span>
+                </div>
               </div>
 
               {/* Admin Context */}
               {isAdmin && (post.user || post.author) && (
                 <div className="p-4 bg-lime-400/10 border border-lime-400/20 rounded-2xl flex items-center gap-4">
-                   <div className="p-2.5 bg-lime-400/20 rounded-xl">
-                      <UserIcon className="w-5 h-5 text-lime-400" />
-                   </div>
-                   <div className="flex-1 min-w-0">
-                      <p className="text-xs text-lime-400 font-bold uppercase tracking-widest">Post Origin</p>
-                      <h5 className="text-sm font-medium text-white truncate">
-                         {post.user?.fullName || post.user?.name || post.author?.name || post.user?.email || "Managed Account"}
-                      </h5>
-                   </div>
-                   <Button variant="ghost" size="sm" className="text-lime-400 hover:bg-lime-400/10 text-xs">
-                      View Profile
-                   </Button>
+                  <div className="p-2.5 bg-lime-400/20 rounded-xl">
+                    <UserIcon className="w-5 h-5 text-lime-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-lime-400 font-bold uppercase tracking-widest">Post Origin</p>
+                    <h5 className="text-sm font-medium text-white truncate">
+                      {post.user?.fullName || post.user?.name || post.author?.name || post.user?.email || "Managed Account"}
+                    </h5>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-lime-400 hover:bg-lime-400/10 text-xs">
+                    View Profile
+                  </Button>
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 {/* Left Column: Context */}
-                 <div className="space-y-6">
-                    <div className="space-y-3">
-                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-emerald-400" />
-                          Caption Strategy
-                       </label>
-                       <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl shadow-inner min-h-[120px] relative overflow-hidden group">
-                          <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <ExternalLink className="w-4 h-4 text-slate-600" />
-                          </div>
-                          <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap selection:bg-amber-400 selection:text-slate-900">
-                             {post.caption === '.' ? <span className="text-slate-500 italic">No primary caption provided.</span> : post.caption}
-                          </p>
-                       </div>
+                {/* Left Column: Context */}
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-emerald-400" />
+                      Caption Strategy
+                    </label>
+                    <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl shadow-inner min-h-[120px] relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ExternalLink className="w-4 h-4 text-slate-600" />
+                      </div>
+                      <p className="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap selection:bg-amber-400 selection:text-slate-900">
+                        {post.caption === '.' ? <span className="text-slate-500 italic">No primary caption provided.</span> : post.caption}
+                      </p>
                     </div>
+                  </div>
 
-                    {post.hashtags && Array.isArray(post.hashtags) && post.hashtags.length > 0 && (
-                      <div className="space-y-3">
-                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                            <Hash className="w-4 h-4 text-sky-400" />
-                            Target Hashtags
-                         </label>
-                         <div className="flex flex-wrap gap-2">
-                            {post.hashtags.map((tag, idx) => (
-                              <span key={idx} className="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-xl text-xs font-medium hover:scale-105 transition-transform cursor-default">
-                                {tag}
-                              </span>
-                            ))}
-                         </div>
+                  {post.hashtags && Array.isArray(post.hashtags) && post.hashtags.length > 0 && (
+                    <div className="space-y-3">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <Hash className="w-4 h-4 text-sky-400" />
+                        Target Hashtags
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {post.hashtags.map((tag, idx) => (
+                          <span key={idx} className="bg-sky-500/10 text-sky-400 border border-sky-500/20 px-3 py-1.5 rounded-xl text-xs font-medium hover:scale-105 transition-transform cursor-default">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Column: Visual Preview */}
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-pink-400" />
+                    Media Asset
+                  </label>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden group relative aspect-[4/5] sm:aspect-square">
+                    {mediaUrl ? (
+                      <>
+                        {(post.asset?.type === "VIDEO" || (anyPost?.media && anyPost.media[0]?.mediaType === "VIDEO")) ? (
+                          <video src={mediaUrl} controls className="w-full h-full object-cover" />
+                        ) : (
+                          <NextImage
+                            src={mediaUrl}
+                            alt="Post media"
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            unoptimized
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                          <span className="text-xs text-white font-medium drop-shadow-md">Original Media File</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-slate-900/50">
+                        <AlertCircle className="w-10 h-10 text-slate-800" />
+                        <span className="text-xs text-slate-600">Visual post component empty.</span>
                       </div>
                     )}
-                 </div>
-
-                 {/* Right Column: Visual Preview */}
-                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                       <ImageIcon className="w-4 h-4 text-pink-400" />
-                       Media Asset
-                    </label>
-                    <div className="rounded-2xl border border-slate-800 bg-slate-950 overflow-hidden group relative aspect-[4/5] sm:aspect-square">
-                       {mediaUrl ? (
-                         <>
-                            {(post.asset?.type === "VIDEO" || (anyPost?.media && anyPost.media[0]?.mediaType === "VIDEO")) ? (
-                              <video src={mediaUrl} controls className="w-full h-full object-cover" />
-                            ) : (
-                              <NextImage 
-                                src={mediaUrl} 
-                                alt="Post media" 
-                                fill 
-                                className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                                unoptimized
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                               <span className="text-xs text-white font-medium drop-shadow-md">Original Media File</span>
-                            </div>
-                         </>
-                       ) : (
-                         <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-slate-900/50">
-                            <AlertCircle className="w-10 h-10 text-slate-800" />
-                            <span className="text-xs text-slate-600">Visual post component empty.</span>
-                         </div>
-                       )}
-                    </div>
-                 </div>
+                  </div>
+                </div>
               </div>
 
               {/* Target Platforms Detail */}
               <div className="space-y-4">
-                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                    Platform Distribution Pipeline
-                 </label>
-                 <div className="grid grid-cols-1 gap-3">
-                    {post.targets.map((target) => {
-                       const Icon = platformIcons[target.platform];
-                       const color = platformColors[target.platform];
-                       return (
-                         <div key={target.id} className="bg-slate-800/30 border border-slate-800 hover:border-slate-700/80 transition-all rounded-2xl p-4 flex items-center gap-4 group">
-                            <div className={clsx("p-3 rounded-2xl bg-slate-900 group-hover:scale-110 transition-transform", color)}>
-                               <Icon className="w-6 h-6" />
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Platform Distribution Pipeline
+                </label>
+                <div className="grid grid-cols-1 gap-3">
+                  {post.targets.map((target) => {
+                    const Icon = platformIcons[target.platform];
+                    const color = platformColors[target.platform];
+                    return (
+                      <div key={target.id} className="bg-slate-800/30 border border-slate-800 hover:border-slate-700/80 transition-all rounded-2xl p-4 flex items-center gap-4 group">
+                        <div className={clsx("p-3 rounded-2xl bg-slate-900 group-hover:scale-110 transition-transform", color)}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm">{target.platform}</span>
+                            {target.socialAccount && (
+                              <span className="px-2 py-0.5 rounded-lg bg-slate-900 text-[10px] text-slate-400 border border-slate-800">
+                                @{target.socialAccount.displayName}
+                              </span>
+                            )}
+                          </div>
+                          {target.publishedAt && (
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              Published {dayjs.tz(target.publishedAt, userTimezone).format('MMM D [at] HH:mm')}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <StatusPill status={target.status === 'PENDING' ? 'SCHEDULED' : (target.status as any)} />
+                          {target.errorMessage && (
+                            <div className="flex items-center gap-1.5 text-rose-400 group/err relative">
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              <span className="text-[10px] font-bold max-w-[100px] truncate">{target.errorMessage}</span>
+                              <div className="absolute right-0 bottom-full mb-2 w-48 p-2 bg-rose-950 border border-rose-500/50 rounded-lg text-[10px] text-white opacity-0 group-hover/err:opacity-100 transition-opacity z-50">
+                                {target.errorMessage}
+                              </div>
                             </div>
-                            <div className="flex-1">
-                               <div className="flex items-center gap-2">
-                                  <span className="font-bold text-white text-sm">{target.platform}</span>
-                                  {target.socialAccount && (
-                                    <span className="px-2 py-0.5 rounded-lg bg-slate-900 text-[10px] text-slate-400 border border-slate-800">
-                                       @{target.socialAccount.displayName}
-                                    </span>
-                                  )}
-                               </div>
-                               {target.publishedAt && (
-                                 <p className="text-[10px] text-slate-500 mt-0.5">
-                                    Published {dayjs.tz(target.publishedAt, userTimezone).format('MMM D [at] HH:mm')}
-                                 </p>
-                               )}
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                               <StatusPill status={target.status === 'PENDING' ? 'SCHEDULED' : (target.status as any)} />
-                               {target.errorMessage && (
-                                  <div className="flex items-center gap-1.5 text-rose-400 group/err relative">
-                                     <AlertCircle className="w-3.5 h-3.5" />
-                                     <span className="text-[10px] font-bold max-w-[100px] truncate">{target.errorMessage}</span>
-                                     <div className="absolute right-0 bottom-full mb-2 w-48 p-2 bg-rose-950 border border-rose-500/50 rounded-lg text-[10px] text-white opacity-0 group-hover/err:opacity-100 transition-opacity z-50">
-                                        {target.errorMessage}
-                                     </div>
-                                  </div>
-                               )}
-                            </div>
-                         </div>
-                       );
-                    })}
-                 </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
             </div>
@@ -396,33 +396,33 @@ export default function PostDetailsModal({
 
         {/* Action Footer */}
         <div className="p-6 shrink-0 border-t border-slate-800 bg-slate-950/50 flex flex-col sm:flex-row gap-3">
-            <Button 
-               variant="outline" 
-               onClick={onClose} 
-               className="border-slate-800 bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 flex-1 order-2 sm:order-1"
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="border-slate-800 bg-transparent text-slate-400 hover:text-white hover:bg-slate-800 flex-1 order-2 sm:order-1"
+          >
+            Close
+          </Button>
+          <div className="flex gap-2 flex-[2] order-1 sm:order-2">
+            {isAdmin && (
+              <Button
+                variant="ghost"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1 border-rose-500/20 text-rose-400 hover:bg-rose-500/10"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Archive
+              </Button>
+            )}
+            <Button
+              onClick={handleEdit}
+              className="flex-1 bg-gradient-to-r from-lime-400 to-lime-500 text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all"
             >
-               Close
+              <Edit2 className="w-4 h-4 mr-2" />
+              Optimization
             </Button>
-            <div className="flex gap-2 flex-[2] order-1 sm:order-2">
-               {isAdmin && (
-                 <Button
-                    variant="ghost"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="flex-1 border-rose-500/20 text-rose-400 hover:bg-rose-500/10"
-                 >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Archive
-                 </Button>
-               )}
-               <Button
-                 onClick={handleEdit}
-                 className="flex-1 bg-gradient-to-r from-lime-400 to-lime-500 text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all"
-               >
-                 <Edit2 className="w-4 h-4 mr-2" />
-                 Optimization
-               </Button>
-            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -56,7 +56,7 @@ export default function MediaLibraryPage() {
         const params = new URLSearchParams();
         params.set("type", activeTab);
         params.set("page", page.toString());
-        params.set("limit", "3");
+        params.set("limit", "9");
 
         const res = await fetch(`/api/uploads/assets?${params.toString()}`, { 
           credentials: "include" 

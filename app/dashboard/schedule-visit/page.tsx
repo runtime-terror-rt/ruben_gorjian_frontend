@@ -150,11 +150,11 @@ export default function ScheduleVisitPage() {
       const items = Array.isArray(data)
         ? data
         : data.items ||
-          data.data?.items ||
-          data.data?.posts ||
-          data.sessions ||
-          data.data ||
-          [];
+        data.data?.items ||
+        data.data?.posts ||
+        data.sessions ||
+        data.data ||
+        [];
 
       const sessionItems = items
         .filter(
@@ -264,7 +264,7 @@ export default function ScheduleVisitPage() {
     setDuration(
       session.session?.durationMinutes || session.sessionDurationMinutes || 60,
     );
-    
+
     // Load existing assets if they exist in the session
     if (session.media && session.media.length > 0) {
       setAssets(session.media.map(m => ({
@@ -552,19 +552,19 @@ export default function ScheduleVisitPage() {
                         "relative flex flex-col items-center justify-center aspect-square rounded-xl transition-all duration-300 group",
                         !isCurrentMonth && "opacity-20 cursor-default",
                         canSelect &&
-                          "hover:bg-lime-400/10 hover:border-lime-400/30 border border-transparent",
+                        "hover:bg-lime-400/10 hover:border-lime-400/30 border border-transparent",
                         isSelected &&
-                          "bg-lime-400 text-slate-900 font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-lime-400 scale-105 z-10",
+                        "bg-lime-400 text-slate-900 font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-lime-400 scale-105 z-10",
                         !isSelected &&
-                          isCurrentMonth &&
-                          !isPast &&
-                          "bg-slate-800/40 text-slate-300 hover:scale-105",
+                        isCurrentMonth &&
+                        !isPast &&
+                        "bg-slate-800/40 text-slate-300 hover:scale-105",
                         isToday &&
-                          !isSelected &&
-                          "border-lime-400/50 text-lime-400 font-bold",
+                        !isSelected &&
+                        "border-lime-400/50 text-lime-400 font-bold",
                         isPast &&
-                          isCurrentMonth &&
-                          "bg-slate-900/20 text-slate-700 cursor-not-allowed",
+                        isCurrentMonth &&
+                        "bg-slate-900/20 text-slate-700 cursor-not-allowed",
                       )}
                     >
                       <span className="text-sm">{day.date()}</span>
@@ -1024,10 +1024,10 @@ export default function ScheduleVisitPage() {
                         <div className="flex flex-wrap gap-2 mt-3">
                           {s.media && s.media.length > 0 ? (
                             s.media.slice(0, 4).map((m, i) => (
-                              <a 
-                                key={m.id} 
-                                href={m.url} 
-                                target="_blank" 
+                              <a
+                                key={m.id}
+                                href={m.url}
+                                target="_blank"
                                 rel="noreferrer"
                                 className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
                               >
@@ -1047,10 +1047,10 @@ export default function ScheduleVisitPage() {
                             ))
                           ) : (
                             s.assets?.slice(0, 4).map((url, i) => (
-                              <a 
-                                key={i} 
-                                href={url} 
-                                target="_blank" 
+                              <a
+                                key={i}
+                                href={url}
+                                target="_blank"
                                 rel="noreferrer"
                                 className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
                               >
