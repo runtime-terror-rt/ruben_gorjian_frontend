@@ -51,6 +51,12 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Management",
     items: [
       {
+        label: "Client Workspace",
+        href: "/admin/client-workspace",
+        icon: Users,
+        permission: "USER_MANAGE",
+      },
+      {
         label: "Users",
         href: "/admin/users",
         icon: Users,
