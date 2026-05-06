@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { 
   User, 
   Mail, 
@@ -45,6 +45,8 @@ export default function AdminClientWorkspace() {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [sessionRefreshKey, setSessionRefreshKey] = useState(0);
   const [editingSession, setEditingSession] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("calendar");
+  const composerRef = useRef<HTMLDivElement>(null);
 
 
 
@@ -55,8 +57,11 @@ export default function AdminClientWorkspace() {
 
   const handleEditSession = (session: any) => {
     setEditingSession(session);
-    // Switch to sessions tab and scroll to top if needed
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setActiveTab("sessions");
+    // Scroll to composer form
+    setTimeout(() => {
+      composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   if (!selectedClient) {
@@ -143,7 +148,7 @@ export default function AdminClientWorkspace() {
       </div>
 
       {/* Main Workspace Tabs */}
-      <Tabs defaultValue="calendar" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-slate-950/50 border border-slate-800 p-1.5 rounded-2xl">
           <TabsTrigger value="calendar" className="rounded-xl px-6 data-[state=active]:bg-slate-800 data-[state=active]:text-white transition-all">
             <CalendarIcon className="h-4 w-4 mr-2" />
@@ -156,15 +161,15 @@ export default function AdminClientWorkspace() {
         </TabsList>
 
         <TabsContent value="calendar" className="space-y-6 outline-none">
-          <CalendarProvider targetUserId={selectedClient.id}>
+          <CalendarProvider targetUserId={selectedClient.id} clientEmail={selectedClient.email}>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/20 backdrop-blur-sm p-6">
-              <EnhancedCalendar />
+              <EnhancedCalendar clientEmail={selectedClient.email} />
             </div>
           </CalendarProvider>
         </TabsContent>
         <TabsContent value="sessions" className="space-y-8 outline-none">
           <div className="grid grid-cols-1 gap-8">
-            <div className="w-full">
+            <div className="w-full" ref={composerRef}>
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-white mb-2">
                   {editingSession ? "Edit Session" : "Book New Session"}

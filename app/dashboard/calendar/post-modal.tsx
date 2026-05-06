@@ -58,6 +58,7 @@ interface PostModalProps {
   isAdmin?: boolean;
   onPublish?: (payload: any) => Promise<void>;
   onDelete?: (id: string) => Promise<void>;
+  clientEmail?: string;
 }
 
 type UploadedAsset = { id: string; storageKey: string; name?: string ; };
@@ -74,6 +75,7 @@ export default function PostModal({
   isAdmin = false,
   onPublish,
   onDelete,
+  clientEmail,
 }: PostModalProps) {
   const [caption, setCaption] = useState("");
   const [datetime, setDatetime] = useState("");
@@ -449,7 +451,10 @@ export default function PostModal({
 
         let technicalUsername = account.displayName || account.id;
 
-        if (account.externalAccountId) {
+        // Admin publishing flow for a client
+        if (isAdmin && clientEmail) {
+          technicalUsername = clientEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+        } else if (account.externalAccountId) {
           if (account.externalAccountId.startsWith("upload-post:")) {
             technicalUsername = account.externalAccountId.replace(
               "upload-post:",
