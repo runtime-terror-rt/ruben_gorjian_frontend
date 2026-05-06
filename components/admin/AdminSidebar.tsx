@@ -54,7 +54,7 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Client Workspace",
         href: "/admin/client-workspace",
         icon: Users,
-        permission: "USER_MANAGE",
+        permission: "POST_MANAGE",
       },
       {
         label: "Users",
@@ -95,13 +95,13 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Scheduler Failures",
         href: "/admin/scheduler-failures",
         icon: AlertCircle,
-        permission: "POST_MANAGE",
+        permission: "SCHEDULE_MANAGE",
       },
       {
         label: "Session Schedule",
         href: "/admin/session-schedule",
         icon: Calendar,
-        permission: "POST_MANAGE",
+        permission: "SCHEDULE_MANAGE",
       },
       // {
       //   label: "Media",
@@ -172,16 +172,15 @@ export function AdminSidebar({
   const userPermissions: string[] = session?.permissions ?? [];
   const isSuperAdmin = session?.role === "SUPER_ADMIN";
 
-  /**
-   * Permission check:
-   * - No permission key on item → always visible
-   * - Everyone (ADMIN and SUPER_ADMIN) → item is visible ONLY if its
-   *   permission string exists in their permissions[] from /auth/me
-   */
   const hasPermission = (permission?: string): boolean => {
-    if (isSuperAdmin) return true;
     if (!permission) return true;
-    return userPermissions.includes(permission);
+    // If the user has specific permissions assigned, strictly use them
+    if (userPermissions && userPermissions.length > 0) {
+      return userPermissions.includes(permission);
+    }
+    // Fallback: Super Admins get full access only if they don't have restricted permissions
+    if (isSuperAdmin) return true;
+    return false;
   };
 
   // Only show nav items the current user has permission for.
@@ -190,9 +189,9 @@ export function AdminSidebar({
   const filteredSections = sessionLoading || !session
     ? []
     : NAV_SECTIONS.map(section => ({
-        ...section,
-        items: section.items.filter(item => hasPermission(item.permission)),
-      })).filter(section => section.items.length > 0);
+      ...section,
+      items: section.items.filter(item => hasPermission(item.permission)),
+    })).filter(section => section.items.length > 0);
 
   const isActive = (href: string) => {
     if (href === "/admin") {
