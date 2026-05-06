@@ -138,9 +138,13 @@ function NavbarInner() {
                 className="flex items-center gap-2 rounded-full border border-[#e4e5ea] bg-white px-3 py-1.5 text-sm font-medium text-[#1c2231] shadow-sm hover:bg-gray-50 transition-all"
               >
                 {/* Avatar */}
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[11px] font-black text-white">
-                  {userInitials}
-                </span>
+                {session?.avatarUrl ? (
+                  <img src={session.avatarUrl} alt="Avatar" className="h-7 w-7 rounded-full object-cover border border-[#e4e5ea]" />
+                ) : (
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[11px] font-black text-white">
+                    {userInitials}
+                  </span>
+                )}
                 <span className="max-w-[120px] truncate text-xs font-semibold text-[#1c2231]">
                   {session?.name || session?.email?.split("@")[0] || "Account"}
                 </span>
@@ -244,9 +248,13 @@ function NavbarInner() {
                 {/* User info in mobile */}
                 <div className="mt-2 rounded-2xl border border-[#e4e5ea] bg-white px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-black text-white">
-                      {userInitials}
-                    </span>
+                    {session?.avatarUrl ? (
+                      <img src={session.avatarUrl} alt="Avatar" className="h-9 w-9 shrink-0 rounded-full object-cover border border-[#e4e5ea]" />
+                    ) : (
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-black text-white">
+                        {userInitials}
+                      </span>
+                    )}
                     <div className="min-w-0">
                       <p className="truncate text-sm font-bold text-[#1c2231]">{session?.name || "User"}</p>
                       <p className="truncate text-[11px] text-[#6c7080]">{session?.email}</p>

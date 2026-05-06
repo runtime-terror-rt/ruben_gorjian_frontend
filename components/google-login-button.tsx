@@ -106,9 +106,11 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
 
       toast.success("Successfully logged in with Google!");
 
-      // Determine redirection destination
-      const session = data?.user || data;
-      const role = session?.role;
+      // Fetch fresh session data to ensure we have populated subscription info
+      const meRes = await fetch("/api/auth/me", { credentials: "include", cache: "no-store" });
+      const freshSession = meRes.ok ? await meRes.json() : (data?.user || data);
+
+      const role = freshSession?.role;
       const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
 
       if (isAdmin) {
@@ -116,13 +118,13 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
         return;
       }
 
-      const subscription = session?.subscription;
+      const subscription = freshSession?.subscription;
       const planCategory = subscription?.planCategory;
       const onboardingCompleted =
-        session?.onboardingCompleted ||
-        (planCategory === "CALENDAR_ONLY" && session?.calendarOnboardingCompleted) ||
-        (planCategory === "VISUAL_ADD_ON" && session?.visualOnboardingCompleted) ||
-        (planCategory === "FULL_MANAGEMENT" && session?.fullManagementOnboardingCompleted);
+        freshSession?.onboardingCompleted ||
+        (planCategory === "CALENDAR_ONLY" && freshSession?.calendarOnboardingCompleted) ||
+        (planCategory === "VISUAL_ADD_ON" && freshSession?.visualOnboardingCompleted) ||
+        (planCategory === "FULL_MANAGEMENT" && freshSession?.fullManagementOnboardingCompleted);
 
       // 1. If no payment (no subscription or status is not ACTIVE/TRIALING)
       if (!subscription || (subscription.status !== "ACTIVE" && subscription.status !== "TRIALING")) {
