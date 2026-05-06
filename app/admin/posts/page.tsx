@@ -52,6 +52,17 @@ const STORAGE_BASE_URL = getEnvVarWithDefault(
   "",
 );
 
+const getCompatibleMediaUrl = (value: string | null | undefined) => {
+  if (!value || typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/")) {
+    return STORAGE_BASE_URL ? `${STORAGE_BASE_URL.replace(/\/+$/, "")}${trimmed}` : null;
+  }
+  return buildStorageUrl(STORAGE_BASE_URL, trimmed);
+};
+
 type AdminPost = {
   id: string;
   caption: string | null;
@@ -493,9 +504,71 @@ export default function AdminPostsPage() {
   const handlePublishPost = async (id: string) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/posts/${id}/publish`, {
+
+      const post = posts.find((p) => p.id === id);
+      if (!post) throw new Error("Post not found");
+
+      const user = post.user || post.owner || post.author;
+      let username = "";
+      if (user && user.email) {
+        username = user.email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+      }
+
+      const platform = post.targets?.[0]?.platform?.toLowerCase() || "instagram";
+      const title = post.caption || "Instant 122";
+
+      let mediaUrls: string[] = [];
+      if (post.asset?.storageKey) {
+        const url = getCompatibleMediaUrl(post.asset.storageKey);
+        if (url) mediaUrls.push(url);
+      }
+      if (post.media && post.media.length > 0) {
+        post.media.forEach((m: any) => {
+          const url = m.url
+            ? getCompatibleMediaUrl(m.url)
+            : getCompatibleMediaUrl(m.storageKey);
+          if (url) mediaUrls.push(url);
+        });
+      }
+      if (mediaUrls.length === 0 && (post as any).assets && (post as any).assets.length > 0) {
+        (post as any).assets.forEach((a: any) => {
+          if (typeof a === "string") {
+            const url = getCompatibleMediaUrl(a);
+            if (url) mediaUrls.push(url);
+          } else if (typeof a === "object") {
+            const url = a.url
+              ? getCompatibleMediaUrl(a.url)
+              : getCompatibleMediaUrl(a.storageKey);
+            if (url) mediaUrls.push(url);
+          }
+        });
+      }
+
+      if (mediaUrls.length === 0) {
+        throw new Error(
+          "Cannot publish this post because no valid media URL was found. Please make sure the post has uploaded media."
+        );
+      }
+
+      const payload: any = {
+        username,
+        platform,
+        title,
+        asyncUpload: true,
+        hashtags: post.hashtags || [],
+      };
+
+      if (mediaUrls.length === 1) {
+        payload.mediaUrl = mediaUrls[0];
+      } else if (mediaUrls.length > 1) {
+        payload.mediaUrls = mediaUrls;
+      }
+
+      const res = await fetch(`/api/social-media/publish-now`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
