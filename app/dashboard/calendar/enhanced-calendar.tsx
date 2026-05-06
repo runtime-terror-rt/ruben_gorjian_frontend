@@ -593,8 +593,7 @@ function ListView({
                   onEdit={() => onEdit(post.id)}
                   onDelete={() => deletePost(post.id)}
                   onDuplicate={() => duplicatePost(post.id)}
-                  onPublish={publishPost ? () => publishPost(post.id) : undefined}
-                />
+                  onPublish={publishPost ? () => publishPost(post.id) : undefined} isBeforeNow={false}                />
               </div>
             );
           })}
