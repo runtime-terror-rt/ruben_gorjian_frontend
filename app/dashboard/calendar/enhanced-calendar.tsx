@@ -603,7 +603,7 @@ function ListView({
   );
 }
 
-export default function EnhancedCalendar() {
+export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string }) {
   const {
     display,
     setDisplay,
@@ -1024,6 +1024,7 @@ export default function EnhancedCalendar() {
             displayName: acc.displayName || acc.externalAccountId || acc.id,
             externalAccountId: acc.externalAccountId,
           }))}
+          clientEmail={clientEmail}
           onCreate={handleCreatePost}
           onUpload={uploadFile}
           uploading={uploading}

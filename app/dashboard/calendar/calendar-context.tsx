@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { buildStorageUrl } from "@/lib/storage-utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   createContext,
@@ -95,6 +96,7 @@ interface CalendarContextType {
 
   // Admin / Impersonation
   targetUserId?: string;
+  clientEmail?: string;
 
   // Timezone info (optional, added dynamically)
   timezone?: string;
@@ -155,9 +157,11 @@ function getDateRange(display: string, referenceDate?: string, tz?: string) {
 export function CalendarProvider({
   children,
   targetUserId,
+  clientEmail,
 }: {
   children: ReactNode;
   targetUserId?: string;
+  clientEmail?: string;
 }) {
   const {
     timezone: userTimezone,
@@ -629,6 +633,71 @@ export function CalendarProvider({
 
   const publishPost = useCallback(
     async (id: string) => {
+      // Admin publishing flow for a client
+      if (targetUserId && clientEmail) {
+        const post = posts.find((p) => p.id === id);
+        if (post) {
+          try {
+            const technicalUsername = clientEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+            const hashtagsStr = Array.isArray(post.hashtags) ? post.hashtags.join(" ") : "";
+            const fullCaption = hashtagsStr ? `${post.caption}\n\n${hashtagsStr}` : post.caption;
+
+            // Debug log to see the post structure
+            console.log("Publishing post:", post);
+
+            // Find media URL using the same logic as CalendarItem.tsx
+            const anyPost = post as any;
+            let mediaUrl = "";
+            const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_STORAGE_BASE_URL || "";
+
+            if (post.asset?.storageKey) {
+              mediaUrl = buildStorageUrl(STORAGE_BASE_URL, post.asset.storageKey) || "";
+            } else if (anyPost.media && anyPost.media.length > 0) {
+              mediaUrl = anyPost.media[0].url || buildStorageUrl(STORAGE_BASE_URL, anyPost.media[0].storageKey) || "";
+            } else if (anyPost.assets && anyPost.assets.length > 0) {
+              mediaUrl = anyPost.assets[0] || "";
+            }
+
+            // Handle multiple targets
+            for (const target of post.targets) {
+              const payload: any = {
+                username: technicalUsername,
+                platform: target.platform.toLowerCase(),
+                title: fullCaption,
+                asyncUpload: true,
+              };
+
+              if (mediaUrl) {
+                payload.mediaUrl = mediaUrl;
+              }
+
+              const endpoint = target.platform === "TIKTOK" 
+                ? "/api/tiktok/publish-now" 
+                : "/api/social-media/publish-now";
+
+              console.log(`Hitting ${endpoint} with payload:`, payload);
+
+              const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(payload),
+              });
+
+              if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.message || `Failed to publish to ${target.platform}`);
+              }
+            }
+            await fetchPosts();
+            return;
+          } catch (err) {
+            console.error("Admin Publish Now Error:", err);
+            throw err;
+          }
+        }
+      }
+
       const response = await fetch(`/api/posts/${id}/publish`, {
         method: "POST",
         credentials: "include",
@@ -641,7 +710,7 @@ export function CalendarProvider({
       const error = await response.json().catch(() => ({}));
       throw new Error(error.error || "Failed to publish post");
     },
-    [fetchPosts],
+    [fetchPosts, posts, targetUserId, clientEmail],
   );
 
   const refreshData = useCallback(async () => {
@@ -731,6 +800,7 @@ export function CalendarProvider({
     publishPost,
     refreshData,
     targetUserId,
+    clientEmail,
     // Add timezone info to context
     timezone: userTimezone,
     timezoneAbbr,
