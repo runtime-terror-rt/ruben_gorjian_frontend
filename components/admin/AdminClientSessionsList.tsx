@@ -59,15 +59,24 @@ export default function AdminClientSessionsList({
     try {
       setLoading(true);
       // Pass a wide date range to ensure future sessions are fetched
-      const from = dayjs().subtract(1, "month").toISOString();
-      const to = dayjs().add(1, "year").toISOString();
+      const startDate = dayjs().subtract(1, "month").toISOString();
+      const endDate = dayjs().add(1, "year").toISOString();
 
-      const url = `/api/scheduler/posts?userId=${userId}&scheduleType=PHOTO_SESSION,VIDEO_SESSION&from=${from}&to=${to}`;
+      const url = `/api/scheduler/posts?userId=${userId}&all=true&scheduleType=PHOTO_SESSION,VIDEO_SESSION&startDate=${startDate}&endDate=${endDate}&pageSize=100&limit=100`;
       const data = await apiGet<any>(url);
 
-      const items = Array.isArray(data)
+      const rawItems = Array.isArray(data)
         ? data
-        : data.items || data.data?.items || [];
+        : (data.items || data.data?.items || data.data?.posts || data.sessions || data.data || []);
+        
+      const items = rawItems.map((p: any) => {
+        const dateValue = p.scheduledFor || p.scheduledAt || p.date;
+        return {
+          ...p,
+          scheduledAt: dateValue,
+          scheduledFor: dateValue
+        };
+      });
       setSessions(items);
     } catch (err) {
       console.error("Failed to load sessions", err);
@@ -165,8 +174,9 @@ export default function AdminClientSessionsList({
   }
 
   const sortedSessions = [...sessions].sort((a, b) => {
-    const dateA = new Date(a.createdAt || a.scheduledAt || 0).getTime();
-    const dateB = new Date(b.createdAt || b.scheduledAt || 0).getTime();
+    // Priority: scheduledAt (the actual event time), then createdAt
+    const dateA = new Date(a.scheduledAt || a.scheduledFor || a.createdAt || 0).getTime();
+    const dateB = new Date(b.scheduledAt || b.scheduledFor || b.createdAt || 0).getTime();
     return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
   });
 
