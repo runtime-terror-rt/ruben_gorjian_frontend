@@ -32,10 +32,8 @@ export async function POST(request: NextRequest) {
 
     if (contentType.includes("application/json")) {
       const postData = await request.json().catch(() => ({}));
-      const formData = new FormData();
-      formData.append("data", JSON.stringify(postData));
-      body = formData;
-      // Note: We don't set Content-Type header here because FormData will set it with the boundary
+      body = JSON.stringify(postData);
+      headers["Content-Type"] = "application/json";
     } else {
       // For multipart/form-data (files), we forward the body as-is (readable stream)
       body = request.body;

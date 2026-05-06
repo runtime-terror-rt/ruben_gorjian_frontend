@@ -59,7 +59,7 @@ interface PostModalProps {
   onPublish?: (payload: any) => Promise<void>;
 }
 
-type UploadedAsset = { id: string; storageKey: string; name?: string };
+type UploadedAsset = { id: string; storageKey: string; name?: string ; };
 
 export default function PostModal({
   open,
@@ -242,8 +242,6 @@ export default function PostModal({
     const hasVideo = allSelectedMedia.some(m => m.type === 'VIDEO');
     const hasImage = allSelectedMedia.some(m => m.type === 'IMAGE');
 
-    // Mixed media (photos + video) is now allowed as per user request "unlimited photo and only one video"
-
     if (allSelectedMedia.filter(m => m.type === 'VIDEO').length > 1) {
       toast({
         title: "Video Limit",
@@ -424,6 +422,24 @@ export default function PostModal({
         hashtags.length > 0
           ? `${caption.trim()}\n\n${hashtags.join(" ")}`
           : caption.trim();
+          
+      // Upload local files first for Publish Now
+      const uploadedAssets: UploadedAsset[] = [];
+      if (selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+          try {
+            const asset = await onUpload(file);
+            uploadedAssets.push({
+              id: asset.id,
+              storageKey: asset.storageKey,
+              name: file.name,
+            });
+          } catch (err) {
+            throw new Error(`Failed to upload ${file.name}`);
+          }
+        }
+      }
+      const combinedAssets = [...assets.filter((a) => assetIds.includes(a.id)), ...uploadedAssets];
 
       for (const accountId of selectedAccounts) {
         const account = socialAccounts.find((a) => a.id === accountId);
@@ -443,7 +459,6 @@ export default function PostModal({
         }
 
         const isFacebook = account.platform === "FACEBOOK";
-        const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
 
         const payload: any = {
           username: technicalUsername,
@@ -452,15 +467,15 @@ export default function PostModal({
           asyncUpload: true,
         };
 
-        if (selectedAssets.length > 0) {
-          if (isFacebook && selectedAssets.length > 1) {
-            payload.mediaUrls = selectedAssets.map((a) =>
+        if (combinedAssets.length > 0) {
+          if (isFacebook && combinedAssets.length > 1) {
+            payload.mediaUrls = combinedAssets.map((a) =>
               buildStorageUrl(STORAGE_BASE_URL, a.storageKey),
             );
           } else {
             payload.mediaUrl = buildStorageUrl(
               STORAGE_BASE_URL,
-              selectedAssets[0].storageKey,
+              combinedAssets[0].storageKey,
             );
           }
         }
@@ -507,69 +522,36 @@ export default function PostModal({
   const handleFiles = async (files?: FileList | null) => {
     if (!files || files.length === 0) return;
     
-    const existingAssets = assets;
-    const existingVideos = existingAssets.filter(a => {
+    const existingVideos = assets.filter(a => {
       const key = a.storageKey.toLowerCase();
       return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
     });
+    const pendingVideos = selectedFiles.filter(f => f.type.startsWith("video/"));
+    
+    let totalVideos = existingVideos.length + pendingVideos.length;
 
     const newFilesList = Array.from(files);
-    setSelectedFiles(prev => [...prev, ...newFilesList]);
-
-    const uploaded: UploadedAsset[] = [];
+    const validFilesToAppend: File[] = [];
     
     for (const file of newFilesList) {
       const isVideo = file.type.startsWith("video/");
       
-      // If we already have a video and trying to upload another one
-      if (isVideo && (existingVideos.length > 0 || uploaded.some(a => a.storageKey.toLowerCase().match(/\.(mp4|mov|webm)$/)))) {
-        toast({
-          title: "Video Limit",
-          description: "You can only upload one video per post. Skipping additional videos.",
-          variant: "destructive",
-        });
-        continue;
-      }
-
-      try {
-        const asset = await onUpload(file);
-        uploaded.push({
-          id: asset.id,
-          storageKey: asset.storageKey,
-          name: file.name,
-        });
-        
-        // If we just uploaded a video, don't allow any more videos
-        if (isVideo) {
-          // We break or continue depending on if user wants to upload more photos
-          // For now, let's just continue to allow photos
+      if (isVideo) {
+        if (totalVideos >= 1) {
+          toast({
+            title: "Video Limit",
+            description: "You can only upload one video per post. Skipping additional videos.",
+            variant: "destructive",
+          });
+          continue;
         }
-      } catch (err) {
-        toast({
-          title: "Upload Failed",
-          description: err instanceof Error ? err.message : "Upload failed",
-          variant: "destructive",
-        });
-        break;
+        totalVideos++;
       }
+      validFilesToAppend.push(file);
     }
 
-    if (uploaded.length > 0) {
-      setAssets((prev) => [...prev, ...uploaded]);
-      const hasAnyVideo = [...existingAssets, ...uploaded].some(a => {
-        const key = a.storageKey.toLowerCase();
-        return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
-      });
-
-      if (hasAnyVideo) {
-        // If there's a video, we might want to restrict to just that video or video + photos
-        // but the user requirement is "multiple photos, one video".
-        // However, social platforms usually don't allow mixed media.
-        // We'll follow the existing handleSubmit logic which prevents mixed media.
-        setAssetIds((prev) => [...prev, ...uploaded.map((a) => a.id)]);
-      } else {
-        setAssetIds((prev) => [...prev, ...uploaded.map((a) => a.id)]);
-      }
+    if (validFilesToAppend.length > 0) {
+      setSelectedFiles(prev => [...prev, ...validFilesToAppend]);
     }
   };
 
@@ -670,13 +652,18 @@ export default function PostModal({
                       : "Select one asset"}
                   </div>
                   <div className="space-y-1 max-h-28 overflow-auto">
-                    {[...assets, ...selectedFiles.map(f => ({ id: f.name, name: f.name, storageKey: f.name, isLocal: true, file: f }))].map((asset) => {
+                    {[...assets, ...selectedFiles.map(f => ({ id: f.name, name: f.name, storageKey: f.name, isLocal: true, file: f }))].map((asset: any) => {
                       const id = 'isLocal' in asset ? asset.name : asset.id;
                       const isSelected = 'isLocal' in asset || assetIds.includes(asset.id);
                       
                       let thumbUrl = null;
                       if (!('isLocal' in asset) && asset.storageKey) {
                         thumbUrl = buildStorageUrl(STORAGE_BASE_URL, asset.storageKey);
+                      } else if ('isLocal' in asset && asset.file) {
+                        // Create object URL for local files preview
+                        if (asset.file.type.startsWith("image/")) {
+                          thumbUrl = URL.createObjectURL(asset.file);
+                        }
                       }
 
                       return (
@@ -688,11 +675,15 @@ export default function PostModal({
                               "bg-slate-800/70 border border-lime-400/50",
                           )}
                         >
-                          {thumbUrl && (
+                          {thumbUrl ? (
                             <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700">
                                <img src={thumbUrl} alt="" className="w-full h-full object-cover" />
                             </div>
-                          )}
+                          ) : ('isLocal' in asset && asset.file?.type.startsWith("video/")) ? (
+                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700 bg-slate-800 flex items-center justify-center">
+                              <span className="text-[8px] font-bold text-slate-400">VIDEO</span>
+                            </div>
+                          ) : null}
                           <input
                             type={allowsMultipleMedia ? "checkbox" : "radio"}
                             name="asset"

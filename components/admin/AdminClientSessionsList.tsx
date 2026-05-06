@@ -9,10 +9,12 @@ import {
   MoreVertical, 
   CheckCircle2, 
   XCircle, 
-  AlertCircle,
   Loader2,
   Trash2,
-  Edit
+  Edit,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown
 } from "lucide-react";
 import { 
   Table, 
@@ -43,6 +45,10 @@ interface AdminClientSessionsListProps {
 export default function AdminClientSessionsList({ userId, onEditSession }: AdminClientSessionsListProps) {
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
   const { toast } = useToast();
   const { timezone: userTimezone } = useTimezone();
 
@@ -112,8 +118,32 @@ export default function AdminClientSessionsList({ userId, onEditSession }: Admin
     );
   }
 
+  const sortedSessions = [...sessions].sort((a, b) => {
+    const dateA = new Date(a.createdAt || a.scheduledAt || 0).getTime();
+    const dateB = new Date(b.createdAt || b.scheduledAt || 0).getTime();
+    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+  });
+
+  const totalPages = Math.ceil(sortedSessions.length / itemsPerPage);
+  const paginatedSessions = sortedSessions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="overflow-hidden border border-slate-800 rounded-2xl bg-slate-950/50">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setSortOrder(prev => prev === "desc" ? "asc" : "desc")}
+          className="border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+        >
+          <ArrowUpDown className="h-4 w-4 mr-2" />
+          Sort by Created {sortOrder === "desc" ? "(Newest First)" : "(Oldest First)"}
+        </Button>
+      </div>
+      <div className="overflow-hidden border border-slate-800 rounded-2xl bg-slate-950/50">
       <Table>
         <TableHeader className="bg-slate-900/50">
           <TableRow className="border-slate-800">
@@ -125,7 +155,7 @@ export default function AdminClientSessionsList({ userId, onEditSession }: Admin
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sessions.map((session) => (
+          {paginatedSessions.map((session) => (
             <TableRow key={session.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
               <TableCell>
                 {session.scheduleType === "PHOTO_SESSION" ? (
@@ -189,6 +219,35 @@ export default function AdminClientSessionsList({ userId, onEditSession }: Admin
           ))}
         </TableBody>
       </Table>
+      
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-900/30">
+          <div className="text-xs text-slate-500">
+            Showing <span className="font-bold text-white">{((currentPage - 1) * itemsPerPage) + 1}</span> to <span className="font-bold text-white">{Math.min(currentPage * itemsPerPage, sortedSessions.length)}</span> of <span className="font-bold text-white">{sortedSessions.length}</span> sessions
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="h-8 border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="h-8 border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+            >
+              Next <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
     </div>
   );
 }

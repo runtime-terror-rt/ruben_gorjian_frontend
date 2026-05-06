@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function GET(
   req: NextRequest,
@@ -15,19 +14,17 @@ export async function GET(
   }
 
   try {
-    const sessionCookie = req.cookies.get("session")?.value;
-
+    const headers = await getBackendHeaders();
+    
     const response = await fetch(
-      `${BACKEND_URL}/api/admin/users/${id}/connected-platforms`,
+      `${getBackendUrl()}/api/admin/users/${id}/connected-platforms`,
       {
         method: "GET",
-        headers: {
-          Cookie: sessionCookie ? `session=${sessionCookie}` : "",
-        },
+        headers,
       }
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status });
