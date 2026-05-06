@@ -4,6 +4,7 @@ import { useSocket } from "@/app/providers/SocketProvider";
 import { useTimezone } from "@/hooks/use-timezone";
 import { fromUTC, parseDateTimeLocal } from "@/lib/timezone";
 import { useUiStore } from "@/store/uiStore";
+import { apiGet } from "@/lib/api";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import timezone from "dayjs/plugin/timezone";
@@ -79,7 +80,11 @@ interface CalendarContextType {
 
   // Post operations
   createPost: (data: CreatePostData, files?: File[]) => Promise<void>;
-  updatePost: (id: string, data: Partial<CreatePostData>, files?: File[]) => Promise<void>;
+  updatePost: (
+    id: string,
+    data: Partial<CreatePostData>,
+    files?: File[],
+  ) => Promise<void>;
   deletePost: (id: string) => Promise<void>;
   duplicatePost: (id: string) => Promise<void>;
   movePost: (id: string, newDate: dayjs.Dayjs) => Promise<void>;
@@ -177,9 +182,9 @@ export function CalendarProvider({
     return storedView || "month";
   };
 
-  const [display, setDisplayState] = useState<"day" | "week" | "month" | "list">(() =>
-    getInitialDisplay(),
-  );
+  const [display, setDisplayState] = useState<
+    "day" | "week" | "month" | "list"
+  >(() => getInitialDisplay());
   const [posts, setPosts] = useState<Post[]>([]);
   const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([]);
   const [loading, setLoading] = useState(false);
@@ -322,7 +327,10 @@ export function CalendarProvider({
 
         // Convert post dates from UTC to user timezone for display
         const postsWithTimezone = (Array.isArray(rawPosts) ? rawPosts : [])
-          .filter((post: any) => post.scheduleType === "POSTING" || !post.scheduleType) // Safeguard filter
+          .filter(
+            (post: any) =>
+              post.scheduleType === "POSTING" || !post.scheduleType,
+          ) // Safeguard filter
           .map((post: any) => {
             const dateValue = post.scheduledFor || post.scheduledAt;
             return {
@@ -345,162 +353,193 @@ export function CalendarProvider({
     try {
       let url = "/api/social-media/platform/my-links";
       if (targetUserId) {
-        url += `?userId=${targetUserId}`;
+        url = `/api/admin/users/${targetUserId}/connected-platforms`;
       }
-      const response = await fetch(url, {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        // Assuming the data format might be { success: true, links: [...] } or just an array
+
+      const data = await apiGet<any>(url);
+
+      if (data) {
+        // Handle different data formats: array, {links:[]}, {items:[]}, etc.
         const rawAccounts = Array.isArray(data)
           ? data
-          : data.links || data.accounts || data.data || [];
+          : data.items || data.links || data.accounts || data.data || [];
 
-        const mappedAccounts: SocialAccount[] = rawAccounts.map((acc: any) => ({
-          id: acc.id || acc._id || acc.platform,
-          platform: acc.platform?.toUpperCase(),
-          displayName: acc.username || acc.displayName || acc.platform,
-          externalAccountId: acc.externalAccountId || acc.username || "",
-        }));
-
-        setSocialAccounts(mappedAccounts);
+        if (Array.isArray(rawAccounts)) {
+          const mappedAccounts: SocialAccount[] = rawAccounts.map(
+            (acc: any) => ({
+              id: String(acc.id || acc._id || acc.platform || Math.random()),
+              platform: (acc.platform || "UNKNOWN").toUpperCase(),
+              displayName:
+                acc.username ||
+                acc.displayName ||
+                acc.platform ||
+                "Unknown Account",
+              externalAccountId: String(
+                acc.externalAccountId || acc.username || "",
+              ),
+            }),
+          );
+          setSocialAccounts(mappedAccounts);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch social accounts:", error);
     }
   }, [targetUserId]);
 
-    const createPost = useCallback(
-      async (data: CreatePostData, files?: File[]) => {
-        try {
-          if (!userTimezone) {
-            throw new Error("Timezone not ready. Please try again.");
-          }
+  const createPost = useCallback(
+    async (data: CreatePostData, files?: File[]) => {
+      try {
+        if (!userTimezone) {
+          throw new Error("Timezone not ready. Please try again.");
+        }
 
-          // Convert scheduledFor from user timezone to UTC
-          const dateISO = parseDateTimeLocal(
-            data.scheduledFor,
-            userTimezone,
-          ).toISOString();
+        // Convert scheduledFor from user timezone to UTC
+        const dateISO = parseDateTimeLocal(
+          data.scheduledFor,
+          userTimezone,
+        ).toISOString();
 
-          const payload = {
-            ...data,
-            scheduledAt: dateISO,
-            scheduledFor: dateISO,
-            ...(data.assetIds && data.assetIds.length > 0
-              ? {
-                  assetIds: data.assetIds,
-                  assetId: data.assetIds[0],
-                }
-              : data.assetId
-                ? { assetId: data.assetId, assetIds: [data.assetId] }
-                : {}),
-            ...(targetUserId
-              ? {
-                  userId: targetUserId,
-                  adminReason: "Created from admin dashboard",
-                }
+        const payload = {
+          ...data,
+          scheduledAt: dateISO,
+          scheduledFor: dateISO,
+          ...(data.assetIds && data.assetIds.length > 0
+            ? {
+                assetIds: data.assetIds,
+                assetId: data.assetIds[0],
+              }
+            : data.assetId
+              ? { assetId: data.assetId, assetIds: [data.assetId] }
               : {}),
-          };
+          ...(targetUserId
+            ? {
+                userId: targetUserId,
+                adminReason: "Created from admin dashboard",
+              }
+            : {}),
+        };
 
+        let response;
+        
+        // If there are files, use FormData. Otherwise, use plain JSON.
+        if (files && files.length > 0) {
           const formData = new FormData();
           formData.append("data", JSON.stringify(payload));
-          if (files && files.length > 0) {
-            files.forEach((file) => formData.append("files", file));
-          }
-
-          const response = await fetch("/api/scheduler/posts", {
+          files.forEach((file) => formData.append("files", file));
+          
+          response = await fetch("/api/scheduler/posts", {
             method: "POST",
             credentials: "include",
             body: formData,
           });
-
-          if (response.ok) {
-            await fetchPosts();
-          } else {
-            const error = await response.json().catch(() => ({}));
-            let msg = error.error || error.message || "Failed to create post";
-            if (error.details?.issues) {
-              msg += ": " + error.details.issues.map((i: any) => i.message).join(", ");
-            }
-            throw new Error(msg);
-          }
-        } catch (error) {
-          console.error("Failed to create post:", error);
-          throw error;
-        }
-      },
-      [fetchPosts, userTimezone, targetUserId],
-    );
-
-    const updatePost = useCallback(
-      async (id: string, data: Partial<CreatePostData>, files?: File[]) => {
-        try {
-          if (!userTimezone) {
-            throw new Error("Timezone not ready. Please try again.");
-          }
-
-          const payload = {
-            ...data,
-            caption: data.caption || (data.hasOwnProperty('caption') ? "." : undefined),
-            ...(data.scheduledFor
-              ? {
-                  scheduledAt: parseDateTimeLocal(
-                    data.scheduledFor,
-                    userTimezone,
-                  ).toISOString(),
-                  scheduledFor: parseDateTimeLocal(
-                    data.scheduledFor,
-                    userTimezone,
-                  ).toISOString(),
-                }
-              : {}),
-            ...(data.assetIds && data.assetIds.length > 0
-              ? {
-                  assetIds: data.assetIds,
-                  assetId: data.assetIds[0],
-                }
-              : data.assetId
-                ? { assetId: data.assetId, assetIds: [data.assetId] }
-                : {}),
-            ...(targetUserId
-              ? {
-                  userId: targetUserId,
-                  adminReason: data.adminReason || "Updated from admin dashboard",
-                }
-              : {}),
-          };
-
-          const formData = new FormData();
-          formData.append("data", JSON.stringify(payload));
-          if (files && files.length > 0) {
-            files.forEach((file) => formData.append("files", file));
-          }
-
-          const response = await fetch(`/api/scheduler/posts/${id}`, {
-            method: "PATCH",
+        } else {
+          response = await fetch("/api/scheduler/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: formData,
+            body: JSON.stringify(payload),
           });
-
-          if (response.ok) {
-            await fetchPosts();
-          } else {
-            const error = await response.json().catch(() => ({}));
-            let msg = error.error || error.message || "Failed to update post";
-            if (error.details?.issues) {
-              msg += ": " + error.details.issues.map((i: any) => i.message).join(", ");
-            }
-            throw new Error(msg);
-          }
-        } catch (error) {
-          console.error("Failed to update post:", error);
-          throw error;
         }
-      },
-      [fetchPosts, userTimezone, targetUserId],
-    );
+
+        if (response.ok) {
+          await fetchPosts();
+        } else {
+          const error = await response.json().catch(() => ({}));
+          let msg = error.message || error.error || "Something went wrong while scheduling your post.";
+          
+          // Filter out technical errors
+          if (msg.toLowerCase().includes("internal server error") || 
+              msg.toLowerCase().includes("unexpected token") ||
+              msg.toLowerCase().includes("nest") ||
+              msg.toLowerCase().includes("multipart")) {
+            msg = "The server encountered an error. Please check if your media is valid and try again.";
+          }
+          
+          if (error.details?.issues) {
+            const details = error.details.issues.map((i: any) => i.message).join(", ");
+            msg = `Validation Error: ${details}`;
+          }
+          
+          throw new Error(msg);
+        }
+      } catch (error) {
+        console.error("Failed to create post:", error);
+        throw error;
+      }
+    },
+    [fetchPosts, userTimezone, targetUserId],
+  );
+
+  const updatePost = useCallback(
+    async (id: string, data: Partial<CreatePostData>, files?: File[]) => {
+      try {
+        if (!userTimezone) {
+          throw new Error("Timezone not ready. Please try again.");
+        }
+
+        const payload = {
+          ...data,
+          caption:
+            data.caption || (data.hasOwnProperty("caption") ? "." : undefined),
+          ...(data.scheduledFor
+            ? {
+                scheduledAt: parseDateTimeLocal(
+                  data.scheduledFor,
+                  userTimezone,
+                ).toISOString(),
+                scheduledFor: parseDateTimeLocal(
+                  data.scheduledFor,
+                  userTimezone,
+                ).toISOString(),
+              }
+            : {}),
+          ...(data.assetIds && data.assetIds.length > 0
+            ? {
+                assetIds: data.assetIds,
+                assetId: data.assetIds[0],
+              }
+            : data.assetId
+              ? { assetId: data.assetId, assetIds: [data.assetId] }
+              : {}),
+          ...(targetUserId
+            ? {
+                userId: targetUserId,
+                adminReason: data.adminReason || "Updated from admin dashboard",
+              }
+            : {}),
+        };
+
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(payload));
+        if (files && files.length > 0) {
+          files.forEach((file) => formData.append("files", file));
+        }
+
+        const response = await fetch(`/api/scheduler/posts/${id}`, {
+          method: "PATCH",
+          credentials: "include",
+          body: formData,
+        });
+
+        if (response.ok) {
+          await fetchPosts();
+        } else {
+          const error = await response.json().catch(() => ({}));
+          let msg = error.error || error.message || "Failed to update post";
+          if (error.details?.issues) {
+            msg +=
+              ": " + error.details.issues.map((i: any) => i.message).join(", ");
+          }
+          throw new Error(msg);
+        }
+      } catch (error) {
+        console.error("Failed to update post:", error);
+        throw error;
+      }
+    },
+    [fetchPosts, userTimezone, targetUserId],
+  );
 
   const deletePost = useCallback(
     async (id: string) => {

@@ -64,6 +64,7 @@ export default function ClientSelectionModal({
     try {
       setLoading(true);
       const data = await apiGet<any>(`/api/scheduler/clients?page=${page}&pageSize=20`);
+      console.log(data,'data')
       // Robustly extract items from various possible response structures
       let items = [];
       let metaData = null;

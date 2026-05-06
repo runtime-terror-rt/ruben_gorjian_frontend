@@ -94,7 +94,7 @@ export default function AdminSessionComposer({
       // For admin, we might want to see conflicts for this specific user or all?
       // Usually, session conflicts are for the provider/photographer, but here it seems per-user or global.
       // Based on the requirement, admin schedules for Client X.
-      const data = await apiGet<any>("/api/scheduler/posts?scheduleType=PHOTO_SESSION,VIDEO_SESSION");
+      const data = await apiGet<any>(`/api/scheduler/posts?userId=${userId}&scheduleType=PHOTO_SESSION,VIDEO_SESSION`);
       const items = Array.isArray(data) ? data : (data.items || data.data?.items || []);
       setSessions(items);
     } catch (err) {
@@ -238,13 +238,13 @@ export default function AdminSessionComposer({
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(currentDate.subtract(1, "month"))}>
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 text-lime-400" />
                 </Button>
-                <span className="text-xs font-bold min-w-[80px] text-center">
+                <span className="text-xs font-bold min-w-[80px] text-center text-lime-400">
                   {currentDate.format("MMM YYYY")}
                 </span>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(currentDate.add(1, "month"))}>
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 text-lime-400" />
                 </Button>
               </div>
             </div>
@@ -261,19 +261,31 @@ export default function AdminSessionComposer({
                 const isPast = day.isBefore(dayjs(), "day");
                 const isSelected = selectedDate?.isSame(day, "day");
                 
+                const sessionCount = sessions.filter(s => {
+                  if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
+                  return dayjs.tz(s.scheduledAt || s.scheduledFor, userTimezone).isSame(day, "day");
+                }).length;
+                
                 return (
                   <button
                     key={idx}
                     disabled={!isCurrentMonth || isPast}
                     onClick={() => setSelectedDate(day)}
                     className={cn(
-                      "aspect-square rounded-lg text-xs flex items-center justify-center transition-all",
+                      "aspect-square rounded-lg text-xs flex flex-col items-center justify-center transition-all relative",
                       !isCurrentMonth && "opacity-0 pointer-events-none",
                       isPast && "text-slate-600 cursor-not-allowed",
-                      isSelected ? "bg-lime-400 text-slate-950 font-bold" : "hover:bg-slate-800 text-slate-300"
+                      isSelected ? "bg-lime-400 text-slate-950 font-bold shadow-lg shadow-lime-400/20" : "hover:bg-slate-800 text-slate-300"
                     )}
                   >
-                    {day.date()}
+                    <span>{day.date()}</span>
+                    {sessionCount > 0 && isCurrentMonth && !isPast && (
+                      <div className="flex gap-[2px] mt-0.5">
+                        {Array.from({ length: Math.min(sessionCount, 3) }).map((_, i) => (
+                          <div key={i} className={cn("h-1 w-1 rounded-full", isSelected ? "bg-slate-900" : "bg-emerald-400")} />
+                        ))}
+                      </div>
+                    )}
                   </button>
                 );
               })}
@@ -295,18 +307,18 @@ export default function AdminSessionComposer({
                 Please select a date first
               </div>
             ) : (
-              <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+              <div className="grid grid-cols-4 gap-2">
                 {availableSlots.map(slot => (
                   <button
                     key={slot.time}
                     disabled={!slot.available}
                     onClick={() => setSelectedTime(slot.time)}
                     className={cn(
-                      "py-2 px-1 rounded-lg text-[10px] font-bold border transition-all",
+                      "py-2.5 px-1 rounded-lg text-[11px] font-bold border transition-all",
                       selectedTime === slot.time 
-                        ? "bg-lime-400 border-lime-400 text-slate-950" 
+                        ? "bg-lime-400 border-lime-400 text-slate-950 shadow-[0_0_15px_rgba(163,230,53,0.3)]" 
                         : slot.available 
-                          ? "bg-slate-800 border-slate-700 text-slate-300 hover:border-lime-400/50" 
+                          ? "bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-800 hover:border-lime-400/50 hover:text-lime-400" 
                           : "bg-slate-900 border-transparent text-slate-600 cursor-not-allowed opacity-50"
                     )}
                   >

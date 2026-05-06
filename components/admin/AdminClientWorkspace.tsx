@@ -46,6 +46,8 @@ export default function AdminClientWorkspace() {
   const [sessionRefreshKey, setSessionRefreshKey] = useState(0);
   const [editingSession, setEditingSession] = useState<any>(null);
 
+
+
   const handleSessionSuccess = () => {
     setSessionRefreshKey(prev => prev + 1);
     setEditingSession(null);
@@ -147,10 +149,6 @@ export default function AdminClientWorkspace() {
             <CalendarIcon className="h-4 w-4 mr-2" />
             Schedule
           </TabsTrigger>
-          <TabsTrigger value="posts" className="rounded-xl px-6 data-[state=active]:bg-slate-800 data-[state=active]:text-white transition-all">
-            <Send className="h-4 w-4 mr-2" />
-            Post on Behalf
-          </TabsTrigger>
           <TabsTrigger value="sessions" className="rounded-xl px-6 data-[state=active]:bg-slate-800 data-[state=active]:text-white transition-all">
             <Camera className="h-4 w-4 mr-2" />
             Book Session
@@ -159,25 +157,14 @@ export default function AdminClientWorkspace() {
 
         <TabsContent value="calendar" className="space-y-6 outline-none">
           <CalendarProvider targetUserId={selectedClient.id}>
-            <div className="rounded-[2.5rem] border border-slate-800 bg-slate-900/20 overflow-hidden backdrop-blur-sm">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/20 backdrop-blur-sm p-6">
               <EnhancedCalendar />
             </div>
           </CalendarProvider>
         </TabsContent>
-
-        <TabsContent value="posts" className="space-y-6 outline-none">
-          <div className="max-w-4xl mx-auto">
-            <AdminPostComposer 
-              userId={selectedClient.id}
-              userName={selectedClient.fullName || selectedClient.name}
-              userEmail={selectedClient.email}
-            />
-          </div>
-        </TabsContent>
-
         <TabsContent value="sessions" className="space-y-8 outline-none">
           <div className="grid grid-cols-1 gap-8">
-            <div className="max-w-4xl mx-auto w-full">
+            <div className="w-full">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-white mb-2">
                   {editingSession ? "Edit Session" : "Book New Session"}

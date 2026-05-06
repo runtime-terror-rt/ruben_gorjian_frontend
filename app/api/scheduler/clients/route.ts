@@ -12,12 +12,15 @@ export async function GET(request: NextRequest) {
       headers,
     });
 
+  
+
     if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         return NextResponse.json(errorData, { status: res.status });
     }
 
     const data = await res.json().catch(() => null);
+
 
     return NextResponse.json(data, { status: res.status });
   } catch (error: any) {
