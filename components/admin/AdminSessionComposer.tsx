@@ -280,10 +280,13 @@ export default function AdminSessionComposer({
                   >
                     <span>{day.date()}</span>
                     {sessionCount > 0 && isCurrentMonth && !isPast && (
-                      <div className="flex gap-[2px] mt-0.5">
-                        {Array.from({ length: Math.min(sessionCount, 3) }).map((_, i) => (
-                          <div key={i} className={cn("h-1 w-1 rounded-full", isSelected ? "bg-slate-900" : "bg-emerald-400")} />
-                        ))}
+                      <div className={cn(
+                        "absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-black shadow-lg z-10",
+                        isSelected 
+                          ? "bg-slate-900 text-lime-400 border border-lime-400/20" 
+                          : "bg-emerald-500 text-white shadow-emerald-500/30"
+                      )}>
+                        {sessionCount}
                       </div>
                     )}
                   </button>

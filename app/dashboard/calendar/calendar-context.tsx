@@ -351,31 +351,47 @@ export function CalendarProvider({
 
   const fetchSocialAccounts = useCallback(async () => {
     try {
-      let url = "/api/social-media/platform/my-links";
-      if (targetUserId) {
-        url = `/api/admin/users/${targetUserId}/connected-platforms`;
-      }
-
+      // Use different endpoints for User and Admin
+      const url = targetUserId 
+        ? `/api/social-media/platform/get-all-performed-links?userId=${targetUserId}` 
+        : "/api/social-media/platform/my-links";
+      
       const data = await apiGet<any>(url);
-
-      if (data) {
-        // Handle different data formats: array, {links:[]}, {items:[]}, etc.
-        const rawAccounts = Array.isArray(data)
-          ? data
-          : data.items || data.links || data.accounts || data.data || [];
+      
+      if (data && (data.success || Array.isArray(data))) {
+        // Handle different data structures:
+        // User (/my-links): data: [...]
+        // Admin (/get-all-performed-links): data: { data: [...] } OR data: [...]
+        let rawAccounts: any[] = [];
+        
+        if (targetUserId) {
+          // Admin response handling
+          rawAccounts = Array.isArray(data.data) 
+            ? data.data 
+            : (data.data?.data || []);
+        } else {
+          // Regular user response handling
+          rawAccounts = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        }
 
         if (Array.isArray(rawAccounts)) {
-          const mappedAccounts: SocialAccount[] = rawAccounts.map(
+          // Filter by targetUserId if needed
+          const filteredAccounts = targetUserId
+            ? rawAccounts.filter((acc: any) => acc.userId === targetUserId)
+            : rawAccounts;
+
+          const mappedAccounts: SocialAccount[] = filteredAccounts.map(
             (acc: any) => ({
               id: String(acc.id || acc._id || acc.platform || Math.random()),
               platform: (acc.platform || "UNKNOWN").toUpperCase(),
               displayName:
+                acc.platformUsername ||
                 acc.username ||
                 acc.displayName ||
                 acc.platform ||
                 "Unknown Account",
               externalAccountId: String(
-                acc.externalAccountId || acc.username || "",
+                acc.externalAccountId || acc.platformUsername || acc.username || "",
               ),
             }),
           );
@@ -399,6 +415,8 @@ export function CalendarProvider({
           data.scheduledFor,
           userTimezone,
         ).toISOString();
+
+        const url = "/api/scheduler/posts";
 
         const payload = {
           ...data,
@@ -428,13 +446,13 @@ export function CalendarProvider({
           formData.append("data", JSON.stringify(payload));
           files.forEach((file) => formData.append("files", file));
           
-          response = await fetch("/api/scheduler/posts", {
+          response = await fetch(url, {
             method: "POST",
             credentials: "include",
             body: formData,
           });
         } else {
-          response = await fetch("/api/scheduler/posts", {
+          response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -446,21 +464,28 @@ export function CalendarProvider({
           await fetchPosts();
         } else {
           const error = await response.json().catch(() => ({}));
-          let msg = error.message || error.error || "Something went wrong while scheduling your post.";
-          
-          // Filter out technical errors
-          if (msg.toLowerCase().includes("internal server error") || 
-              msg.toLowerCase().includes("unexpected token") ||
-              msg.toLowerCase().includes("nest") ||
-              msg.toLowerCase().includes("multipart")) {
-            msg = "The server encountered an error. Please check if your media is valid and try again.";
+          let msg =
+            error.message ||
+            error.error ||
+            "Something went wrong while scheduling your post.";
+
+          if (
+            msg.toLowerCase().includes("internal server error") ||
+            msg.toLowerCase().includes("unexpected token") ||
+            msg.toLowerCase().includes("nest") ||
+            msg.toLowerCase().includes("multipart")
+          ) {
+            msg =
+              "The server encountered an error. Please check if your data is valid and try again.";
           }
-          
+
           if (error.details?.issues) {
-            const details = error.details.issues.map((i: any) => i.message).join(", ");
+            const details = error.details.issues
+              .map((i: any) => i.message)
+              .join(", ");
             msg = `Validation Error: ${details}`;
           }
-          
+
           throw new Error(msg);
         }
       } catch (error) {

@@ -617,6 +617,7 @@ export default function EnhancedCalendar() {
     updatePost,
     movePost,
     publishPost,
+    deletePost,
     // Explicitly destructure timezone as userTimezone to be used in children
     timezone: userTimezone,
   } = useCalendar();
@@ -1027,6 +1028,7 @@ export default function EnhancedCalendar() {
           onUpload={uploadFile}
           uploading={uploading}
           isAdmin={isAdmin}
+          onDelete={deletePost}
           onPublish={isAdmin ? (payload) => publishPost(editingPost?.id || "") : undefined}
         />
 

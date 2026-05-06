@@ -57,6 +57,7 @@ interface PostModalProps {
   } | null;
   isAdmin?: boolean;
   onPublish?: (payload: any) => Promise<void>;
+  onDelete?: (id: string) => Promise<void>;
 }
 
 type UploadedAsset = { id: string; storageKey: string; name?: string ; };
@@ -72,6 +73,7 @@ export default function PostModal({
   editingPost,
   isAdmin = false,
   onPublish,
+  onDelete,
 }: PostModalProps) {
   const [caption, setCaption] = useState("");
   const [datetime, setDatetime] = useState("");
@@ -327,7 +329,7 @@ export default function PostModal({
       });
       return;
     }
-    if (requiresMedia && assetIds.length === 0) {
+    if (requiresMedia && assetIds.length === 0 && selectedFiles.length === 0) {
       toast({
         title: "Media Required",
         description: "Instagram and TikTok require media to publish.",
@@ -782,6 +784,27 @@ export default function PostModal({
           >
             Cancel
           </Button>
+          {isEditing && onDelete && (
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                if (confirm("Are you sure you want to delete this post?")) {
+                  setSubmitting(true);
+                  try {
+                    await onDelete(editingPost.id);
+                    onClose();
+                  } catch (err) {
+                    console.error("Delete Error:", err);
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }
+              }}
+              className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 mr-auto"
+            >
+              Delete Post
+            </Button>
+          )}
           <Button
             onClick={handleSubmit}
             disabled={submitting}
