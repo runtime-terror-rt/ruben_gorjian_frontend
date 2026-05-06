@@ -296,6 +296,14 @@ export default function AdminSessionComposer({
                   >
                     <Camera className="h-4 w-4" /> Photo
                   </Button>
+                  <Button
+                    type="button"
+                    variant={sessionType === "VIDEO_SESSION" ? "default" : "outline"}
+                    className="flex-1 h-10 gap-2"
+                    onClick={() => setSessionType("VIDEO_SESSION")}
+                  >
+                    <Video className="h-4 w-4" /> Video
+                  </Button>
                 
                 </div>
               </div>
