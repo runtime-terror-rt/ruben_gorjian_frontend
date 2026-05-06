@@ -598,7 +598,7 @@ export default function AdminUsersPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button id="status" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
-                {filters.status === "" ? "All" : filters.status === "ACTIVE" ? "Active" : filters.status === "BLOCKED" ? "Blocked" : "Deleted"} 
+                {filters.status === "" ? "All" : filters.status === "ACTIVE" ? "Active" : filters.status === "BLOCKED" ? "Blocked" : "Deleted"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
@@ -615,7 +615,7 @@ export default function AdminUsersPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button id="plan" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
-                {filters.plan === "" ? "All Plans" : (plansQuery.data?.find(p => p.code === filters.plan)?.name || filters.plan)} 
+                {filters.plan === "" ? "All Plans" : (plansQuery.data?.find(p => p.code === filters.plan)?.name || filters.plan)}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
@@ -634,7 +634,7 @@ export default function AdminUsersPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
-                {filters.subscriptionStatus === "" ? "All" : filters.subscriptionStatus} 
+                {filters.subscriptionStatus === "" ? "All" : filters.subscriptionStatus}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
@@ -653,7 +653,7 @@ export default function AdminUsersPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button id="sort" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
-                {filters.sortBy === "createdAt" && filters.sortDir === "desc" ? "Newest First" : "Oldest First"} 
+                {filters.sortBy === "createdAt" && filters.sortDir === "desc" ? "Newest First" : "Oldest First"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
@@ -709,9 +709,9 @@ export default function AdminUsersPage() {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className="border-slate-800 hover:bg-slate-800/20 transition-all group">
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell 
-                    className="py-5 font-medium group-hover:text-white transition-colors"
-                    key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell
+                      className="py-5 font-medium group-hover:text-white transition-colors"
+                      key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -720,50 +720,50 @@ export default function AdminUsersPage() {
         </Table>
       </div>
 
-            {/* ── Pagination Footer ── */}
-            {totalPages > 0 && (
-              <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-950/20">
-                
-                {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-                  Showing page{" "}
-                  <span className="text-slate-300 font-black">{filters.page}</span>
-                  {" "}of{" "}
-                  <span className="text-slate-300 font-black">{totalPages}</span>
-                  {" "}·{" "}
-                  <span className="text-slate-300 font-black">{total}</span> total users
-                </p>
+      {/* ── Pagination Footer ── */}
+      {totalPages > 0 && (
+        <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-950/20">
 
-                {/* Right: Prev / Next */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-                    disabled={usersQuery.isLoading || filters.page <= 1}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                  >
-                    <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Previous
-                  </button>
-                  
-                  <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
-                    <span className="text-xs font-black text-lime-400">Page {filters.page}</span>
-                  </div>
+          {/* Left: results info */}
+          <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
+            Showing page{" "}
+            <span className="text-slate-300 font-black">{filters.page}</span>
+            {" "}of{" "}
+            <span className="text-slate-300 font-black">{totalPages}</span>
+            {" "}·{" "}
+            <span className="text-slate-300 font-black">{total}</span> total users
+          </p>
 
-                  <button
-                    onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
-                    disabled={usersQuery.isLoading || filters.page >= totalPages}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                  >
-                    Next Page
-                    <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            )}
+          {/* Right: Prev / Next */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+              disabled={usersQuery.isLoading || filters.page <= 1}
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
+            >
+              <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </button>
+
+            <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
+              <span className="text-xs font-black text-lime-400">Page {filters.page}</span>
+            </div>
+
+            <button
+              onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
+              disabled={usersQuery.isLoading || filters.page >= totalPages}
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
+            >
+              Next Page
+              <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Create User Dialog */}
       <Dialog open={createState.open} onOpenChange={(open) => setCreateState((prev) => ({ ...prev, open }))}>
@@ -857,9 +857,9 @@ export default function AdminUsersPage() {
             </label>
           </div>
           <DialogFooter className="gap-4 pt-4">
-            <Button 
+            <Button
               type="button"
-              variant="outline" 
+              variant="outline"
               onClick={() => setCreateState((prev) => ({ ...prev, open: false }))}
               className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
@@ -927,9 +927,9 @@ export default function AdminUsersPage() {
             </div>
           </div>
           <DialogFooter className="gap-4 pt-4">
-            <Button 
+            <Button
               type="button"
-              variant="outline" 
+              variant="outline"
               onClick={() => setEditState((prev) => ({ ...prev, open: false }))}
               className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
@@ -998,8 +998,8 @@ export default function AdminUsersPage() {
             </label>
           )}
           <DialogFooter className="gap-4 pt-8">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setConfirmAction(null)}
               className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
@@ -1012,8 +1012,8 @@ export default function AdminUsersPage() {
               }
               className={cn(
                 "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base",
-                confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-white" : 
-                "bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
+                confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-white" :
+                  "bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
               )}
             >
               Confirm Action
