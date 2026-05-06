@@ -202,7 +202,9 @@ function PricingPageContent() {
         });
         const authenticated = res.ok;
         setIsAuthenticated(authenticated);
-
+        
+        /* 
+        // AUTO-REDIRECT REMOVED FOR BETTER UX (PREVENTS BACK-BUTTON LOOP)
         if (authenticated && typeof window !== "undefined") {
           const { getPlanSelection, clearPlanSelection } = await import("@/lib/plan-selection");
           const selection = getPlanSelection();
@@ -213,6 +215,7 @@ function PricingPageContent() {
             }, 500);
           }
         }
+        */
       } catch {
         setIsAuthenticated(false);
       }
@@ -289,6 +292,9 @@ function PricingPageContent() {
     router.push(`/billing/checkout?plan=${plan.lookupKey}&cycle=${billingCycle}`);
   };
 
+  const selectedPlanId = useUiStore((state) => state.selectedPlanId);
+  const selectedPlanMeta = useUiStore((state) => state.selectedPlanMeta);
+
   return (
     <div className="min-h-screen bg-[#f5f4ef] text-[#1b1b1b]">
       <Suspense fallback={<div className="h-16" />}>
@@ -298,6 +304,44 @@ function PricingPageContent() {
       <main className="pt-24 pb-20">
         <section className="px-4">
           <div className="mx-auto max-w-6xl text-center">
+            {/* Professional Selection Indicator (COMMENTED OUT FOR NOW) */}
+            {/* 
+            {selectedPlanId && (
+              <div className="mx-auto mb-10 max-w-2xl animate-in fade-in slide-in-from-top-4 duration-700">
+                <div className="flex items-center justify-between rounded-2xl border border-primary/20 bg-primary/[0.03] p-4 backdrop-blur-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-bold uppercase tracking-wider text-primary/60">Currently Selected</p>
+                      <p className="text-sm font-black text-primary">
+                        {selectedPlanMeta?.planName || selectedPlanId}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={async () => {
+                        const { clearPlanSelection } = await import("@/lib/plan-selection");
+                        clearPlanSelection();
+                      }}
+                      className="text-xs font-bold text-secondary hover:text-primary transition-colors px-3 py-2"
+                    >
+                      Clear
+                    </button>
+                    <Button 
+                      onClick={() => router.push(`/billing/checkout?plan=${selectedPlanId}&cycle=${billingCycle}`)}
+                      className="rounded-full bg-primary px-6 py-2 text-xs font-black text-white shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      Continue to Checkout
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+            */}
+
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6f7179]">
               Talexia Pricing
             </p>
