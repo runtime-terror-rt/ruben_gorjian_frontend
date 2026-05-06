@@ -96,7 +96,7 @@ export function OnboardingHeaderNav({
     if (onLeave) {
       onLeave();
     } else {
-      router.push("/dashboard");
+      router.push("/");
     }
   };
 
@@ -117,13 +117,13 @@ export function OnboardingHeaderNav({
           {/* Left cluster */}
           <div className="flex items-center gap-4">
             <Link
-              href="/dashboard"
+              href="/"
               onClick={handleLogoClick}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <Image src={logo} alt="Talexia.ai" className="h-8 w-8" />
-              <span className="hidden sm:inline text-lg font-semibold text-white">
-                Talexia.ai
+              <Image src={logo} alt="Talexia" className="h-8 w-8" />
+              <span className="hidden sm:inline text-sm font-semibold tracking-[0.22em] text-white">
+                TALEXIA
               </span>
             </Link>
             <div className="hidden md:flex items-center gap-3">
