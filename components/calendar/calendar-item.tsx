@@ -232,17 +232,17 @@ export const CalendarItem = memo<CalendarItemProps>(
             </div>
           )}
 
-          {/* Hover actions */}
-          <div className="hidden group-hover:flex items-center gap-0.5 flex-shrink-0 ml-auto mr-1">
+          {/* Actions */}
+          <div className="flex items-center gap-1 flex-shrink-0 ml-auto mr-1">
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowRawTime(!showRawTime);
+                onDelete();
               }}
-              className="p-1 text-slate-400 hover:text-amber-400 transition-colors"
-              title="Toggle raw data view"
+              className="p-1.5 rounded-md hover:bg-rose-500/20 text-rose-500 transition-colors"
+              title="Delete"
             >
-              <AlertCircle className="h-3 w-3" />
+              <Trash2 className="h-4 w-4" />
             </button>
             <button
               onClick={(e) => {
@@ -254,7 +254,7 @@ export const CalendarItem = memo<CalendarItemProps>(
             >
               <Edit2 className="h-4 w-4 text-slate-300 hover:text-white" />
             </button>
-            {isAdmin && (
+            {/* {isAdmin && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -263,31 +263,21 @@ export const CalendarItem = memo<CalendarItemProps>(
                 className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
                 title="Duplicate"
               >
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="h-3.5 w-3.5 text-slate-400" />
               </button>
-            )}
+            )} */}
             {isAdmin && onPublish && post.status !== "POSTED" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onPublish?.();
                 }}
-                className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
+                className="p-1.5 rounded-md hover:bg-lime-500/10 transition-colors"
                 title={isMissingContent ? "Publishing without content may fail" : "Publish now"}
               >
                 <Send className="h-3.5 w-3.5 text-lime-400" />
               </button>
             )}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              className="p-1.5 rounded-md hover:bg-slate-600/50 hover:text-rose-400 text-slate-400 transition-colors"
-              title="Delete"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
           </div>
         </div>
       </div>
