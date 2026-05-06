@@ -512,7 +512,7 @@ function CheckoutContent() {
               onCheckedChange={(checked) => setTermsAccepted(!!checked)}
             />
             <Label htmlFor="terms" className="text-xs leading-relaxed text-slate-400">
-              I agree to the <a href="/terms" className="text-lime-400 hover:underline">Terms of Service</a> and <a href="/privacy" className="text-lime-400 hover:underline">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
+              I agree to the <a href="/terms-conditions" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
             </Label>
           </div>
         </div>
