@@ -91,11 +91,23 @@ export default function AdminSessionComposer({
   const fetchSessions = useCallback(async () => {
     try {
       setLoadingSessions(true);
-      // For admin, we might want to see conflicts for this specific user or all?
-      // Usually, session conflicts are for the provider/photographer, but here it seems per-user or global.
-      // Based on the requirement, admin schedules for Client X.
-      const data = await apiGet<any>(`/api/scheduler/posts?userId=${userId}&scheduleType=PHOTO_SESSION,VIDEO_SESSION`);
-      const items = Array.isArray(data) ? data : (data.items || data.data?.items || []);
+      const startDate = dayjs().subtract(1, "month").toISOString();
+      const endDate = dayjs().add(1, "year").toISOString();
+      const url = `/api/scheduler/posts?userId=${userId}&all=true&scheduleType=PHOTO_SESSION,VIDEO_SESSION&startDate=${startDate}&endDate=${endDate}&pageSize=100&limit=100`;
+      
+      const data = await apiGet<any>(url);
+      const rawItems = Array.isArray(data) 
+        ? data 
+        : (data.items || data.data?.items || data.data?.posts || data.sessions || data.data || []);
+        
+      const items = rawItems.map((p: any) => {
+        const dateValue = p.scheduledFor || p.scheduledAt || p.date;
+        return {
+          ...p,
+          scheduledAt: dateValue,
+          scheduledFor: dateValue
+        };
+      });
       setSessions(items);
     } catch (err) {
       console.error("Failed to load sessions", err);
