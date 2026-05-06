@@ -50,47 +50,37 @@ export default function ClientSelectionModal({
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState<Meta | null>(null);
-  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
-      const timer = setTimeout(() => {
-        fetchClients(1);
-      }, searchQuery ? 500 : 0);
-      return () => clearTimeout(timer);
+      fetchClients(1);
     }
   }, [isOpen, searchQuery]);
 
-  const fetchClients = async (pageNum: number) => {
+  const fetchClients = async (page: number = 1) => {
     try {
       setLoading(true);
-      const queryParams = new URLSearchParams();
-      queryParams.set("all", "true");
-      queryParams.set("page", pageNum.toString());
-      queryParams.set("pageSize", pageSize.toString());
-      if (searchQuery.trim()) {
-        queryParams.set("search", searchQuery.trim());
-      }
-
-      const data = await apiGet<any>(`/api/scheduler/clients?${queryParams.toString()}`).catch(async (err) => {
-        console.warn("Paginated fetch failed, trying fallback:", err);
-        return await apiGet<any>("/api/scheduler/clients");
-      });
-      
+      const data = await apiGet<any>(`/api/scheduler/clients?page=${page}&pageSize=20`);
+      // Robustly extract items from various possible response structures
       let items = [];
       let metaData = null;
 
       if (data && typeof data === "object") {
         items = data.items || data.data?.items || data.data || data.users || [];
-        if (Array.isArray(data)) items = data;
-        metaData = data.meta || data.data?.meta || null;
+        if (data.meta) {
+          setTotalPages(data.meta.totalPages || 1);
+          setTotalCount(data.meta.totalCount || items.length);
+        } else if (data.totalPages) {
+          setTotalPages(data.totalPages);
+          setTotalCount(data.totalCount || items.length);
+        }
       }
 
       setClients(items);
-      setMeta(metaData);
-      setPage(pageNum);
+      setCurrentPage(page);
     } catch (err) {
       console.error("Error fetching clients:", err);
     } finally {
@@ -133,16 +123,26 @@ export default function ClientSelectionModal({
             />
           </div>
 
-          <div className="flex-1 border border-slate-800/60 rounded-2xl overflow-hidden flex flex-col bg-[#060810]/40 backdrop-blur-sm">
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <div className="flex-1 overflow-hidden">
-                <Table className="min-w-full table-fixed">
-                  <TableHeader className="bg-[#0b0f1a]/95 backdrop-blur-xl sticky top-0 z-20">
-                    <TableRow className="border-slate-800/40 hover:bg-transparent uppercase tracking-widest text-[9px] font-black opacity-60">
-                      <TableHead className="text-slate-400 h-9 px-4 w-[30%]">Name</TableHead>
-                      <TableHead className="text-slate-400 h-9 px-4 w-[35%]">Email Address</TableHead>
-                      <TableHead className="text-slate-400 h-9 px-4 w-[20%]">User ID</TableHead>
-                      <TableHead className="text-right text-slate-400 h-9 pr-6 w-[15%]">Action</TableHead>
+          <div className="flex-1 border border-slate-800 rounded-xl overflow-hidden flex flex-col bg-slate-950/50">
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar border-b border-slate-800">
+              <Table className="min-w-full table-auto">
+                <TableHeader className="bg-slate-950/80 backdrop-blur-md sticky top-0 z-20">
+                  <TableRow className="border-slate-800 hover:bg-transparent uppercase tracking-widest text-[10px] font-bold">
+                    <TableHead className="text-slate-500 h-10 px-4">Name</TableHead>
+                    <TableHead className="text-slate-500 h-10 px-4">Email Address</TableHead>
+                    <TableHead className="text-slate-500 h-10 px-4">User ID</TableHead>
+                    <TableHead className="text-right text-slate-500 h-10 pr-6">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center gap-4">
+                          <Loader2 className="h-10 w-10 animate-spin text-lime-400" />
+                          <p className="text-base text-slate-400 font-medium">Loading client database...</p>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -216,35 +216,32 @@ export default function ClientSelectionModal({
                 </Table>
               </div>
             </div>
-
-            {/* Pagination Footer */}
-            {meta && meta.totalPages > 0 && (
-              <div className="shrink-0 px-6 py-3 border-t border-slate-800/50 bg-[#0b0f1a]/80 flex items-center justify-between">
-                <p className="text-[9px] font-black text-slate-500 tracking-widest uppercase">
-                  Page <span className="text-slate-300">{page}</span> / <span className="text-slate-300">{meta.totalPages}</span>
-                  {" "}· {meta.totalCount} Clients
-                </p>
+            
+            {/* Pagination Controls */}
+            {!searchQuery && totalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-950/80">
+                <div className="text-xs text-slate-500">
+                  Showing page <span className="font-bold text-white">{currentPage}</span> of <span className="font-bold text-white">{totalPages}</span>
+                  {totalCount > 0 && <span> ({totalCount} total)</span>}
+                </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
-                    size="icon"
-                    className="h-7 w-7 bg-slate-900/50 border-slate-800/80 hover:bg-slate-800 disabled:opacity-20 rounded-lg transition-all"
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page <= 1 || loading}
+                    size="sm"
+                    onClick={() => fetchClients(currentPage - 1)}
+                    disabled={currentPage === 1 || loading}
+                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
                   >
-                    <ChevronLeft className="h-3 w-3" />
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev
                   </Button>
-                  <div className="bg-slate-900/80 px-2 py-0.5 rounded-md border border-slate-800/80 min-w-[24px] text-center">
-                    <span className="text-[10px] font-black text-lime-400">{page}</span>
-                  </div>
                   <Button
                     variant="outline"
-                    size="icon"
-                    className="h-7 w-7 bg-slate-900/50 border-slate-800/80 hover:bg-slate-800 disabled:opacity-20 rounded-lg transition-all"
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= meta.totalPages || loading}
+                    size="sm"
+                    onClick={() => fetchClients(currentPage + 1)}
+                    disabled={currentPage === totalPages || loading}
+                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
                   >
-                    <ChevronRight className="h-3 w-3" />
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>
               </div>

@@ -60,7 +60,7 @@ interface SocialAccount {
 
 interface CalendarContextType {
   // View state
-  display: "day" | "week" | "month";
+  display: "day" | "week" | "month" | "list";
   startDate: string;
   endDate: string;
 
@@ -72,7 +72,7 @@ interface CalendarContextType {
   loading: boolean;
 
   // Actions
-  setDisplay: (display: "day" | "week" | "month") => void;
+  setDisplay: (display: "day" | "week" | "month" | "list") => void;
   setDateRange: (startDate: string, endDate: string) => void;
   navigateDate: (direction: "prev" | "next" | "today") => void;
   navigateToDate: (date: dayjs.Dayjs) => void;
@@ -177,7 +177,7 @@ export function CalendarProvider({
     return storedView || "month";
   };
 
-  const [display, setDisplayState] = useState<"day" | "week" | "month">(() =>
+  const [display, setDisplayState] = useState<"day" | "week" | "month" | "list">(() =>
     getInitialDisplay(),
   );
   const [posts, setPosts] = useState<Post[]>([]);
@@ -258,6 +258,7 @@ export function CalendarProvider({
                 ? current.add(1, "week")
                 : current.subtract(1, "week");
             break;
+          case "list":
           case "month":
             newDate =
               direction === "next"

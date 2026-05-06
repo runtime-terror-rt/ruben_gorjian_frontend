@@ -26,6 +26,7 @@ import {
   Loader2,
   List,
   X,
+  LayoutList,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import clsx from "clsx";
@@ -548,6 +549,61 @@ function DayView({
   );
 }
 
+function ListView({
+  onAddPost,
+  onEdit,
+  onDragEnd,
+}: {
+  onAddPost: (date: Dayjs) => void;
+  onEdit: (postId: string) => void;
+  onDragEnd: (postId: string, newDate: Date) => void;
+}) {
+  const { posts, startDate, deletePost, duplicatePost, publishPost, timezone: userTimezone } = useCalendar();
+  const monthStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("month") : dayjs(startDate).startOf("month");
+  
+  // Sort posts chronologically
+  const sortedPosts = useMemo(() => {
+    return [...posts].sort((a, b) => {
+      const dateA = userTimezone ? dayjs.tz(a.scheduledFor, userTimezone) : dayjs(a.scheduledFor);
+      const dateB = userTimezone ? dayjs.tz(b.scheduledFor, userTimezone) : dayjs(b.scheduledFor);
+      return dateA.valueOf() - dateB.valueOf();
+    });
+  }, [posts, userTimezone]);
+
+  return (
+    <div className="flex flex-col h-full space-y-4">
+      {sortedPosts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-4">
+          <LayoutList className="h-12 w-12 opacity-20" />
+          <p>No posts scheduled for this period.</p>
+          <Button variant="outline" onClick={() => onAddPost(dayjs().tz(userTimezone))}>
+            Create Post
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {sortedPosts.map((post) => {
+            const date = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
+            return (
+              <div key={post.id} className="w-full">
+                <CalendarItem
+                  post={post}
+                  date={date}
+                  display="day"
+                  onEdit={() => onEdit(post.id)}
+                  onDelete={() => deletePost(post.id)}
+                  onDuplicate={() => duplicatePost(post.id)}
+                  onPublish={publishPost ? () => publishPost(post.id) : undefined}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function EnhancedCalendar() {
   const {
     display,
@@ -833,6 +889,19 @@ export default function EnhancedCalendar() {
                 <Grid className="h-4 w-4" />
                 <span className="ml-1 sm:ml-2">Month</span>
               </Button>
+              <Button
+                variant={display === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setDisplay("list")}
+                className={clsx(
+                  "rounded-none border-0 border-l border-slate-700",
+                  display !== "list" && "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                )}
+                title="List view"
+              >
+                <LayoutList className="h-4 w-4" />
+                <span className="ml-1 sm:ml-2">List</span>
+              </Button>
             </div>
 
             <Button
@@ -923,6 +992,13 @@ export default function EnhancedCalendar() {
                   )}
                   {display === "month" && (
                     <MonthView
+                      onAddPost={handleAddPost}
+                      onEdit={handleViewPost}
+                      onDragEnd={handleDragEnd}
+                    />
+                  )}
+                  {display === "list" && (
+                    <ListView
                       onAddPost={handleAddPost}
                       onEdit={handleViewPost}
                       onDragEnd={handleDragEnd}
