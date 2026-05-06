@@ -88,11 +88,11 @@ export default function ClientSelectionModal({
     }
   };
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && (!meta || newPage <= meta.totalPages)) {
-      fetchClients(newPage);
-    }
-  };
+  // const handlePageChange = (newPage: number) => {
+  //   if (newPage >= 1 && (!meta || newPage <= meta.totalPages)) {
+  //     fetchClients(newPage);
+  //   }
+  // };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -135,17 +135,6 @@ export default function ClientSelectionModal({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-64 text-center">
-                        <div className="flex flex-col items-center justify-center gap-4">
-                          <Loader2 className="h-10 w-10 animate-spin text-lime-400" />
-                          <p className="text-base text-slate-400 font-medium">Loading client database...</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
                     {loading ? (
                       <TableRow className="hover:bg-transparent border-none">
                         <TableCell colSpan={4} className="h-[460px] text-center">
@@ -247,7 +236,6 @@ export default function ClientSelectionModal({
               </div>
             )}
           </div>
-        </div>
       </DialogContent>
     </Dialog>
   );
