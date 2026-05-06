@@ -37,9 +37,10 @@ import { useTimezone } from "@/hooks/use-timezone";
 
 interface AdminClientSessionsListProps {
   userId: string;
+  onEditSession?: (session: any) => void;
 }
 
-export default function AdminClientSessionsList({ userId }: AdminClientSessionsListProps) {
+export default function AdminClientSessionsList({ userId, onEditSession }: AdminClientSessionsListProps) {
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -163,6 +164,11 @@ export default function AdminClientSessionsList({ userId }: AdminClientSessionsL
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-slate-300">
+                    {onEditSession && (
+                      <DropdownMenuItem onClick={() => onEditSession(session)} className="gap-2 focus:bg-slate-800 focus:text-white">
+                        <Edit className="h-4 w-4 text-blue-400" /> Edit Session
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={() => handleUpdateStatus(session.id, "SCHEDULED")} className="gap-2 focus:bg-slate-800 focus:text-white">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Mark Scheduled
                     </DropdownMenuItem>

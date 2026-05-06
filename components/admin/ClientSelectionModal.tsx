@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, User, Mail, Hash, Loader2, X } from "lucide-react";
+import { Search, User, Mail, Hash, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { apiGet } from "@/lib/api";
 
 interface Client {
@@ -43,25 +43,36 @@ export default function ClientSelectionModal({
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
-      fetchClients();
+      fetchClients(1);
     }
   }, [isOpen]);
 
-  const fetchClients = async () => {
+  const fetchClients = async (page: number = 1) => {
     try {
       setLoading(true);
-      const data = await apiGet<any>("/api/scheduler/clients");
+      const data = await apiGet<any>(`/api/scheduler/clients?page=${page}&pageSize=20`);
       // Robustly extract items from various possible response structures
       let items = [];
       if (Array.isArray(data)) {
         items = data;
       } else if (data && typeof data === "object") {
         items = data.items || data.data?.items || data.data || data.users || [];
+        if (data.meta) {
+          setTotalPages(data.meta.totalPages || 1);
+          setTotalCount(data.meta.totalCount || items.length);
+        } else if (data.totalPages) {
+          setTotalPages(data.totalPages);
+          setTotalCount(data.totalCount || items.length);
+        }
       }
       setClients(items);
+      setCurrentPage(page);
     } catch (err) {
       console.error("Error fetching clients:", err);
     } finally {
@@ -119,7 +130,7 @@ export default function ClientSelectionModal({
           </div>
 
           <div className="flex-1 border border-slate-800 rounded-xl overflow-hidden flex flex-col bg-slate-950/50">
-            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar">
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar border-b border-slate-800">
               <Table className="min-w-full table-auto">
                 <TableHeader className="bg-slate-950/80 backdrop-blur-md sticky top-0 z-20">
                   <TableRow className="border-slate-800 hover:bg-transparent uppercase tracking-widest text-[10px] font-bold">
@@ -189,6 +200,36 @@ export default function ClientSelectionModal({
                 </TableBody>
               </Table>
             </div>
+            
+            {/* Pagination Controls */}
+            {!searchQuery && totalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-950/80">
+                <div className="text-xs text-slate-500">
+                  Showing page <span className="font-bold text-white">{currentPage}</span> of <span className="font-bold text-white">{totalPages}</span>
+                  {totalCount > 0 && <span> ({totalCount} total)</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fetchClients(currentPage - 1)}
+                    disabled={currentPage === 1 || loading}
+                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fetchClients(currentPage + 1)}
+                    disabled={currentPage === totalPages || loading}
+                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
+                  >
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

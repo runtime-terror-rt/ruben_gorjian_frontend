@@ -34,13 +34,17 @@ interface AdminSessionComposerProps {
   userName?: string | null;
   userEmail?: string;
   onSuccess?: () => void;
+  editingSession?: any;
+  onCancelEdit?: () => void;
 }
 
 export default function AdminSessionComposer({
   userId,
   userName,
   userEmail,
-  onSuccess
+  onSuccess,
+  editingSession,
+  onCancelEdit
 }: AdminSessionComposerProps) {
   const { toast } = useToast();
   const { timezone: userTimezone } = useTimezone();
@@ -58,6 +62,31 @@ export default function AdminSessionComposer({
   const [sessions, setSessions] = useState<any[]>([]);
   const [loadingSessions, setLoadingSessions] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (editingSession) {
+      setSessionType(editingSession.scheduleType);
+      setTitle(editingSession.sessionTitle || editingSession.session?.title || "");
+      setNotes(editingSession.sessionNotes || editingSession.session?.notes || "");
+      setDuration(editingSession.sessionDurationMinutes || editingSession.session?.durationMinutes || 60);
+      setAdminReason(editingSession.adminReason || "");
+      
+      if (editingSession.scheduledAt || editingSession.scheduledFor) {
+        const date = dayjs.tz(editingSession.scheduledAt || editingSession.scheduledFor, userTimezone);
+        setCurrentDate(date);
+        setSelectedDate(date);
+        setSelectedTime(date.format("HH:mm"));
+      }
+    } else {
+      setSessionType("PHOTO_SESSION");
+      setTitle("");
+      setNotes("");
+      setDuration(60);
+      setAdminReason("");
+      setSelectedDate(null);
+      setSelectedTime("");
+    }
+  }, [editingSession, userTimezone]);
 
   const fetchSessions = useCallback(async () => {
     try {
@@ -97,6 +126,7 @@ export default function AdminSessionComposer({
       
       const hasConflict = sessions.some((s) => {
         if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
+        if (editingSession && s.id === editingSession.id) return false;
         
         const existingStart = dayjs.tz(s.scheduledAt || s.scheduledFor, userTimezone);
         const existingDuration = s.session?.durationMinutes || s.sessionDurationMinutes || 60;
@@ -142,7 +172,7 @@ export default function AdminSessionComposer({
         userTimezone
       ).toISOString();
 
-      const payload = {
+      const payload: any = {
         userId,
         scheduleType: sessionType,
         scheduledAt,
@@ -150,19 +180,27 @@ export default function AdminSessionComposer({
         sessionNotes: notes.trim(),
         sessionDurationMinutes: duration,
         adminReason: adminReason.trim() || `Scheduled by Admin for ${userName || userEmail}`,
-        status: "SCHEDULED"
       };
 
-      await apiPost("/api/scheduler/sessions", payload);
+      if (editingSession) {
+        await apiPatch(`/api/scheduler/sessions/${editingSession.id}`, payload);
+        toast({ title: "Success", description: "Session updated successfully" });
+      } else {
+        payload.status = "SCHEDULED";
+        await apiPost("/api/scheduler/sessions", payload);
+        toast({ title: "Success", description: "Session scheduled successfully" });
+      }
       
-      toast({ title: "Success", description: "Session scheduled successfully" });
-      
-      // Reset form
-      setTitle("");
-      setNotes("");
-      setAdminReason("");
-      setSelectedDate(null);
-      setSelectedTime("");
+      // Reset form if not editing, or close edit
+      if (editingSession && onCancelEdit) {
+        onCancelEdit();
+      } else {
+        setTitle("");
+        setNotes("");
+        setAdminReason("");
+        setSelectedDate(null);
+        setSelectedTime("");
+      }
       
       if (onSuccess) onSuccess();
     } catch (err: any) {
@@ -356,20 +394,37 @@ export default function AdminSessionComposer({
               />
             </div>
 
-            <Button
-              type="submit"
-              disabled={submitting || !selectedDate || !selectedTime}
-              className="w-full h-12 bg-lime-400 hover:bg-lime-500 text-slate-950 font-bold text-lg rounded-xl shadow-lg shadow-lime-400/20"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Scheduling...
-                </>
-              ) : (
-                "Schedule Session for Client"
+            <div className="flex gap-4">
+              {editingSession && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancelEdit}
+                  className="flex-1 h-12 text-slate-300 border-slate-700 bg-slate-900 rounded-xl"
+                >
+                  Cancel Edit
+                </Button>
               )}
-            </Button>
+              <Button
+                type="submit"
+                disabled={submitting || !selectedDate || !selectedTime}
+                className={cn(
+                  "flex-1 h-12 font-bold text-lg rounded-xl shadow-lg",
+                  editingSession 
+                    ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/20"
+                    : "bg-lime-400 hover:bg-lime-500 text-slate-950 shadow-lime-400/20"
+                )}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    {editingSession ? "Updating..." : "Scheduling..."}
+                  </>
+                ) : (
+                  editingSession ? "Update Session" : "Schedule Session for Client"
+                )}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

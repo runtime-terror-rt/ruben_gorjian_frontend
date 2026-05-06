@@ -44,9 +44,17 @@ export default function AdminClientWorkspace() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [sessionRefreshKey, setSessionRefreshKey] = useState(0);
+  const [editingSession, setEditingSession] = useState<any>(null);
 
   const handleSessionSuccess = () => {
     setSessionRefreshKey(prev => prev + 1);
+    setEditingSession(null);
+  };
+
+  const handleEditSession = (session: any) => {
+    setEditingSession(session);
+    // Switch to sessions tab and scroll to top if needed
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!selectedClient) {
@@ -171,14 +179,20 @@ export default function AdminClientWorkspace() {
           <div className="grid grid-cols-1 gap-8">
             <div className="max-w-4xl mx-auto w-full">
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-white mb-2">Book New Session</h3>
-                <p className="text-sm text-slate-400">Schedule a photoshoot or video session for this client.</p>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {editingSession ? "Edit Session" : "Book New Session"}
+                </h3>
+                <p className="text-sm text-slate-400">
+                  {editingSession ? "Update the details for this session." : "Schedule a photoshoot or video session for this client."}
+                </p>
               </div>
               <AdminSessionComposer 
                 userId={selectedClient.id}
                 userName={selectedClient.fullName || selectedClient.name}
                 userEmail={selectedClient.email}
                 onSuccess={handleSessionSuccess}
+                editingSession={editingSession}
+                onCancelEdit={() => setEditingSession(null)}
               />
             </div>
             
@@ -187,7 +201,11 @@ export default function AdminClientWorkspace() {
                 <h3 className="text-xl font-bold text-white mb-2">Session History</h3>
                 <p className="text-sm text-slate-400">View and manage existing sessions for this client.</p>
               </div>
-              <AdminClientSessionsList key={sessionRefreshKey} userId={selectedClient.id} />
+              <AdminClientSessionsList 
+                key={sessionRefreshKey} 
+                userId={selectedClient.id} 
+                onEditSession={handleEditSession}
+              />
             </div>
           </div>
         </TabsContent>
