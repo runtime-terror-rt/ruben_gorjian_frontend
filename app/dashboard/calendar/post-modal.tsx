@@ -33,16 +33,19 @@ interface PostModalProps {
     displayName: string;
     externalAccountId?: string;
   }>;
-  onCreate: (payload: {
-    caption: string;
-    scheduledFor: string;
-    socialAccountIds: string[];
-    platforms: string[];
-    assetIds?: string[];
-    hashtags?: string[];
-    mediaUrl?: string;
-    mediaUrls?: string[];
-  }, files?: File[]) => Promise<void>;
+  onCreate: (
+    payload: {
+      caption: string;
+      scheduledFor: string;
+      socialAccountIds: string[];
+      platforms: string[];
+      assetIds?: string[];
+      hashtags?: string[];
+      mediaUrl?: string;
+      mediaUrls?: string[];
+    },
+    files?: File[],
+  ) => Promise<void>;
   onUpload: (file: File) => Promise<{ id: string; storageKey: string }>;
   uploading?: boolean;
   editingPost?: {
@@ -62,7 +65,7 @@ interface PostModalProps {
   clientEmail?: string;
 }
 
-type UploadedAsset = { id: string; storageKey: string; name?: string ; };
+type UploadedAsset = { id: string; storageKey: string; name?: string };
 
 export default function PostModal({
   open,
@@ -238,17 +241,25 @@ export default function PostModal({
     // Removed artificial single-media restriction for Instagram/TikTok to support carousel posts
 
     const selectedAssets = assets.filter((a) => assetIds.includes(a.id));
-    
+
     // Validate combined assets (uploaded + pending)
     const allSelectedMedia = [
-      ...selectedAssets.map(a => ({ type: a.storageKey.toLowerCase().match(/\.(mp4|mov|webm)$/) ? 'VIDEO' : 'IMAGE', name: a.name })),
-      ...selectedFiles.map(f => ({ type: f.type.startsWith('video/') ? 'VIDEO' : 'IMAGE', name: f.name }))
+      ...selectedAssets.map((a) => ({
+        type: a.storageKey.toLowerCase().match(/\.(mp4|mov|webm)$/)
+          ? "VIDEO"
+          : "IMAGE",
+        name: a.name,
+      })),
+      ...selectedFiles.map((f) => ({
+        type: f.type.startsWith("video/") ? "VIDEO" : "IMAGE",
+        name: f.name,
+      })),
     ];
 
-    const hasVideo = allSelectedMedia.some(m => m.type === 'VIDEO');
-    const hasImage = allSelectedMedia.some(m => m.type === 'IMAGE');
+    const hasVideo = allSelectedMedia.some((m) => m.type === "VIDEO");
+    const hasImage = allSelectedMedia.some((m) => m.type === "IMAGE");
 
-    if (allSelectedMedia.filter(m => m.type === 'VIDEO').length > 1) {
+    if (allSelectedMedia.filter((m) => m.type === "VIDEO").length > 1) {
       toast({
         title: "Video Limit",
         description: "You can only include one video per post.",
@@ -265,7 +276,8 @@ export default function PostModal({
     if (hasTikTok && hasImage) {
       toast({
         title: "Format Error",
-        description: "TikTok only supports video uploads. Please remove any images.",
+        description:
+          "TikTok only supports video uploads. Please remove any images.",
         variant: "destructive",
       });
       return;
@@ -428,7 +440,7 @@ export default function PostModal({
         hashtags.length > 0
           ? `${caption.trim()}\n\n${hashtags.join(" ")}`
           : caption.trim();
-          
+
       // Upload local files first for Publish Now
       const uploadedAssets: UploadedAsset[] = [];
       if (selectedFiles.length > 0) {
@@ -445,7 +457,10 @@ export default function PostModal({
           }
         }
       }
-      const combinedAssets = [...assets.filter((a) => assetIds.includes(a.id)), ...uploadedAssets];
+      const combinedAssets = [
+        ...assets.filter((a) => assetIds.includes(a.id)),
+        ...uploadedAssets,
+      ];
 
       for (const accountId of selectedAccounts) {
         const account = socialAccounts.find((a) => a.id === accountId);
@@ -455,7 +470,9 @@ export default function PostModal({
 
         // Admin publishing flow for a client
         if (isAdmin && clientEmail) {
-          technicalUsername = clientEmail.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+          technicalUsername = clientEmail
+            .split("@")[0]
+            .replace(/[^a-zA-Z0-9_]/g, "_");
         } else if (account.externalAccountId) {
           if (account.externalAccountId.startsWith("upload-post:")) {
             technicalUsername = account.externalAccountId.replace(
@@ -530,26 +547,31 @@ export default function PostModal({
 
   const handleFiles = async (files?: FileList | null) => {
     if (!files || files.length === 0) return;
-    
-    const existingVideos = assets.filter(a => {
+
+    const existingVideos = assets.filter((a) => {
       const key = a.storageKey.toLowerCase();
-      return key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm");
+      return (
+        key.endsWith(".mp4") || key.endsWith(".mov") || key.endsWith(".webm")
+      );
     });
-    const pendingVideos = selectedFiles.filter(f => f.type.startsWith("video/"));
-    
+    const pendingVideos = selectedFiles.filter((f) =>
+      f.type.startsWith("video/"),
+    );
+
     let totalVideos = existingVideos.length + pendingVideos.length;
 
     const newFilesList = Array.from(files);
     const validFilesToAppend: File[] = [];
-    
+
     for (const file of newFilesList) {
       const isVideo = file.type.startsWith("video/");
-      
+
       if (isVideo) {
         if (totalVideos >= 1) {
           toast({
             title: "Video Limit",
-            description: "You can only upload one video per post. Skipping additional videos.",
+            description:
+              "You can only upload one video per post. Skipping additional videos.",
             variant: "destructive",
           });
           continue;
@@ -560,7 +582,7 @@ export default function PostModal({
     }
 
     if (validFilesToAppend.length > 0) {
-      setSelectedFiles(prev => [...prev, ...validFilesToAppend]);
+      setSelectedFiles((prev) => [...prev, ...validFilesToAppend]);
     }
   };
 
@@ -676,14 +698,27 @@ export default function PostModal({
                       : "Select one asset"}
                   </div>
                   <div className="space-y-1 max-h-28 overflow-auto">
-                    {[...assets, ...selectedFiles.map(f => ({ id: f.name, name: f.name, storageKey: f.name, isLocal: true, file: f }))].map((asset: any) => {
-                      const id = 'isLocal' in asset ? asset.name : asset.id;
-                      const isSelected = 'isLocal' in asset || assetIds.includes(asset.id);
-                      
+                    {[
+                      ...assets,
+                      ...selectedFiles.map((f) => ({
+                        id: f.name,
+                        name: f.name,
+                        storageKey: f.name,
+                        isLocal: true,
+                        file: f,
+                      })),
+                    ].map((asset: any) => {
+                      const id = "isLocal" in asset ? asset.name : asset.id;
+                      const isSelected =
+                        "isLocal" in asset || assetIds.includes(asset.id);
+
                       let thumbUrl = null;
-                      if (!('isLocal' in asset) && asset.storageKey) {
-                        thumbUrl = buildStorageUrl(STORAGE_BASE_URL, asset.storageKey);
-                      } else if ('isLocal' in asset && asset.file) {
+                      if (!("isLocal" in asset) && asset.storageKey) {
+                        thumbUrl = buildStorageUrl(
+                          STORAGE_BASE_URL,
+                          asset.storageKey,
+                        );
+                      } else if ("isLocal" in asset && asset.file) {
                         // Create object URL for local files preview
                         if (asset.file.type.startsWith("image/")) {
                           thumbUrl = URL.createObjectURL(asset.file);
@@ -701,22 +736,32 @@ export default function PostModal({
                         >
                           {thumbUrl ? (
                             <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700">
-                               <img src={thumbUrl} alt="" className="w-full h-full object-cover" />
+                              <img
+                                src={thumbUrl}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
                             </div>
-                          ) : ('isLocal' in asset && asset.file?.type.startsWith("video/")) ? (
+                          ) : "isLocal" in asset &&
+                            asset.file?.type.startsWith("video/") ? (
                             <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700 bg-slate-800 flex items-center justify-center">
-                              <span className="text-[8px] font-bold text-slate-400">VIDEO</span>
+                              <span className="text-[8px] font-bold text-slate-400">
+                                VIDEO
+                              </span>
                             </div>
                           ) : null}
-                           <input
+                          <input
                             type={allowsMultipleMedia ? "checkbox" : "radio"}
                             name="asset"
                             value={id}
                             checked={isSelected}
-                            readOnly={'isLocal' in asset || isPosted || isEditing}
+                            readOnly={
+                              "isLocal" in asset || isPosted || isEditing
+                            }
                             disabled={isPosted || isEditing}
                             onChange={() => {
-                              if ('isLocal' in asset || isPosted || isEditing) return;
+                              if ("isLocal" in asset || isPosted || isEditing)
+                                return;
                               if (allowsMultipleMedia) {
                                 setAssetIds((prev) =>
                                   prev.includes(asset.id)
@@ -730,7 +775,12 @@ export default function PostModal({
                             className="accent-lime-400"
                           />
                           <span className="truncate flex-1">
-                            {asset.name} {'isLocal' in asset && <span className="text-[10px] text-amber-400 ml-1">(Pending)</span>}
+                            {asset.name}{" "}
+                            {"isLocal" in asset && (
+                              <span className="text-[10px] text-amber-400 ml-1">
+                                (Pending)
+                              </span>
+                            )}
                           </span>
                         </label>
                       );
@@ -783,14 +833,14 @@ export default function PostModal({
                     key={acc.id}
                     className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
                   >
-                     <input
+                    <input
                       type="checkbox"
                       checked={selectedAccounts.includes(acc.id)}
                       onChange={() => toggleAccount(acc.id)}
                       disabled={isPosted}
                       className={clsx(
                         "h-4 w-4 accent-lime-400 cursor-pointer",
-                        isPosted && "opacity-50 cursor-not-allowed"
+                        isPosted && "opacity-50 cursor-not-allowed",
                       )}
                     />
                     <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
@@ -850,7 +900,7 @@ export default function PostModal({
                   : "Schedule"}
             </Button>
           )}
-          {(isAdmin || onPublish) && !isPosted && (
+          {/* {(isAdmin || onPublish) && !isPosted && (
             <Button
               onClick={handlePublishNow}
               disabled={submitting}
@@ -858,7 +908,7 @@ export default function PostModal({
             >
               {submitting ? "Publishing..." : "Publish Now"}
             </Button>
-          )}
+          )} */}
         </div>
       </div>
     </div>
