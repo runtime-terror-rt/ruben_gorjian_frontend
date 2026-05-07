@@ -54,6 +54,7 @@ interface PostModalProps {
     socialAccountIds: string[];
     hashtags?: string[];
     existingMedia?: any[];
+    status?: string;
   } | null;
   isAdmin?: boolean;
   onPublish?: (payload: any) => Promise<void>;
@@ -88,6 +89,7 @@ export default function PostModal({
   const { timezone: userTimezone, timezoneAbbr } = useTimezone();
   const { toast } = useToast();
 
+  const isPosted = editingPost?.status === "POSTED";
   const scrollHandlers = useScrollPropagation({ scrollWindowAtBoundary: true });
 
   const normalizeHashtags = (input: string): string[] => {
@@ -636,8 +638,10 @@ export default function PostModal({
                 accept="image/*,video/*"
                 multiple
                 onChange={(e) => handleFiles(e.target.files)}
+                disabled={isPosted}
                 className={clsx(
                   "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                  isPosted && "opacity-50 cursor-not-allowed"
                 )}
               />
               <div className="mt-2 text-xs text-slate-400">
@@ -691,14 +695,15 @@ export default function PostModal({
                               <span className="text-[8px] font-bold text-slate-400">VIDEO</span>
                             </div>
                           ) : null}
-                          <input
+                           <input
                             type={allowsMultipleMedia ? "checkbox" : "radio"}
                             name="asset"
                             value={id}
                             checked={isSelected}
-                            readOnly={'isLocal' in asset}
+                            readOnly={'isLocal' in asset || isPosted}
+                            disabled={isPosted}
                             onChange={() => {
-                              if ('isLocal' in asset) return;
+                              if ('isLocal' in asset || isPosted) return;
                               if (allowsMultipleMedia) {
                                 setAssetIds((prev) =>
                                   prev.includes(asset.id)
@@ -732,6 +737,7 @@ export default function PostModal({
               onChange={setCaption}
               placeholder="Write your caption..."
               rows={6}
+              readOnly={isPosted}
             />
           </div>
 
@@ -743,6 +749,7 @@ export default function PostModal({
               value={hashtagsInput}
               onChange={(e) => setHashtagsInput(e.target.value)}
               placeholder="#hashtag1 #hashtag2"
+              readOnly={isPosted}
             />
           </div>
 
@@ -753,6 +760,7 @@ export default function PostModal({
               timezone={userTimezone}
               timezoneAbbr={timezoneAbbr}
               min={formatForDateTimeLocal(dayjs(), userTimezone)}
+              disabled={isPosted}
             />
             <div className="space-y-2">
               <label className="text-sm text-slate-300">Accounts</label>
@@ -762,11 +770,15 @@ export default function PostModal({
                     key={acc.id}
                     className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
                   >
-                    <input
+                     <input
                       type="checkbox"
                       checked={selectedAccounts.includes(acc.id)}
                       onChange={() => toggleAccount(acc.id)}
-                      className="h-4 w-4 accent-lime-400 cursor-pointer"
+                      disabled={isPosted}
+                      className={clsx(
+                        "h-4 w-4 accent-lime-400 cursor-pointer",
+                        isPosted && "opacity-50 cursor-not-allowed"
+                      )}
                     />
                     <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
                       {acc.platform}
@@ -810,20 +822,22 @@ export default function PostModal({
               Delete Post
             </Button>
           )}
-          <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="bg-lime-400 text-slate-900 hover:bg-lime-300"
-          >
-            {submitting
-              ? isEditing
-                ? "Updating..."
-                : "Scheduling..."
-              : isEditing
-                ? "Update"
-                : "Schedule"}
-          </Button>
-          {(isAdmin || onPublish) && (
+          {!isPosted && (
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="bg-lime-400 text-slate-900 hover:bg-lime-300"
+            >
+              {submitting
+                ? isEditing
+                  ? "Updating..."
+                  : "Scheduling..."
+                : isEditing
+                  ? "Update"
+                  : "Schedule"}
+            </Button>
+          )}
+          {(isAdmin || onPublish) && !isPosted && (
             <Button
               onClick={handlePublishNow}
               disabled={submitting}

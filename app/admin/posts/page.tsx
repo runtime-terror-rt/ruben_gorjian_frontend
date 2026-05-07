@@ -351,6 +351,15 @@ export default function AdminPostsPage() {
     const post = posts.find((p) => p.id === postId);
     if (!post) return;
 
+    if (post.status === "POSTED") {
+      toast({
+        title: "Update Prevented",
+        description: "Cannot edit posts that have already been published.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const targetUserId = extractUserIdFromPost(post);
       if (!targetUserId) {
@@ -436,7 +445,8 @@ export default function AdminPostsPage() {
           id: m.id || m.storageKey,
           storageKey: m.storageKey || m.url,
           name: (m.storageKey || m.url || "").split('/').pop() || 'Media'
-        }))
+        })),
+        status: post.status
       });
       setEditModalOpen(true);
     } catch (err) {
@@ -579,6 +589,23 @@ export default function AdminPostsPage() {
             .map((r: any) => r.error);
           throw new Error(errors.join(", ") || "Publishing failed");
         }
+        // Update the status in the scheduler after successful publication
+        const targetUserId = extractUserIdFromPost(post);
+        const statusResponse = await fetch(`/api/scheduler/posts/${id}/publish-status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            status: "completed",
+            userId: targetUserId,
+            adminReason: "Published from admin dashboard",
+          }),
+        });
+
+        if (!statusResponse.ok) {
+          console.warn("Failed to update scheduler status, but post was published.");
+        }
+
         toast({
           title: "Success",
           description: "Publication triggered successfully",
@@ -903,13 +930,15 @@ export default function AdminPostsPage() {
                               <Eye className="h-4 w-4 mr-2" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
-                              onClick={() => handleEditPost(post.id)}
-                            >
-                              <Calendar className="h-4 w-4 mr-2" />
-                              Edit Post
-                            </DropdownMenuItem>
+                            {post.status !== "POSTED" && (
+                              <DropdownMenuItem
+                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
+                                onClick={() => handleEditPost(post.id)}
+                              >
+                                <Calendar className="h-4 w-4 mr-2" />
+                                Edit Post
+                              </DropdownMenuItem>
+                            )}
                             {post.status !== "POSTED" && (
                               <DropdownMenuItem
                                 className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-lime-400"
