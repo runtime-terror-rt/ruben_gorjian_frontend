@@ -150,11 +150,11 @@ export default function ScheduleVisitPage() {
       const items = Array.isArray(data)
         ? data
         : data.items ||
-        data.data?.items ||
-        data.data?.posts ||
-        data.sessions ||
-        data.data ||
-        [];
+          data.data?.items ||
+          data.data?.posts ||
+          data.sessions ||
+          data.data ||
+          [];
 
       const sessionItems = items
         .filter(
@@ -267,12 +267,14 @@ export default function ScheduleVisitPage() {
 
     // Load existing assets if they exist in the session
     if (session.media && session.media.length > 0) {
-      setAssets(session.media.map(m => ({
-        id: m.id,
-        storageKey: m.storageKey,
-        name: m.storageKey.split('/').pop() || 'Existing Media'
-      })));
-      setAssetIds(session.media.map(m => m.id));
+      setAssets(
+        session.media.map((m) => ({
+          id: m.id,
+          storageKey: m.storageKey,
+          name: m.storageKey.split("/").pop() || "Existing Media",
+        })),
+      );
+      setAssetIds(session.media.map((m) => m.id));
     } else {
       setAssets([]);
       setAssetIds([]);
@@ -425,7 +427,7 @@ export default function ScheduleVisitPage() {
     const slots = [];
     const startHour = 9; // 9 AM
     const endHour = 20; // 8 PM
-    
+
     let current = selectedDate.hour(startHour).minute(0).second(0);
     const end = selectedDate.hour(endHour).minute(0).second(0);
 
@@ -433,17 +435,18 @@ export default function ScheduleVisitPage() {
 
     while (current.isBefore(end) || current.isSame(end)) {
       const timeStr = current.format("HH:mm");
-      
+
       // Check if this time slot is in the past
       const isPast = current.isBefore(now, "minute");
-      
+
       // Check for conflicts
       const hasConflict = sessions.some((s) => {
         if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
         if (editingSession && s.id === editingSession.id) return false;
 
         const existingStart = dayjs.tz(s.scheduledAt, userTimezone);
-        const existingDuration = s.session?.durationMinutes || s.sessionDurationMinutes || 60;
+        const existingDuration =
+          s.session?.durationMinutes || s.sessionDurationMinutes || 60;
         const existingEnd = existingStart.add(existingDuration, "minute");
 
         // 90 min buffer rule
@@ -460,7 +463,7 @@ export default function ScheduleVisitPage() {
         time: timeStr,
         label: current.format("h:mm A"),
         available: !hasConflict && !isPast,
-        reason: isPast ? "Past" : hasConflict ? "Conflict" : null
+        reason: isPast ? "Past" : hasConflict ? "Conflict" : null,
       });
 
       current = current.add(30, "minute");
@@ -485,7 +488,11 @@ export default function ScheduleVisitPage() {
           name: file.name,
         });
       } catch (err) {
-        toast({ title: "Upload Failed", description: err instanceof Error ? err.message : "Upload failed", variant: "destructive" });
+        toast({
+          title: "Upload Failed",
+          description: err instanceof Error ? err.message : "Upload failed",
+          variant: "destructive",
+        });
         break;
       }
     }
@@ -592,19 +599,19 @@ export default function ScheduleVisitPage() {
                         "relative flex flex-col items-center justify-center aspect-square rounded-xl transition-all duration-300 group",
                         !isCurrentMonth && "opacity-20 cursor-default",
                         canSelect &&
-                        "hover:bg-lime-400/10 hover:border-lime-400/30 border border-transparent",
+                          "hover:bg-lime-400/10 hover:border-lime-400/30 border border-transparent",
                         isSelected &&
-                        "bg-lime-400 text-slate-900 font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-lime-400 scale-105 z-10",
+                          "bg-lime-400 text-slate-900 font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-lime-400 scale-105 z-10",
                         !isSelected &&
-                        isCurrentMonth &&
-                        !isPast &&
-                        "bg-slate-800/40 text-slate-300 hover:scale-105",
+                          isCurrentMonth &&
+                          !isPast &&
+                          "bg-slate-800/40 text-slate-300 hover:scale-105",
                         isToday &&
-                        !isSelected &&
-                        "border-lime-400/50 text-lime-400 font-bold",
+                          !isSelected &&
+                          "border-lime-400/50 text-lime-400 font-bold",
                         isPast &&
-                        isCurrentMonth &&
-                        "bg-slate-900/20 text-slate-700 cursor-not-allowed",
+                          isCurrentMonth &&
+                          "bg-slate-900/20 text-slate-700 cursor-not-allowed",
                       )}
                     >
                       <span className="text-sm">{day.date()}</span>
@@ -634,7 +641,6 @@ export default function ScheduleVisitPage() {
               </div>
             </CardContent>
           </Card>
-
         </div>
 
         {/* Right Column: Session Details */}
@@ -713,7 +719,9 @@ export default function ScheduleVisitPage() {
                         sessionType === "VIDEO_SESSION"
                           ? "bg-lime-400/10 border-lime-400 text-white"
                           : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300",
-                        !hasVideoAddon && !isAdmin && "opacity-50 hover:border-transparent hover:text-slate-500 cursor-not-allowed"
+                        !hasVideoAddon &&
+                          !isAdmin &&
+                          "opacity-50 hover:border-transparent hover:text-slate-500 cursor-not-allowed",
                       )}
                     >
                       <Video
@@ -755,14 +763,15 @@ export default function ScheduleVisitPage() {
                       />
                     </div>
                     <div className="space-y-4">
-                      <Label
-                        className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
-                      >
-                        <Clock className="h-3 w-3 text-lime-400" /> Select Time Slot
+                      <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <Clock className="h-3 w-3 text-lime-400" /> Select Time
+                        Slot
                       </Label>
                       {!selectedDate ? (
                         <div className="p-4 bg-slate-800/30 border border-dashed border-slate-700 rounded-xl text-center">
-                          <p className="text-xs text-slate-500">Please select a date first</p>
+                          <p className="text-xs text-slate-500">
+                            Please select a date first
+                          </p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 scrollbar-hide">
@@ -778,7 +787,7 @@ export default function ScheduleVisitPage() {
                                   ? "bg-lime-400 border-lime-400 text-slate-900 shadow-[0_0_15px_rgba(163,230,53,0.3)]"
                                   : slot.available
                                     ? "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-lime-400/50 hover:bg-lime-400/5"
-                                    : "bg-slate-900/20 border-transparent text-slate-600 cursor-not-allowed opacity-50"
+                                    : "bg-slate-900/20 border-transparent text-slate-600 cursor-not-allowed opacity-50",
                               )}
                             >
                               {slot.label}
@@ -788,8 +797,12 @@ export default function ScheduleVisitPage() {
                       )}
                       {selectedTime && (
                         <div className="flex items-center gap-2 px-3 py-2 bg-lime-400/10 border border-lime-400/20 rounded-lg">
-                           <Clock className="h-3 w-3 text-lime-400" />
-                           <span className="text-xs font-bold text-lime-400">Selected: {availableSlots.find(s => s.time === selectedTime)?.label || selectedTime}</span>
+                          <Clock className="h-3 w-3 text-lime-400" />
+                          <span className="text-xs font-bold text-lime-400">
+                            Selected:{" "}
+                            {availableSlots.find((s) => s.time === selectedTime)
+                              ?.label || selectedTime}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -850,26 +863,36 @@ export default function ScheduleVisitPage() {
                   {sessionType === "PHOTO_SESSION" && (
                     <div className="space-y-2">
                       <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                        <Camera className="h-3 w-3 text-lime-400" /> Upload Photos / Videos (Optional)
+                        <Camera className="h-3 w-3 text-lime-400" /> Upload
+                        Photos / Videos (Optional)
                       </Label>
                       <div className="rounded-lg border border-dashed border-slate-700 bg-slate-800/30 p-3">
-                        <input
-                          type="file"
-                          accept="image/*,video/*"
-                          multiple
-                          onChange={(e) => handleFiles(e.target.files)}
-                          className={clsx(
-                            "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700"
-                          )}
-                        />
-                        <div className="mt-2 text-xs text-slate-400">
-                          {uploading && <span>Uploading...</span>}
-                          {assets.length > 0 && !uploading && (
-                            <span className="text-lime-300">
-                              {assets.length} file(s) uploaded
-                            </span>
-                          )}
-                        </div>
+                        {!editingSession && (
+                          <>
+                            <input
+                              type="file"
+                              accept="image/*,video/*"
+                              multiple
+                              onChange={(e) => handleFiles(e.target.files)}
+                              className={clsx(
+                                "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                              )}
+                            />
+                            <div className="mt-2 text-xs text-slate-400">
+                              {uploading && <span>Uploading...</span>}
+                              {assets.length > 0 && !uploading && (
+                                <span className="text-lime-300">
+                                  {assets.length} file(s) uploaded
+                                </span>
+                              )}
+                            </div>
+                          </>
+                        )}
+                        {editingSession && assets.length === 0 && (
+                          <div className="text-xs text-slate-500 italic py-2 text-center">
+                            No media attached to this session
+                          </div>
+                        )}
                         {assets.length > 0 && (
                           <div className="mt-3 space-y-1 max-h-28 overflow-auto">
                             {assets.map((asset) => {
@@ -879,7 +902,8 @@ export default function ScheduleVisitPage() {
                                   key={asset.id}
                                   className={clsx(
                                     "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50",
-                                    isSelected && "bg-slate-800/70 border border-lime-400/50"
+                                    isSelected &&
+                                      "bg-slate-800/70 border border-lime-400/50",
                                   )}
                                 >
                                   <input
@@ -887,16 +911,20 @@ export default function ScheduleVisitPage() {
                                     name="asset"
                                     value={asset.id}
                                     checked={isSelected}
+                                    disabled={!!editingSession}
                                     onChange={() => {
+                                      if (editingSession) return;
                                       setAssetIds((prev) =>
                                         prev.includes(asset.id)
                                           ? prev.filter((id) => id !== asset.id)
-                                          : [...prev, asset.id]
+                                          : [...prev, asset.id],
                                       );
                                     }}
                                     className="accent-lime-400"
                                   />
-                                  <span className="truncate flex-1">{asset.name || asset.storageKey}</span>
+                                  <span className="truncate flex-1">
+                                    {asset.name || asset.storageKey}
+                                  </span>
                                 </label>
                               );
                             })}
@@ -978,8 +1006,8 @@ export default function ScheduleVisitPage() {
                     </span>
                   ) : uploading ? (
                     <span className="flex items-center gap-3">
-                      <Loader2 className="h-5 w-5 animate-spin" />{" "}
-                      Uploading Media...
+                      <Loader2 className="h-5 w-5 animate-spin" /> Uploading
+                      Media...
                     </span>
                   ) : isDayBlocked() && !editingSession ? (
                     "Date Already Booked"
@@ -1099,108 +1127,113 @@ export default function ScheduleVisitPage() {
                       </div>
 
                       {/* Media Display */}
-                      {((s.media && s.media.length > 0) || (s.assets && s.assets.length > 0)) && (
+                      {((s.media && s.media.length > 0) ||
+                        (s.assets && s.assets.length > 0)) && (
                         <div className="flex flex-wrap gap-2 mt-3">
-                          {s.media && s.media.length > 0 ? (
-                            s.media.slice(0, 4).map((m, i) => (
-                              <a 
-                                key={m.id} 
-                                href={m.url} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
-                              >
-                                {m.mediaType === "IMAGE" || m.mimeType?.startsWith('image/') ? (
-                                  <img src={m.url} alt="Media" className="h-full w-full object-cover" />
-                                ) : (
-                                  <div className="h-full w-full flex items-center justify-center bg-slate-800">
-                                    <Video className="h-4 w-4 text-lime-400" />
-                                  </div>
-                                )}
-                                {i === 3 && (s.media?.length || 0) > 4 && (
-                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
-                                    +{(s.media?.length || 0) - 4}
-                                  </div>
-                                )}
-                              </a>
-                            ))
-                          ) : (
-                            s.assets?.slice(0, 4).map((url, i) => (
-                              <a 
-                                key={i} 
-                                href={url} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
-                              >
-                                <img src={url} alt="Asset" className="h-full w-full object-cover" />
-                                {i === 3 && (s.assets?.length || 0) > 4 && (
-                                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
-                                    +{(s.assets?.length || 0) - 4}
-                                  </div>
-                                )}
-                              </a>
-                            ))
-                          )}
+                          {s.media && s.media.length > 0
+                            ? s.media.slice(0, 4).map((m, i) => (
+                                <a
+                                  key={m.id}
+                                  href={m.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
+                                >
+                                  {m.mediaType === "IMAGE" ||
+                                  m.mimeType?.startsWith("image/") ? (
+                                    <img
+                                      src={m.url}
+                                      alt="Media"
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="h-full w-full flex items-center justify-center bg-slate-800">
+                                      <Video className="h-4 w-4 text-lime-400" />
+                                    </div>
+                                  )}
+                                  {i === 3 && (s.media?.length || 0) > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                      +{(s.media?.length || 0) - 4}
+                                    </div>
+                                  )}
+                                </a>
+                              ))
+                            : s.assets?.slice(0, 4).map((url, i) => (
+                                <a
+                                  key={i}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
+                                >
+                                  <img
+                                    src={url}
+                                    alt="Asset"
+                                    className="h-full w-full object-cover"
+                                  />
+                                  {i === 3 && (s.assets?.length || 0) > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                      +{(s.assets?.length || 0) - 4}
+                                    </div>
+                                  )}
+                                </a>
+                              ))}
                         </div>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-3">
                     {isAdmin && (
-                      <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700">
-                        {["pending", "completed", "canceled"].map(
-                          (status) => (
-                            <Button
-                              key={status}
-                              variant="ghost"
-                              size="sm"
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                try {
-                                  await apiPatch(
-                                    `/api/scheduler/sessions/${s.id}/status`,
-                                    {
-                                      status: status.toLowerCase(),
-                                      adminReason:
-                                        "Status updated by admin",
-                                    },
-                                  );
-                                  toast({
-                                    title: "Status Updated",
-                                    description: `Session marked as ${status.toLowerCase()}`,
-                                  });
-                                  fetchSessions();
-                                } catch (err: any) {
-                                  toast({
-                                    title: "Update Failed",
-                                    description: err.message,
-                                    variant: "destructive",
-                                  });
-                                }
-                              }}
-                              className={clsx(
-                                "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
-                                s.status === status
-                                  ? "bg-lime-400 text-slate-900"
-                                  : "text-slate-500 hover:text-white hover:bg-slate-700",
-                              )}
-                            >
-                              {status === "SCHEDULED"
-                                ? "Sch"
-                                : status === "COMPLETED"
-                                  ? "Done"
-                                  : "Can"}
-                            </Button>
-                          ),
-                        )}
+                      <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {["pending", "completed", "canceled"].map((status) => (
+                          <Button
+                            key={status}
+                            variant="ghost"
+                            size="sm"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              try {
+                                await apiPatch(
+                                  `/api/scheduler/sessions/${s.id}/status`,
+                                  {
+                                    status: status.toLowerCase(),
+                                    adminReason: "Status updated by admin",
+                                  },
+                                );
+                                toast({
+                                  title: "Status Updated",
+                                  description: `Session marked as ${status.toLowerCase()}`,
+                                });
+                                fetchSessions();
+                              } catch (err: any) {
+                                toast({
+                                  title: "Update Failed",
+                                  description: err.message,
+                                  variant: "destructive",
+                                });
+                              }
+                            }}
+                            className={clsx(
+                              "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
+                              s.status === status
+                                ? "bg-lime-400 text-slate-900"
+                                : "text-slate-500 hover:text-white hover:bg-slate-700",
+                            )}
+                          >
+                            {status === "SCHEDULED"
+                              ? "Sch"
+                              : status === "COMPLETED"
+                                ? "Done"
+                                : "Can"}
+                          </Button>
+                        ))}
                       </div>
                     )}
                     <Button
-                      variant="ghost"
+                      // variant="ghost"
                       size="sm"
                       onClick={() => handleEditSession(s)}
-                      className="h-9 text-slate-400 hover:text-lime-400 hover:bg-lime-400/10 font-bold"
+                      className="h-9 text-slate-400 font-bold"
                     >
                       Edit
                     </Button>

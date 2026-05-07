@@ -633,28 +633,41 @@ export default function PostModal({
               )}
             </label>
             <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/60 p-3">
-              <input
-                type="file"
-                accept="image/*,video/*"
-                multiple
-                onChange={(e) => handleFiles(e.target.files)}
-                disabled={isPosted}
-                className={clsx(
-                  "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
-                  isPosted && "opacity-50 cursor-not-allowed"
-                )}
-              />
-              <div className="mt-2 text-xs text-slate-400">
-                {uploading && <span>Uploading...</span>}
-                {assets.length > 0 && !uploading && (
-                  <span className="text-lime-300">
-                    {assets.length} file(s) uploaded
-                  </span>
-                )}
-                {assets.length === 0 && !uploading && assetIds.length === 0 && (
-                  <span>Optional: Attach media. Admin can add it later.</span>
-                )}
-              </div>
+              {!isEditing && (
+                <>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={(e) => handleFiles(e.target.files)}
+                    disabled={isPosted}
+                    className={clsx(
+                      "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                      isPosted && "opacity-50 cursor-not-allowed",
+                    )}
+                  />
+                  <div className="mt-2 text-xs text-slate-400">
+                    {uploading && <span>Uploading...</span>}
+                    {assets.length > 0 && !uploading && (
+                      <span className="text-lime-300">
+                        {assets.length} file(s) uploaded
+                      </span>
+                    )}
+                    {assets.length === 0 &&
+                      !uploading &&
+                      assetIds.length === 0 && (
+                        <span>
+                          Optional: Attach media. Admin can add it later.
+                        </span>
+                      )}
+                  </div>
+                </>
+              )}
+              {isEditing && assets.length === 0 && (
+                <div className="text-xs text-slate-500 italic py-2 text-center">
+                  No media attached to this post
+                </div>
+              )}
               {assets.length > 0 && (
                 <div className="mt-3 space-y-1">
                   <div className="text-xs text-slate-300 font-medium">
@@ -700,10 +713,10 @@ export default function PostModal({
                             name="asset"
                             value={id}
                             checked={isSelected}
-                            readOnly={'isLocal' in asset || isPosted}
-                            disabled={isPosted}
+                            readOnly={'isLocal' in asset || isPosted || isEditing}
+                            disabled={isPosted || isEditing}
                             onChange={() => {
-                              if ('isLocal' in asset || isPosted) return;
+                              if ('isLocal' in asset || isPosted || isEditing) return;
                               if (allowsMultipleMedia) {
                                 setAssetIds((prev) =>
                                   prev.includes(asset.id)
