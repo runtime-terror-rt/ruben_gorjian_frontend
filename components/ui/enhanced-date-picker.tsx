@@ -19,6 +19,7 @@ interface EnhancedDatePickerProps {
   timezoneAbbr: string;
   min?: string; // Minimum date in same format
   className?: string;
+  disabled?: boolean;
 }
 
 const TIME_PRESETS = [
@@ -36,6 +37,7 @@ export function EnhancedDatePicker({
   timezoneAbbr,
   min,
   className,
+  disabled = false,
 }: EnhancedDatePickerProps) {
   const [showQuickSelect, setShowQuickSelect] = useState(false);
   const [showTimePresets, setShowTimePresets] = useState(false);
@@ -119,6 +121,7 @@ export function EnhancedDatePicker({
           variant="outline"
           size="sm"
           onClick={() => setShowQuickSelect(!showQuickSelect)}
+          disabled={disabled}
           className="text-xs border-slate-700 hover:bg-slate-800"
         >
           <CalendarIcon className="h-3 w-3 mr-1" />
@@ -129,6 +132,7 @@ export function EnhancedDatePicker({
           variant="outline"
           size="sm"
           onClick={() => setShowTimePresets(!showTimePresets)}
+          disabled={disabled}
           className="text-xs border-slate-700 hover:bg-slate-800"
         >
           <Clock className="h-3 w-3 mr-1" />
@@ -184,12 +188,14 @@ export function EnhancedDatePicker({
           className={clsx(
             "w-full rounded-lg border border-slate-700 p-2 text-sm text-slate-400 focus:border-lime-400 focus:outline-none dark:bg-slate-900 dark:text-white [color-scheme:dark] [&_::-webkit-calendar-picker-indicator]:opacity-80 [&_::-webkit-calendar-picker-indicator]:cursor-pointer [&_::-webkit-calendar-picker-indicator]:filter-invert",
             isPastDate && "border-amber-500/50",
+            disabled && "opacity-50 cursor-not-allowed",
             className
           )}
           value={value}
           onChange={handleDateTimeChange}
           min={min || formatForDateTimeLocal(dayjs(), timezone)}
           step="60" // 1 minute steps
+          disabled={disabled}
         />
 
         {isPastDate && (
