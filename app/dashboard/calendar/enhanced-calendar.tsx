@@ -726,6 +726,7 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
           storageKey: post.asset.storageKey,
           name: post.asset.storageKey.split('/').pop() || 'Media'
         }] : [],
+        status: post.status,
       });
       // post.scheduledFor is already in user timezone from fetchPosts conversion
       setModalDate(userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor));

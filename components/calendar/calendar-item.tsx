@@ -244,16 +244,18 @@ export const CalendarItem = memo<CalendarItemProps>(
             >
               <Trash2 className="h-4 w-4" />
             </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit();
-              }}
-              className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
-              title="Edit post"
-            >
-              <Edit2 className="h-4 w-4 text-slate-300 hover:text-white" />
-            </button>
+            {post.status !== "POSTED" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
+                className="p-1.5 rounded-md hover:bg-slate-600/50 transition-colors"
+                title="Edit post"
+              >
+                <Edit2 className="h-4 w-4 text-slate-300 hover:text-white" />
+              </button>
+            )}
             {/* {isAdmin && (
               <button
                 onClick={(e) => {

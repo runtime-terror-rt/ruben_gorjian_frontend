@@ -689,6 +689,22 @@ export function CalendarProvider({
                 throw new Error(errData.message || `Failed to publish to ${target.platform}`);
               }
             }
+            // Update the status in the scheduler after successful publication
+            const statusResponse = await fetch(`/api/scheduler/posts/${id}/publish-status`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                status: "completed",
+                userId: targetUserId,
+                adminReason: "Published from admin dashboard",
+              }),
+            });
+
+            if (!statusResponse.ok) {
+              console.warn("Failed to update scheduler status, but post was published.");
+            }
+
             await fetchPosts();
             return;
           } catch (err) {
