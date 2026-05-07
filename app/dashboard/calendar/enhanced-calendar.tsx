@@ -164,9 +164,17 @@ function WeekView({
   onEdit: (postId: string) => void;
   onDragEnd: (postId: string, newDate: Date) => void;
 }) {
-  const { posts, startDate, deletePost, duplicatePost, publishPost, timezone: userTimezone } =
-    useCalendar();
-  const weekStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("isoWeek") : dayjs(startDate).startOf("isoWeek");
+  const {
+    posts,
+    startDate,
+    deletePost,
+    duplicatePost,
+    publishPost,
+    timezone: userTimezone,
+  } = useCalendar();
+  const weekStart = userTimezone
+    ? dayjs.tz(startDate, userTimezone).startOf("isoWeek")
+    : dayjs(startDate).startOf("isoWeek");
 
   const localizedDays = useMemo(() => {
     const days = [];
@@ -189,9 +197,7 @@ function WeekView({
         style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x pan-y" }}
         {...scrollHandlers}
       >
-        <div
-          className="grid [grid-template-columns:136px_repeat(7,160px)] md:[grid-template-columns:136px_repeat(7,_minmax(0,_1fr))] gap-[4px] rounded-[10px] min-h-full w-max md:w-full"
-        >
+        <div className="grid [grid-template-columns:136px_repeat(7,160px)] md:[grid-template-columns:136px_repeat(7,_minmax(0,_1fr))] gap-[4px] rounded-[10px] min-h-full w-max md:w-full">
           <div className="z-10 bg-slate-900/80 flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 border border-slate-800/50"></div>
           {localizedDays.map((day) => {
             const isToday = userTimezone
@@ -268,7 +274,9 @@ function MonthView({
     navigateToDate,
     timezone: userTimezone,
   } = useCalendar();
-  const monthStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("month") : dayjs(startDate).startOf("month");
+  const monthStart = userTimezone
+    ? dayjs.tz(startDate, userTimezone).startOf("month")
+    : dayjs(startDate).startOf("month");
   const [wideMonth, setWideMonth] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -353,7 +361,7 @@ function MonthView({
       >
         <div
           className={gridClassName}
-          style={{ gridAutoRows: 'minmax(110px, auto)' }}
+          style={{ gridAutoRows: "minmax(110px, auto)" }}
         >
           {localizedDays.map((day) => (
             <div
@@ -367,7 +375,9 @@ function MonthView({
           ))}
           {calendarDays.map((date, index) => {
             const isCurrentMonth = date.label === "current-month";
-            const dayDate = userTimezone ? dayjs.tz(date.day, userTimezone).startOf("day") : dayjs(date.day).startOf("day");
+            const dayDate = userTimezone
+              ? dayjs.tz(date.day, userTimezone).startOf("day")
+              : dayjs(date.day).startOf("day");
             const isToday = userTimezone
               ? dayDate.isSame(dayjs().tz(userTimezone), "day")
               : dayDate.isSame(dayjs(), "day");
@@ -379,7 +389,7 @@ function MonthView({
                   "text-center min-h-[120px] sm:min-h-[140px] flex border-r border-b border-slate-800/60 transition-all duration-200",
                   !isCurrentMonth && "bg-slate-950/40 opacity-30",
                   isToday && "bg-emerald-500/5",
-                  isCurrentMonth && "hover:bg-slate-800/30"
+                  isCurrentMonth && "hover:bg-slate-800/30",
                 )}
               >
                 <CalendarColumn
@@ -426,7 +436,9 @@ function DayView({
     publishPost,
     timezone: userTimezone,
   } = useCalendar();
-  const selectedDate = userTimezone ? dayjs.tz(startDate, userTimezone) : dayjs(startDate);
+  const selectedDate = userTimezone
+    ? dayjs.tz(startDate, userTimezone)
+    : dayjs(startDate);
   const scrollHandlers = useScrollPropagation();
 
   // Group posts by hour for timeline display
@@ -434,7 +446,9 @@ function DayView({
     const grouped: Record<number, typeof posts> = {};
     posts
       .filter((post) => {
-        const pDate = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
+        const pDate = userTimezone
+          ? dayjs.tz(post.scheduledFor, userTimezone)
+          : dayjs(post.scheduledFor);
         return pDate.isSame(selectedDate, "day");
       })
       .forEach((post) => {
@@ -450,8 +464,12 @@ function DayView({
     // Sort posts within each hour
     Object.keys(grouped).forEach((hour) => {
       grouped[Number(hour)].sort((a, b) => {
-        const dateA = userTimezone ? dayjs.tz(a.scheduledFor, userTimezone) : dayjs(a.scheduledFor);
-        const dateB = userTimezone ? dayjs.tz(b.scheduledFor, userTimezone) : dayjs(b.scheduledFor);
+        const dateA = userTimezone
+          ? dayjs.tz(a.scheduledFor, userTimezone)
+          : dayjs(a.scheduledFor);
+        const dateB = userTimezone
+          ? dayjs.tz(b.scheduledFor, userTimezone)
+          : dayjs(b.scheduledFor);
         return dateA.valueOf() - dateB.valueOf();
       });
     });
@@ -558,14 +576,27 @@ function ListView({
   onEdit: (postId: string) => void;
   onDragEnd: (postId: string, newDate: Date) => void;
 }) {
-  const { posts, startDate, deletePost, duplicatePost, publishPost, timezone: userTimezone } = useCalendar();
-  const monthStart = userTimezone ? dayjs.tz(startDate, userTimezone).startOf("month") : dayjs(startDate).startOf("month");
-  
+  const {
+    posts,
+    startDate,
+    deletePost,
+    duplicatePost,
+    publishPost,
+    timezone: userTimezone,
+  } = useCalendar();
+  const monthStart = userTimezone
+    ? dayjs.tz(startDate, userTimezone).startOf("month")
+    : dayjs(startDate).startOf("month");
+
   // Sort posts chronologically
   const sortedPosts = useMemo(() => {
     return [...posts].sort((a, b) => {
-      const dateA = userTimezone ? dayjs.tz(a.scheduledFor, userTimezone) : dayjs(a.scheduledFor);
-      const dateB = userTimezone ? dayjs.tz(b.scheduledFor, userTimezone) : dayjs(b.scheduledFor);
+      const dateA = userTimezone
+        ? dayjs.tz(a.scheduledFor, userTimezone)
+        : dayjs(a.scheduledFor);
+      const dateB = userTimezone
+        ? dayjs.tz(b.scheduledFor, userTimezone)
+        : dayjs(b.scheduledFor);
       return dateA.valueOf() - dateB.valueOf();
     });
   }, [posts, userTimezone]);
@@ -576,14 +607,19 @@ function ListView({
         <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-4">
           <LayoutList className="h-12 w-12 opacity-20" />
           <p>No posts scheduled for this period.</p>
-          <Button variant="outline" onClick={() => onAddPost(dayjs().tz(userTimezone))}>
+          <Button
+            variant="outline"
+            onClick={() => onAddPost(dayjs().tz(userTimezone))}
+          >
             Create Post
           </Button>
         </div>
       ) : (
         <div className="space-y-4">
           {sortedPosts.map((post) => {
-            const date = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
+            const date = userTimezone
+              ? dayjs.tz(post.scheduledFor, userTimezone)
+              : dayjs(post.scheduledFor);
             return (
               <div key={post.id} className="w-full">
                 <CalendarItem
@@ -593,7 +629,11 @@ function ListView({
                   onEdit={() => onEdit(post.id)}
                   onDelete={() => deletePost(post.id)}
                   onDuplicate={() => duplicatePost(post.id)}
-                  onPublish={publishPost ? () => publishPost(post.id) : undefined} isBeforeNow={false}                />
+                  onPublish={
+                    publishPost ? () => publishPost(post.id) : undefined
+                  }
+                  isBeforeNow={false}
+                />
               </div>
             );
           })}
@@ -603,7 +643,11 @@ function ListView({
   );
 }
 
-export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string }) {
+export default function EnhancedCalendar({
+  clientEmail,
+}: {
+  clientEmail?: string;
+}) {
   const {
     display,
     setDisplay,
@@ -642,11 +686,14 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
   const { uploadFile, uploading } = useUpload();
   const { toast } = useToast();
 
-  const handleAddPost = useCallback((date?: Dayjs) => {
-    const defaultDate = userTimezone ? dayjs().tz(userTimezone) : dayjs();
-    setModalDate(date ?? defaultDate);
-    setModalOpen(true);
-  }, [userTimezone]);
+  const handleAddPost = useCallback(
+    (date?: Dayjs) => {
+      const defaultDate = userTimezone ? dayjs().tz(userTimezone) : dayjs();
+      setModalDate(date ?? defaultDate);
+      setModalOpen(true);
+    },
+    [userTimezone],
+  );
 
   const handleCreatePost = useCallback(
     async (
@@ -699,8 +746,9 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
       if (post.status === "POSTED") {
         toast({
           title: "Update Prevented",
-          description: "Cannot edit posts that have already been published. Please duplicate the post to create a new version.",
-          variant: "destructive"
+          description:
+            "Cannot edit posts that have already been published. Please duplicate the post to create a new version.",
+          variant: "destructive",
         });
         return;
       }
@@ -722,15 +770,23 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
           : post.hashtags
             ? [post.hashtags]
             : [],
-        existingMedia: post.asset ? [{
-          id: post.asset.id,
-          storageKey: post.asset.storageKey,
-          name: post.asset.storageKey.split('/').pop() || 'Media'
-        }] : [],
+        existingMedia: post.asset
+          ? [
+              {
+                id: post.asset.id,
+                storageKey: post.asset.storageKey,
+                name: post.asset.storageKey.split("/").pop() || "Media",
+              },
+            ]
+          : [],
         status: post.status,
       });
       // post.scheduledFor is already in user timezone from fetchPosts conversion
-      setModalDate(userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor));
+      setModalDate(
+        userTimezone
+          ? dayjs.tz(post.scheduledFor, userTimezone)
+          : dayjs(post.scheduledFor),
+      );
       setModalOpen(true);
     },
     [posts, userTimezone, toast],
@@ -739,26 +795,33 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
   const handleDragEnd = useCallback(
     async (postId: string, newDate: Date) => {
       try {
-        const targetDate = userTimezone ? dayjs.tz(newDate, userTimezone) : dayjs(newDate);
+        const targetDate = userTimezone
+          ? dayjs.tz(newDate, userTimezone)
+          : dayjs(newDate);
         const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
 
         // Validate: cannot move to past dates (before current minute)
         if (targetDate.isBefore(now, "minute")) {
           toast({
             title: "Invalid Move",
-            description: "Cannot schedule posts in the past. Please select a current or future date/time.",
-            variant: "destructive"
+            description:
+              "Cannot schedule posts in the past. Please select a current or future date/time.",
+            variant: "destructive",
           });
           return;
         }
 
         await movePost(postId, targetDate);
-        toast({ title: "Post Rescheduled", description: `Item moved to ${targetDate.format("MMM D, HH:mm")}` });
+        toast({
+          title: "Post Rescheduled",
+          description: `Item moved to ${targetDate.format("MMM D, HH:mm")}`,
+        });
       } catch (err) {
         toast({
           title: "Error",
-          description: err instanceof Error ? err.message : "Failed to move post",
-          variant: "destructive"
+          description:
+            err instanceof Error ? err.message : "Failed to move post",
+          variant: "destructive",
         });
       }
     },
@@ -766,7 +829,9 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
   );
 
   const formatDateRange = () => {
-    const start = userTimezone ? dayjs.tz(startDate, userTimezone) : dayjs(startDate);
+    const start = userTimezone
+      ? dayjs.tz(startDate, userTimezone)
+      : dayjs(startDate);
     const end = userTimezone ? dayjs.tz(endDate, userTimezone) : dayjs(endDate);
 
     if (display === "day") {
@@ -807,15 +872,43 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
-            <p>Target Timezone: <span className="text-white bg-slate-800 px-1 rounded">{userTimezone || "BROWSER_DEFAULT"}</span></p>
-            <p>Browser Timezone: <span className="text-white">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span></p>
-            <p>Current Time (Local): <span className="text-white">{dayjs().format("YYYY-MM-DD HH:mm:ss")}</span></p>
-            <p>Current Time (Locked): <span className="text-white">{userTimezone ? dayjs().tz(userTimezone).format("YYYY-MM-DD HH:mm:ss") : "N/A"}</span></p>
-            <p>UTC Now: <span className="text-white">{dayjs().utc().format("YYYY-MM-DD HH:mm:ss")} Z</span></p>
+            <p>
+              Target Timezone:{" "}
+              <span className="text-white bg-slate-800 px-1 rounded">
+                {userTimezone || "BROWSER_DEFAULT"}
+              </span>
+            </p>
+            <p>
+              Browser Timezone:{" "}
+              <span className="text-white">
+                {Intl.DateTimeFormat().resolvedOptions().timeZone}
+              </span>
+            </p>
+            <p>
+              Current Time (Local):{" "}
+              <span className="text-white">
+                {dayjs().format("YYYY-MM-DD HH:mm:ss")}
+              </span>
+            </p>
+            <p>
+              Current Time (Locked):{" "}
+              <span className="text-white">
+                {userTimezone
+                  ? dayjs().tz(userTimezone).format("YYYY-MM-DD HH:mm:ss")
+                  : "N/A"}
+              </span>
+            </p>
+            <p>
+              UTC Now:{" "}
+              <span className="text-white">
+                {dayjs().utc().format("YYYY-MM-DD HH:mm:ss")} Z
+              </span>
+            </p>
           </div>
           <div className="mt-2 pt-2 border-t border-amber-500/20">
             <p className="text-[10px] text-amber-400/70 font-sans italic">
-              Tip: If "Current Time (Locked)" doesn't match your wall clock, check your Business Settings.
+              Tip: If "Current Time (Locked)" doesn't match your wall clock,
+              check your Business Settings.
             </p>
           </div>
         </div>
@@ -858,7 +951,8 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
                 onClick={() => setDisplay("day")}
                 className={clsx(
                   "rounded-none border-0",
-                  display !== "day" && "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  display !== "day" &&
+                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Day view"
               >
@@ -871,7 +965,8 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
                 onClick={() => setDisplay("week")}
                 className={clsx(
                   "rounded-none border-0 border-l border-r border-slate-700",
-                  display !== "week" && "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  display !== "week" &&
+                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Week view"
               >
@@ -884,7 +979,8 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
                 onClick={() => setDisplay("month")}
                 className={clsx(
                   "rounded-none border-0",
-                  display !== "month" && "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  display !== "month" &&
+                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Month view"
               >
@@ -897,7 +993,8 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
                 onClick={() => setDisplay("list")}
                 className={clsx(
                   "rounded-none border-0 border-l border-slate-700",
-                  display !== "list" && "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  display !== "list" &&
+                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="List view"
               >
@@ -1032,7 +1129,11 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
           uploading={uploading}
           isAdmin={isAdmin}
           onDelete={deletePost}
-          onPublish={isAdmin ? (payload) => publishPost(editingPost?.id || "") : undefined}
+          onPublish={
+            isAdmin
+              ? (payload) => publishPost(editingPost?.id || "")
+              : undefined
+          }
         />
 
         <PostDetailsModal
