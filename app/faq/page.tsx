@@ -30,35 +30,9 @@ type FaqListResponse = {
   };
 };
 
-const fallbackFaqRows = [
-  {
-    id: "fallback-1",
-    question: "Can Talexia support multiple client brands?",
-    answer:
-      "Yes. The product is built for agencies and operators managing several accounts with separate brand profiles.",
-  },
-  {
-    id: "fallback-2",
-    question: "What does founder pricing include?",
-    answer:
-      "Founder pricing applies the discounted plan rate for eligible early adopters and remains until cancellation.",
-  },
-  {
-    id: "fallback-3",
-    question: "Which platforms do you support in Phase 1?",
-    answer:
-      "Instagram, Facebook, and TikTok are supported for social connection and scheduled publishing.",
-  },
-  {
-    id: "fallback-4",
-    question: "Do you generate AI images?",
-    answer:
-      "No. Phase 1 includes text generation only: captions, hashtags, CTAs, and short descriptions.",
-  },
-];
-
 export default function FAQPage() {
-  const [faqRows, setFaqRows] = useState(fallbackFaqRows);
+  const [faqRows, setFaqRows] = useState<Faq[]>([]);
+  const [faqLoaded, setFaqLoaded] = useState(false);
 
   useEffect(() => {
     let isActive = true;
@@ -66,19 +40,26 @@ export default function FAQPage() {
       .then((res) => {
         if (!isActive) return;
         const rows = Array.isArray(res?.data) ? res.data : [];
-        const mapped = rows
+        const mapped: Faq[] = rows
           .filter((r) => r.isActive)
           .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
           .map((r) => ({
             id: r.id,
             question: r.question,
             answer: r.answer,
+            displayOrder: r.displayOrder ?? 0,
+            isActive: true,
           }));
-        if (mapped.length) {
-          setFaqRows(mapped);
-        }
+        setFaqRows(mapped);
       })
-      .catch(() => {});
+      .catch(() => {
+        setFaqRows([]);
+      })
+      .finally(() => {
+        if (isActive) {
+          setFaqLoaded(true);
+        }
+      });
     return () => {
       isActive = false;
     };
@@ -107,22 +88,35 @@ export default function FAQPage() {
           >
             Questions teams ask before switching
           </h2>
-          <Accordion type="single" collapsible className="mt-6">
-            {accordionItems.map((item) => (
-              <AccordionItem
-                key={item.id}
-                value={`faq-${item.id}`}
-                className="mb-6 rounded-full border border-[#ebedf4] px-6 py-4"
-              >
-                <AccordionTrigger className="text-left text-sm font-medium">
-                  {item.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          {accordionItems.length > 0 ? (
+            <Accordion type="single" collapsible className="mt-6">
+              {accordionItems.map((item) => (
+                <AccordionItem
+                  key={item.id}
+                  value={`faq-${item.id}`}
+                  className="mb-6 rounded-full border border-[#ebedf4] px-6 py-4"
+                >
+                  <AccordionTrigger className="text-left text-sm font-medium">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          ) : faqLoaded ? (
+            <div className="rounded-3xl border border-[#e4e6ee] bg-[#f8fbff] p-8 text-center text-sm text-[#4f5160]">
+              <p className="text-base font-semibold text-[#1f2230]">
+                Our FAQ section is being updated.
+              </p>
+              <p className="mt-3">
+                We don&apos;t have FAQ content available right now, but our team is ready to answer your questions. Please contact us for support or check back shortly.
+              </p>
+            </div>
+          ) : (
+            <p className="mt-6 text-sm text-[#5d657d]">Loading frequently asked questions...</p>
+          )}
         </div>
       </section>
 

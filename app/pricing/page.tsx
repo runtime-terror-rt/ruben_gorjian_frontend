@@ -149,24 +149,8 @@ function PricingPageContent() {
     return stored === "jewelry" ? "jewelry" : "regular";
   });
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
-  const [faqs, setFaqs] = useState<Array<{ q: string; a: string }>>([
-    {
-      q: "Can I switch plans after I subscribe?",
-      a: "Yes. You can upgrade or downgrade at any time from billing settings. Changes are applied through Stripe.",
-    },
-    {
-      q: "How does founder pricing work?",
-      a: "Founder rates apply while founder slots remain and are grandfathered until cancellation. If canceled, re-subscription uses standard pricing.",
-    },
-    {
-      q: "Do all plans support scheduling?",
-      a: "All plans include the calendar and are admin-managed by Talexia.",
-    },
-    {
-      q: "What happens if I exceed monthly post limits?",
-      a: "Soft-limit plans continue with usage visibility. Hard-limit plans require upgrading or waiting for the next billing cycle.",
-    },
-  ]);
+  const [faqs, setFaqs] = useState<Array<{ q: string; a: string }>>([]);
+  const [faqLoaded, setFaqLoaded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const masterFromUrl = searchParams.get("master");
@@ -176,8 +160,10 @@ function PricingPageContent() {
       : masterPlan;
 
   useEffect(() => {
+    let isActive = true;
     apiGet<FaqListResponse>("/api/faq?pageType=PRICING_PAGE")
       .then((res) => {
+        if (!isActive) return;
         const rows = Array.isArray(res?.data) ? res.data : [];
         const mapped = rows
           .filter((r) => r.isActive)
@@ -186,11 +172,17 @@ function PricingPageContent() {
             q: r.question,
             a: r.answer,
           }));
-        if (mapped.length) {
-          setFaqs(mapped);
-        }
+        setFaqs(mapped);
       })
-      .catch(() => {});
+      .catch(() => {
+        setFaqs([]);
+      })
+      .finally(() => {
+        if (isActive) setFaqLoaded(true);
+      });
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -552,22 +544,35 @@ function PricingPageContent() {
             >
               Questions teams ask before switching
             </h3>
-            <Accordion type="single" collapsible className="mt-6">
-              {faqs.map((faq, index) => (
-                <AccordionItem
-                  key={faq.q}
-                  value={`faq-${index}`}
-                  className="mb-6 rounded-full border border-[#ebedf4] px-6 py-4"
-                >
-                  <AccordionTrigger className="text-left text-sm font-medium">
-                    {faq.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {faqs.length > 0 ? (
+              <Accordion type="single" collapsible className="mt-6">
+                {faqs.map((faq, index) => (
+                  <AccordionItem
+                    key={`${faq.q}-${index}`}
+                    value={`faq-${index}`}
+                    className="mb-6 rounded-full border border-[#ebedf4] px-6 py-4"
+                  >
+                    <AccordionTrigger className="text-left text-sm font-medium">
+                      {faq.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-left text-sm text-[#55596a] pl-4">
+                      {faq.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : faqLoaded ? (
+              <div className="rounded-3xl border border-[#e4e6ee] bg-[#f8fbff] p-8 text-center text-sm text-[#4f5160]">
+                <p className="text-base font-semibold text-[#1f2230]">
+                  Pricing FAQ content is not available right now.
+                </p>
+                <p className="mt-3">
+                  If you have questions about our plans or pricing, reach out to our team and we&apos;ll respond quickly.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-6 text-sm text-[#5d657d]">Loading pricing FAQs...</p>
+            )}
           </div>
         </section>
       </main>

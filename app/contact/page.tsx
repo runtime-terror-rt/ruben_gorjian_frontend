@@ -37,12 +37,7 @@ export default function ContactPage() {
       apiPost<ContactResponse>("/api/contact", payload),
 
     onSuccess: (data) => {
-      toast.success("Message sent successfully!");
-
-      // optional: show submission id
-      if (data?.data?.submissionId) {
-        toast.info(`Submission ID: ${data.data.submissionId}`);
-      }
+      toast.success("Thank you! Your message has been sent successfully.");
     },
 
     onError: (error: any) => {
@@ -85,7 +80,7 @@ export default function ContactPage() {
         className="px-4 pb-16 pt-14 sm:pt-20"
         aria-labelledby="contact-heading"
       >
-        <div className="mx-auto grid max-w-6xl gap-6 rounded-3xl border border-[#dfe2ec] bg-white p-6 sm:p-8 lg:grid-cols-1">
+        <div className="mx-auto max-w-6xl gap-6 rounded-3xl border border-[#dfe2ec] bg-white p-6 sm:p-8 md:p-10">
           <div className="space-y-10">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#777b86]">
               Contact sales
@@ -103,13 +98,13 @@ export default function ContactPage() {
               right Talexia setup for your workflow.
             </p>
 
-            <div className="grid w-full gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_1.2fr]">
+            <div className="grid w-full gap-6 md:grid-cols-[1.2fr_1fr]">
               {/* Image */}
               <div className="h-full w-full rounded-xl border border-indigo-800/10">
                 <Image
                   src={contactImage}
                   alt="Contact Talexia"
-                  className="h-full w-full rounded-xl object-cover object-center lg:h-[600px]"
+                  className="h-full w-full rounded-xl object-contain object-center"
                   width={600}
                   height={600}
                 />
@@ -117,12 +112,12 @@ export default function ContactPage() {
 
               {/* Form */}
               <form
-                className="flex flex-col  h-full gap-3  rounded-xl border-2 border-indigo-800/10 p-4 shadow-lg "
+                className="flex flex-col gap-6 rounded-xl border-2 border-indigo-800/10 p-4 sm:p-6 md:p-8 shadow-lg"
                 onSubmit={handleContactSubmit}
               >
                 {/* Error */}
                 {mutation.isError && (
-                  <p className="sm:col-span-2 rounded-xl border border-[#f1cbc1] bg-[#fff1ec] px-4 py-2 text-sm text-[#b53f2a]">
+                  <p className="rounded-xl border border-[#f1cbc1] bg-[#fff1ec] px-4 py-2 text-sm text-[#b53f2a]">
                     {(mutation.error as any)?.message ||
                       "Unable to submit contact form right now."}
                   </p>
@@ -130,66 +125,65 @@ export default function ContactPage() {
 
                 {/* Success */}
                 {mutation.isSuccess && (
-                  <p className="sm:col-span-2 rounded-xl border border-[#ced9f6] bg-[#edf2ff] px-4 py-2 text-sm text-[#2f4587]">
-                    Thanks. We received your request.{" "}
-                    {(mutation.data as any)?.data?.submissionId}
+                  <p className="rounded-xl border border-[#ced9f6] bg-[#edf2ff] px-4 py-2 text-sm text-[#2f4587]">
+                    Thank you for your message! We've received your request and will get back to you soon.
                   </p>
                 )}
 
-                <div className="contents">
-                  <label className="font-bold">Full Name : </label>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-[#1f2230]">Full Name</label>
                   <input
                     name="fullName"
-                    placeholder="Full name"
-                    className="form-control h-20 rounded-xl border border-[#d8dce8] px-6 py-3 text-sm outline-none focus:border-[#4a5dff]"
+                    placeholder="Enter your full name"
+                    className="h-12 rounded-xl border border-[#d8dce8] px-4 py-3 text-sm outline-none focus:border-[#4a5dff] focus:ring-2 focus:ring-[#4a5dff]/20"
                     required
                   />
                 </div>
 
-                <div className="contents">
-                  <label className="font-bold">Business Name : </label>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-[#1f2230]">Business Name</label>
                   <input
                     name="businessName"
-                    placeholder="Business name"
-                    className="form-control h-20 rounded-xl border border-[#d8dce8] px-6 py-3 text-sm outline-none focus:border-[#4a5dff]"
+                    placeholder="Enter your business name"
+                    className="h-12 rounded-xl border border-[#d8dce8] px-4 py-3 text-sm outline-none focus:border-[#4a5dff] focus:ring-2 focus:ring-[#4a5dff]/20"
                     required
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="font-bold">Email : </label>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-[#1f2230]">Email</label>
                   <input
                     name="email"
                     type="email"
-                    placeholder="Email"
-                    className="form-control h-20 w-full rounded-xl border border-[#d8dce8] px-6 py-3 text-sm outline-none focus:border-[#4a5dff]"
+                    placeholder="Enter your email address"
+                    className="h-12 w-full rounded-xl border border-[#d8dce8] px-4 py-3 text-sm outline-none focus:border-[#4a5dff] focus:ring-2 focus:ring-[#4a5dff]/20"
                     required
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="font-bold">Website/@Handle: </label>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-[#1f2230]">Website or @Handle</label>
                   <input
                     name="websiteOrHandle"
-                    placeholder="Website or @handle"
-                    className="form-control h-20 w-full rounded-xl border border-[#d8dce8] px-6 py-3 text-sm outline-none focus:border-[#4a5dff]"
+                    placeholder="Enter your website or social handle"
+                    className="h-12 w-full rounded-xl border border-[#d8dce8] px-4 py-3 text-sm outline-none focus:border-[#4a5dff] focus:ring-2 focus:ring-[#4a5dff]/20"
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="font-bold">Message : </label>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-[#1f2230]">Message</label>
                   <textarea
                     name="message"
-                    rows={4}
-                    placeholder="What do you want Talexia to handle for you?"
-                    className="form-control h-20 w-full rounded-xl border border-[#d8dce8] px-6 py-3 text-sm outline-none focus:border-[#4a5dff]"
+                    rows={5}
+                    placeholder="Tell us what you want Talexia to handle for you"
+                    className="w-full resize-none rounded-xl border border-[#d8dce8] px-4 py-3 text-sm outline-none focus:border-[#4a5dff] focus:ring-2 focus:ring-[#4a5dff]/20"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={mutation.isPending}
-                  className="h-12 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-70 sm:col-span-2"
+                  className="h-12 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {mutation.isPending ? "Sending..." : "Send request"}
                 </button>
