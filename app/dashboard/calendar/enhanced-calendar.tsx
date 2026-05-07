@@ -634,6 +634,7 @@ export default function EnhancedCalendar({ clientEmail }: { clientEmail?: string
     socialAccountIds: string[];
     hashtags?: string[];
     existingMedia?: any[];
+    status?: string;
   } | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [viewingPostId, setViewingPostId] = useState<string | null>(null);

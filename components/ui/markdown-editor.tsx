@@ -10,6 +10,7 @@ interface MarkdownEditorProps {
   placeholder?: string;
   className?: string;
   rows?: number;
+  readOnly?: boolean;
 }
 
 export function MarkdownEditor({
@@ -18,6 +19,7 @@ export function MarkdownEditor({
   placeholder = "Write your caption in Markdown...",
   className,
   rows = 6,
+  readOnly = false,
 }: MarkdownEditorProps) {
   const [mode, setMode] = useState<"edit" | "preview">("edit");
 
@@ -104,6 +106,7 @@ export function MarkdownEditor({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
+          readOnly={readOnly}
         />
       ) : (
         <div className="w-full rounded-lg border border-slate-800 bg-slate-950/80 p-3 text-sm text-slate-200 min-h-[120px] prose prose-invert prose-sm max-w-none">

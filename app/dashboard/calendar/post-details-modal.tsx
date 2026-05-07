@@ -467,7 +467,7 @@ export default function PostDetailsModal({
                     Archive
                  </Button>
                )}
-               {post.status !== 'POSTED' && (
+               {post?.status !== 'POSTED' && (
                  <Button
                    onClick={handleEdit}
                    className="flex-1 bg-gradient-to-r from-lime-400 to-lime-500 text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all"
