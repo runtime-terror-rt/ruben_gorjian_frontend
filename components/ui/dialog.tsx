@@ -53,9 +53,13 @@ export function DialogTrigger({ children, className }: {
 export function DialogContent({
   children,
   className,
+  overlayClassName,
+  contentClassName,
 }: {
   children: React.ReactNode;
   className?: string;
+  overlayClassName?: string;
+  contentClassName?: string;
 }) {
   const ctx = useDialog();
   const [mounted, setMounted] = React.useState(false);
@@ -75,7 +79,7 @@ export function DialogContent({
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4">
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className={cn("absolute inset-0 bg-black/40 backdrop-blur-md", overlayClassName)}
         onClick={() => ctx.setOpen(false)}
         aria-hidden="true"
       />
@@ -86,7 +90,7 @@ export function DialogContent({
         )}
       >
         <div
-          className="flex-1 overflow-y-auto overflow-x-hidden p-6"
+          className={cn("flex-1 overflow-y-auto overflow-x-hidden p-6", contentClassName)}
           data-lenis-prevent
         >
           {children}
@@ -165,4 +169,3 @@ function useDialog() {
   if (!ctx) throw new Error("Dialog components must be used within <Dialog>");
   return ctx;
 }
-
