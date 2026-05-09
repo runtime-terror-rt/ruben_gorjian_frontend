@@ -7,8 +7,8 @@ export async function GET() {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
-    // The user confirmed that /admin/coupons is the final route
-    const res = await fetch(`${getBackendUrl()}/admin/coupons`, {
+    // Fetch available coupons from the billing endpoint
+    const res = await fetch(`${getBackendUrl()}/billing/coupons/available`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
