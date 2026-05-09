@@ -7,14 +7,13 @@ export async function GET() {
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
 
-    // The user confirmed that /admin/coupons is the final route
+    // Professional Public Proxy: Hitting /admin/coupons without cookies as it's public.
     const res = await fetch(`${getBackendUrl()}/admin/coupons`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
       },
-      credentials: "include",
+      cache: "no-store",
     });
 
     if (!res.ok) {

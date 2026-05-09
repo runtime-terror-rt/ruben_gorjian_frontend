@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, CreditCard, Tag, Plus, Minus, Video, ShieldCheck, ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { Check, CreditCard, Tag, Plus, Minus, ShieldCheck, ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,6 @@ import { useSessionContext } from "@/context/SessionContext";
 // Pricing data for addons matching screenshot
 const ADDON_PRICES = {
   platform: 5, // $5 per extra platform
-  videoHour: 495, // $495 per video session
 };
 
 const TAX_RATE = 0.08625; // 8.625% based on backend example
@@ -37,7 +36,7 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { session } = useSessionContext();
-  
+
   // URL params
   const rawPlan = searchParams.get("plan");
   const isEnterprise = rawPlan?.toUpperCase().startsWith("ENT");
@@ -47,10 +46,9 @@ function CheckoutContent() {
   );
 
   // State
-  const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{name?: string, price?: number} | null>(null);
+  const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{ name?: string, price?: number } | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [addonPlatformQty, setAddonPlatformQty] = useState(0);
-  const [videoSessionHours, setVideoSessionHours] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +124,22 @@ function CheckoutContent() {
     }
   }, [planCode, appliedCoupon]);
 
+  // Platform Limits based on user request
+  const platformLimit = useMemo(() => {
+    if (isEnterprise) return 3;
+    if (planCode === "FMP-20") return 3;
+    if (planCode === "FMP-35") return 2;
+    if (planCode === "FM-70") return 1;
+    return 3; // Default
+  }, [isEnterprise, planCode]);
+
+  // Ensure addonPlatformQty doesn't exceed limit if plan changes
+  useEffect(() => {
+    if (addonPlatformQty > platformLimit) {
+      setAddonPlatformQty(platformLimit);
+    }
+  }, [platformLimit, addonPlatformQty]);
+
   // Calculation Logic (aligned with screenshot and backend founder pricing)
   const calculation = useMemo(() => {
     let basePrice = 0;
@@ -143,7 +157,7 @@ function CheckoutContent() {
         basePrice = 1250;
       }
     }
-    
+
     // BACKEND SYNC: Check if user has Founder pricing (30% discount)
     // Stripe shows $664.30 for $949.00 plan, which is 949 * 0.7
     const isFounder = session?.isFounder || session?.subscription?.priceType === "founder";
@@ -154,20 +168,19 @@ function CheckoutContent() {
 
     const planPrice = basePrice * discountMultiplier * cycleMultiplier * founderMultiplier;
     const platformPrice = (addonPlatformQty * ADDON_PRICES.platform) * cycleMultiplier;
-    const videoPrice = (videoSessionHours * ADDON_PRICES.videoHour); // FIXED: Video sessions are NOT per month, they are quantity-based per year/month.
-    
-    const subtotal = planPrice + platformPrice + videoPrice;
-    
+
+    const subtotal = planPrice + platformPrice;
+
     let discount = 0;
     // FINAL SAFETY CHECK: Strict plan code-level enforcement
-    const isActuallyApplicable = !!(appliedCoupon && 
-      appliedCoupon.applicablePlans && 
+    const isActuallyApplicable = !!(appliedCoupon &&
+      appliedCoupon.applicablePlans &&
       appliedCoupon.applicablePlans.includes(planCode as any));
 
     if (isCouponApplied && appliedCoupon && isActuallyApplicable) {
       const val = appliedCoupon.discountValue;
       const type = appliedCoupon.discountType;
-      
+
       if (type === 'percentage') {
         discount = subtotal * (val / 100);
       } else {
@@ -182,7 +195,6 @@ function CheckoutContent() {
     return {
       planPrice,
       platformPrice,
-      videoPrice,
       subtotal,
       discount,
       tax,
@@ -191,7 +203,7 @@ function CheckoutContent() {
       isFounder,
       isActuallyApplicable
     };
-  }, [planCode, billingCycle, addonPlatformQty, videoSessionHours, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
+  }, [planCode, billingCycle, addonPlatformQty, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
 
   const handleApplyCoupon = (codeToApply?: string) => {
     const code = (codeToApply || couponCode).trim().toUpperCase();
@@ -203,11 +215,11 @@ function CheckoutContent() {
     setError(null);
 
     const coupon = availableCoupons.find(c => c.code === code);
-    
+
     if (coupon) {
       // STRICT VALIDATION: Check if the plan is explicitly on the allowed list
       const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode as any);
-      
+
       if (!isApplicable && !isEnterprise) {
         setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
         return;
@@ -239,7 +251,7 @@ function CheckoutContent() {
       if (fallbacks[code]) {
         const fb = fallbacks[code];
         const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode as any);
-        
+
         if (!isApplicable && !isEnterprise) {
           setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
           return;
@@ -277,7 +289,6 @@ function CheckoutContent() {
         billingCycle,
         termsAccepted,
         addonPlatformQty,
-        videoSessionHours,
         couponCode: isCouponApplied ? couponCode : undefined,
         successUrl: `${origin}/billing/success`,
         cancelUrl: `${origin}/billing/checkout?plan=${planCode}&cycle=${billingCycle}`,
@@ -288,7 +299,7 @@ function CheckoutContent() {
       } else {
         const errorMsg = res.error || "Failed to initiate checkout. Please try again.";
         setError(errorMsg);
-        
+
         // If the error is specifically about the coupon, remove it to stop calculating the discount
         if (errorMsg.toLowerCase().includes("coupon") || errorMsg.toLowerCase().includes("applicable")) {
           handleRemoveCoupon();
@@ -304,9 +315,9 @@ function CheckoutContent() {
 
   return (
     <div className="container max-w-5xl mx-auto py-10">
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         className="mb-6 gap-2 text-slate-400 hover:text-white"
         onClick={() => router.back()}
       >
@@ -334,8 +345,8 @@ function CheckoutContent() {
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-white">
-                          {isEnterprise 
-                            ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan") 
+                          {isEnterprise
+                            ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
                             : PLAN_NAMES[planCode as PlanKey]}
                         </h3>
                         {calculation.isFounder && (
@@ -368,8 +379,8 @@ function CheckoutContent() {
                       onClick={() => setBillingCycle("monthly")}
                       className={cn(
                         "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all",
-                        billingCycle === "monthly" 
-                          ? "bg-lime-500 text-slate-950 shadow-sm" 
+                        billingCycle === "monthly"
+                          ? "bg-lime-500 text-slate-950 shadow-sm"
                           : "text-slate-400 hover:text-white"
                       )}
                     >
@@ -379,8 +390,8 @@ function CheckoutContent() {
                       onClick={() => setBillingCycle("yearly")}
                       className={cn(
                         "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all flex items-center gap-1.5",
-                        billingCycle === "yearly" 
-                          ? "bg-lime-500 text-slate-950 shadow-sm" 
+                        billingCycle === "yearly"
+                          ? "bg-lime-500 text-slate-950 shadow-sm"
                           : "text-slate-400 hover:text-white"
                       )}
                     >
@@ -399,62 +410,49 @@ function CheckoutContent() {
               {/* Addons Section */}
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Optional Add-ons</h3>
-                
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-4 transition hover:border-slate-700">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-white font-medium"> Platforms</Label>
-                      <span className="text-xs text-lime-400">+${ADDON_PRICES.platform.toFixed(2)} ea/mo</span>
-                    </div>
-                    {/* <p className="text-xs text-slate-500">Additional social accounts for your plan.</p> */}
-                    <div className="flex items-center gap-3">
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent hover:bg-slate-800"
-                        onClick={() => setAddonPlatformQty(Math.max(0, addonPlatformQty - 1))}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="w-8 text-center font-bold text-white">{addonPlatformQty}</span>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent hover:bg-slate-800"
-                        onClick={() => setAddonPlatformQty(addonPlatformQty + 1)}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
 
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-3 transition hover:border-slate-700">
+                <div className="grid gap-4">
+                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-5 space-y-4 transition hover:border-slate-700">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Video className="h-4 w-4 text-slate-400" />
-                        <Label className="text-white font-medium"> Video Sessions</Label>
+                      <div className="space-y-1">
+                        <Label className="text-white font-semibold text-base">Additional Platforms</Label>
+                        <p className="text-xs text-slate-500">Connect more social accounts to your plan (Max: {platformLimit})</p>
                       </div>
-                      <span className="text-xs text-lime-400">+${ADDON_PRICES.videoHour.toFixed(2)} each</span>
+                      <div className="text-right">
+                        <span className="text-sm font-bold text-lime-400">+${ADDON_PRICES.platform.toFixed(2)}</span>
+                        <span className="text-[10px] text-slate-500 block">per platform/mo</span>
+                      </div>
                     </div>
-                    {/* <p className="text-xs text-slate-500">Additional vertical video sessions (15-20s).</p> */}
-                    <div className="flex items-center gap-3">
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent hover:bg-slate-800"
-                        onClick={() => setVideoSessionHours(Math.max(0, videoSessionHours - 1))}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="w-8 text-center font-bold text-white">{videoSessionHours}</span>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent hover:bg-slate-800"
-                        onClick={() => setVideoSessionHours(videoSessionHours + 1)}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
+                    
+                    <div className="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-800">
+                      <div className="flex items-center gap-4">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
+                          onClick={() => setAddonPlatformQty(Math.max(0, addonPlatformQty - 1))}
+                          disabled={addonPlatformQty <= 0}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <div className="flex flex-col items-center min-w-[40px]">
+                          <span className="text-xl font-black text-white">{addonPlatformQty}</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
+                          onClick={() => setAddonPlatformQty(Math.min(platformLimit, addonPlatformQty + 1))}
+                          disabled={addonPlatformQty >= platformLimit}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <div className="text-right">
+                        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Subtotal</span>
+                        <p className="text-lg font-bold text-white">${(addonPlatformQty * ADDON_PRICES.platform).toFixed(2)}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -466,8 +464,8 @@ function CheckoutContent() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                    <Input 
-                      placeholder="Enter code (e.g. SUMMER26)" 
+                    <Input
+                      placeholder="Enter code (e.g. SUMMER26)"
                       className="border-slate-800 bg-slate-950 pl-10 text-white focus:ring-lime-400"
                       value={couponCode}
                       onChange={(e) => {
@@ -477,7 +475,7 @@ function CheckoutContent() {
                       disabled={isCouponApplied}
                     />
                   </div>
-                  <Button 
+                  <Button
                     variant={isCouponApplied ? "outline" : "secondary"}
                     className={cn(isCouponApplied ? "border-lime-500/50 text-lime-400" : "")}
                     onClick={() => isCouponApplied ? handleRemoveCoupon() : handleApplyCoupon()}
@@ -485,7 +483,7 @@ function CheckoutContent() {
                     {isCouponApplied ? "Remove" : "Apply"}
                   </Button>
                 </div>
-                
+
                 {isCouponApplied && appliedCoupon && (isEnterprise || appliedCoupon.applicablePlans?.includes(planCode as string)) && (
                   <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
                     <Check className="h-4 w-4" />
@@ -505,9 +503,9 @@ function CheckoutContent() {
           </Card>
 
           <div className="flex items-start space-x-3 p-2">
-            <Checkbox 
-              id="terms" 
-              className="mt-1 border-slate-700 data-[state=checked]:bg-lime-500" 
+            <Checkbox
+              id="terms"
+              className="mt-1 border-slate-700 data-[state=checked]:bg-lime-500"
               checked={termsAccepted}
               onCheckedChange={(checked) => setTermsAccepted(!!checked)}
             />
@@ -534,8 +532,8 @@ function CheckoutContent() {
                 <div className="flex justify-between items-start text-slate-300">
                   <div className="flex flex-col">
                     <span className="font-medium text-white">
-                      {isEnterprise 
-                        ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan") 
+                      {isEnterprise
+                        ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
                         : PLAN_NAMES[planCode as PlanKey]}
                     </span>
                     <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>
@@ -557,7 +555,7 @@ function CheckoutContent() {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Addons */}
                 {addonPlatformQty > 0 && (
                   <div className="flex justify-between items-start text-slate-300">
@@ -568,19 +566,11 @@ function CheckoutContent() {
                     <span className="text-white font-medium">${calculation.platformPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 )}
-                
-                {videoSessionHours > 0 && (
-                  <div className="flex justify-between items-start text-slate-300">
-                    <div className="flex flex-col">
-                      <span>Video Session</span>
-                      <span className="text-[10px] text-slate-500 font-medium">Qty {videoSessionHours}, ${ADDON_PRICES.videoHour.toFixed(2)} each</span>
-                    </div>
-                    <span className="text-white font-medium">${calculation.videoPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                )}
+
+
 
                 <Separator className="bg-slate-800/60" />
-                
+
                 {/* Subtotal */}
                 <div className="flex justify-between text-white font-semibold">
                   <span>Subtotal</span>
@@ -629,7 +619,7 @@ function CheckoutContent() {
             </CardContent>
 
             <CardContent className="pt-2 pb-6">
-              <Button 
+              <Button
                 className="w-full rounded-full bg-lime-500 py-7 text-base font-black text-slate-950 hover:bg-lime-400 shadow-[0_0_30px_rgba(132,204,22,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98]"
                 disabled={loading}
                 onClick={handleCheckout}
@@ -646,7 +636,7 @@ function CheckoutContent() {
                   </>
                 )}
               </Button>
-              
+
               <div className="mt-6 flex flex-col items-center gap-4 border-t border-slate-800/80 pt-6">
                 <div className="flex items-center justify-center gap-6 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-5" />
