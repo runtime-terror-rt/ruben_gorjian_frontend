@@ -55,11 +55,13 @@ export function DialogContent({
   className,
   overlayClassName,
   contentClassName,
+  fullScreen,
 }: {
   children: React.ReactNode;
   className?: string;
   overlayClassName?: string;
   contentClassName?: string;
+  fullScreen?: boolean;
 }) {
   const ctx = useDialog();
   const [mounted, setMounted] = React.useState(false);
@@ -77,7 +79,7 @@ export function DialogContent({
   if (!ctx.open || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4">
+    <div className={cn("fixed inset-0 z-[100] flex items-center justify-center overflow-hidden", !fullScreen && "p-4")}>
       <div
         className={cn("absolute inset-0 bg-black/40 backdrop-blur-md", overlayClassName)}
         onClick={() => ctx.setOpen(false)}
@@ -85,12 +87,13 @@ export function DialogContent({
       />
       <div
         className={cn(
-          "relative z-[100] flex max-h-[90vh] w-full max-w-md flex-col rounded-2xl border border-slate-700/50 bg-slate-900 shadow-2xl overflow-hidden",
+          "relative z-[100] flex flex-col overflow-hidden",
+          !fullScreen && "max-h-[90vh] w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-900 shadow-2xl",
           className
         )}
       >
         <div
-          className={cn("flex-1 overflow-y-auto overflow-x-hidden p-6", contentClassName)}
+          className={cn("flex-1 overflow-y-auto overflow-x-hidden", !fullScreen && "p-6", contentClassName)}
           data-lenis-prevent
         >
           {children}
