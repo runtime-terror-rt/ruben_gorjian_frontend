@@ -202,25 +202,44 @@ function TagInput({
             {t}
           </button>
         ))}
-        <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === ",") {
-              e.preventDefault();
+        <div className="flex-1 min-w-[140px] relative flex items-center">
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === ",") {
+                e.preventDefault();
+                add(draft);
+                setDraft("");
+              }
+              if (e.key === "Backspace" && !draft && value.length > 0) {
+                remove(value.length - 1);
+              }
+            }}
+            onBlur={() => {
               add(draft);
               setDraft("");
-            }
-            if (e.key === "Backspace" && !draft && value.length > 0) {
-              remove(value.length - 1);
-            }
-          }}
-          placeholder={placeholder}
-          className="flex-1 min-w-[120px] bg-transparent outline-none text-sm text-slate-200 placeholder:text-slate-600"
-        />
+            }}
+            placeholder={placeholder}
+            className="w-full bg-transparent outline-none text-sm text-slate-200 placeholder:text-slate-600 h-9 pr-10"
+          />
+          {draft.trim() && (
+            <button
+              type="button"
+              onClick={() => {
+                add(draft);
+                setDraft("");
+              }}
+              
+            >
+              <Plus className="h-4 w-4 text-white" size={30} />
+            </button>
+          )}
+        </div>
       </div>
-      <div className="mt-2 text-[9px] sm:text-[10px] text-slate-600 font-semibold uppercase tracking-widest">
-        Press Enter to add, click tag to remove
+      <div className="mt-2 flex items-center justify-between text-[9px] sm:text-[10px] text-slate-600 font-semibold uppercase tracking-widest">
+        <span>Press Enter, comma, or click (+) to add</span>
+        <span>Click tag to remove</span>
       </div>
     </div>
   );
