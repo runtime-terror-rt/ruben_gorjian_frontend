@@ -55,6 +55,7 @@ function CheckoutContent() {
   const [isCouponApplied, setIsCouponApplied] = useState(false);
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [platformLimitError, setPlatformLimitError] = useState<string | null>(null);
 
   // Fetch enterprise plan details from API
   useEffect(() => {
@@ -139,6 +140,23 @@ function CheckoutContent() {
       setAddonPlatformQty(platformLimit);
     }
   }, [platformLimit, addonPlatformQty]);
+
+  const handleAddPlatform = () => {
+    if (addonPlatformQty < platformLimit) {
+      setAddonPlatformQty(addonPlatformQty + 1);
+      setPlatformLimitError(null);
+    } else {
+      setPlatformLimitError(`Maximum limit of ${platformLimit} additional ${platformLimit === 1 ? 'platform' : 'platforms'} reached for the ${isEnterprise ? 'Enterprise' : PLAN_NAMES[planCode as PlanKey]} plan.`);
+      
+      // Auto-clear error after 3 seconds
+      setTimeout(() => setPlatformLimitError(null), 3000);
+    }
+  };
+
+  const handleRemovePlatform = () => {
+    setAddonPlatformQty(Math.max(0, addonPlatformQty - 1));
+    setPlatformLimitError(null);
+  };
 
   // Calculation Logic (aligned with screenshot and backend founder pricing)
   const calculation = useMemo(() => {
@@ -430,7 +448,7 @@ function CheckoutContent() {
                           variant="outline"
                           size="icon"
                           className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
-                          onClick={() => setAddonPlatformQty(Math.max(0, addonPlatformQty - 1))}
+                          onClick={handleRemovePlatform}
                           disabled={addonPlatformQty <= 0}
                         >
                           <Minus className="h-4 w-4" />
@@ -441,9 +459,8 @@ function CheckoutContent() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
-                          onClick={() => setAddonPlatformQty(Math.min(platformLimit, addonPlatformQty + 1))}
-                          disabled={addonPlatformQty >= platformLimit}
+                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white transition-all active:scale-95"
+                          onClick={handleAddPlatform}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -454,6 +471,13 @@ function CheckoutContent() {
                         <p className="text-lg font-bold text-white">${(addonPlatformQty * ADDON_PRICES.platform).toFixed(2)}</p>
                       </div>
                     </div>
+
+                    {platformLimitError && (
+                      <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-[11px] text-red-400 animate-in slide-in-from-top-2 duration-300">
+                        <ShieldCheck className="h-3.5 w-3.5" />
+                        <span>{platformLimitError}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
