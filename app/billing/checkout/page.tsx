@@ -499,7 +499,7 @@ function CheckoutContent() {
                   <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
                     <Check className="h-4 w-4" />
                     <div>
-                      <span className="font-bold">{appliedCoupon.code}</span> applied: {appliedCoupon.description || "Discount applied successfully"}
+                      <span className="font-bold">{appliedCoupon.code}</span> applied: {appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `$${appliedCoupon.discountValue} off`} successfully
                     </div>
                   </div>
                 )}
