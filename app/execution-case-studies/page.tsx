@@ -7,9 +7,11 @@ import {
   Image as ImageIcon,
   MapPin,
   Play,
-  Loader2,
-  Maximize2,
   X,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Loader2,
 } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -200,7 +202,10 @@ function FullWidthMediaGrid({
 export default function CaseStudiesPage() {
   const limit = 10;
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{
+    images: string[];
+    index: number;
+  } | null>(null);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
@@ -257,8 +262,8 @@ export default function CaseStudiesPage() {
         <Navbar />
       </Suspense>
 
-      <section className="px-4 py-12 sm:py-24">
-        <div className="max-w-6xl mx-auto space-y-20">
+      <section className="px-4 py-2 sm:py-7">
+        <div className="max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col justify-center items-center">
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#1c2231]">
               Execution Case Studies
@@ -286,7 +291,7 @@ export default function CaseStudiesPage() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-24 sm:gap-40">
+            <div className="flex flex-col gap-12 sm:gap-16">
               {activeItems.map((cs) => {
                 const logoUrl = cs.logoUrl || getMediaUrl(cs.logo);
                 const imageUrls = Array.isArray(cs.images)
@@ -301,7 +306,7 @@ export default function CaseStudiesPage() {
                     key={cs.id}
                     className="group border-none bg-transparent rounded-none overflow-visible shadow-none relative"
                   >
-                    <CardHeader className="p-0 mb-8 sm:mb-12">
+                    <CardHeader className="p-0 mb-4 sm:mb-4">
                       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-b-2 border-[#f0f2f8] pb-8">
                         <div className="flex items-center gap-6">
                           <div className="h-20 w-20 rounded-[2rem] border-2 border-[#e4e5ea] bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-lg group-hover:border-accent transition-colors duration-500">
@@ -338,9 +343,9 @@ export default function CaseStudiesPage() {
                       </div>
                     </CardHeader>
 
-                    <CardContent className="p-0 space-y-12 sm:space-y-16">
+                    <CardContent className="p-0 space-y-6 sm:space-y-8">
                       {/* 1. NARRATIVE SECTION */}
-                      <div className="space-y-6 px-2 sm:px-0">
+                      <div className="space-y-2 px-2 sm:px-0">
                         <p className="text-[#1c2231] text-xl sm:text-4xl leading-[1.2] font-black tracking-tight max-w-[90%]">
                           {cs.cycleTitle ||
                             "Engineered for high-frequency execution and strategic brand expansion."}
@@ -348,31 +353,27 @@ export default function CaseStudiesPage() {
                       </div>
 
                       {/* 2. INTEL GRID */}
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 sm:gap-20 px-2 sm:px-0">
-                        {/* Services */}
-                        <div className="lg:col-span-4 space-y-6">
-                          <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.3em] uppercase opacity-60">
-                            Services
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {services.length === 0 ? (
-                              <div className="text-sm font-bold opacity-30 italic">
-                                Syncing Intel...
-                              </div>
-                            ) : (
-                              services.map((s, idx) => (
-                                <span
-                                  key={`${s}-${idx}`}
-                                  className="px-4 py-2 rounded-xl bg-[#f0f2f8] text-[#1c2231] text-[10px] font-black tracking-[0.1em] uppercase border border-[#e4e5ea]"
-                                >
+                      <div className="space-y-4 px-2 sm:px-0">
+                     
+                        <ul className="flex flex-col gap-y-3 list-none p-0">
+                          {services.length === 0 ? (
+                            <li className="text-sm font-bold opacity-30 italic">
+                              Syncing Intel...
+                            </li>
+                          ) : (
+                            services.map((s, idx) => (
+                              <li
+                                key={`${s}-${idx}`}
+                                className="flex items-center gap-4"
+                              >
+                                <div className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                                <div className="text-sm sm:text-base text-[#363a49] font-bold leading-tight">
                                   {s}
-                                </span>
-                              ))
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Pipeline */}
+                                </div>
+                              </li>
+                            ))
+                          )}
+                        </ul>
                       </div>
                       <p className="text-[#1c2231] text-xl sm:text-4xl leading-[1.2] font-black tracking-tight max-w-[90%]">
                         {cs.tagline ||
@@ -382,42 +383,42 @@ export default function CaseStudiesPage() {
                       {/* 3. FULL WIDTH IMAGE GRID */}
                       {imageUrls.length > 0 && (
                         <div className="space-y-4">
-                          <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.3em] uppercase flex items-center gap-4 px-2 sm:px-0">
-                            <span className="shrink-0">Production Assets</span>
-                            <div className="h-px w-full bg-[#f0f2f8]" />
-                          </div>
+                          
                           <FullWidthMediaGrid
                             images={imageUrls}
-                            onImageClick={setLightboxImage}
+                            onImageClick={(url) =>
+                              setLightbox({
+                                images: imageUrls,
+                                index: imageUrls.indexOf(url),
+                              })
+                            }
                           />
                         </div>
                       )}
 
-                      <div className="lg:col-span-8 space-y-4">
-                        <div className="text-xl font-bold">
+                      <div className="">
+                        <div className="text-xl mb-3 font-bold">
                           {cs?.structureTitle}
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
+                        <ul className="flex flex-col gap-y-2 list-none p-0">
                           {structureItems.length === 0 ? (
-                            <div className="text-sm font-bold opacity-30 italic">
+                            <li className="text-sm font-bold opacity-30 italic">
                               Building Architecture...
-                            </div>
+                            </li>
                           ) : (
                             structureItems.map((it, idx) => (
-                              <div
+                              <li
                                 key={`${it}-${idx}`}
-                                className="flex items-start gap-4 border-l border-[#e4e5ea] pl-6 py-1"
+                                className="flex items-start gap-4 "
                               >
-                                <span className="text-accent font-black text-xs">
-                                  0{idx + 1}
-                                </span>
+                                <div className="h-1.5 w-1.5 rounded-full bg-accent shrink-0 mt-1.5" />
                                 <div className="text-sm sm:text-base text-[#363a49] font-bold leading-tight">
                                   {it}
                                 </div>
-                              </div>
+                              </li>
                             ))
                           )}
-                        </div>
+                        </ul>
                       </div>
                       <h1 className="text-xl font-bold">{cs?.videoTitle}</h1>
 
@@ -436,7 +437,7 @@ export default function CaseStudiesPage() {
                       )}
 
                       {/* 5. FOOTER SYNC */}
-                      <div className="pt-12 border-t border-[#f0f2f8] flex items-center justify-between px-2 sm:px-0">
+                      {/* <div className="pt-12 border-t border-[#f0f2f8] flex items-center justify-between px-2 sm:px-0">
                         <div className="text-[10px] text-[#9ca3af] font-black tracking-[0.4em] uppercase opacity-50">
                           Execution Ref:{" "}
                           {cs.updatedAt
@@ -451,7 +452,7 @@ export default function CaseStudiesPage() {
                             <div className="h-1.5 w-1.5 rounded-full bg-accent animate-ping" />
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                     </CardContent>
                   </Card>
                 );
@@ -474,37 +475,75 @@ export default function CaseStudiesPage() {
               <p className="text-[10px] text-[#9ca3af] font-black tracking-[0.5em] uppercase opacity-40">
                 Reveal Further Insights
               </p>
-            ) : activeItems.length > 0 ? (
-              <div className="flex flex-col items-center gap-8 w-full opacity-20 px-10">
-                <div className="h-20 w-px bg-gradient-to-b from-[#e4e5ea] to-transparent" />
-                <p className="text-[10px] text-[#9ca3af] font-black tracking-[0.6em] uppercase whitespace-nowrap">
-                  Narrative Stream Concluded
-                </p>
-              </div>
             ) : null}
           </div>
         </div>
       </section>
 
       {/* Lightbox for full image viewing */}
-      <Dialog
-        open={!!lightboxImage}
-        onOpenChange={() => setLightboxImage(null)}
-      >
-        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-transparent border-none overflow-hidden flex items-center justify-center">
-          {lightboxImage && (
-            <div className="relative w-full h-full flex items-center justify-center p-4">
+      <Dialog open={!!lightbox} onOpenChange={() => setLightbox(null)}>
+        <DialogContent 
+          className="max-w-[100vw] max-h-[100vh] w-screen h-screen p-0 bg-transparent border-none shadow-none overflow-hidden flex items-center justify-center"
+          overlayClassName="backdrop-blur-3xl bg-black/40"
+          contentClassName="p-0"
+        >
+          {lightbox && (
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* Close Button */}
               <button
-                onClick={() => setLightboxImage(null)}
-                className="absolute top-4 right-4 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors"
+                onClick={() => setLightbox(null)}
+                className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md"
               >
                 <X className="h-6 w-6" />
               </button>
-              <img
-                src={lightboxImage}
-                alt="Full preview"
-                className="w-full h-full object-contain rounded-2xl shadow-2xl"
-              />
+
+              {/* Previous Button */}
+              {lightbox.images.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightbox({
+                      ...lightbox,
+                      index:
+                        (lightbox.index - 1 + lightbox.images.length) %
+                        lightbox.images.length,
+                    });
+                  }}
+                  className="absolute left-6 z-[60] p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md group"
+                >
+                  <ChevronLeft className="h-8 w-8 transition-transform group-hover:-translate-x-1" />
+                </button>
+              )}
+
+              {/* Next Button */}
+              {lightbox.images.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLightbox({
+                      ...lightbox,
+                      index: (lightbox.index + 1) % lightbox.images.length,
+                    });
+                  }}
+                  className="absolute right-6 z-[60] p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md group"
+                >
+                  <ChevronRight className="h-8 w-8 transition-transform group-hover:translate-x-1" />
+                </button>
+              )}
+
+              {/* Image Container */}
+              <div className="w-full h-full flex items-center justify-center p-4 sm:p-12">
+                <img
+                  src={lightbox.images[lightbox.index]}
+                  alt="Full preview"
+                  className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
+                />
+              </div>
+
+              {/* Counter */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white text-xs font-black tracking-widest backdrop-blur-md">
+                {lightbox.index + 1} / {lightbox.images.length}
+              </div>
             </div>
           )}
         </DialogContent>
