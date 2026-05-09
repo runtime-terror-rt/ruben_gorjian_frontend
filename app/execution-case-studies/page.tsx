@@ -268,7 +268,7 @@ export default function CaseStudiesPage() {
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#1c2231]">
               Execution Case Studies
             </h1>
-            <p className="text-[#6b7280] text-sm sm:text-lg max-w-2xl font-bold tracking-tight mt-2 italic opacity-80">
+            <p className="text-[#6b7280] text-sm sm:text-lg max-w-2xl tracking-tight mt-2 italic opacity-80">
               Structured production. Managed execution. Real restaurant output.
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function CaseStudiesPage() {
                                 )} */}
                             </div>
                             {cs.location && (
-                              <div className="text-xs text-[#9ca3af] font-black flex items-center gap-2 uppercase tracking-[0.2em] mt-2">
+                              <div className="text-xs text-[#9ca3af] flex items-center gap-2 uppercase tracking-[0.2em] mt-2">
                                 <div className="h-1.5 w-1.5 rounded-full bg-accent" />
                                 {cs.location}
                               </div>
@@ -357,7 +357,7 @@ export default function CaseStudiesPage() {
                      
                         <ul className="flex flex-col gap-y-3 list-none p-0">
                           {services.length === 0 ? (
-                            <li className="text-sm font-bold opacity-30 italic">
+                            <li className="text-sm opacity-30 italic">
                               Syncing Intel...
                             </li>
                           ) : (
@@ -367,7 +367,7 @@ export default function CaseStudiesPage() {
                                 className="flex items-center gap-4"
                               >
                                 <div className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
-                                <div className="text-sm sm:text-base text-[#363a49] font-bold leading-tight">
+                                <div className="text-sm sm:text-base text-[#363a49] leading-tight">
                                   {s}
                                 </div>
                               </li>
@@ -412,7 +412,7 @@ export default function CaseStudiesPage() {
                                 className="flex items-start gap-4 "
                               >
                                 <div className="h-1.5 w-1.5 rounded-full bg-accent shrink-0 mt-1.5" />
-                                <div className="text-sm sm:text-base text-[#363a49] font-bold leading-tight">
+                                <div className="text-sm sm:text-base text-[#363a49]  leading-tight">
                                   {it}
                                 </div>
                               </li>
@@ -425,7 +425,7 @@ export default function CaseStudiesPage() {
                       {/* 4. VIDEO PLAYER - CINEMATIC SCALE */}
                       {videoUrl && (
                         <div className="space-y-6 px-2 sm:px-0">
-                          <div className="rounded-[2.5rem] sm:rounded-[4rem] overflow-hidden border-4 border-[#f0f2f8] bg-black shadow-2xl aspect-video relative group transition-all duration-500 hover:border-accent/20">
+                          <div className=" overflow-hidden border-4 border-[#f0f2f8] bg-black shadow-2xl aspect-video relative group transition-all duration-500 hover:border-accent/20">
                             <video
                               src={videoUrl}
                               controls
@@ -483,8 +483,9 @@ export default function CaseStudiesPage() {
       {/* Lightbox for full image viewing */}
       <Dialog open={!!lightbox} onOpenChange={() => setLightbox(null)}>
         <DialogContent 
-          className="max-w-[100vw] max-h-[100vh] w-screen h-screen p-0 bg-transparent border-none shadow-none overflow-hidden flex items-center justify-center"
-          overlayClassName="backdrop-blur-3xl bg-black/40"
+          fullScreen
+          className="w-screen h-screen bg-transparent border-none shadow-none overflow-hidden flex items-center justify-center"
+          overlayClassName="backdrop-blur-3xl bg-black/60"
           contentClassName="p-0"
         >
           {lightbox && (
@@ -492,9 +493,9 @@ export default function CaseStudiesPage() {
               {/* Close Button */}
               <button
                 onClick={() => setLightbox(null)}
-                className="absolute top-6 right-6 z-[60] p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md"
+                className="absolute top-8 right-8 z-[60] p-3 rounded-full bg-black/50 text-[#d25ffd] hover:bg-black/70 transition-all backdrop-blur-xl border border-[#d25ffd]/30 shadow-2xl"
               >
-                <X className="h-6 w-6" />
+                <X className="h-7 w-7" />
               </button>
 
               {/* Previous Button */}
@@ -509,7 +510,7 @@ export default function CaseStudiesPage() {
                         lightbox.images.length,
                     });
                   }}
-                  className="absolute left-6 z-[60] p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md group"
+                  className="absolute left-8 z-[60] p-4 rounded-full bg-black/50 text-[#d25ffd] hover:bg-black/70 transition-all backdrop-blur-xl border border-[#d25ffd]/30 shadow-2xl group"
                 >
                   <ChevronLeft className="h-8 w-8 transition-transform group-hover:-translate-x-1" />
                 </button>
@@ -525,18 +526,18 @@ export default function CaseStudiesPage() {
                       index: (lightbox.index + 1) % lightbox.images.length,
                     });
                   }}
-                  className="absolute right-6 z-[60] p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all backdrop-blur-md group"
+                  className="absolute right-8 z-[60] p-4 rounded-full bg-black/50 text-[#d25ffd] hover:bg-black/70 transition-all backdrop-blur-xl border border-[#d25ffd]/30 shadow-2xl group"
                 >
                   <ChevronRight className="h-8 w-8 transition-transform group-hover:translate-x-1" />
                 </button>
               )}
 
               {/* Image Container */}
-              <div className="w-full h-full flex items-center justify-center p-4 sm:p-12">
+              <div className="w-full h-full flex items-center justify-center p-6 sm:p-20">
                 <img
                   src={lightbox.images[lightbox.index]}
                   alt="Full preview"
-                  className="max-w-full max-h-full object-contain shadow-2xl animate-in fade-in zoom-in duration-300"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-[0_0_100px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-300"
                 />
               </div>
 
