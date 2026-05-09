@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 import Navbar from "@/components/navbar";
-import heroImage from "@/components/assets/hero_cocktail.jpg";
+import heroImage from "@/components/assets/hero_cocktail.webp";
 import whiskImage from "@/components/assets/whisk.png";
 import contentCalendarImage from "@/components/assets/Content_1.png";
 import FooterSecondary from "@/components/footer-secondary";
