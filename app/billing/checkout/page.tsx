@@ -25,10 +25,10 @@ const TAX_RATE = 0.08625; // 8.625% based on backend example
 type Coupon = {
   id: string;
   code: string;
-  discountType: "percentage" | "fixed_amount";
+  discountType: "percentage" | "fixed";
   discountValue: number;
   description: string;
-  applicablePlans: string[];
+  applicablePlans?: string[];
   expiresAt: string;
 };
 
@@ -119,7 +119,7 @@ function CheckoutContent() {
 
   // Re-validate coupon if plan changes
   useEffect(() => {
-    if (appliedCoupon && !appliedCoupon.applicablePlans.includes(planCode as any)) {
+    if (appliedCoupon && appliedCoupon.applicablePlans && !appliedCoupon.applicablePlans.includes(planCode as any)) {
       handleRemoveCoupon();
       setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode as PlanKey]} plan.`);
     }
@@ -147,7 +147,7 @@ function CheckoutContent() {
       setPlatformLimitError(null);
     } else {
       setPlatformLimitError(`Maximum limit of ${platformLimit} additional ${platformLimit === 1 ? 'platform' : 'platforms'} reached for the ${isEnterprise ? 'Enterprise' : PLAN_NAMES[planCode as PlanKey]} plan.`);
-      
+
       // Auto-clear error after 3 seconds
       setTimeout(() => setPlatformLimitError(null), 3000);
     }
@@ -190,18 +190,13 @@ function CheckoutContent() {
     const subtotal = planPrice + platformPrice;
 
     let discount = 0;
-    // FINAL SAFETY CHECK: Strict plan code-level enforcement
-    const isActuallyApplicable = !!(appliedCoupon &&
-      appliedCoupon.applicablePlans &&
-      appliedCoupon.applicablePlans.includes(planCode as any));
-
-    if (isCouponApplied && appliedCoupon && isActuallyApplicable) {
+    if (isCouponApplied && appliedCoupon) {
       const val = appliedCoupon.discountValue;
       const type = appliedCoupon.discountType;
 
       if (type === 'percentage') {
         discount = subtotal * (val / 100);
-      } else {
+      } else if (type === 'fixed') {
         discount = val * cycleMultiplier;
       }
     }
@@ -219,7 +214,7 @@ function CheckoutContent() {
       total,
       isYearly: billingCycle === "yearly",
       isFounder,
-      isActuallyApplicable
+      isActuallyApplicable: true // Defaulting to true as available coupons are now fetched from a specific endpoint
     };
   }, [planCode, billingCycle, addonPlatformQty, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
 
@@ -235,8 +230,8 @@ function CheckoutContent() {
     const coupon = availableCoupons.find(c => c.code === code);
 
     if (coupon) {
-      // STRICT VALIDATION: Check if the plan is explicitly on the allowed list
-      const isApplicable = coupon.applicablePlans && coupon.applicablePlans.includes(planCode as any);
+      // Check if applicable plans exist and if the current plan is included
+      const isApplicable = !coupon.applicablePlans || coupon.applicablePlans.includes(planCode as any);
 
       if (!isApplicable && !isEnterprise) {
         setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
@@ -250,30 +245,22 @@ function CheckoutContent() {
           id: "fallback-summer26",
           code: "SUMMER26",
           discountType: "percentage",
-          discountValue: 10,
-          description: "Summer sale - 10% off",
-          applicablePlans: ["FM-70", "FMP-20"],
-          expiresAt: "2026-12-31T23:59:59.000Z"
+          discountValue: 15,
+          description: "Summer sale - 15% off",
+          expiresAt: "2027-12-31T23:59:59.000Z"
         },
-        "SUMMER25": {
-          id: "fallback-summer25",
-          code: "SUMMER25",
-          discountType: "percentage",
-          discountValue: 12,
-          description: "Summer sale - 12% off",
-          applicablePlans: ["FM-70", "FMP-35"],
-          expiresAt: "2025-12-31T23:59:59.000Z"
+        "FIXED36": {
+          id: "fallback-fixed36",
+          code: "FIXED36",
+          discountType: "fixed",
+          discountValue: 36,
+          description: "Summer sale - fixed 36 off",
+          expiresAt: "2027-12-31T23:59:59.000Z"
         }
       };
 
       if (fallbacks[code]) {
         const fb = fallbacks[code];
-        const isApplicable = fb.applicablePlans && fb.applicablePlans.includes(planCode as any);
-
-        if (!isApplicable && !isEnterprise) {
-          setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
-          return;
-        }
         setAppliedCoupon(fb);
         setIsCouponApplied(true);
         setCouponCode(fb.code);
@@ -441,7 +428,7 @@ function CheckoutContent() {
                         <span className="text-[10px] text-slate-500 block">per platform/mo</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-800">
                       <div className="flex items-center gap-4">
                         <Button
@@ -465,7 +452,7 @@ function CheckoutContent() {
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <div className="text-right">
                         <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Subtotal</span>
                         <p className="text-lg font-bold text-white">${(addonPlatformQty * ADDON_PRICES.platform).toFixed(2)}</p>
@@ -508,7 +495,7 @@ function CheckoutContent() {
                   </Button>
                 </div>
 
-                {isCouponApplied && appliedCoupon && (isEnterprise || appliedCoupon.applicablePlans?.includes(planCode as string)) && (
+                {isCouponApplied && appliedCoupon && (
                   <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
                     <Check className="h-4 w-4" />
                     <div>
@@ -602,14 +589,19 @@ function CheckoutContent() {
                 </div>
 
                 {/* Coupon */}
-                {isCouponApplied && calculation.isActuallyApplicable && (
+                {isCouponApplied && (
                   <div className="flex justify-between items-center bg-lime-400/5 p-3 rounded-lg border border-lime-400/10">
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1.5 text-lime-400 font-semibold">
                         <Tag className="h-3 w-3" />
                         <span>Talexia Coupon {appliedCoupon?.code || couponCode}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-medium">{appliedCoupon?.discountValue || 10}% off for this period</span>
+                      <span className="text-[10px] text-slate-500 font-medium">
+                        {appliedCoupon?.discountType === 'percentage' 
+                          ? `${appliedCoupon.discountValue}% off` 
+                          : `$${appliedCoupon?.discountValue} off`} 
+                        for this period
+                      </span>
                     </div>
                     <span className="text-lime-400 font-bold">- ${calculation.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
