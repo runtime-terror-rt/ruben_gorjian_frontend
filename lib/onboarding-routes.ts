@@ -19,6 +19,10 @@ export type OnboardingRoute =
 export function getOnboardingRouteForPlanCategory(
   planCategory: PlanCategory | string | null | undefined
 ): OnboardingRoute | null {
+  // All plans now use brand-brief onboarding
+  return "/onboarding/brand-brief";
+
+  /* 
   if (!planCategory) return null;
 
   const category = planCategory.toUpperCase();
@@ -48,6 +52,7 @@ export function getOnboardingRouteForPlanCategory(
     default:
       return null;
   }
+  */
 }
 
 /**

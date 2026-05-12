@@ -91,18 +91,24 @@ export default function SettingsPage() {
 
   const brief = brandBriefQuery.data?.items?.[0];
 
+  const hasBrandBrief = true; // All plans now use Brand Brief
+  /* // Commented out old enterprise-only logic
   const isEnterprise =
     session?.subscription?.planCategory?.toUpperCase() === "ENTERPRISE" ||
     session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIEF" ||
     session?.subscription?.planCategory?.toUpperCase() === "BRAND_BRIF" ||
     session?.subscription?.planCode?.toUpperCase().startsWith("ENT");
+  */
 
-  const hasFullManagement = !isEnterprise && (session?.fullManagementOnboardingCompleted || session?.subscription?.planCategory === "FULL_MANAGEMENT");
+  const hasFullManagement = false; 
+  /* // Commented out old full management logic
+  const hasFullManagementOld = !isEnterprise && (session?.fullManagementOnboardingCompleted || session?.subscription?.planCategory === "FULL_MANAGEMENT");
+  */
 
   const fullManagementQuery = useQuery({
     queryKey: ["my-full-management"],
     queryFn: () => apiGet<{ data: any; businessName: string; completed: boolean }>("/api/onboarding/full-management"),
-    enabled: activeTab === "full-management",
+    enabled: false, // Disabled
   });
 
   const fullManagementData = fullManagementQuery.data?.data;
@@ -349,7 +355,7 @@ export default function SettingsPage() {
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
           )}
         </button>
-        {isEnterprise && (
+        {hasBrandBrief && (
           <button
             onClick={() => setActiveTab("brand-brief")}
             className={cn(
