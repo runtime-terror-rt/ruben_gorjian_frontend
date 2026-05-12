@@ -623,7 +623,7 @@ export default function DashboardPage() {
                   <div>
                     <p className="text-sm text-white">{a.title}</p>
                     <p className="text-xs text-slate-400">
-                      {a.description.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, (match) => dayjs.utc(match).format("MMM D, YYYY • h:mm A"))}
+                      {(a.description || "").replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, (match) => dayjs(match).format("MMM D, YYYY • h:mm A"))}
                     </p>
                     <p className="text-xs text-slate-500">
                       {new Date(a.createdAt).toLocaleString()}

@@ -153,7 +153,12 @@ function EnterprisePlanDetailsContent() {
                 </div>
                 <div>
                   <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Industry</p>
+                  {/* Old styling:
                   <Badge variant="outline" className="bg-blue-400/5 border-blue-400/20 text-blue-400 font-black text-[10px] uppercase mt-1">
+                    {proposal?.industry?.replace(/_/g, " ") || "Not Specified"}
+                  </Badge>
+                  */}
+                  <Badge className="bg-lime-400/10 border border-lime-400/20 text-lime-400 font-black text-[11px] px-3 py-1 rounded-lg uppercase mt-1 hover:bg-lime-400/20 transition-colors">
                     {proposal?.industry?.replace(/_/g, " ") || "Not Specified"}
                   </Badge>
                 </div>

@@ -120,11 +120,7 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
 
       const subscription = freshSession?.subscription;
       const planCategory = subscription?.planCategory;
-      const onboardingCompleted =
-        freshSession?.onboardingCompleted ||
-        (planCategory === "CALENDAR_ONLY" && freshSession?.calendarOnboardingCompleted) ||
-        (planCategory === "VISUAL_ADD_ON" && freshSession?.visualOnboardingCompleted) ||
-        (planCategory === "FULL_MANAGEMENT" && freshSession?.fullManagementOnboardingCompleted);
+      const onboardingCompleted = freshSession?.brandBriefCompleted || freshSession?.brandBriefOnboardingCompleted;
 
       // 1. If no payment (no subscription or status is not ACTIVE/TRIALING)
       if (!subscription || (subscription.status !== "ACTIVE" && subscription.status !== "TRIALING")) {

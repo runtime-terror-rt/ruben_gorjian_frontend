@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
 
 interface OnlinePresenceSectionProps {
   data: any;
@@ -9,6 +10,13 @@ interface OnlinePresenceSectionProps {
 }
 
 export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectionProps) {
+  const urlPattern = /^(https?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d%_.~+=-]*)?$/i;
+
+  const isInvalidUrl = (url: string) => {
+    if (!url || !url.trim()) return false;
+    return !urlPattern.test(url.trim()) || !url.trim().includes(".");
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-6">
@@ -27,8 +35,16 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               value={data.websiteUrl || ""}
               onChange={(e) => updateData({ websiteUrl: e.target.value })}
               placeholder="https://your-restaurant.com"
-              className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+              className={`bg-slate-900/50 border-slate-800 focus:border-lime-400/50 transition-all ${
+                isInvalidUrl(data.websiteUrl) ? "border-red-500/50 focus:border-red-500" : ""
+              }`}
             />
+            {isInvalidUrl(data.websiteUrl) && (
+              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                <AlertCircle className="h-3 w-3" />
+                Please enter a valid URL
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -53,8 +69,16 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               value={data.facebookPageUrl || ""}
               onChange={(e) => updateData({ facebookPageUrl: e.target.value })}
               placeholder="e.g. facebook.com/YourRestaurant"
-              className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+              className={`bg-slate-900/50 border-slate-800 focus:border-lime-400/50 transition-all ${
+                isInvalidUrl(data.facebookPageUrl) ? "border-red-500/50 focus:border-red-500" : ""
+              }`}
             />
+            {isInvalidUrl(data.facebookPageUrl) && (
+              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                <AlertCircle className="h-3 w-3" />
+                Please enter a valid URL
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -82,8 +106,16 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               value={data.onlineOrderingUrl || ""}
               onChange={(e) => updateData({ onlineOrderingUrl: e.target.value })}
               placeholder="https://order.toasttab.com/..."
-              className="bg-slate-900/50 border-slate-800 focus:border-lime-400/50"
+              className={`bg-slate-900/50 border-slate-800 focus:border-lime-400/50 transition-all ${
+                isInvalidUrl(data.onlineOrderingUrl) ? "border-red-500/50 focus:border-red-500" : ""
+              }`}
             />
+            {isInvalidUrl(data.onlineOrderingUrl) && (
+              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                <AlertCircle className="h-3 w-3" />
+                Please enter a valid URL
+              </p>
+            )}
           </div>
         </div>
       </div>

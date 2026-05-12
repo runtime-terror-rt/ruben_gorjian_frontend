@@ -159,6 +159,27 @@ export default function BrandBriefPage() {
         setError("Instagram handle is required.");
         return;
       }
+
+      // Strict URL Validation for Step 2
+      const urlPattern = /^(https?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d%_.~+=-]*)?$/i;
+
+      const validate = (url: string, name: string) => {
+        if (url && url.trim() && (!urlPattern.test(url.trim()) || !url.trim().includes('.'))) {
+          return `Please enter a valid URL for ${name} (e.g. https://yourbrand.com)`;
+        }
+        return null;
+      };
+
+      const errors = [
+        validate(formData.websiteUrl, "Website URL"),
+        validate(formData.facebookPageUrl, "Facebook Page URL"),
+        validate(formData.onlineOrderingUrl, "Online Ordering URL")
+      ].filter(Boolean);
+
+      if (errors.length > 0) {
+        setError(errors[0] as string);
+        return;
+      }
     } else if (currentStep === 3) {
       const hasAllCaptions = formData.captionSample1 && formData.captionSample2 && formData.captionSample3;
       if (!formData.foodDescription || !formData.uniqueSellingPoint || !formData.customerReviews || !hasAllCaptions || (formData.toneAndVoice?.length === 0) || !formData.captionTargeting) {
