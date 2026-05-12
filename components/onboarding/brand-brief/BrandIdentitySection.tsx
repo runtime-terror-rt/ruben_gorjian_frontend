@@ -34,8 +34,25 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
   const handleDietaryChange = (cert: string, checked: boolean) => {
     const current = data.dietaryCertifications || [];
+
+    /* Original simple logic - commented out as per request
     if (checked) {
       updateData({ dietaryCertifications: [...current, cert] });
+    } else {
+      updateData({ dietaryCertifications: current.filter((c: string) => c !== cert) });
+    }
+    */
+
+    // New professional logic with "None" exclusivity
+    if (checked) {
+      if (cert === "None") {
+        // If "None" is selected, clear everything else
+        updateData({ dietaryCertifications: ["None"] });
+      } else {
+        // If something else is selected, make sure "None" is removed
+        const filtered = current.filter((c: string) => c !== "None");
+        updateData({ dietaryCertifications: [...filtered, cert] });
+      }
     } else {
       updateData({ dietaryCertifications: current.filter((c: string) => c !== cert) });
     }
