@@ -195,29 +195,30 @@ function OnboardingRouterContent() {
       // Route to plan-specific onboarding using canonical mapping
       const { getOnboardingRouteForPlanCategory } =
         await import("@/lib/onboarding-routes");
-      const { getPlanSelection } = await import("@/lib/plan-selection");
-      const selection = getPlanSelection();
-
-      // Check pendingPlanCode FIRST for enterprise, since it's the plan user just selected
-      const pendingCode = session.pendingPlanCode;
-      const isEnterprise =
-        pendingCode?.toUpperCase().startsWith("ENT") ||
-        session.subscription?.planCode?.toUpperCase().startsWith("ENT") ||
-        selection?.planCode?.toUpperCase().startsWith("ENT") ||
-        planCategory?.toUpperCase() === "ENTERPRISE" ||
-        planCategory?.toUpperCase() === "BRAND_BRIEF" ||
-        planCategory?.toUpperCase() === "BRAND_BRIF";
-
-      const onboardingRoute = isEnterprise
-        ? "/onboarding/brand-brief"
-        : getOnboardingRouteForPlanCategory(planCategory);
+      
+      const onboardingRoute = getOnboardingRouteForPlanCategory(planCategory);
 
       if (onboardingRoute) {
         if (onboardingRoute === pathname) {
           return;
         }
-        // Determine if completed
-        const isCompleted = isEnterprise
+
+        // Determine if completed - All plans now only check brand brief completion
+        const isCompleted = session.brandBriefCompleted || session.brandBriefOnboardingCompleted;
+
+        /* // Commented out old plan-specific completion logic
+        const pendingCode = session.pendingPlanCode;
+        const { getPlanSelection } = await import("@/lib/plan-selection");
+        const selection = getPlanSelection();
+        const isEnterprise =
+          pendingCode?.toUpperCase().startsWith("ENT") ||
+          session.subscription?.planCode?.toUpperCase().startsWith("ENT") ||
+          selection?.planCode?.toUpperCase().startsWith("ENT") ||
+          planCategory?.toUpperCase() === "ENTERPRISE" ||
+          planCategory?.toUpperCase() === "BRAND_BRIEF" ||
+          planCategory?.toUpperCase() === "BRAND_BRIF";
+
+        const isCompletedOld = isEnterprise
           ? (session.brandBriefCompleted || session.brandBriefOnboardingCompleted)
           : (
             ((planCategory === "CALENDAR_ONLY" ||
@@ -232,6 +233,7 @@ function OnboardingRouterContent() {
               planCategory === "JEWELRY_FULL_MANAGEMENT") &&
               session.fullManagementOnboardingCompleted)
           );
+        */
 
         if (isCompleted) {
           router.push("/dashboard");
@@ -239,7 +241,7 @@ function OnboardingRouterContent() {
           router.push(onboardingRoute);
         }
       } else {
-        // Unknown plan category - redirect to pricing (never default to Calendar)
+        // Unknown plan category - redirect to pricing
         console.log("[OnboardingRouter] Unknown plan category:", planCategory);
         router.push("/pricing");
       }

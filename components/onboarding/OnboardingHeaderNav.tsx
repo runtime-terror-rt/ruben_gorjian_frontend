@@ -75,13 +75,16 @@ export function OnboardingHeaderNav({
   const progress = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
   const isCompleted = session
-    ? (planCategory === "CALENDAR_ONLY" &&
+    ? (session.brandBriefCompleted || session.brandBriefOnboardingCompleted)
+    /* // Commented out old plan-specific logic
+    : (planCategory === "CALENDAR_ONLY" &&
       session.calendarOnboardingCompleted) ||
     (planCategory === "VISUAL_CALENDAR" &&
       session.calendarOnboardingCompleted) ||
     (planCategory === "VISUAL_ADD_ON" && session.visualOnboardingCompleted) ||
     (planCategory === "FULL_MANAGEMENT" &&
       session.fullManagementOnboardingCompleted)
+    */
     : false;
 
   const handleLogoClick = (e: React.MouseEvent) => {

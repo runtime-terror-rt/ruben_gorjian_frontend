@@ -51,7 +51,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
 
     // No active subscription but onboarding not finished - go to onboarding
-    const isCompleted = session.onboardingCompleted || session.brandBriefCompleted || session.brandBriefOnboardingCompleted || session.fullManagementOnboardingCompleted || session.calendarOnboardingCompleted || session.visualOnboardingCompleted;
+    // All plans now only check brand brief completion
+    const isCompleted = session.brandBriefCompleted || session.brandBriefOnboardingCompleted;
+    /* // Commented out old completion flags
+    const isCompletedOld = session.onboardingCompleted || session.brandBriefCompleted || session.brandBriefOnboardingCompleted || session.fullManagementOnboardingCompleted || session.calendarOnboardingCompleted || session.visualOnboardingCompleted;
+    */
     if (hasActiveSubscription && !isCompleted && !isOnboardingPage && !isCheckoutPage && !isVerifyPage) {
       router.replace("/onboarding");
     }
@@ -61,7 +65,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const hasActiveSubscription = session?.subscription?.planCode &&
     (session?.subscription?.status === "ACTIVE" || session?.subscription?.status === "TRIALING");
 
-  const isCompleted = session?.onboardingCompleted || session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
+  const isCompleted = session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted;
+  /* // Commented out old completion flags
+  const isCompletedOld = session?.onboardingCompleted || session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted || session?.fullManagementOnboardingCompleted || session?.calendarOnboardingCompleted || session?.visualOnboardingCompleted;
+  */
 
   const isAuthorized = !!session && (
     pathname === "/pricing" ||
