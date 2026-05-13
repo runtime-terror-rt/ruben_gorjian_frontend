@@ -447,13 +447,13 @@ function DayView({
     posts
       .filter((post) => {
         const pDate = userTimezone
-          ? dayjs.tz(post.scheduledFor, userTimezone)
+          ? dayjs(post.scheduledFor).tz(userTimezone)
           : dayjs(post.scheduledFor);
         return pDate.isSame(selectedDate, "day");
       })
       .forEach((post) => {
         const hour = userTimezone
-          ? dayjs.tz(post.scheduledFor, userTimezone).hour()
+          ? dayjs(post.scheduledFor).tz(userTimezone).hour()
           : dayjs(post.scheduledFor).hour();
         if (!grouped[hour]) {
           grouped[hour] = [];
@@ -465,10 +465,10 @@ function DayView({
     Object.keys(grouped).forEach((hour) => {
       grouped[Number(hour)].sort((a, b) => {
         const dateA = userTimezone
-          ? dayjs.tz(a.scheduledFor, userTimezone)
+          ? dayjs(a.scheduledFor).tz(userTimezone)
           : dayjs(a.scheduledFor);
         const dateB = userTimezone
-          ? dayjs.tz(b.scheduledFor, userTimezone)
+          ? dayjs(b.scheduledFor).tz(userTimezone)
           : dayjs(b.scheduledFor);
         return dateA.valueOf() - dateB.valueOf();
       });
@@ -592,10 +592,10 @@ function ListView({
   const sortedPosts = useMemo(() => {
     return [...posts].sort((a, b) => {
       const dateA = userTimezone
-        ? dayjs.tz(a.scheduledFor, userTimezone)
+        ? dayjs(a.scheduledFor).tz(userTimezone)
         : dayjs(a.scheduledFor);
       const dateB = userTimezone
-        ? dayjs.tz(b.scheduledFor, userTimezone)
+        ? dayjs(b.scheduledFor).tz(userTimezone)
         : dayjs(b.scheduledFor);
       return dateA.valueOf() - dateB.valueOf();
     });
@@ -618,7 +618,7 @@ function ListView({
         <div className="space-y-4">
           {sortedPosts.map((post) => {
             const date = userTimezone
-              ? dayjs.tz(post.scheduledFor, userTimezone)
+              ? dayjs(post.scheduledFor).tz(userTimezone)
               : dayjs(post.scheduledFor);
             return (
               <div key={post.id} className="w-full">
@@ -784,7 +784,7 @@ export default function EnhancedCalendar({
       // post.scheduledFor is already in user timezone from fetchPosts conversion
       setModalDate(
         userTimezone
-          ? dayjs.tz(post.scheduledFor, userTimezone)
+          ? dayjs(post.scheduledFor).tz(userTimezone)
           : dayjs(post.scheduledFor),
       );
       setModalOpen(true);

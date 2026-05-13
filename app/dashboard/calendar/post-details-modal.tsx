@@ -196,7 +196,7 @@ export default function PostDetailsModal({
   if (!open) return null;
 
   const scheduledDate = (post?.scheduledFor && userTimezone)
-    ? dayjs.tz(post.scheduledFor, userTimezone) 
+    ? dayjs(post.scheduledFor).tz(userTimezone) 
     : null;
 
   return (
@@ -420,7 +420,7 @@ export default function PostDetailsModal({
                                </div>
                                {target.publishedAt && (
                                  <p className="text-[10px] text-slate-500 mt-0.5">
-                                    Published {dayjs.tz(target.publishedAt, userTimezone).format('MMM D [at] HH:mm')}
+                                    Published {dayjs(target.publishedAt).tz(userTimezone).format('MMM D [at] HH:mm')}
                                  </p>
                                )}
                             </div>
