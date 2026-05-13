@@ -111,7 +111,7 @@ export function DraggableEventCard({
       : [];
 
   const timeStr = userTimezone 
-    ? dayjs.tz(post.scheduledFor, userTimezone).format("HH:mm")
+    ? dayjs(post.scheduledFor).tz(userTimezone).format("HH:mm")
     : dayjs(post.scheduledFor).format("HH:mm");
   const platforms = post.targets.map((t) => t.platform);
 

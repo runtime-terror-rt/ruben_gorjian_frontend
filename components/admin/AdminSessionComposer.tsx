@@ -72,7 +72,7 @@ export default function AdminSessionComposer({
       setAdminReason(editingSession.adminReason || "");
       
       if (editingSession.scheduledAt || editingSession.scheduledFor) {
-        const date = dayjs.tz(editingSession.scheduledAt || editingSession.scheduledFor, userTimezone);
+        const date = dayjs(editingSession.scheduledAt || editingSession.scheduledFor).tz(userTimezone);
         setCurrentDate(date);
         setSelectedDate(date);
         setSelectedTime(date.format("HH:mm"));
@@ -140,7 +140,7 @@ export default function AdminSessionComposer({
         if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
         if (editingSession && s.id === editingSession.id) return false;
         
-        const existingStart = dayjs.tz(s.scheduledAt || s.scheduledFor, userTimezone);
+        const existingStart = dayjs(s.scheduledAt || s.scheduledFor).tz(userTimezone);
         const existingDuration = s.session?.durationMinutes || s.sessionDurationMinutes || 60;
         const existingEnd = existingStart.add(existingDuration, "minute");
 
@@ -275,7 +275,7 @@ export default function AdminSessionComposer({
                 
                 const sessionCount = sessions.filter(s => {
                   if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
-                  return dayjs.tz(s.scheduledAt || s.scheduledFor, userTimezone).isSame(day, "day");
+                  return dayjs(s.scheduledAt || s.scheduledFor).tz(userTimezone).isSame(day, "day");
                 }).length;
                 
                 return (

@@ -222,7 +222,7 @@ export const CalendarItem = memo<CalendarItemProps>(
           <span className="text-[11px] text-slate-400 tabular-nums shrink-0">
             {post.status === "DRAFT" ? "Draft " : ""}
             {userTimezone 
-              ? dayjs.tz(post.scheduledFor, userTimezone).format("HH:mm")
+              ? dayjs(post.scheduledFor).tz(userTimezone).format("HH:mm")
               : dayjs(post.scheduledFor).format("HH:mm")}
           </span>
 

@@ -211,7 +211,7 @@ export default function ScheduleVisitPage() {
         const d = s.scheduledAt || s.scheduledFor || s.date;
         if (!d) return;
         try {
-          const dateStr = dayjs.tz(d, userTimezone).format("YYYY-MM-DD");
+          const dateStr = dayjs(d).tz(userTimezone).format("YYYY-MM-DD");
           map[dateStr] = (map[dateStr] || 0) + 1;
         } catch {
           const dateStr = dayjs(d).format("YYYY-MM-DD");
@@ -406,7 +406,7 @@ export default function ScheduleVisitPage() {
       // Ignore if editing own session
       if (editingSession && s.id === editingSession.id) return false;
 
-      const existingStart = dayjs.tz(s.scheduledAt, userTimezone);
+      const existingStart = dayjs(s.scheduledAt).tz(userTimezone);
 
       const existingDuration =
         s.session?.durationMinutes || s.sessionDurationMinutes || 60;
@@ -444,7 +444,7 @@ export default function ScheduleVisitPage() {
         if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
         if (editingSession && s.id === editingSession.id) return false;
 
-        const existingStart = dayjs.tz(s.scheduledAt, userTimezone);
+        const existingStart = dayjs(s.scheduledAt).tz(userTimezone);
         const existingDuration =
           s.session?.durationMinutes || s.sessionDurationMinutes || 60;
         const existingEnd = existingStart.add(existingDuration, "minute");

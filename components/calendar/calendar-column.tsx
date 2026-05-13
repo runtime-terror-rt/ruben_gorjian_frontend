@@ -76,7 +76,7 @@ export const CalendarColumn = memo<CalendarColumnProps>(
         // to satisfy the requirement that Admin 'Delete' (now mapping to FAILED) makes them disappear.
         if (post.status === "FAILED") return false;
 
-        const pDate = userTimezone ? dayjs.tz(post.scheduledFor, userTimezone) : dayjs(post.scheduledFor);
+        const pDate = userTimezone ? dayjs(post.scheduledFor).tz(userTimezone) : dayjs(post.scheduledFor);
         
         if (display === "day") {
           return pDate.format("YYYY-MM-DD HH:mm") === dateInTz.format("YYYY-MM-DD HH:mm");
