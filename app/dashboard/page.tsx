@@ -176,6 +176,7 @@ export default function DashboardPage() {
 
   const progressQ = useSubscriptionProgress(enabled);
   const progress = progressQ.data?.data.chart;
+  const subscription = progressQ.data?.data.subscription;
 
   const upcomingQ = useUpcomingPosts(enabled);
   const sessionsQ = useUpcomingSessions(enabled);
@@ -240,33 +241,33 @@ export default function DashboardPage() {
         <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white">
           <div className="flex justify-between items-center mb-4">
             <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded">
-              ACTIVE PLAN
+              {subscription?.status ?? "ACTIVE"} PLAN
             </span>
             <span className="text-xs text-slate-400">
-              {overview?.plan.billingCycle}
+              {subscription?.billingCycle ?? "MONTHLY"}
             </span>
           </div>
 
           <h2 className="text-2xl font-bold mb-2">
-            {overview?.plan?.planCategory || "N/A"}
+            {subscription?.name ?? "N/A"}
           </h2>
           <p className="text-xs text-slate-500 mb-6">
-            CODE: {overview?.plan?.planCode}
+            CODE: {subscription?.planCode ?? "N/A"}
           </p>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-slate-400 text-xs">SUBSCRIPTION PERIOD</p>
               <p className="font-semibold">
-                {overview?.usage?.periodStart ? new Date(overview.usage.periodStart).toLocaleDateString() : "N/A"}{" "}
+                {subscription?.currentPeriodStart ? dayjs.utc(subscription.currentPeriodStart).format("M/D/YYYY") : "N/A"}{" "}
                 -{" "}
-                {overview?.usage?.periodEnd ? new Date(overview.usage.periodEnd).toLocaleDateString() : "N/A"}
+                {subscription?.currentPeriodEnd ? dayjs.utc(subscription.currentPeriodEnd).format("M/D/YYYY") : "N/A"}
               </p>
             </div>
 
             <div>
               <p className="text-slate-400 text-xs">PAYMENT</p>
-              <p className="font-semibold">{overview?.plan?.billingCycle || "N/A"}</p>
+              <p className="font-semibold">{subscription?.billingCycle ?? "MONTHLY"}</p>
             </div>
           </div>
 
@@ -274,15 +275,15 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
-              value={overview?.plan?.platformLimit ?? 4}
+              value={subscription?.platformLimit ?? 0}
             />
-            <FeatureBox label="Posts" value={overview?.plan?.postQuota} />
-            <FeatureBox label="Video" value="Enabled" />
+            <FeatureBox label="Posts" value={subscription?.basePostQuota ?? 0} />
+            <FeatureBox label="Video" value={subscription?.videoAddonEnabled ? "Enabled" : "Disabled"} />
             <FeatureBox
               label="Video Session Hours"
-              value={overview?.plan?.videoSessionHours}
+              value={subscription?.videoSessionHours ?? 0}
             />
-            <FeatureBox label="Days Left" value={overview?.plan?.daysLeft} />
+            <FeatureBox label="Days Left" value={subscription?.daysLeft ?? 0} />
           </div>
         </div>
 
