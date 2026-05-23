@@ -199,11 +199,11 @@ export default function SupportSystemPage() {
       accessorKey: "fullName",
       header: "User",
       cell: ({ row }) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-slate-200">
+        <div className="flex flex-col min-w-0">
+          <span className="font-medium text-slate-200 truncate">
             {row.original.fullName}
           </span>
-          <span className="text-[10px] text-slate-500 font-mono">
+          <span className="text-[10px] text-slate-500 font-mono truncate" title={row.original.email}>
             {row.original.email}
           </span>
         </div>
@@ -213,11 +213,11 @@ export default function SupportSystemPage() {
       accessorKey: "businessName",
       header: "Business",
       cell: ({ row }) => (
-        <div className="flex flex-col">
-          <span className="text-slate-300 font-medium">
+        <div className="flex flex-col min-w-0">
+          <span className="text-slate-300 font-medium truncate">
             {row.original.businessName}
           </span>
-          <span className="text-[10px] text-slate-500">
+          <span className="text-[10px] text-slate-500 truncate" title={row.original.websiteHandle}>
             {row.original.websiteHandle}
           </span>
         </div>
@@ -472,8 +472,15 @@ export default function SupportSystemPage() {
 
       {/* Table */}
       <Card className="border-white/5 bg-slate-900/40 backdrop-blur-md overflow-hidden transition-all shadow-2xl">
-        <div className="overflow-x-auto">
-          <Table>
+        <div className="w-full">
+          <Table className="table-fixed w-full">
+            <colgroup>
+              <col className="w-[30%]" />
+              <col className="w-[30%]" />
+              <col className="w-[12%]" />
+              <col className="w-[18%]" />
+              <col className="w-[10%]" />
+            </colgroup>
             <TableHeader className="bg-slate-950/40">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
@@ -488,60 +495,60 @@ export default function SupportSystemPage() {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>
               ))}
             </TableHeader>
-          <TableBody>
-            {submissionsQuery.isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} className="border-white/5 animate-pulse">
+            <TableBody>
+              {submissionsQuery.isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i} className="border-white/5 animate-pulse">
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-16 bg-slate-800/10"
+                    />
+                  </TableRow>
+                ))
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    className="border-white/5 hover:bg-white/5 transition-colors group"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-4">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-16 bg-slate-800/10"
-                  />
-                </TableRow>
-              ))
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="border-white/5 hover:bg-white/5 transition-colors group"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-48 text-center text-slate-500"
-                >
-                  <div className="flex flex-col items-center justify-center gap-4">
-                    <div className="h-16 w-16 rounded-full bg-slate-800/40 flex items-center justify-center">
-                      <MessageSquare className="h-8 w-8 opacity-20" />
+                    className="h-48 text-center text-slate-500"
+                  >
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <div className="h-16 w-16 rounded-full bg-slate-800/40 flex items-center justify-center">
+                        <MessageSquare className="h-8 w-8 opacity-20" />
+                      </div>
+                      <p className="text-sm font-medium">
+                        No submissions found matching your filters.
+                      </p>
                     </div>
-                    <p className="text-sm font-medium">
-                      No submissions found matching your filters.
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
         {/* Pagination */}
         <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
