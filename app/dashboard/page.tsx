@@ -272,6 +272,7 @@ export default function DashboardPage() {
           </div>
 
           {/* FEATURES */}
+          {/* this is test */}
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
