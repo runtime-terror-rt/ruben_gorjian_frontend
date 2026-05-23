@@ -253,11 +253,11 @@ export default function SchedulerFailuresPage() {
                         <div className="flex flex-col gap-1">
                           <div className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5 text-slate-500" />
-                            {dayjs(ticket.createdAt || ticket.timestamp).format("MMM D, YYYY")}
+                            {dayjs(ticket.createdAt ).format("MMM D, YYYY")}
                           </div>
-                          <div className="text-xs text-slate-500 ml-5">
-                            {dayjs(ticket.createdAt || ticket.timestamp).format("h:mm A")}
-                          </div>
+                          {/* <div className="text-xs text-slate-500 ml-5">
+                            {dayjs(ticket.createdAt ).format("h:mm A")}
+                          </div> */}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
