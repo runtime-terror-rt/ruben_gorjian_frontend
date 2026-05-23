@@ -504,6 +504,39 @@ export default function AdminCaseStudiesPage() {
     },
   });
 
+  const onSubmit = (v: CaseStudyFormValues) => {
+    if (!editing && (!v.logo || v.logo.length === 0)) {
+      toast({ title: "Validation Error", description: "Please upload a project logo.", variant: "destructive" });
+      return;
+    }
+    if (!editing && selectedImages.length === 0) {
+      toast({ title: "Validation Error", description: "Please upload at least one image for the gallery.", variant: "destructive" });
+      return;
+    }
+    saveMutation.mutate(v);
+  };
+
+  const onInvalid = (errors: any) => {
+    const firstError = Object.keys(errors)[0];
+    
+    const messages: Record<string, string> = {
+      title: "Oops! You forgot to give your case study a title.",
+      location: "We need a location for this case study to proceed.",
+      displayOrder: "Don't forget to set a display order number.",
+      tagline: "A punchy tagline is required to create this case study.",
+      cycleTitle: "What's the services cycle title? We need that!",
+      services: "Please add at least one service to the list.",
+      structureTitle: "You're missing the structure section title.",
+      structureItems: "Make sure to add at least one structure highlight.",
+    };
+
+    toast({
+      title: "Almost there!",
+      description: messages[firstError] || "Oops! It looks like you missed some required fields.",
+      variant: "destructive",
+    });
+  };
+
   const items = listQuery.data?.items ?? [];
 
   const totals = useMemo(() => {
@@ -757,7 +790,8 @@ export default function AdminCaseStudiesPage() {
               {editing ? "Update Case Study" : "Create Case Study"}
             </h2>
             <button
-              onClick={form.handleSubmit((v) => saveMutation.mutate(v))}
+              type="button"
+              onClick={form.handleSubmit(onSubmit, onInvalid)}
               disabled={saveMutation.isPending}
               className="flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors disabled:opacity-50"
             >
@@ -767,7 +801,7 @@ export default function AdminCaseStudiesPage() {
           </div>
 
           <form
-            onSubmit={form.handleSubmit((v) => saveMutation.mutate(v))}
+            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
             className="flex-1 overflow-y-auto px-4 sm:px-8 py-6"
           >
             <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-16">
@@ -798,7 +832,7 @@ export default function AdminCaseStudiesPage() {
                           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
                           <Input
                             placeholder="San Francisco, CA"
-                            {...form.register("location")}
+                            {...form.register("location", { required: true })}
                             className="h-12 pl-10 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                           />
                         </div>
@@ -812,6 +846,7 @@ export default function AdminCaseStudiesPage() {
                           placeholder="01"
                           {...form.register("displayOrder", {
                             valueAsNumber: true,
+                            required: true,
                           })}
                           className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                         />
@@ -867,7 +902,7 @@ export default function AdminCaseStudiesPage() {
                       </Label>
                       <Textarea
                         placeholder="Describe the soul of the project in a single punchy sentence..."
-                        {...form.register("tagline")}
+                        {...form.register("tagline", { required: true })}
                         className="min-h-[100px] bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-2xl resize-none"
                       />
                     </div>
@@ -877,7 +912,7 @@ export default function AdminCaseStudiesPage() {
                       </Label>
                       <Input
                         placeholder="e.g. Discovery Phase"
-                        {...form.register("cycleTitle")}
+                        {...form.register("cycleTitle", { required: true })}
                         className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                       />
                     </div>
@@ -888,6 +923,7 @@ export default function AdminCaseStudiesPage() {
                       <Controller
                         name="services"
                         control={form.control}
+                        rules={{ validate: (v) => v && v.length > 0 }}
                         render={({ field }) => (
                           <TagInput
                             value={getStringArray(field.value)}
@@ -903,7 +939,7 @@ export default function AdminCaseStudiesPage() {
                       </Label>
                       <Input
                         placeholder="e.g. Project Architecture"
-                        {...form.register("structureTitle")}
+                        {...form.register("structureTitle", { required: true })}
                         className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
                       />
                     </div>
@@ -914,6 +950,7 @@ export default function AdminCaseStudiesPage() {
                       <Controller
                         name="structureItems"
                         control={form.control}
+                        rules={{ validate: (v) => v && v.length > 0 }}
                         render={({ field }) => (
                           <TagInput
                             value={getStringArray(field.value)}
