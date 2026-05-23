@@ -897,11 +897,15 @@ export default function AdminPostsPage() {
                       <TableCell>
                         <div className="flex flex-col">
                           <div className="text-sm font-medium text-slate-200">
-                            {dayjs(post.scheduledFor).format("MMM D, YYYY")}
+                            {post.scheduledFor 
+                              ? fromUTC(post.scheduledFor, userTimezone || "UTC").format("MMM D, YYYY")
+                              : "Pending"}
                           </div>
                           <div className="text-xs text-slate-400 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {dayjs(post.scheduledFor).format("h:mm A")}
+                            {post.scheduledFor 
+                              ? fromUTC(post.scheduledFor, userTimezone || "UTC").format("h:mm A")
+                              : "—"}
                             <span className="text-slate-500 ml-1">
                               {timezoneAbbr}
                             </span>
