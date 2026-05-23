@@ -290,10 +290,10 @@ export default function PostDetailsModal({
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Media</span>
                     <span className="text-sm font-semibold text-white">{allMediaUrls.length > 0 ? `${allMediaUrls.length} file(s)` : "Null"}</span>
                  </div>
-                 <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
+                 {/* <div className="bg-slate-800/40 border border-slate-700/50 p-3 rounded-2xl flex flex-col gap-1">
                     <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">TZ</span>
                     <span className="text-sm font-semibold text-amber-400">{timezoneAbbr}</span>
-                 </div>
+                 </div> */}
               </div>
 
               {/* Admin Context */}
