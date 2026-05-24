@@ -507,20 +507,35 @@ export default function ScheduleVisitPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-4 mb-2"
       >
-        <div className="flex items-center gap-4">
-          <h1 className="text-4xl font-black text-white tracking-tight">
-            Session <span className="text-lime-400">Scheduling</span>
-          </h1>
-          {isAdmin && (
-            <div className="px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-amber-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">
-                Admin Mode
-              </span>
-            </div>
-          )}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <h1 className="text-4xl font-black text-white tracking-tight">
+              Session <span className="text-lime-400">Scheduling</span>
+            </h1>
+            {isAdmin && (
+              <div className="px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-amber-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">
+                  Admin Mode
+                </span>
+              </div>
+            )}
+          </div>
+          <Button
+            onClick={() => {
+              window.open(
+                "https://calendly.com/talexia",
+                "CalendlyPopup",
+                "width=800,height=700,scrollbars=yes"
+              );
+            }}
+            className="bg-[#006BFF] hover:bg-[#005BE6] text-white shadow-[0_0_15px_rgba(0,107,255,0.3)] transition-all font-bold h-12 px-6 rounded-xl w-full md:w-auto"
+          >
+            <CalendarIcon className="mr-2 h-5 w-5" />
+            Schedule on Calendly
+          </Button>
         </div>
         <p className="text-slate-400 text-lg">
           Book your professional photoshoot or video session. One slot per day
