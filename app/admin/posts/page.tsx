@@ -28,6 +28,7 @@ import { getEnvVarWithDefault } from "@/lib/env-utils";
 import { buildStorageUrl } from "@/lib/storage-utils";
 import { fromUTC, toUTC } from "@/lib/timezone";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import {
   Calendar,
   ChevronLeft,
@@ -46,6 +47,8 @@ import { useCallback, useEffect, useState } from "react";
 import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 import { apiGet } from "@/lib/api";
 import PostFilters, { FilterState } from "@/components/admin/PostFilters";
+
+dayjs.extend(utc);
 
 const STORAGE_BASE_URL = getEnvVarWithDefault(
   "NEXT_PUBLIC_STORAGE_BASE_URL",
@@ -203,15 +206,12 @@ export default function AdminPostsPage() {
           p.scheduleType !== "VIDEO_SESSION"
       );
 
-      // Sync timezone as in User Dashboard
+      // Normalize the date field
       const syncedItems = filteredItems.map((p: any) => {
         const dateValue = p.scheduledFor || p.scheduledAt;
         return {
           ...p,
-          scheduledFor:
-            dateValue && userTimezone
-              ? fromUTC(dateValue, userTimezone).format()
-              : dateValue,
+          scheduledFor: dateValue,
         };
       });
 
@@ -898,16 +898,16 @@ export default function AdminPostsPage() {
                         <div className="flex flex-col">
                           <div className="text-sm font-medium text-slate-200">
                             {post.scheduledFor 
-                              ? fromUTC(post.scheduledFor, userTimezone || "UTC").format("MMM D, YYYY")
+                              ? dayjs.utc(post.scheduledFor).format("MMM D, YYYY")
                               : "Pending"}
                           </div>
                           <div className="text-xs text-slate-400 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {post.scheduledFor 
-                              ? fromUTC(post.scheduledFor, userTimezone || "UTC").format("h:mm A")
+                              ? dayjs.utc(post.scheduledFor).format("h:mm A")
                               : "—"}
                             <span className="text-slate-500 ml-1">
-                              {timezoneAbbr}
+                              UTC
                             </span>
                           </div>
                         </div>
