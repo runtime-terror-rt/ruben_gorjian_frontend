@@ -29,13 +29,20 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
     const headers = await getBackendHeaders();
+    request.headers.forEach((value, key) => {
+      const lowerKey = key.toLowerCase();
+      if (lowerKey !== 'host' && lowerKey !== 'connection' && lowerKey !== 'accept-encoding') {
+        headers[key] = value;
+      }
+    });
+
     const res = await fetch(`${getBackendUrl()}/case-studies`, {
       method: "POST",
       headers,
-      body: formData,
-    });
+      body: request.body as any,
+      duplex: "half",
+    } as RequestInit);
     return proxyResponse(res);
   } catch (error: any) {
     console.error("Case Studies POST Error:", error);

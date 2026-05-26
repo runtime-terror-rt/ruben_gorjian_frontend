@@ -20,14 +20,20 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const formData = await request.formData();
     const headers = await getBackendHeaders();
+    request.headers.forEach((value, key) => {
+      const lowerKey = key.toLowerCase();
+      if (lowerKey !== 'host' && lowerKey !== 'connection' && lowerKey !== 'accept-encoding') {
+        headers[key] = value;
+      }
+    });
 
     const res = await fetch(`${getBackendUrl()}/case-studies/${id}`, {
       method: "PATCH",
       headers,
-      body: formData,
-    });
+      body: request.body as any,
+      duplex: "half",
+    } as RequestInit);
 
     return proxyResponse(res);
   } catch (error: any) {

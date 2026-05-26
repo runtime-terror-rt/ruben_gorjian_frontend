@@ -1140,8 +1140,10 @@ export default function AdminCaseStudiesPage() {
                       <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm overflow-hidden">
                           {videoFiles && videoFiles.length > 0 ? (
-                            <span className="truncate text-teal-300 font-bold">
-                              {videoFiles[0].name}
+                            <span className="truncate text-teal-300 font-bold" title={videoFiles[0].name}>
+                              {videoFiles[0].name.length > 20 
+                                ? videoFiles[0].name.substring(0, 20) + "..." 
+                                : videoFiles[0].name}
                             </span>
                           ) : editing?.videoUrl ||
                             getMediaUrl(editing?.video) ? (
