@@ -523,7 +523,7 @@ export default function ScheduleVisitPage() {
               </div>
             )}
           </div>
-          <Button
+          {/* <Button
             onClick={() => {
               window.open(
                 "https://calendly.com/talexia",
@@ -535,7 +535,7 @@ export default function ScheduleVisitPage() {
           >
             <CalendarIcon className="mr-2 h-5 w-5" />
             Schedule on Calendly
-          </Button>
+          </Button> */}
         </div>
         <p className="text-slate-400 text-lg">
           Book your professional photoshoot or video session. One slot per day

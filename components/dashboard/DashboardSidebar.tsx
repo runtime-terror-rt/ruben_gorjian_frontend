@@ -41,8 +41,8 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: LayoutDashboard,
       },
       {
-        label: "Schedule Visit",
-        href: "/dashboard/schedule-visit",
+        label: "Schedule On Calendly",
+        href: "https://calendly.com/talexia",
         icon: CalendarClock,
       },
     ],
@@ -117,6 +117,13 @@ export function DashboardSidebar({
   };
 
   const handleNavClick = (href: string) => {
+    if (href.startsWith("http")) {
+      window.open(href, "CalendlyPopup", "width=800,height=700,scrollbars=yes");
+      if (isMobile && onClose) {
+        onClose();
+      }
+      return;
+    }
     router.push(href);
     if (isMobile && onClose) {
       onClose();
@@ -146,7 +153,10 @@ export function DashboardSidebar({
           <div className="flex h-full flex-col min-h-0">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
-              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Link
+                href="/"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
                 <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center">
                   <span className="text-sm font-bold text-slate-900">T</span>
                 </div>
@@ -241,7 +251,10 @@ export function DashboardSidebar({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 p-4 h-16 flex-shrink-0">
         {!isCollapsed ? (
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-bold text-slate-900">T</span>
             </div>
@@ -253,7 +266,10 @@ export function DashboardSidebar({
             </div>
           </Link>
         ) : (
-          <Link href="/" className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center hover:opacity-80 transition-opacity"
+          >
             <span className="text-sm font-bold text-slate-900">T</span>
           </Link>
         )}
