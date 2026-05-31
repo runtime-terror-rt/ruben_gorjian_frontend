@@ -240,7 +240,7 @@ export default function PostDetailsModal({
             <div className="flex items-center gap-3 text-xs text-slate-400">
                <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
-                  {scheduledDate ? scheduledDate.format('MMM D, HH:mm') : "Pending"}
+                  {scheduledDate ? `${scheduledDate.format('MMM D, h:mm A')} ${timezoneAbbr}` : "Pending"}
                </span>
                <span className="w-1 h-1 rounded-full bg-slate-700" />
                <span className="flex items-center gap-1.5">

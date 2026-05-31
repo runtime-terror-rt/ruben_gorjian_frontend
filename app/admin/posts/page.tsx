@@ -527,7 +527,7 @@ export default function AdminPostsPage() {
       const platform = post.targets?.[0]?.platform?.toLowerCase() || "instagram";
       const title = post.caption || "Instant 122";
 
-      let mediaUrls: string[] = [];
+      const mediaUrls: string[] = [];
       if (post.asset?.storageKey) {
         const url = getCompatibleMediaUrl(post.asset.storageKey);
         if (url) mediaUrls.push(url);
@@ -898,16 +898,16 @@ export default function AdminPostsPage() {
                         <div className="flex flex-col">
                           <div className="text-sm font-medium text-slate-200">
                             {post.scheduledFor 
-                              ? dayjs.utc(post.scheduledFor).format("MMM D, YYYY")
+                              ? fromUTC(post.scheduledFor, userTimezone).format("MMM D, YYYY")
                               : "Pending"}
                           </div>
                           <div className="text-xs text-slate-400 flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {post.scheduledFor 
-                              ? dayjs.utc(post.scheduledFor).format("h:mm A")
+                              ? fromUTC(post.scheduledFor, userTimezone).format("h:mm A")
                               : "—"}
                             <span className="text-slate-500 ml-1">
-                              UTC
+                              {timezoneAbbr}
                             </span>
                           </div>
                         </div>

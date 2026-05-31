@@ -12,6 +12,7 @@ import { useTimezone } from "@/hooks/use-timezone";
 import { useToast } from "@/hooks/use-toast";
 import { useUpload } from "@/hooks/use-upload";
 import { apiGet, apiPatch, apiPost } from "@/lib/api";
+import { fromUTC } from "@/lib/timezone";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -255,7 +256,7 @@ export default function ScheduleVisitPage() {
 
   const handleEditSession = (session: Session) => {
     setEditingSession(session);
-    const date = dayjs(session.scheduledAt);
+    const date = fromUTC(session.scheduledAt, userTimezone);
     setSelectedDate(date);
     setSelectedTime(date.format("HH:mm"));
     setSessionType(session.scheduleType);
@@ -406,7 +407,7 @@ export default function ScheduleVisitPage() {
       // Ignore if editing own session
       if (editingSession && s.id === editingSession.id) return false;
 
-      const existingStart = dayjs(s.scheduledAt).tz(userTimezone);
+      const existingStart = fromUTC(s.scheduledAt, userTimezone);
 
       const existingDuration =
         s.session?.durationMinutes || s.sessionDurationMinutes || 60;
@@ -444,7 +445,7 @@ export default function ScheduleVisitPage() {
         if (s.status === "CANCELLED" || s.status === "REJECTED") return false;
         if (editingSession && s.id === editingSession.id) return false;
 
-        const existingStart = dayjs(s.scheduledAt).tz(userTimezone);
+        const existingStart = fromUTC(s.scheduledAt, userTimezone);
         const existingDuration =
           s.session?.durationMinutes || s.sessionDurationMinutes || 60;
         const existingEnd = existingStart.add(existingDuration, "minute");
@@ -1120,11 +1121,11 @@ export default function ScheduleVisitPage() {
                       <div className="flex items-center gap-3 mt-1">
                         <span className="text-xs text-slate-400 flex items-center gap-1">
                           <CalendarIcon className="h-3 w-3" />
-                          {dayjs(s.scheduledAt).format("MMM D, YYYY")}
+                          {fromUTC(s.scheduledAt, userTimezone).format("MMM D, YYYY")}
                         </span>
                         <span className="text-xs text-slate-400 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {dayjs(s.scheduledAt).format("HH:mm")}
+                          {fromUTC(s.scheduledAt, userTimezone).format("HH:mm")}
                         </span>
                         <span
                           className={clsx(
