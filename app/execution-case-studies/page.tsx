@@ -5,8 +5,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import {
   Image as ImageIcon,
-  MapPin,
-  Play,
+  
   X,
   ChevronLeft,
   ChevronRight,
@@ -16,7 +15,7 @@ import {
 import { apiGet } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import Navbar from "@/components/navbar";
 import FooterSecondary from "@/components/footer-secondary";
 import { Dialog, DialogContent } from "@/components/ui/dialog";

@@ -308,9 +308,9 @@ export default function PostDetailsModal({
                          {post.user?.fullName || post.user?.name || post.author?.name || post.user?.email || "Managed Account"}
                       </h5>
                    </div>
-                   <Button variant="ghost" size="sm" className="text-lime-400 hover:bg-lime-400/10 text-xs">
+                   {/* <Button variant="ghost" size="sm" className="text-lime-400 hover:bg-lime-400/10 text-xs">
                       View Profile
-                   </Button>
+                   </Button> */}
                 </div>
               )}
 
