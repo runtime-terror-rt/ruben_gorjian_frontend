@@ -414,11 +414,19 @@ export function CalendarProvider({
           throw new Error("Timezone not ready. Please try again.");
         }
 
-        // Convert scheduledFor from user timezone to UTC
-        const dateISO = parseDateTimeLocal(
-          data.scheduledFor,
-          userTimezone,
-        ).toISOString();
+        // ✅ If scheduledFor is already a UTC ISO string (sent from modal after conversion),
+        // use it directly. Otherwise, convert from user timezone to UTC.
+        const isAlreadyUTC = data.scheduledFor.endsWith("Z") || data.scheduledFor.includes("+");
+        const dateISO = isAlreadyUTC
+          ? new Date(data.scheduledFor).toISOString()
+          : parseDateTimeLocal(data.scheduledFor, userTimezone).toISOString();
+
+        // ✅ DEBUG: Log timezone conversion for verification
+        console.log("[SCHEDULE] Timezone in use:", userTimezone);
+        console.log("[SCHEDULE] Raw input scheduledFor:", data.scheduledFor);
+        console.log("[SCHEDULE] isAlreadyUTC:", isAlreadyUTC);
+        console.log("[SCHEDULE] Final UTC ISO sent to backend:", dateISO);
+        console.log("[SCHEDULE] Verify: UTC time back in user TZ:", new Date(dateISO).toLocaleString("en-US", { timeZone: userTimezone }));
 
         const url = "/api/scheduler/posts";
 
@@ -507,20 +515,32 @@ export function CalendarProvider({
           throw new Error("Timezone not ready. Please try again.");
         }
 
+        // ✅ Helper: convert scheduledFor safely (avoid double-conversion if already UTC ISO)
+        const toUTCIso = (s: string) => {
+          const isAlreadyUTC = s.endsWith("Z") || s.includes("+");
+          return isAlreadyUTC
+            ? new Date(s).toISOString()
+            : parseDateTimeLocal(s, userTimezone).toISOString();
+        };
+
+        // ✅ DEBUG: Log timezone conversion for update verification
+        if (data.scheduledFor) {
+          const updatedDateISO = toUTCIso(data.scheduledFor);
+          console.log("[UPDATE] Timezone in use:", userTimezone);
+          console.log("[UPDATE] Raw input scheduledFor:", data.scheduledFor);
+          console.log("[UPDATE] isAlreadyUTC:", data.scheduledFor.endsWith("Z") || data.scheduledFor.includes("+"));
+          console.log("[UPDATE] Final UTC ISO sent to backend:", updatedDateISO);
+          console.log("[UPDATE] Verify: UTC time back in user TZ:", new Date(updatedDateISO).toLocaleString("en-US", { timeZone: userTimezone }));
+        }
+
         const payload = {
           ...data,
           caption:
             data.caption || (data.hasOwnProperty("caption") ? "." : undefined),
           ...(data.scheduledFor
             ? {
-                scheduledAt: parseDateTimeLocal(
-                  data.scheduledFor,
-                  userTimezone,
-                ).toISOString(),
-                scheduledFor: parseDateTimeLocal(
-                  data.scheduledFor,
-                  userTimezone,
-                ).toISOString(),
+                scheduledAt: toUTCIso(data.scheduledFor),
+                scheduledFor: toUTCIso(data.scheduledFor),
               }
             : {}),
           ...(data.assetIds && data.assetIds.length > 0

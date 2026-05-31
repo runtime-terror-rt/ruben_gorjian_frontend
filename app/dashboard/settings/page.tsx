@@ -56,7 +56,10 @@ export default function SettingsPage() {
       bio: "",
       industry: "",
       website: "",
-      timezone: "UTC",
+      // ✅ Default to browser detected timezone, not UTC
+      timezone: typeof window !== "undefined"
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : "UTC",
     }),
     [session?.email],
   );
@@ -180,7 +183,7 @@ export default function SettingsPage() {
           bio: data.profile.bio || "",
           industry: data.business.industry || "",
           website: data.business.website || "",
-          timezone: data.business.timezone || "UTC",
+          timezone: data.business.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         });
       } catch (err: unknown) {
         setError(
@@ -550,15 +553,53 @@ export default function SettingsPage() {
                       placeholder="e.g. Hospitality, Retail, Tech"
                     />
                   </div>
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
-                    <Input
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone <span className="text-rose-400">*</span></Label>
+                    {/* ✅ Timezone select — critical for correct post scheduling */}
+                    <select
                       id="timezone"
                       value={form.timezone}
-                      onChange={handleChange("timezone")}
-                      placeholder="UTC"
-                    />
-                  </div> */}
+                      onChange={(e) => setForm(prev => ({ ...prev, timezone: e.target.value }))}
+                      className="flex w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300"
+                    >
+                      <optgroup label="Asia">
+                        <option value="Asia/Dhaka">Asia/Dhaka (Bangladesh — UTC+6)</option>
+                        <option value="Asia/Kolkata">Asia/Kolkata (India — UTC+5:30)</option>
+                        <option value="Asia/Karachi">Asia/Karachi (Pakistan — UTC+5)</option>
+                        <option value="Asia/Dubai">Asia/Dubai (UAE — UTC+4)</option>
+                        <option value="Asia/Singapore">Asia/Singapore (UTC+8)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (Japan — UTC+9)</option>
+                        <option value="Asia/Shanghai">Asia/Shanghai (China — UTC+8)</option>
+                      </optgroup>
+                      <optgroup label="Americas">
+                        <option value="America/New_York">America/New_York (ET — UTC-5/4)</option>
+                        <option value="America/Chicago">America/Chicago (CT — UTC-6/5)</option>
+                        <option value="America/Denver">America/Denver (MT — UTC-7/6)</option>
+                        <option value="America/Los_Angeles">America/Los_Angeles (PT — UTC-8/7)</option>
+                        <option value="America/Toronto">America/Toronto (ET — UTC-5/4)</option>
+                        <option value="America/Vancouver">America/Vancouver (PT — UTC-8/7)</option>
+                        <option value="America/Sao_Paulo">America/Sao_Paulo (BRT — UTC-3)</option>
+                      </optgroup>
+                      <optgroup label="Europe">
+                        <option value="Europe/London">Europe/London (GMT/BST — UTC+0/1)</option>
+                        <option value="Europe/Paris">Europe/Paris (CET — UTC+1/2)</option>
+                        <option value="Europe/Berlin">Europe/Berlin (CET — UTC+1/2)</option>
+                        <option value="Europe/Istanbul">Europe/Istanbul (TRT — UTC+3)</option>
+                      </optgroup>
+                      <optgroup label="Pacific">
+                        <option value="Australia/Sydney">Australia/Sydney (AEST — UTC+10/11)</option>
+                        <option value="Pacific/Auckland">Pacific/Auckland (NZST — UTC+12/13)</option>
+                      </optgroup>
+                      <optgroup label="Other">
+                        <option value="UTC">UTC (Coordinated Universal Time)</option>
+                        <option value="Africa/Cairo">Africa/Cairo (EET — UTC+2)</option>
+                        <option value="Africa/Lagos">Africa/Lagos (WAT — UTC+1)</option>
+                      </optgroup>
+                    </select>
+                    <p className="text-xs text-amber-400/80">
+                      ⚠️ This must be set correctly — all scheduled posts use this timezone.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>

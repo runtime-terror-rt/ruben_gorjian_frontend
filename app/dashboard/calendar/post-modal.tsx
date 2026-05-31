@@ -12,11 +12,16 @@ import {
   parseDateTimeLocal,
 } from "@/lib/timezone";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import clsx from "clsx";
 import { useToast } from "@/hooks/use-toast";
 
 import { getEnvVarWithDefault } from "@/lib/env-utils";
 import { buildStorageUrl } from "@/lib/storage-utils";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const STORAGE_BASE_URL = getEnvVarWithDefault(
   "NEXT_PUBLIC_STORAGE_BASE_URL",
@@ -213,11 +218,29 @@ export default function PostModal({
       return;
     }
 
+    // ✅ CRITICAL: Validate timezone is set correctly (not UTC fallback for BD users)
+    if (!userTimezone || userTimezone === "UTC") {
+      toast({
+        title: "Timezone Not Set",
+        description: "Please set your timezone in Settings → Business before scheduling. Go to Dashboard → Settings → Business → Timezone and select 'Asia/Dhaka'.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // ✅ Convert local datetime to UTC ISO string HERE in the modal
+    // datetime is "YYYY-MM-DDTHH:mm" in user's local timezone
+    // parseDateTimeLocal interprets it as userTimezone and converts to UTC
+    const scheduledForUTC = parseDateTimeLocal(datetime, userTimezone).toISOString();
+
+    // Debug log to verify conversion
+    console.log("[SUBMIT] userTimezone:", userTimezone);
+    console.log("[SUBMIT] datetime (local):", datetime);
+    console.log("[SUBMIT] scheduledForUTC (sent to backend):", scheduledForUTC);
+
     // Validate past dates
-    const now = userTimezone ? dayjs().tz(userTimezone) : dayjs();
-    const selectedDate = userTimezone
-      ? dayjs.tz(datetime, userTimezone)
-      : dayjs(datetime);
+    const now = dayjs().tz(userTimezone);
+    const selectedDate = dayjs.tz(datetime, userTimezone);
 
     if (selectedDate.isBefore(now, "minute")) {
       toast({
@@ -295,7 +318,8 @@ export default function PostModal({
       const hashtags = normalizeHashtags(hashtagsInput);
       const metadata = {
         caption: caption.trim(),
-        scheduledFor: datetime,
+        // ✅ Pass UTC ISO string — context will NOT double-convert this
+        scheduledFor: scheduledForUTC,
         socialAccountIds: selectedAccounts,
         platforms,
         assetIds,
@@ -854,6 +878,25 @@ export default function PostModal({
               </div>
             </div>
           </div>
+          {/* Timezone info banner — helps user & developer verify correct TZ */}
+          {datetime && userTimezone && (
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 flex items-center gap-2">
+              <span className="text-xs text-amber-400 font-semibold shrink-0">🕐 Schedule TZ:</span>
+              <span className="text-xs text-amber-300/80 flex-1 truncate">
+                {userTimezone} ({timezoneAbbr}) — fires at{" "}
+                <span className="font-bold text-amber-300">
+                  {(() => {
+                    try {
+                      const utcTime = dayjs.tz(datetime, userTimezone).utc();
+                      return utcTime.format("MMM D, HH:mm [UTC]");
+                    } catch {
+                      return "—";
+                    }
+                  })()}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-2 px-5 py-4 border-t border-slate-800 flex-shrink-0">

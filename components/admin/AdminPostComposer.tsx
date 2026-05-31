@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiGet, apiPost, apiDelete } from "@/lib/api";
@@ -11,6 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -412,6 +418,18 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
     // Combine user-selected media + admin-uploaded media
     const allMediaIds = [...selectedUserMediaIds, ...adminUploadedMediaIds];
 
+    // ✅ FIX: Use dayjs.tz to correctly interpret the local datetime in browser timezone
+    // new Date(scheduledFor).toISOString() is unreliable — treats input as UTC on some environments
+    const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const scheduledForUTC =
+      publishMode === "SCHEDULE" && scheduledFor
+        ? dayjs.tz(scheduledFor, browserTimezone).utc().toISOString()
+        : undefined;
+
+    console.log("[AdminComposer] browserTimezone:", browserTimezone);
+    console.log("[AdminComposer] scheduledFor (local input):", scheduledFor);
+    console.log("[AdminComposer] scheduledForUTC (sent to backend):", scheduledForUTC);
+
     createPostMutation.mutate({
       content: {
         caption: caption.trim(),
@@ -421,11 +439,8 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
       platforms: selectedPlatforms,
       socialAccountIds: selectedAccountIds,
       publishMode,
-      scheduledFor:
-        publishMode === "SCHEDULE" && scheduledFor
-          ? new Date(scheduledFor).toISOString()
-          : undefined,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      scheduledFor: scheduledForUTC,
+      timezone: browserTimezone,
       reason: reason.trim(),
     });
   };
@@ -825,13 +840,31 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
           {/* Scheduled Date/Time */}
           {publishMode === "SCHEDULE" && (
             <div className="space-y-2">
-              <Label htmlFor="scheduledFor">Scheduled Date & Time *</Label>
+              <Label htmlFor="scheduledFor">
+                Scheduled Date & Time *{" "}
+                <span className="text-xs font-normal text-slate-400">
+                  ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                </span>
+              </Label>
               <Input
                 id="scheduledFor"
                 type="datetime-local"
                 value={scheduledFor}
                 onChange={(e) => setScheduledFor(e.target.value)}
               />
+              {/* ✅ UTC preview so admin can verify the correct time will be stored */}
+              {scheduledFor && (() => {
+                try {
+                  const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                  const utcTime = dayjs.tz(scheduledFor, browserTz).utc();
+                  return (
+                    <p className="text-xs text-amber-400">
+                      🕐 Will fire at: <strong>{utcTime.format("MMM D, HH:mm [UTC]")}</strong>
+                      {" "}(= local {dayjs.tz(scheduledFor, browserTz).format("h:mm A")})
+                    </p>
+                  );
+                } catch { return null; }
+              })()}
             </div>
           )}
 
