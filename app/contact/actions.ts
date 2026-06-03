@@ -39,7 +39,7 @@ export async function submitContactForm(
   console.log({ payload });
 
   try {
-    const response = await fetch(`${backendBase}/api/contact`, {
+    const response = await fetch(`${backendBase}/api/contact/submit-inquiry`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
