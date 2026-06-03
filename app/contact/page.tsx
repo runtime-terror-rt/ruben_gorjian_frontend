@@ -1,73 +1,31 @@
 "use client";
 
-import { FormEvent, Suspense } from "react";
+import { useActionState, useEffect, useRef, Suspense } from "react";
 import Image from "next/image";
 import Navbar from "@/components/navbar";
 import FooterSecondary from "@/components/footer-secondary";
 import contactImage from "@/components/assets/contact.svg";
-import { useMutation } from "@tanstack/react-query";
-import { apiPost } from "@/lib/api";
 import { toast } from "sonner";
+import { submitContactForm, type ContactFormState } from "./actions";
 
-type ContactPayload = {
-  fullName: string;
-  businessName: string;
-  email: string;
-  websiteOrHandle?: string;
-  interests: string[];
-  // postsPerMonth: string;
-  message?: string;
-  source?: string;
-};
-
-type ContactResponse = {
-  success: boolean;
-  data: {
-    submissionId: string;
-  };
-};
+const initialState: ContactFormState = { status: "idle", message: "" };
 
 export default function ContactPage() {
-  // const mutation = useMutation({
-  //   mutationFn: (payload: ContactPayload) =>
-  //     apiPost<ContactResponse>("/api/contact", payload),
-  // });
-  const mutation = useMutation({
-    mutationFn: (payload: ContactPayload) =>
-      apiPost<ContactResponse>("/api/contact", payload),
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction, isPending] = useActionState(
+    submitContactForm,
+    initialState
+  );
 
-    onSuccess: (data) => {
-      toast.success("Thank you! Your message has been sent successfully.");
-    },
-
-    onError: (error: any) => {
-      toast.error(error?.message || "Unable to submit contact form right now.");
-    },
-  });
-
-  async function handleContactSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const data = new FormData(form);
-
-    const payload: ContactPayload = {
-      fullName: (data.get("fullName") as string)?.trim(),
-      businessName: (data.get("businessName") as string)?.trim(),
-      email: (data.get("email") as string)?.trim(),
-      websiteOrHandle: (data.get("websiteOrHandle") as string)?.trim(),
-      message: (data.get("message") as string)?.trim(),
-      interests: [],
-      // postsPerMonth: "100",
-      source: "google-search",
-    };
-
-    mutation.mutate(payload, {
-      onSuccess: () => {
-        form.reset();
-      },
-    });
-  }
+  // Show toast and reset form on success/error transitions
+  useEffect(() => {
+    if (state.status === "success") {
+      toast.success(state.message);
+      formRef.current?.reset();
+    } else if (state.status === "error") {
+      toast.error(state.message);
+    }
+  }, [state]);
 
   return (
     <main className="min-h-screen bg-white text-[#1f2230]">
@@ -112,26 +70,28 @@ export default function ContactPage() {
 
               {/* Form */}
               <form
+                ref={formRef}
+                action={formAction}
                 className="flex flex-col gap-6 rounded-xl border-2 border-indigo-800/10 p-4 sm:p-6 md:p-8 shadow-lg"
-                onSubmit={handleContactSubmit}
               >
                 {/* Error */}
-                {mutation.isError && (
+                {state.status === "error" && (
                   <p className="rounded-xl border border-[#f1cbc1] bg-[#fff1ec] px-4 py-2 text-sm text-[#b53f2a]">
-                    {(mutation.error as any)?.message ||
-                      "Unable to submit contact form right now."}
+                    {state.message}
                   </p>
                 )}
 
                 {/* Success */}
-                {mutation.isSuccess && (
+                {state.status === "success" && (
                   <p className="rounded-xl border border-[#ced9f6] bg-[#edf2ff] px-4 py-2 text-sm text-[#2f4587]">
-                    Thank you for your message! We've received your request and will get back to you soon.
+                    {state.message}
                   </p>
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-[#1f2230]">Full Name</label>
+                  <label className="text-sm font-medium text-[#1f2230]">
+                    Full Name
+                  </label>
                   <input
                     name="fullName"
                     placeholder="Enter your full name"
@@ -141,7 +101,9 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-[#1f2230]">Business Name</label>
+                  <label className="text-sm font-medium text-[#1f2230]">
+                    Business Name
+                  </label>
                   <input
                     name="businessName"
                     placeholder="Enter your business name"
@@ -151,7 +113,9 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-[#1f2230]">Email</label>
+                  <label className="text-sm font-medium text-[#1f2230]">
+                    Email
+                  </label>
                   <input
                     name="email"
                     type="email"
@@ -162,7 +126,9 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-[#1f2230]">Website or @Handle</label>
+                  <label className="text-sm font-medium text-[#1f2230]">
+                    Website or @Handle
+                  </label>
                   <input
                     name="websiteOrHandle"
                     placeholder="Enter your website or social handle"
@@ -171,7 +137,9 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium text-[#1f2230]">Message</label>
+                  <label className="text-sm font-medium text-[#1f2230]">
+                    Message
+                  </label>
                   <textarea
                     name="message"
                     rows={5}
@@ -182,10 +150,10 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  disabled={mutation.isPending}
+                  disabled={isPending}
                   className="h-12 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {mutation.isPending ? "Sending..." : "Send request"}
+                  {isPending ? "Sending..." : "Send request"}
                 </button>
               </form>
             </div>
