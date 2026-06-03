@@ -39,14 +39,11 @@ export async function submitContactForm(
   console.log({ payload });
 
   try {
-    const response = await fetch(
-      `${backendBase.replace(/\/$/, "")}/api/contacts`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      },
-    );
+    const response = await fetch(`${backendBase}/api/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
     if (!response.ok) {
       // Try JSON first, fall back to raw text so we always surface the real error
