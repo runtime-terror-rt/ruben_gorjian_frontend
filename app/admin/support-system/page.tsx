@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   Search,
   RefreshCw,
@@ -134,6 +134,10 @@ export default function SupportSystemPage() {
   // State
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const [selectedSubmission, setSelectedSubmission] =
     useState<Submission | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -144,12 +148,58 @@ export default function SupportSystemPage() {
     createdAt: true,
   });
 
-  // Queries
+  // Reset page index when filters change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [search, statusFilter]);
+
+  // Main Table Query
   const submissionsQuery = useQuery({
-    queryKey: ["contact-submissions"],
+    queryKey: [
+      "contact-submissions",
+      pagination.pageIndex,
+      pagination.pageSize,
+      statusFilter,
+      search,
+    ],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      params.append("page", (pagination.pageIndex + 1).toString());
+      params.append("limit", pagination.pageSize.toString());
+      if (statusFilter !== "ALL") {
+        params.append("status", statusFilter);
+      }
+      if (search) {
+        params.append("search", search);
+      }
+      return apiGet<SubmissionsResponse>(
+        `/api/contact/admin/submissions?${params.toString()}`
+      ).then((res) => res.data);
+    },
+  });
+
+  // Stats Queries
+  const pendingQuery = useQuery({
+    queryKey: ["contact-submissions-stats", "PENDING"],
     queryFn: () =>
-      apiGet<SubmissionsResponse>("/api/contact/admin/submissions").then(
-        (res) => res.data.submissions,
+      apiGet<SubmissionsResponse>("/api/contact/admin/submissions?limit=1&status=PENDING").then(
+        (res) => res.data.total
+      ),
+  });
+
+  const repliedQuery = useQuery({
+    queryKey: ["contact-submissions-stats", "REPLIED"],
+    queryFn: () =>
+      apiGet<SubmissionsResponse>("/api/contact/admin/submissions?limit=1&status=REPLIED").then(
+        (res) => res.data.total
+      ),
+  });
+
+  const resolvedQuery = useQuery({
+    queryKey: ["contact-submissions-stats", "RESOLVED"],
+    queryFn: () =>
+      apiGet<SubmissionsResponse>("/api/contact/admin/submissions?limit=1&status=RESOLVED").then(
+        (res) => res.data.total
       ),
   });
 
@@ -165,6 +215,7 @@ export default function SupportSystemPage() {
         position: "top-right",
       });
       queryClient.invalidateQueries({ queryKey: ["contact-submissions"] });
+      queryClient.invalidateQueries({ queryKey: ["contact-submissions-stats"] });
     },
     onError: (err: Error) => {
       toast.error("Failed to update status", {
@@ -174,24 +225,17 @@ export default function SupportSystemPage() {
     },
   });
 
-  // Filtering Logic
-  const filteredData = useMemo(() => {
-    let data = submissionsQuery.data ?? [];
-    if (statusFilter !== "ALL") {
-      data = data.filter((s) => s.status.toUpperCase() === statusFilter);
-    }
-    if (search) {
-      const low = search.toLowerCase();
-      data = data.filter(
-        (s) =>
-          s.fullName.toLowerCase().includes(low) ||
-          s.email.toLowerCase().includes(low) ||
-          s.message.toLowerCase().includes(low) ||
-          s.businessName.toLowerCase().includes(low),
-      );
-    }
-    return data;
-  }, [submissionsQuery.data, statusFilter, search]);
+  // Client-side filter by name & email (backend ignores the search param)
+  const submissions = useMemo(() => {
+    const raw = submissionsQuery.data?.submissions ?? [];
+    if (!search.trim()) return raw;
+    const low = search.trim().toLowerCase();
+    return raw.filter(
+      (s) =>
+        s.fullName.toLowerCase().includes(low) ||
+        s.email.toLowerCase().includes(low),
+    );
+  }, [submissionsQuery.data, search]);
 
   // Table Columns
   const columns: ColumnDef<Submission>[] = [
@@ -344,14 +388,17 @@ export default function SupportSystemPage() {
   ];
 
   const table = useReactTable({
-    data: filteredData,
+    data: submissions,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
+    pageCount: submissionsQuery.data?.totalPages ?? -1,
     state: {
+      pagination,
       columnVisibility,
     },
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    onColumnVisibilityChange: setColumnVisibility,
   });
 
   return (
@@ -390,7 +437,7 @@ export default function SupportSystemPage() {
         </div>
       </div>
 
-      {/* Stats Cards - Optional Flair */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-slate-900/40 border-white/5 p-4 flex items-center gap-4 group hover:bg-slate-800/40 transition-colors">
           <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
@@ -401,8 +448,7 @@ export default function SupportSystemPage() {
               Pending
             </p>
             <p className="text-xl font-bold text-white">
-              {submissionsQuery.data?.filter((s) => s.status === "PENDING")
-                .length ?? 0}
+              {pendingQuery.data ?? 0}
             </p>
           </div>
         </Card>
@@ -415,8 +461,7 @@ export default function SupportSystemPage() {
               Replied
             </p>
             <p className="text-xl font-bold text-white">
-              {submissionsQuery.data?.filter((s) => s.status === "REPLIED")
-                .length ?? 0}
+              {repliedQuery.data ?? 0}
             </p>
           </div>
         </Card>
@@ -429,8 +474,7 @@ export default function SupportSystemPage() {
               Resolved
             </p>
             <p className="text-xl font-bold text-white">
-              {submissionsQuery.data?.filter((s) => s.status === "RESOLVED")
-                .length ?? 0}
+              {resolvedQuery.data ?? 0}
             </p>
           </div>
         </Card>
@@ -445,7 +489,7 @@ export default function SupportSystemPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
             <Input
-              placeholder="Filter by name, email, or message content..."
+              placeholder="Filter by name and email"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-slate-950/50 border-slate-800 focus-visible:ring-lime-500/50 h-11"
@@ -551,9 +595,9 @@ export default function SupportSystemPage() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
-          <div className="text-xs text-slate-500 font-medium">
-            Showing {filteredData.length} records
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-t border-white/5 bg-slate-950/20 gap-4">
+          <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
+            <span>Total: {submissionsQuery.data?.total ?? 0} records</span>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -566,7 +610,8 @@ export default function SupportSystemPage() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-xs text-slate-400 px-2 font-mono">
-              Page {table.getState().pagination.pageIndex + 1}
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount() || 1}
             </span>
             <Button
               variant="outline"
