@@ -14,6 +14,7 @@ export async function submitContactForm(
   const email = (formData.get("email") as string)?.trim();
   const websiteOrHandle = (formData.get("websiteOrHandle") as string)?.trim();
   const message = (formData.get("message") as string)?.trim();
+  const honeypot = (formData.get("honeypot") as string)?.trim();
 
   // Server-side validation
   if (!fullName || !businessName || !email) {
@@ -34,6 +35,7 @@ export async function submitContactForm(
     postsPerMonth: "100",
     message: message || "",
     source: "google-search",
+    honeypot: honeypot || "",
   };
 
   console.log({ payload });
