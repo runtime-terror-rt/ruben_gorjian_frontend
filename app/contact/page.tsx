@@ -148,6 +148,30 @@ export default function ContactPage() {
                   />
                 </div>
 
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    width: "1px",
+                    height: "1px",
+                    margin: "-1px",
+                    padding: 0,
+                    border: 0,
+                    overflow: "hidden",
+                    clip: "rect(0,0,0,0)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label htmlFor="website_url">Honeypot</label>
+                  <input
+                    id="website_url"
+                    name="honeypot"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <button
                   type="submit"
                   disabled={isPending}
