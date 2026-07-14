@@ -11,6 +11,7 @@ import logo from "@/components/assets/talexia_ai_logo.png";
 import { cn } from "@/lib/utils";
 
 const navItems = [
+  { label: "New Home", href: "/newhome" },
   { label: "Features", href: "/#features" },
   { label: "How it works", href: "/#how-it-works" },
   { label: "Pricing", href: "/pricing" },
