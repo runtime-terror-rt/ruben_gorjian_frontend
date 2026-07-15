@@ -178,38 +178,6 @@
   width: 4px; height: 4px; background: #b08d3e; transform: rotate(45deg);
 }
 
-/* ==================== DATA TABLE ==================== */
-.talexia-wrapper .data-table {
-  margin: 12px 0;
-  border: 1px solid #e6e1d8;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #fff;
-}
-.talexia-wrapper .data-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  border-bottom: 1px solid #ece7dc;
-  font-size: 13px;
-}
-.talexia-wrapper .data-row:last-child { border-bottom: none; }
-.talexia-wrapper .data-row.header {
-  background: #f6f1e6;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  font-size: 10.5px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #8a6d28;
-  font-weight: 600;
-}
-.talexia-wrapper .data-cell {
-  padding: 12px 14px;
-  border-right: 1px solid #ece7dc;
-  line-height: 1.55;
-}
-.talexia-wrapper .data-cell:last-child { border-right: none; }
-.talexia-wrapper .data-cell strong { font-size: 13.5px; }
-
 /* ==================== VERSION FOOTER ==================== */
 .talexia-wrapper .version-footer {
   max-width: 780px; margin: 60px auto 80px;
@@ -258,8 +226,5 @@
   .talexia-wrapper .sec-title { font-size: 22px; }
   .talexia-wrapper .clause-title { font-size: 16px; }
   .talexia-wrapper .clause-body { font-size: 14px; }
-  .talexia-wrapper .data-row { grid-template-columns: 1fr; }
-  .talexia-wrapper .data-cell { border-right: none; border-bottom: 1px dashed #ece7dc; }
-  .talexia-wrapper .data-cell:last-child { border-bottom: none; }
   .talexia-wrapper .version-footer { margin: 40px 20px 60px; padding: 24px; }
 }

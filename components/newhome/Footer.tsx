@@ -12,16 +12,16 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Services</h4>
             <ul>
-              <li><a href="#plans">Managed plans</a></li>
-              <li><a href="#atelier">Atelier</a></li>
+              <li><a href="/plan">Managed plans</a></li>
+              <li><a href="/newhome#atelier">Atelier</a></li>
             </ul>
           </div>
           <div className="footer-col">
             <h4>About</h4>
             <ul>
-              <li><a href="#process">Our process</a></li>
-              <li><a href="#work">Selected work</a></li>
-              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="/newhome#process">Our process</a></li>
+              <li><a href="/newhome#work">Selected work</a></li>
+              <li><a href="/newhome#faq">FAQ</a></li>
             </ul>
           </div>
           <div className="footer-col">

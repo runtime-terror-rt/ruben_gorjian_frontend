@@ -3,7 +3,7 @@ import './privacy.css';
 
 export const metadata = {
   title: 'Privacy Policy — Talexia',
-  description: "Talexia's Privacy Policy. Version 1.0, effective July 2026."
+  description: "Talexia's Privacy Policy. Version 1.1, effective July 2026."
 };
 
 export default function PrivacyPolicyPage() {
@@ -13,555 +13,450 @@ export default function PrivacyPolicyPage() {
       <div className="page-header">
         <div className="rule-ornament-center"></div>
         <div className="page-eyebrow">Legal</div>
-        <h1 className="page-title">Service Policy <em>&</em> Terms of Service</h1>
-        <div className="page-meta">Version 1.0 <span>·</span> Effective July 10, 2026</div>
+        <h1 className="page-title">Privacy <em>Policy</em></h1>
+        <div className="page-meta">Version 1.1 <span>·</span> Effective July 10, 2026</div>
       </div>
 
       {/* PREAMBLE */}
-    <div className="preamble">
-  <p>This document defines the working agreement between Talexia and its subscribers. It is written to be understandable — not to conceal terms behind legalese. If any clause is unclear, contact us before subscribing.</p>
-  <p>By subscribing to a Talexia plan, you agree to the version of this document that was live on the day of your subscription. Talexia stores the exact text of the version you accepted, along with the date and time of acceptance, in its Legal Records system.</p>
-</div>
+      <div className="preamble">
+        <p>This document explains what information Talexia collects, how it is used, and what rights you have over it. It is written to be understandable — not to conceal terms behind legalese.</p>
+        <p>This Privacy Policy works alongside Talexia's <a href="/terms" style={{ color: '#14110c', textDecoration: 'none', borderBottom: '1px solid #b08d3e' }}>Service Policy &amp; Terms of Service</a>. Where the two documents overlap, the Service Policy governs the commercial relationship and this document governs the data relationship.</p>
+      </div>
 
       {/* DOCUMENT LAYOUT */}
       <div className="doc-layout">
 
         {/* SECTION NAV */}
-       <aside className="sec-nav">
-    <div className="sec-nav-title">Contents</div>
-    <ul className="sec-nav-list">
-      <li><a href="#s1"><span className="sec-num">I</span> Definitions</a></li>
-      <li><a href="#s2"><span className="sec-num">II</span> The service</a></li>
-      <li><a href="#s3"><span className="sec-num">III</span> Scope &amp; exclusions</a></li>
-      <li><a href="#s4"><span className="sec-num">IV</span> Onboarding</a></li>
-      <li><a href="#s5"><span className="sec-num">V</span> Production &amp; publishing</a></li>
-      <li><a href="#s6"><span className="sec-num">VI</span> Content authorization</a></li>
-      <li><a href="#s7"><span className="sec-num">VII</span> Corrections</a></li>
-      <li><a href="#s8"><span className="sec-num">VIII</span> Client responsibilities</a></li>
-      <li><a href="#s9"><span className="sec-num">IX</span> Billing &amp; cancellation</a></li>
-      <li><a href="#s10"><span className="sec-num">X</span> Intellectual property</a></li>
-      <li><a href="#s11"><span className="sec-num">XI</span> Liability &amp; disputes</a></li>
-      <li><a href="#s12"><span className="sec-num">XII</span> Changes to this policy</a></li>
-    </ul>
-  </aside>
-
-
+        <aside className="sec-nav">
+          <div className="sec-nav-title">Contents</div>
+          <ul className="sec-nav-list">
+            <li><a href="#s1"><span className="sec-num">I</span> Who we are</a></li>
+            <li><a href="#s2"><span className="sec-num">II</span> What we collect</a></li>
+            <li><a href="#s3"><span className="sec-num">III</span> How we use it</a></li>
+            <li><a href="#s4"><span className="sec-num">IV</span> Where it lives</a></li>
+            <li><a href="#s5"><span className="sec-num">V</span> Third parties</a></li>
+            <li><a href="#s6"><span className="sec-num">VI</span> Production tools &amp; AI</a></li>
+            <li><a href="#s7"><span className="sec-num">VII</span> How long we keep it</a></li>
+            <li><a href="#s8"><span className="sec-num">VIII</span> Security</a></li>
+            <li><a href="#s9"><span className="sec-num">IX</span> Your rights</a></li>
+            <li><a href="#s10"><span className="sec-num">X</span> California residents</a></li>
+            <li><a href="#s11"><span className="sec-num">XI</span> EU &amp; UK residents</a></li>
+            <li><a href="#s12"><span className="sec-num">XII</span> Children</a></li>
+            <li><a href="#s13"><span className="sec-num">XIII</span> Changes &amp; contact</a></li>
+          </ul>
+        </aside>
 
         {/* DOC CONTENT */}
         <div className="doc-content">
 
-          {/* SECTION I */}
-        <section className="doc-section" id="s1">
-      <div className="sec-header">
-        <div className="sec-num-large">I.</div>
-        <h2 className="sec-title"><em>Definitions</em></h2>
-      </div>
+          {/* ==================== SECTION I ==================== */}
+          <section className="doc-section" id="s1">
+            <div className="sec-header">
+              <div className="sec-num-large">I.</div>
+              <h2 className="sec-title">Who <em>we are</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">1.1</div>
+              <div className="clause-title">Data controller</div>
+              <div className="clause-body">
+                <p>Talexia, operating at <a href="/newhome">talexia.us</a>, is the data controller for information collected through its website, its subscription service, and its production operations. In this document, &quot;Talexia,&quot; &quot;we,&quot; and &quot;our&quot; refer to Talexia; &quot;you&quot; and &quot;your&quot; refer to any person whose information Talexia processes.</p>
+                <p>For questions about this policy or the information Talexia holds about you, contact <a href="mailto:office@talexia.us">office@talexia.us</a>.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">1.1</div>
-        <div className="clause-title">Terms used throughout this document</div>
-        <div className="clause-body">
-          <p><strong>Talexia</strong> refers to Talexia, an editorial visual production studio for fine jewelry brands, operating at talexia.us.</p>
-          <p><strong>Client</strong> or <strong>you</strong> refers to the individual or business entity subscribing to a Talexia plan.</p>
-          <p><strong>Plan</strong> refers to Essentials, Signature, Atelier, or any subsequently offered subscription tier.</p>
-          <p><strong>Brand Brief</strong> refers to the onboarding document in which the Client provides brand voice, audience, aesthetic preferences, and product information used as the reference for all content production.</p>
-          <p><strong>Catalog</strong> refers to the collection of product images the Client uploads to the shared Talexia Google Drive folder at onboarding, from which visual content is produced.</p>
-          <p><strong>Content Cycle</strong> refers to a single calendar month of production, publishing, and delivery under an active subscription.</p>
-          <p><strong>Feed Content</strong> refers to scheduled posts published to Instagram, Facebook, or LinkedIn feeds via official platform APIs. It excludes Stories, Reels, direct messages, comment responses, and paid advertising.</p>
-        </div>
-      </div>
-    </section>
+          {/* ==================== SECTION II ==================== */}
+          <section className="doc-section" id="s2">
+            <div className="sec-header">
+              <div className="sec-num-large">II.</div>
+              <h2 className="sec-title">What <em>we collect</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">2.1</div>
+              <div className="clause-title">Categories of information</div>
+              <div className="clause-body">
+                <p>Talexia collects only what is required to operate the service. In summary:</p>
 
-         {/* ==================== SECTION II ==================== */}
-    <section className="doc-section" id="s2">
-      <div className="sec-header">
-        <div className="sec-num-large">II.</div>
-        <h2 className="sec-title"><em>The service</em></h2>
-      </div>
+                <div className="data-table">
+                  <div className="data-row header">
+                    <div className="data-cell">Category</div>
+                    <div className="data-cell">What it includes</div>
+                    <div className="data-cell">Why we collect it</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Account &amp; billing</strong></div>
+                    <div className="data-cell">Name, email, business name, billing address, payment method (via Stripe)</div>
+                    <div className="data-cell">To manage your subscription and process payments</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Brand information</strong></div>
+                    <div className="data-cell">Brand voice, audience, aesthetic preferences, taglines, sample captions, industry details</div>
+                    <div className="data-cell">To produce content faithful to your brand</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Product catalog</strong></div>
+                    <div className="data-cell">Product images, SKUs, material and stone information you provide</div>
+                    <div className="data-cell">To produce visual content of your pieces</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Platform authorization</strong></div>
+                    <div className="data-cell">OAuth tokens for connected social media accounts (Instagram, Facebook, LinkedIn)</div>
+                    <div className="data-cell">To publish scheduled content on your behalf</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Legal records</strong></div>
+                    <div className="data-cell">Acceptance timestamps, IP address, browser info, document version accepted</div>
+                    <div className="data-cell">To maintain records of your agreement to our terms</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Support communications</strong></div>
+                    <div className="data-cell">Emails, consultation call notes, correction requests</div>
+                    <div className="data-cell">To respond to your inquiries and improve service</div>
+                  </div>
+                  <div className="data-row">
+                    <div className="data-cell"><strong>Website usage</strong></div>
+                    <div className="data-cell">Page visits, referrer, device type, general location (city-level)</div>
+                    <div className="data-cell">To understand how the website is used and improve it</div>
+                  </div>
+                </div>
 
-      <div className="clause">
-        <div className="clause-num">2.1</div>
-        <div className="clause-title">What Talexia provides</div>
-        <div className="clause-body">
-          <p>Talexia is a fully managed editorial visual production service. Under an active subscription, Talexia produces luxury-enhanced feed content, writes captions in the Client's brand voice, and publishes content on a scheduled monthly rhythm to the Client's connected social media accounts.</p>
-          <p>The service is designed for delegation. Once onboarding is complete, no further recurring input is required from the Client for production to proceed.</p>
-        </div>
-      </div>
+                <p>Talexia does not collect sensitive personal categories — health information, precise location tracking, genetic data, or biometric data — as none are relevant to the service.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">2.2</div>
+              <div className="clause-title">What we do not collect</div>
+              <div className="clause-body">
+                <p>Talexia does not collect, store, or have access to:</p>
+                <ul>
+                  <li>Your social media login credentials (only OAuth tokens — never passwords)</li>
+                  <li>Your website admin credentials (Talexia never requires these)</li>
+                  <li>Full credit card numbers (handled by Stripe; Talexia sees only the last four digits and card type)</li>
+                  <li>Your customers&apos; data (Talexia does not manage DMs, comments, or customer relationships)</li>
+                </ul>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">2.2</div>
-        <div className="clause-title">Plans and deliverables</div>
-        <div className="clause-body">
-          <p>Current plan structure and deliverable volumes are as follows:</p>
-          <ul>
-            <li><strong>Essentials — $397 per month, or $4,288 per year.</strong> Twelve luxury-enhanced visuals, professional captions, published to two platforms, monthly content calendar. The annual rate reflects a 10% discount versus twelve monthly payments.</li>
-            <li><strong>Signature — $597 per month, or $6,448 per year.</strong> Twenty-four luxury-enhanced visuals, professional captions and scheduling, published to three platforms, monthly content plan, seasonal editorial planning. The annual rate reflects a 10% discount versus twelve monthly payments.</li>
-            <li><strong>Atelier — pricing by consultation.</strong> Bespoke visual work for signature pieces and custom collections, structured individually per engagement, minimum three-month term.</li>
-          </ul>
-          <p>Signature includes a one-time onboarding fee of $97 applied to the first invoice. Essentials does not include an onboarding fee. Plan pricing and deliverable volumes are subject to change on future subscriptions; existing subscriptions retain their original terms until cancellation or upgrade.</p>
-        </div>
-      </div>
+          {/* ==================== SECTION III ==================== */}
+          <section className="doc-section" id="s3">
+            <div className="sec-header">
+              <div className="sec-num-large">III.</div>
+              <h2 className="sec-title">How <em>we use it</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">3.1</div>
+              <div className="clause-title">Purposes of processing</div>
+              <div className="clause-body">
+                <p>Talexia uses the information collected only for the following purposes:</p>
+                <ul>
+                  <li><strong>Service delivery</strong> — producing visual content, writing captions, publishing to your connected platforms</li>
+                  <li><strong>Billing</strong> — processing subscription payments and issuing invoices</li>
+                  <li><strong>Communication</strong> — responding to inquiries, sending service updates, notifying you of authorization renewals</li>
+                  <li><strong>Legal compliance</strong> — maintaining records required for consumer protection, tax, and platform terms compliance</li>
+                  <li><strong>Website improvement</strong> — understanding traffic patterns and improving user experience</li>
+                  <li><strong>Case study reference</strong> — displaying work produced for your brand as portfolio material, subject to Section 10.3 of the Service Policy</li>
+                </ul>
+                <p>Talexia does not use your information for automated decision-making, profiling, targeted advertising, or any purpose beyond those listed above.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">3.2</div>
+              <div className="clause-title">We do not sell your information</div>
+              <div className="clause-body">
+                <p>Talexia does not sell personal information to third parties, and does not &quot;share&quot; personal information for cross-context behavioral advertising as those terms are defined under California and comparable state laws.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">2.3</div>
-        <div className="clause-title">Categories served</div>
-        <div className="clause-body">
-          <p>Talexia specializes in fine jewelry. Brands in adjacent luxury categories — including silverware, high-end accessories, watches, and select artisan luxury goods — may be considered on inquiry basis where the aesthetic model aligns with Talexia's production standards. Non-luxury categories, video-first brands, and lifestyle-photography-dependent products are outside Talexia's scope.</p>
-        </div>
-      </div>
-    </section>
+          {/* ==================== SECTION IV ==================== */}
+          <section className="doc-section" id="s4">
+            <div className="sec-header">
+              <div className="sec-num-large">IV.</div>
+              <h2 className="sec-title">Where <em>it lives</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">4.1</div>
+              <div className="clause-title">Storage locations</div>
+              <div className="clause-body">
+                <p>Talexia stores information across a small number of service infrastructure providers:</p>
+                <ul>
+                  <li><strong>Product catalogs</strong> are stored in Google Drive folders under Talexia&apos;s Google Workspace account, accessible only to Talexia staff.</li>
+                  <li><strong>Account, billing, and Brand Brief data</strong> are stored in Talexia&apos;s operational database and encrypted email storage.</li>
+                  <li><strong>Payment information</strong> is stored by Stripe — Talexia never sees or stores full card details.</li>
+                  <li><strong>Legal Records</strong> — acceptance timestamps, IP addresses, and document versions — are stored in an append-only database table designed for permanence and audit integrity.</li>
+                  <li><strong>Support communications</strong> are stored in email and, where applicable, in Google Drive documents linked to the Client&apos;s file.</li>
+                </ul>
+                <p>All Talexia storage is US-based. Where information is transferred internationally (for example, where a Client is EU-based), that transfer is governed by Section XI of this policy.</p>
+              </div>
+            </div>
+          </section>
 
-    {/* ==================== SECTION III ==================== */}
-    <section className="doc-section" id="s3">
-      <div className="sec-header">
-        <div className="sec-num-large">III.</div>
-        <h2 className="sec-title"><em>Scope</em> &amp; exclusions</h2>
-      </div>
+          {/* ==================== SECTION V ==================== */}
+          <section className="doc-section" id="s5">
+            <div className="sec-header">
+              <div className="sec-num-large">V.</div>
+              <h2 className="sec-title">Third <em>parties</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">5.1</div>
+              <div className="clause-title">Service providers we use</div>
+              <div className="clause-body">
+                <p>Talexia relies on the following third-party service providers to operate. Each is bound by its own privacy policy and data processing standards, which we&apos;ve linked below for reference:</p>
+                <ul>
+                  <li><strong>Stripe</strong> — payment processing (<a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">stripe.com/privacy</a>)</li>
+                  <li><strong>Google Workspace</strong> — Google Drive for catalog storage, Gmail for support communications (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>)</li>
+                  <li><strong>Meta Platforms</strong> — Instagram and Facebook Content Publishing API for scheduled posting (<a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener noreferrer">facebook.com/privacy/policy</a>)</li>
+                  <li><strong>LinkedIn</strong> — Marketing API for scheduled posting (<a href="https://www.linkedin.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">linkedin.com/legal/privacy-policy</a>)</li>
+                  <li><strong>UploadPost or equivalent scheduling API</strong> — technical layer between Talexia and social platforms for scheduled publishing</li>
+                </ul>
+                <p>Each provider has access only to the specific information required to perform its function. Talexia does not share information with any third party beyond those listed here, except as required by law.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">5.2</div>
+              <div className="clause-title">Legal disclosures</div>
+              <div className="clause-body">
+                <p>Talexia will disclose information where required by law — including in response to a valid subpoena, court order, or lawful government request — or where necessary to enforce this policy, the Service Policy, or Talexia&apos;s rights. Where legally permitted, Talexia will notify affected Clients before making such a disclosure.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">5.3</div>
+              <div className="clause-title">Business transfers</div>
+              <div className="clause-body">
+                <p>In the event Talexia is acquired, merged, or reorganized, Client information may be transferred to the successor entity. Any successor will be bound by the terms of this Privacy Policy or a policy providing equivalent protection.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">3.1</div>
-        <div className="clause-title">Feed content only</div>
-        <div className="clause-body">
-          <p>Talexia produces and publishes feed content only. This is a structural limitation of the platform APIs Talexia uses, not a stylistic choice.</p>
-          <p>Meta's Content Publishing API and LinkedIn's Marketing API do not permit third-party services to publish Stories, Reels, or ephemeral content on a Client's behalf. Talexia does not accept direct login credentials from Clients and does not publish content through methods outside official platform APIs.</p>
-        </div>
-      </div>
+          {/* ==================== SECTION VI ==================== */}
+          <section className="doc-section" id="s6">
+            <div className="sec-header">
+              <div className="sec-num-large">VI.</div>
+              <h2 className="sec-title">Production <em>tools &amp; AI</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">6.1</div>
+              <div className="clause-title">Visual production processing</div>
+              <div className="clause-body">
+                <p>Talexia&apos;s visual production process combines proprietary internal tools with third-party visual enhancement and animation services. During production, product images from your catalog — including, for plans that offer image preparation, source images you submit that require cleanup or correction before production — are processed by these services to prepare and produce your monthly visual content.</p>
+                <p>Talexia takes the following commitments regarding this processing:</p>
+                <ul>
+                  <li>Talexia does not authorize training use of Client data on third-party AI systems where an opt-out is available.</li>
+                  <li>Talexia does not upload Client information beyond what is required for production of the specific visual asset being produced.</li>
+                  <li>Talexia does not use Client-provided images to produce content for other Talexia Clients.</li>
+                  <li>Talexia&apos;s production tool selection is subject to periodic review; where a tool&apos;s data practices change materially, Talexia will either replace the tool or update this policy.</li>
+                </ul>
+                <p>Where required by law or by material change in tool practices, Talexia will notify Clients of specific tools in use. In all cases, the deliverable — editorial-standard visual content faithful to your pieces — is produced under Talexia&apos;s proprietary methodology.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">6.2</div>
+              <div className="clause-title">Brand voice training</div>
+              <div className="clause-body">
+                <p>Captions and brand voice are produced using Talexia&apos;s proprietary training system, which uses your Brand Brief as reference input for your specific brand only. Your Brand Brief is not used to train Talexia&apos;s system for other Clients. Your captions and brand voice remain distinct to your subscription and are not reused across accounts.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">3.2</div>
-        <div className="clause-title">Explicit exclusions</div>
-        <div className="clause-body">
-          <p>The following are excluded from all Talexia plans:</p>
-          <ul>
-            <li>Instagram Stories, Facebook Stories, and any ephemeral content</li>
-            <li>Instagram Reels, filmed video, video editing, and sound editing</li>
-            <li>Direct message handling, comment responses, and community engagement</li>
-            <li>Paid social advertising, ad management, boosted posts, and audience targeting</li>
-            <li>Publishing to platforms other than Instagram, Facebook, and LinkedIn</li>
-            <li>Real-time or reactive posting outside the scheduled monthly rhythm</li>
-            <li>Content approval workflows on a per-post basis (see Section VI)</li>
-          </ul>
-          <p>Exclusions apply regardless of plan tier. Custom scope expansions are not available through Essentials or Signature. Bespoke deliverable mixes are available under Atelier by consultation.</p>
-        </div>
-      </div>
+          {/* ==================== SECTION VII ==================== */}
+          <section className="doc-section" id="s7">
+            <div className="sec-header">
+              <div className="sec-num-large">VII.</div>
+              <h2 className="sec-title">How <em>long we keep it</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">7.1</div>
+              <div className="clause-title">Retention periods</div>
+              <div className="clause-body">
+                <p>Talexia retains information only as long as necessary for the purposes it was collected:</p>
+                <ul>
+                  <li><strong>Account and billing information</strong> — for the duration of your subscription and for seven (7) years thereafter, as required for tax and accounting compliance.</li>
+                  <li><strong>Brand Brief and catalog</strong> — for the duration of your subscription. Upon cancellation, retained for ninety (90) days to support potential reactivation, then deleted or returned upon Client request.</li>
+                  <li><strong>Platform authorization tokens</strong> — until the token expires, is revoked by the platform, or is revoked by the Client. Talexia does not retain expired tokens.</li>
+                  <li><strong>Legal Records</strong> — permanently, as required for the enforceability of the Service Policy and defense against future disputes.</li>
+                  <li><strong>Support communications</strong> — three (3) years after last contact, then deleted unless retention is required by ongoing legal matters.</li>
+                  <li><strong>Website usage data</strong> — twenty-four (24) months, then aggregated or deleted.</li>
+                </ul>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">7.2</div>
+              <div className="clause-title">Deletion on request</div>
+              <div className="clause-body">
+                <p>Except for Legal Records, which Talexia retains as noted above, you may request deletion of your information at any time under Section IX. Some information may be retained beyond your request where required by law or by legitimate business necessity — for example, unpaid invoices or unresolved disputes.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">3.3</div>
-        <div className="clause-title">Micro-animation</div>
-        <div className="clause-body">
-          <p>Selected plans include micro-animation — subtle motion applied to still visuals, published as short-form video via the official platform APIs. Micro-animation does not include filmed video, user-recorded footage, trending audio integration, or sound design. The specific inclusion of micro-animation is defined per plan.</p>
-        </div>
-      </div>
-    </section>
+          {/* ==================== SECTION VIII ==================== */}
+          <section className="doc-section" id="s8">
+            <div className="sec-header">
+              <div className="sec-num-large">VIII.</div>
+              <h2 className="sec-title"><em>Security</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">8.1</div>
+              <div className="clause-title">How we protect information</div>
+              <div className="clause-body">
+                <p>Talexia protects information through a combination of technical and operational measures:</p>
+                <ul>
+                  <li>Encrypted storage across all infrastructure providers (Stripe, Google Workspace, database)</li>
+                  <li>Encrypted transmission via HTTPS across all site communication</li>
+                  <li>OAuth-based platform authorization — no plain-text credentials stored anywhere</li>
+                  <li>Access restricted to Talexia staff on a need-to-know basis</li>
+                  <li>Multi-factor authentication on all infrastructure accounts</li>
+                  <li>Periodic review of third-party provider security practices</li>
+                </ul>
+                <p>No system is fully immune to breach. In the event of a data breach affecting your information, Talexia will notify you within seventy-two (72) hours of confirmed detection, describing the nature of the breach, the information affected, and the steps taken in response — consistent with applicable US state and international law.</p>
+              </div>
+            </div>
+          </section>
 
-    {/* ==================== SECTION IV ==================== */}
+          {/* ==================== SECTION IX ==================== */}
+          <section className="doc-section" id="s9">
+            <div className="sec-header">
+              <div className="sec-num-large">IX.</div>
+              <h2 className="sec-title">Your <em>rights</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">9.1</div>
+              <div className="clause-title">Rights available to all Clients</div>
+              <div className="clause-body">
+                <p>Regardless of jurisdiction, you have the following rights with respect to information Talexia holds about you:</p>
+                <ul>
+                  <li><strong>Right to know</strong> — request a summary of what information Talexia holds about you</li>
+                  <li><strong>Right to access</strong> — request a copy of your information in a portable format</li>
+                  <li><strong>Right to correct</strong> — request correction of inaccurate information</li>
+                  <li><strong>Right to delete</strong> — request deletion of your information, subject to legal retention requirements</li>
+                  <li><strong>Right to withdraw consent</strong> — for processing based on your consent, withdraw that consent at any time</li>
+                  <li><strong>Right to opt out of case study use</strong> — under Section 10.3 of the Service Policy</li>
+                </ul>
+                <p>To exercise any of these rights, contact <a href="mailto:office@talexia.us">office@talexia.us</a>. Talexia will respond within thirty (30) days. Talexia may require verification of your identity before acting on a request.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">9.2</div>
+              <div className="clause-title">No discrimination</div>
+              <div className="clause-body">
+                <p>Talexia will not discriminate against you for exercising any of these rights. Doing so will not affect your subscription pricing, service quality, or eligibility for future service.</p>
+              </div>
+            </div>
+          </section>
 
-    <section className="doc-section" id="s4">
-      <div className="sec-header">
-        <div className="sec-num-large">IV.</div>
-        <h2 className="sec-title"><em>Onboarding</em></h2>
-      </div>
+          {/* ==================== SECTION X ==================== */}
+          <section className="doc-section" id="s10">
+            <div className="sec-header">
+              <div className="sec-num-large">X.</div>
+              <h2 className="sec-title">California <em>residents</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">10.1</div>
+              <div className="clause-title">Your rights under the CCPA and CPRA</div>
+              <div className="clause-body">
+                <p>If you are a California resident, you have specific rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA), in addition to those listed in Section IX:</p>
+                <ul>
+                  <li><strong>Right to know categories</strong> — the categories of personal information Talexia collects, the sources, and the purposes of collection (disclosed in Section II)</li>
+                  <li><strong>Right to correct inaccurate information</strong></li>
+                  <li><strong>Right to delete personal information</strong>, subject to legal exemptions</li>
+                  <li><strong>Right to opt out of &quot;sale&quot; or &quot;sharing&quot;</strong> — Talexia does not sell or share personal information as those terms are defined, but you retain the right regardless</li>
+                  <li><strong>Right to limit use of sensitive personal information</strong> — Talexia does not collect sensitive personal information in the CPRA-defined categories</li>
+                </ul>
+                <p>To exercise these rights, contact <a href="mailto:office@talexia.us">office@talexia.us</a>. You may also designate an authorized agent to submit requests on your behalf.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">10.2</div>
+              <div className="clause-title">Categories collected in the past 12 months</div>
+              <div className="clause-body">
+                <p>Consistent with Section II of this policy, Talexia has collected the following categories of personal information in the past twelve months from active or prospective Clients: identifiers (name, email), commercial information (subscription and payment), professional information (brand and business details), Internet activity (website usage), and inferences drawn from these categories (aesthetic preferences derived from Brand Brief responses). Talexia has not sold or shared any of these categories.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">4.1</div>
-        <div className="clause-title">Brand Brief submission</div>
-        <div className="clause-body">
-          <p>Following successful payment, the Client is directed to complete a Brand Brief. The Brand Brief captures brand name, voice, audience, aesthetic preferences, product focus, and sample captions. All required fields must be completed before content production begins.</p>
-          <p>The accuracy and completeness of the Brand Brief is the foundation of all subsequent content. Talexia is not responsible for content that reflects information the Client omitted, misstated, or failed to provide in the Brief.</p>
-        </div>
-      </div>
+          {/* ==================== SECTION XI ==================== */}
+          <section className="doc-section" id="s11">
+            <div className="sec-header">
+              <div className="sec-num-large">XI.</div>
+              <h2 className="sec-title">EU &amp; UK <em>residents</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">11.1</div>
+              <div className="clause-title">Lawful basis for processing</div>
+              <div className="clause-body">
+                <p>For Clients located in the European Union, the United Kingdom, or the European Economic Area, Talexia processes personal information under the following lawful bases established by the General Data Protection Regulation (GDPR) and the UK GDPR:</p>
+                <ul>
+                  <li><strong>Contract performance</strong> — for account, billing, Brand Brief, catalog, and publishing operations</li>
+                  <li><strong>Legal obligation</strong> — for Legal Records, tax compliance, and regulatory reporting</li>
+                  <li><strong>Legitimate interests</strong> — for website usage analysis, service improvement, and case study reference, balanced against your rights</li>
+                  <li><strong>Consent</strong> — where specifically requested (for example, for marketing communications)</li>
+                </ul>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">11.2</div>
+              <div className="clause-title">International data transfers</div>
+              <div className="clause-body">
+                <p>Talexia is based in the United States. If you are located outside the United States, your information will be transferred to and processed in the United States. Where required by GDPR, UK GDPR, or comparable law, such transfers are governed by Standard Contractual Clauses or equivalent safeguards.</p>
+                <p>By subscribing to Talexia from a jurisdiction outside the United States, you acknowledge and consent to this transfer.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">11.3</div>
+              <div className="clause-title">Rights under GDPR and UK GDPR</div>
+              <div className="clause-body">
+                <p>In addition to the rights listed in Section IX, EU and UK residents have the following rights:</p>
+                <ul>
+                  <li>Right to restrict processing</li>
+                  <li>Right to object to processing based on legitimate interests</li>
+                  <li>Right to data portability in a machine-readable format</li>
+                  <li>Right to lodge a complaint with your national data protection authority</li>
+                </ul>
+                <p>To exercise these rights, contact <a href="mailto:office@talexia.us">office@talexia.us</a>. Talexia will respond within thirty (30) days.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">4.2</div>
-        <div className="clause-title">Catalog upload</div>
-        <div className="clause-body">
-          <p>The Client uploads the product catalog to a dedicated Google Drive folder shared with Talexia. The catalog serves as the standing reference for content production throughout the subscription.</p>
-          <p>The Client may upload the catalog in any organizational structure. The Client may add new pieces to the folder at any time; pieces added by the 25th of a month become available for production in the following Content Cycle.</p>
-          <p>Image requirements depend on the Client's plan. <strong>Essentials</strong> produces from the Client's existing product photography — typically website or catalog images. For best results at this tier, images should be reasonable-resolution studio-style photography (white or neutral background preferred, in focus, with accurate color and even lighting). Lifestyle shots, phone photography, and low-resolution images may result in production output below Talexia's standard, in which case affected pieces may be excluded from rotation without refund adjustment.</p>
-          <p><strong>Signature</strong> includes full image preparation. The Client may submit source images in any form, including phone photography; Talexia will clean, correct, and prepare the source images before production. Image preparation is a production step applied at Talexia's discretion and is not guaranteed to produce a particular result: the faithfulness of the final visual depends on the quality of the original image, and Talexia prepares each image to the highest standard the source allows. In all cases, Talexia represents the piece as it is and does not alter the piece's design, materials, or configuration.</p>
-        </div>
-      </div>
+          {/* ==================== SECTION XII ==================== */}
+          <section className="doc-section" id="s12">
+            <div className="sec-header">
+              <div className="sec-num-large">XII.</div>
+              <h2 className="sec-title"><em>Children</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">12.1</div>
+              <div className="clause-title">Service not directed to children</div>
+              <div className="clause-body">
+                <p>Talexia&apos;s service is intended for business use by adult professionals. Talexia does not knowingly collect information from children under the age of thirteen (13). If Talexia becomes aware that information has been collected from a child under thirteen, Talexia will delete that information without undue delay.</p>
+                <p>If you believe a child has provided information to Talexia, contact <a href="mailto:office@talexia.us">office@talexia.us</a>.</p>
+              </div>
+            </div>
+          </section>
 
-      <div className="clause">
-        <div className="clause-num">4.3</div>
-        <div className="clause-title">Product identification</div>
-        <div className="clause-body">
-          <p>Where the Client's SKU or filename convention encodes material and stone information, no additional identification is required. Where filenames or SKUs do not self-describe, the Client provides a simple text file listing filename, metal type, and stone details for each piece.</p>
-          <p>Faithful visual representation depends on accurate material information. Ambiguities identified during onboarding will be flagged for the Client to resolve before production begins.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">4.4</div>
-        <div className="clause-title">Voice lock and first cycle</div>
-        <div className="clause-body">
-          <p>Talexia trains its proprietary brand voice system against the completed Brand Brief and produces sample captions and visual directions for the Client's review. Upon review, the first Content Cycle begins. Content publishes within the first monthly billing cycle following successful onboarding.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION V ==================== */}
-    <section className="doc-section" id="s5">
-      <div className="sec-header">
-        <div className="sec-num-large">V.</div>
-        <h2 className="sec-title"><em>Production</em> &amp; publishing</h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">5.1</div>
-        <div className="clause-title">Production methodology</div>
-        <div className="clause-body">
-          <p>Talexia produces visual content using a proprietary production process that combines AI-assisted visual enhancement with editorial art direction, manual product verification, and hand composition where required. Every visual is manually verified for product accuracy — correct metal tone, stone color, and design detail — before publication.</p>
-          <p>The Client acknowledges that visual content is composed through Talexia's proprietary methodology and that the specific tools, techniques, or ratios of automated-to-manual work are Talexia's confidential production process and not subject to disclosure.</p>
-          <p>The Client's expectation is faithful representation of the piece, held to editorial standard. This is the deliverable Talexia commits to, regardless of production method.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">5.2</div>
-        <div className="clause-title">Captions and hashtags</div>
-        <div className="clause-body">
-          <p>Captions and hashtags are produced from the Client's Brand Brief using Talexia's proprietary brand voice training. Captions reflect the tone, audience, and vocabulary declared in the Brief. Hashtag selection is optimized for fine jewelry industry conventions.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">5.3</div>
-        <div className="clause-title">Publishing rhythm</div>
-        <div className="clause-body">
-          <p>Content is scheduled across each Content Cycle for optimal cadence based on platform best practices for fine jewelry. Talexia manages posting timing on the Client's behalf using a monthly bulk schedule generated per brand.</p>
-          <p>The Client may indicate preferred posting windows in the Brand Brief. Time-critical individual posts — product launches, store events, announcements — may be requested in advance and will be scheduled accordingly. Day-by-day scheduling requests outside these two channels are not accepted.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">5.4</div>
-        <div className="clause-title">Platform access</div>
-        <div className="clause-body">
-          <p>To publish on the Client's behalf, Talexia requires OAuth authorization to the Client's connected accounts. The Client authorizes access directly at onboarding via secure third-party integration. Talexia never sees, holds, or has access to the Client's login credentials.</p>
-          <p>Platform authorization tokens expire periodically per platform policy (typically every sixty to ninety days). When a token expires, the Client will receive a notification to reauthorize the integration. Publication interruptions caused by expired authorization are the Client's responsibility to resolve; Talexia is not liable for missed posts during periods of unauthorized access.</p>
-          <p>The Client may revoke authorization at any time from the platform's account settings without notice to Talexia.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">5.5</div>
-        <div className="clause-title">Publishing failures</div>
-        <div className="clause-body">
-          <p>Publishing failures caused by platform outages, API changes, or technical issues on Talexia's side will be rescheduled and republished as soon as the issue is resolved. Talexia is not liable for revenue, engagement, or business impact resulting from platform-side outages or from failures caused by expired or revoked Client authorization.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION VI ==================== */}
-    
-    <section className="doc-section" id="s6">
-      <div className="sec-header">
-        <div className="sec-num-large">VI.</div>
-        <h2 className="sec-title"><em>Content authorization</em></h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">6.1</div>
-        <div className="clause-title">Brand Brief authorization model</div>
-        <div className="clause-body">
-          <p>Talexia operates on a standing authorization model. By submitting the Brand Brief at onboarding, the Client authorizes Talexia to produce visual content, captions, hashtags, and scheduled posts on the Client's behalf, using the information provided in the Brief as the sole reference, for the duration of the subscription.</p>
-          <p>Talexia does not require per-post approval, does not provide content previews prior to publication, and does not conduct approval workflows. This standing authorization is what enables Talexia's fully managed rhythm at published pricing.</p>
-          <p>The Client's substantive review moment is at Brand Brief submission and revision, not at individual post approval.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">6.2</div>
-        <div className="clause-title">Brand Brief updates</div>
-        <div className="clause-body">
-          <p>The Client may submit an updated Brand Brief at any time to reflect brand changes: new product lines, rebrands, tone shifts, audience pivots, or updated preferences. Brand Brief updates apply to the Content Cycle following submission. Retroactive application to already-produced or already-published content is not available.</p>
-          <p>Talexia is not responsible for content produced under the previously-current Brand Brief if the Client's actual brand has diverged and the Brief was not updated to reflect the change.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION VII ==================== */}
-    <section className="doc-section" id="s7">
-      <div className="sec-header">
-        <div className="sec-num-large">VII.</div>
-        <h2 className="sec-title"><em>Corrections</em></h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">7.1</div>
-        <div className="clause-title">Factual errors</div>
-        <div className="clause-body">
-          <p>Verifiable factual errors in published content — incorrect metal tone, incorrect stone color, wrong product name, incorrect price, discontinued item, or misrepresented material — reported within forty-eight (48) hours of publication will be corrected in the next scheduled Content Cycle at no additional charge.</p>
-          <p>Corrections are applied in the next scheduled cycle to preserve production rhythm. Immediate takedown, mid-cycle re-publication, or same-week correction is not available under standard plans.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">7.2</div>
-        <div className="clause-title">What is not eligible for correction</div>
-        <div className="clause-body">
-          <p>The following are not grounds for revision, regeneration, or refund:</p>
-          <ul>
-            <li>Stylistic preferences regarding composition, color palette, or aesthetic choice</li>
-            <li>Caption tone, phrasing, or wording preferences</li>
-            <li>Hashtag selection preferences</li>
-            <li>Posting time preferences outside those established in the Brand Brief</li>
-            <li>Retroactive brand changes not reflected in an updated Brand Brief</li>
-            <li>Content quality issues traceable to source material quality below Section 4.2 minimum standards</li>
-            <li>Reports of errors submitted more than forty-eight (48) hours after publication</li>
-          </ul>
-          <p>Stylistic preferences are governed by the Brand Brief. Preference changes are handled through Brief updates per Section 6.2.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">7.3</div>
-        <div className="clause-title">Repeated errors</div>
-        <div className="clause-body">
-          <p>Where the same factual error appears in multiple pieces of published content — for example, a consistently miscoded piece — the error is corrected across all affected posts in the next Content Cycle following the report. The Client's original Brand Brief and catalog information are the reference standard; where the Brief or catalog contained the error, Section 4.1 and 8.1 apply.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION VIII ==================== */}
-    
-    <section className="doc-section" id="s8">
-      <div className="sec-header">
-        <div className="sec-num-large">VIII.</div>
-        <h2 className="sec-title"><em>Client</em> responsibilities</h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">8.1</div>
-        <div className="clause-title">Accuracy of provided information</div>
-        <div className="clause-body">
-          <p>The Client is responsible for the accuracy, completeness, and currency of the Brand Brief and catalog. Talexia produces content faithfully from the information provided. Consequences of inaccurate, incomplete, or outdated Client information — including misrepresentation of products, incorrect pricing on posts, or misalignment with actual brand identity — are the Client's responsibility.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">8.2</div>
-        <div className="clause-title">Platform account maintenance</div>
-        <div className="clause-body">
-          <p>The Client is responsible for maintaining active social media accounts, resolving platform-level suspensions or violations, and reauthorizing expired OAuth tokens promptly upon notification. Missed publications resulting from Client-side account issues do not entitle the Client to refund or additional content in subsequent cycles.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">8.3</div>
-        <div className="clause-title">Legal ownership of submitted material</div>
-        <div className="clause-body">
-          <p>The Client warrants that all product images and Brand Brief content uploaded to Talexia are owned by the Client or licensed to the Client with permission to use in social media publication. The Client indemnifies Talexia against any third-party claims arising from Client-submitted material.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">8.4</div>
-        <div className="clause-title">Regulatory compliance</div>
-        <div className="clause-body">
-          <p>The Client is responsible for ensuring that published content complies with applicable regulations for the Client's jurisdiction — including but not limited to advertising standards, price disclosure requirements, and product certification claims. Talexia produces content from the information provided; the Client is responsible for verifying compliance before content publishes and for updating the Brand Brief where regulatory obligations require specific disclosures.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION IX ==================== */}
-    <section className="doc-section" id="s9">
-      <div className="sec-header">
-        <div className="sec-num-large">IX.</div>
-        <h2 className="sec-title"><em>Billing</em> &amp; cancellation</h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.1</div>
-        <div className="clause-title">Billing terms</div>
-        <div className="clause-body">
-          <p>Plans are billed either monthly or annually through Stripe, according to the billing cycle the Client selects at checkout. Monthly plans are charged on the anniversary of the Client's first successful charge. Annual plans are charged in full at the time of purchase and once per year thereafter on the purchase anniversary. The one-time Signature onboarding fee of $97 is applied to the first invoice regardless of billing cycle.</p>
-          <p>Payment is due in advance of the applicable subscription period. Failed payments will result in production pause. Publishing may continue on a best-effort basis for content already produced in the current cycle; new production will not begin until payment is successfully processed.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.2</div>
-        <div className="clause-title">Plan changes</div>
-        <div className="clause-body">
-          <p>The Client may upgrade or downgrade between Essentials and Signature at any time. Plan changes apply to the following Content Cycle. Downgrades do not entitle the Client to prorated refund for the current cycle. Upgrades take effect immediately with the additional deliverables and platforms available starting with the next billing period.</p>
-          <p>Movement between Managed Plans (Essentials or Signature) and Atelier is treated as a new engagement structured by consultation.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.3</div>
-        <div className="clause-title">Cancellation</div>
-        <div className="clause-body">
-          <p><strong>Monthly plans.</strong> The Client may cancel a monthly subscription at any time directly from the billing section of their Talexia account. Cancellation takes effect at the end of the current monthly billing cycle. Deliverables scheduled for the current cycle will be completed and published; no future cycles will be produced or billed.</p>
-          <p><strong>Annual plans.</strong> The Client may cancel an annual subscription at any time from the billing section of their Talexia account to stop it from renewing. Cancellation takes effect at the end of the paid annual term; the Client retains access to production and publishing for the remainder of the term already paid. An annual term, once begun, runs to its scheduled end and is not shortened, prorated, or refunded by cancellation, except during the cooling-off window described in Section 9.4.</p>
-          <p>No long-term contracts apply to Essentials or Signature beyond the billing cycle selected at checkout. Atelier engagements are subject to the specific engagement terms agreed at consultation, which may include multi-month commitments.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.4</div>
-        <div className="clause-title">Refunds</div>
-        <div className="clause-body">
-          <p><strong>Monthly plans.</strong> No refunds are issued for partial or full Content Cycles already delivered or in progress. Cancellation prevents future billing but does not reverse completed cycles. Where a monthly subscription is canceled mid-cycle, the current cycle's content will still be produced and published; refund of that cycle's payment is not available.</p>
-          <p><strong>Annual plans.</strong> Annual subscriptions are paid in full at purchase and are <strong>non-refundable</strong>. This reflects the discounted annual rate, which is offered in exchange for the Client's commitment to a full year of service. Cancellation of an annual plan stops future renewal but does not entitle the Client to a refund of the current term, in whole or in part.</p>
-          <p><strong>Cooling-off window.</strong> As a limited exception, a Client who purchases an annual plan may request a full refund within fourteen (14) days of the initial annual purchase, provided fewer than three (3) deliverables have been produced or published. Requests must be made in writing to <a href="mailto:office@talexia.us">office@talexia.us</a>. After the fourteen-day window closes, the annual term is fully committed and non-refundable as described above. The cooling-off window applies only to a Client's first annual purchase, not to annual renewals.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.5</div>
-        <div className="clause-title">Suspension for cause</div>
-        <div className="clause-body">
-          <p>Talexia reserves the right to suspend or terminate a subscription for cause without refund in cases of: repeated abusive communication with Talexia staff, submission of material infringing third-party rights, use of Talexia's service to publish content that violates platform terms of service, or non-payment beyond fifteen (15) days past due.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.6</div>
-        <div className="clause-title">Annual renewal &amp; advance notice</div>
-        <div className="clause-body">
-          <p>Annual subscriptions renew automatically at the end of each annual term at the then-current annual rate, unless the Client cancels before the renewal date. Renewal charges are processed on the term anniversary through the Client's payment method on file.</p>
-          <p>Talexia will send the Client a renewal reminder by email at least thirty (30) days before each annual renewal charge. The reminder will state the renewal date and the amount to be charged, and will explain how to cancel before renewal. Cancellation submitted before the renewal date prevents the upcoming annual charge; see Section 9.3 for how cancellation takes effect.</p>
-          <p>The renewal reminder is provided as a courtesy. The Client's authoritative control over renewal is the auto-renew setting in the billing section of their Talexia account, which the Client may turn off at any time to prevent renewal. Talexia is not responsible for reminder emails that are not delivered, delayed, or filtered for reasons outside its reasonable control, including spam filtering, an outdated email address, or mail-server failure. Regardless of whether any individual reminder email is received, it remains the Client's responsibility to keep a current email address and payment method on file and to manage the auto-renew setting in their account. A missed or undelivered reminder email does not, on its own, entitle the Client to a refund of an annual renewal charge.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.7</div>
-        <div className="clause-title">Service continuity &amp; wind-down</div>
-        <div className="clause-body">
-          <p>If Talexia decides to cease operations, it will do so through a managed wind-down designed so that every Client is served through the end of the term they have paid for. No Client's paid service is cut short by Talexia's closure, and because no paid cycle goes undelivered, no refund arises from this process.</p>
-          <p>On the day Talexia decides to wind down, it will identify the latest service expiry among all active subscriptions and set that date as the closure date — the final day on which service is provided. From that decision forward, Talexia will not onboard new Clients and will not begin new subscription terms beyond the closure date.</p>
-          <p>Because subscriptions are billed one month in advance, the final billing date across all Clients falls one month before the closure date: that final charge pays for the last month of service, which runs through the closure date. No charge will be issued for any period extending beyond the closure date. Monthly Clients continue to be billed month-to-month up to that final billing date, and may stop earlier at any time from the billing section of their account.</p>
-          <p>Any Client whose paid term ends before the closure date may choose — at their option — to extend service up to the closure date at a prorated rate. This extension is voluntary; a Client who declines is simply served through the end of their existing paid term and is not renewed.</p>
-          <p>Talexia will notify affected Clients by email as soon as the wind-down decision is made, and in any event at least thirty (30) days before any individual Client's service ends, so that Clients have time to arrange alternative services. Throughout the wind-down, Clients may continue to cancel their subscription and turn off auto-renew from the billing section of their account as normal.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">9.8</div>
-        <div className="clause-title">Promotional first-month offer</div>
-        <div className="clause-body">
-          <p>Talexia may offer a complimentary first month through a promotional code (for example, "1MFREE") applied at checkout. Where such an offer applies, the following terms govern it.</p>
-          <p>A valid payment method is required to begin, even though the first month is complimentary. The promotional code discounts the first month's charge to zero; the subscription then continues automatically into the second month, which is billed at the plan's normal rate (monthly or annual, as selected). The one-time Signature onboarding fee, where applicable, is not waived by the promotional code.</p>
-          <p>The Client may cancel at any time before the complimentary first month ends, directly from the billing section of their account. A Client who cancels before the first month ends is not charged. If the Client does not cancel before the first month ends, billing proceeds automatically as described above.</p>
-          <p>The complimentary first month is limited to one per business. Eligibility is determined by Talexia and may be limited by business, by email domain, or by a stated expiry date. Talexia may modify or withdraw any promotional offer at any time; withdrawal does not affect a promotional month already validly commenced. Once a paid period begins following a promotional first month, standard billing, cancellation, and refund terms in this Section apply.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION X ==================== */}
-
-    <section className="doc-section" id="s10">
-      <div className="sec-header">
-        <div className="sec-num-large">X.</div>
-        <h2 className="sec-title"><em>Intellectual</em> property</h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">10.1</div>
-        <div className="clause-title">Ownership of produced content</div>
-        <div className="clause-body">
-          <p>Visual content, captions, and hashtags produced by Talexia during an active subscription are licensed to the Client for full commercial use on the Client's social media channels and marketing materials throughout the duration of the subscription and thereafter, provided the subscription was terminated in good standing.</p>
-          <p>The license is worldwide, royalty-free, and perpetual for content produced during the paid subscription period. Content produced during a subscription later terminated for cause under Section 9.5 remains subject to Talexia's discretion regarding continued Client use.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">10.2</div>
-        <div className="clause-title">Talexia proprietary systems</div>
-        <div className="clause-body">
-          <p>Talexia's brand voice training system, production methodology, editorial framework, and internal tooling are Talexia's exclusive intellectual property and are not transferred to the Client under any subscription. Sample outputs, training data, and Brief-derived stylistic parameters remain Talexia's confidential production infrastructure.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">10.3</div>
-        <div className="clause-title">Case study rights</div>
-        <div className="clause-body">
-          <p>Unless the Client provides written objection at onboarding, Talexia reserves the right to reference the Client's engagement — including work produced — as a case study in Talexia's marketing materials, portfolio, and public communications. Written objection may be submitted at any time to remove Client references from future Talexia marketing use.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION XI ==================== */}        
-    <section className="doc-section" id="s11">
-      <div className="sec-header">
-        <div className="sec-num-large">XI.</div>
-        <h2 className="sec-title"><em>Liability</em> &amp; disputes</h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">11.1</div>
-        <div className="clause-title">Limitation of liability</div>
-        <div className="clause-body">
-          <p>Talexia's liability under any circumstance is limited to the total amount paid by the Client to Talexia in the six (6) months preceding the event giving rise to the claim. Talexia is not liable for indirect, consequential, punitive, or incidental damages, including but not limited to lost revenue, lost engagement, lost customers, or reputational harm.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">11.2</div>
-        <div className="clause-title">Business outcomes disclaimer</div>
-        <div className="clause-body">
-          <p>Talexia produces visual content and manages scheduled publishing. Talexia does not warrant, promise, or guarantee any specific business outcome — including but not limited to sales growth, follower growth, engagement rate, reach, brand awareness, or return on investment. Business outcomes depend on factors beyond Talexia's control, including the Client's own sales operations, product quality, pricing, competitive environment, and market conditions.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">11.3</div>
-        <div className="clause-title">Dispute resolution</div>
-        <div className="clause-body">
-          <p>Disputes arising under this agreement will first be addressed through good-faith direct communication between Talexia and the Client. Where direct resolution is not achieved within thirty (30) days, disputes will be resolved through binding arbitration under the rules of the American Arbitration Association, conducted remotely, with the seat of arbitration in the state of Talexia's operating jurisdiction.</p>
-          <p>Neither party may bring class action proceedings against the other under this agreement.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">11.4</div>
-        <div className="clause-title">Governing law</div>
-        <div className="clause-body">
-          <p>This agreement is governed by the laws of the state in which Talexia is registered as a business entity, without regard to conflict of law principles.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">11.5</div>
-        <div className="clause-title">Content variability &amp; verification</div>
-        <div className="clause-body">
-          <p>Talexia produces visual content and captions to a consistent editorial standard. The Client acknowledges that produced content may nonetheless vary in character and quality depending on factors including the quality and clarity of the source images provided, the completeness and accuracy of the Brand Brief, and the specific pieces submitted. Where source material is limited — for example, low-resolution or phone-sourced images prepared under a plan that offers image preparation — the fidelity and finish of the final content depend on what the original material allows. Talexia prepares and produces every asset to the highest standard the source permits and represents each piece as it is, without altering its design, materials, or configuration.</p>
-          <p>Because Talexia operates on a Brand Brief authorization model and publishes without individual post approval, the Client remains responsible for the accuracy of the information provided in the Brand Brief and catalog. Verifiable factual errors in published content are corrected under Section VII. Stylistic preferences and normal variation within Talexia's editorial standard are not grounds for revision.</p>
-        </div>
-      </div>
-    </section>
-
-    {/* ==================== SECTION XII ==================== */}
-    <section className="doc-section" id="s12">
-      <div className="sec-header">
-        <div className="sec-num-large">XII.</div>
-        <h2 className="sec-title">Changes <em>to this policy</em></h2>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">12.1</div>
-        <div className="clause-title">Versioning</div>
-        <div className="clause-body">
-          <p>Talexia maintains a document versioning system. Every material change to this Service Policy results in a new version number and effective date. The version active at the time of a Client's subscription acceptance is stored verbatim in Talexia's Legal Records system alongside the Client's acceptance timestamp, IP address, and acceptance context.</p>
-          <p>The Client's obligations are governed by the version of this document accepted at subscription, not by the current live version, unless the Client explicitly re-accepts a subsequent version.</p>
-        </div>
-      </div>
-
-      <div className="clause">
-        <div className="clause-num">12.2</div>
-        <div className="clause-title">Notice of changes</div>
-        <div className="clause-body">
-          <p>Where changes to this Service Policy materially affect existing Clients' obligations, Talexia will provide written notice via email at least thirty (30) days in advance of the change taking effect. The Client's continued subscription following the notice period constitutes acceptance of the updated version.</p>
-          <p>Where the Client does not accept a change and the change is material, the Client may cancel the subscription under Section 9.3 before the change takes effect without penalty.</p>
-        </div>
-      </div>
-    </section>
-
+          {/* ==================== SECTION XIII ==================== */}
+          <section className="doc-section" id="s13">
+            <div className="sec-header">
+              <div className="sec-num-large">XIII.</div>
+              <h2 className="sec-title">Changes <em>&amp; contact</em></h2>
+            </div>
+            <div className="clause">
+              <div className="clause-num">13.1</div>
+              <div className="clause-title">Updates to this policy</div>
+              <div className="clause-body">
+                <p>Talexia may update this Privacy Policy from time to time to reflect changes in operations, tools, or legal requirements. Every update results in a new version number and effective date. The version active at the time of your subscription is stored in Talexia&apos;s Legal Records system.</p>
+                <p>Where a change materially affects your rights or the way your information is used, Talexia will notify you via email at least thirty (30) days before the change takes effect. Continued use of the service after the notice period constitutes acceptance of the updated policy.</p>
+              </div>
+            </div>
+            <div className="clause">
+              <div className="clause-num">13.2</div>
+              <div className="clause-title">Contact us</div>
+              <div className="clause-body">
+                <p>For any question about this Privacy Policy or the information Talexia holds about you, contact:</p>
+                <p><strong>Email:</strong> <a href="mailto:office@talexia.us">office@talexia.us</a></p>
+                <p>Talexia will acknowledge receipt within seven (7) days and provide a substantive response within thirty (30) days.</p>
+              </div>
+            </div>
+          </section>
 
         </div>
       </div>
@@ -569,8 +464,8 @@ export default function PrivacyPolicyPage() {
       {/* VERSION FOOTER */}
       <div className="version-footer">
         <h4>Document reference</h4>
-        <p>Talexia Privacy Policy — Version 1.0 — Effective July 10, 2026</p>
-        <p style={{ marginTop: '8px' }}>For questions about any clause in this document, contact <a href="mailto:office@talexia.us">office@talexia.us</a> before subscribing.</p>
+        <p>Talexia Privacy Policy — Version 1.1 — Effective July 10, 2026</p>
+        <p style={{ marginTop: '8px' }}>Read alongside our <a href="/terms" style={{ color: '#b08d3e', textDecoration: 'none' }}>Service Policy &amp; Terms of Service</a>.</p>
       </div>
     </>
   );
