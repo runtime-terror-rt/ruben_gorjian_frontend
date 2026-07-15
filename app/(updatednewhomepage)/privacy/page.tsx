@@ -46,6 +46,7 @@ export default function PrivacyPolicyPage() {
   </aside>
 
 
+
         {/* DOC CONTENT */}
         <div className="doc-content">
 

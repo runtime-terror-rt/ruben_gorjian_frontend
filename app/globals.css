@@ -43,7 +43,7 @@ html::-webkit-scrollbar {
 
 @layer base {
   * {
-    @apply border-slate-800/40 outline-slate-500/50 font-poppins;
+    @apply border-slate-800/40 outline-slate-500/50;
   }
   button {
     @apply px-4 py-2;
