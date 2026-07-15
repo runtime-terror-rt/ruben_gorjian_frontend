@@ -30,7 +30,7 @@ export default function PlansPreview() {
         <div className="plan-name">Essentials</div>
         <div className="plan-price">
           <span className="cur">$</span>
-          <span className="amt" data-monthly="397" data-annual="4,288">397</span>
+          <span className="amt" data-monthly="397" data-annual="4,288">{isAnnual ? '4,288' : '397'}</span>
           <span className="per per-monthly">/ month</span>
           <span className="per per-annual">/ year</span>
         </div>
@@ -55,7 +55,7 @@ export default function PlansPreview() {
         <div className="plan-name">Signature</div>
         <div className="plan-price">
           <span className="cur">$</span>
-          <span className="amt" data-monthly="597" data-annual="6,448">597</span>
+          <span className="amt" data-monthly="597" data-annual="6,448">{isAnnual ? '6,448' : '597'}</span>
           <span className="per per-monthly">/ month</span>
           <span className="per per-annual">/ year</span>
         </div>
