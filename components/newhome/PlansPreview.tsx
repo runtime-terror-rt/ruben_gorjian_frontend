@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function PlansPreview() {
   const [cycle, setCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -39,14 +40,16 @@ export default function PlansPreview() {
               <p className="plan-desc">A polished, consistent presence for a single-store retailer — brand voice locked from day one, published on a steady weekly rhythm.</p>
               <ul className="plan-feat">
                 <li>12 luxury-enhanced visuals</li>
+                <li>Produced from your existing product photography</li>
                 <li>Professional captions, written for you</li>
                 <li>Published to 2 platforms</li>
                 <li>Monthly content calendar</li>
               </ul>
+              <p className="plan-desc" style={{ marginTop: '20px', fontSize: '13px', color: '#666', lineHeight: '1.4' }}>Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.</p>
               <div className="plan-cta">
-                <a href={`signup.html?plan=essentials&billing=${cycle}`} className="plan-btn plan-btn-outline" data-cta="essentials"
+                <Link href={`/signup?plan=essentials&billing=${cycle}`} className="plan-btn plan-btn-outline" data-cta="essentials"
                   data-label-monthly="Subscribe to Essentials"
-                  data-label-annual="Subscribe annually &mdash; $4,288/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $4,288/yr" : "Subscribe to Essentials" }}></a>
+                  data-label-annual="Subscribe annually &mdash; $4,288/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $4,288/yr" : "Subscribe to Essentials" }}></Link>
                 <div className="plan-annual-terms">Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly, with a 30-day reminder.</div>
               </div>
             </div>
@@ -64,21 +67,22 @@ export default function PlansPreview() {
               <p className="plan-desc">A weekly rhythm for brands ready to show up consistently — planned around the fine jewelry editorial calendar, completely off your plate.</p>
               <ul className="plan-feat">
                 <li>24 luxury-enhanced visuals</li>
+                <li>Full image preparation — send us anything, even phone photos</li>
                 <li>Professional captions &amp; scheduling</li>
                 <li>Published to 3 platforms</li>
                 <li>Monthly content plan</li>
                 <li>Seasonal editorial planning</li>
               </ul>
               <div className="plan-cta">
-                <a href={`signup.html?plan=signature&billing=${cycle}`} className="plan-btn plan-btn-dark" data-cta="signature"
+                <Link href={`/signup?plan=signature&billing=${cycle}`} className="plan-btn plan-btn-dark" data-cta="signature"
                   data-label-monthly="Subscribe to Signature"
-                  data-label-annual="Subscribe annually &mdash; $6,448/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $6,448/yr" : "Subscribe to Signature" }}></a>
+                  data-label-annual="Subscribe annually &mdash; $6,448/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $6,448/yr" : "Subscribe to Signature" }}></Link>
                 <div className="plan-annual-terms">Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly, with a 30-day reminder.</div>
               </div>
             </div>
           </div>
           <div className="plans-cta">
-            <a href="/plan">See full plan details →</a>
+            <Link href="/plan">See full plan details →</Link>
           </div>
         </div>
       </section>

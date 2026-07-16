@@ -21,7 +21,7 @@ export default function Footer() {
             <ul>
               <li><a href="/newhome#process">Our process</a></li>
               <li><a href="/newhome#work">Selected work</a></li>
-              <li><a href="/newhome#faq">FAQ</a></li>
+              <li><a href="/newhome/faq">FAQ</a></li>
             </ul>
           </div>
           <div className="footer-col">
@@ -29,7 +29,7 @@ export default function Footer() {
             <ul>
               <li><a href="/terms">Service policy</a></li>
               <li><a href="/privacy">Privacy</a></li>
-              <li><a href="mailto:hello@talexia.us">Contact</a></li>
+              <li><a href="/newhome/contact">Contact</a></li>
             </ul>
           </div>
         </div>

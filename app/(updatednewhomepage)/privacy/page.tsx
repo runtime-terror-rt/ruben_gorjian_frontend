@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
     <>
       {/* PAGE HEADER */}
       <div className="page-header">
-        <div className="rule-ornament-center"></div>
+        <div className="rule-ornament center"></div>
         <div className="page-eyebrow">Legal</div>
         <h1 className="page-title">Privacy <em>Policy</em></h1>
         <div className="page-meta">Version 1.1 <span>·</span> Effective July 10, 2026</div>

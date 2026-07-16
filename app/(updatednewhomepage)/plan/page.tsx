@@ -55,12 +55,12 @@ export default function PlanPage() {
           <div className="billing-toggle-wrap">
             <div className="billing-toggle">
               <span className={`billing-label ${!isAnnual ? 'active' : ''}`} onClick={() => setIsAnnual(false)}>Monthly</span>
-              <button 
-                type="button" 
-                className={`billing-switch ${isAnnual ? 'annual' : ''}`} 
+              <button
+                type="button"
+                className={`billing-switch ${isAnnual ? 'annual' : ''}`}
                 onClick={() => setIsAnnual(!isAnnual)}
-                role="switch" 
-                aria-checked={isAnnual} 
+                role="switch"
+                aria-checked={isAnnual}
                 aria-label="Switch between monthly and annual billing"
               ></button>
               <span className={`billing-label ${isAnnual ? 'active' : ''}`} onClick={() => setIsAnnual(true)}>Annual</span>
@@ -334,34 +334,34 @@ export default function PlanPage() {
           </div>
 
           <div className="faq-refs-grid">
-            <Link href="/faq#onboarding" className="faq-ref">
+            <Link href="/newhome/faq#onboarding" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Do I have to send you images every month?</div>
               <div className="faq-ref-arrow">See onboarding &amp; catalog &rarr;</div>
             </Link>
-            <Link href="/faq#scope" className="faq-ref">
+            <Link href="/newhome/faq#scope" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Do you post Stories or Reels?</div>
               <div className="faq-ref-arrow">See scope &amp; limits &rarr;</div>
             </Link>
-            <Link href="/faq#content" className="faq-ref">
+            <Link href="/newhome/faq#content" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Can I approve every post before it goes live?</div>
               <div className="faq-ref-arrow">See content &amp; approvals &rarr;</div>
             </Link>
-            <Link href="/faq#content" className="faq-ref">
+            <Link href="/newhome/faq#content" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> What if a published post has an error?</div>
               <div className="faq-ref-arrow">See content &amp; approvals &rarr;</div>
             </Link>
-            <Link href="/faq#publishing" className="faq-ref">
+            <Link href="/newhome/faq#publishing" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> How do you access my social accounts?</div>
               <div className="faq-ref-arrow">See publishing &amp; platforms &rarr;</div>
             </Link>
-            <Link href="/faq#billing" className="faq-ref">
+            <Link href="/newhome/faq#billing" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> What if I need to cancel?</div>
               <div className="faq-ref-arrow">See billing &amp; cancellation &rarr;</div>
             </Link>
           </div>
 
           <div className="faq-cta">
-            <Link href="/faq">See all frequently asked questions &rarr;</Link>
+            <Link href="/newhome/faq">See all frequently asked questions &rarr;</Link>
           </div>
         </div>
       </section>
