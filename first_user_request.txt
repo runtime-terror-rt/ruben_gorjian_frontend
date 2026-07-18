@@ -1,0 +1,29 @@
+<USER_REQUEST>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talexia — Editorial Visual Production for Fine Jewelry</title>
+<meta name="description" content="Editorial-grade feed content for fine jewelry brands. Produced, published, and held to a luxury standard.">
+<style>
+  /* ==================== RESET & BASE ==================== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    font-family: Georgia, 'Cormorant Garamond', serif;
+    color: #14110c;
+    background: #faf8f3;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+
+  /* ==================== NAVIGATION ==================== */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 248, 243, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e6e1d8;
+    padding: 16px 40px;
+<truncated 126004 bytes>

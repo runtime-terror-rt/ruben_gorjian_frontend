@@ -1,0 +1,486 @@
+/* ==================== RESET & BASE ==================== */
+.brandbrief-wrapper { box-sizing: border-box; margin: 0; padding: 0; }
+.brandbrief-wrapper { scroll-behavior: smooth; scroll-padding-top: 80px; }
+.brandbrief-wrapper {
+    font-family: Georgia, 'Cormorant Garamond', serif;
+    color: #14110c;
+    background: #faf8f3;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ==================== NAVIGATION ==================== */
+.brandbrief-wrapper .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 248, 243, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e6e1d8;
+    padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+.brandbrief-wrapper .nav-brand {
+    font-family: Georgia, serif; font-size: 22px; font-weight: 500;
+    color: #14110c; text-decoration: none; letter-spacing: 0.3px;
+  }
+.brandbrief-wrapper .nav-brand .dot { color: #b08d3e; }
+.brandbrief-wrapper .nav-status {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: #8a6d28; font-weight: 500;
+  }
+.brandbrief-wrapper .nav-status .dot { color: #b08d3e; margin: 0 8px; }
+
+  /* ==================== PAGE HEADER ==================== */
+.brandbrief-wrapper .page-header {
+    text-align: center;
+    padding: 80px 40px 60px;
+    border-bottom: 1px solid #e6e1d8;
+    background: #fff;
+  }
+.brandbrief-wrapper .page-eyebrow {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase;
+    color: #8a6d28; font-weight: 500; margin-bottom: 20px;
+  }
+.brandbrief-wrapper .page-title {
+    font-family: Georgia, serif; font-weight: 400;
+    font-size: 46px; line-height: 1.15;
+    color: #14110c; margin-bottom: 18px;
+    max-width: 780px; margin-left: auto; margin-right: auto;
+  }
+.brandbrief-wrapper .page-title em { color: #b08d3e; font-style: italic; }
+.brandbrief-wrapper .page-lede {
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 18px; line-height: 1.6; color: #6b6b6b;
+    max-width: 620px; margin: 0 auto;
+  }
+.brandbrief-wrapper .rule-ornament {
+    width: 60px; height: 1px; background: #b08d3e; position: relative;
+    margin: 0 auto 24px;
+  }
+.brandbrief-wrapper .rule-ornament::before, .brandbrief-wrapper .rule-ornament::after {
+    content: ""; position: absolute; top: 50%; width: 5px; height: 5px;
+    background: #b08d3e; transform: translateY(-50%) rotate(45deg);
+  }
+.brandbrief-wrapper .rule-ornament::before { left: -12px; }
+.brandbrief-wrapper .rule-ornament::after { right: -12px; }
+
+  /* ==================== INSTRUCTIONS PREAMBLE ==================== */
+.brandbrief-wrapper .preamble {
+    max-width: 780px; margin: 60px auto 0;
+    padding: 32px 40px;
+    background: #f6f1e6;
+    border-left: 3px solid #b08d3e;
+    border-radius: 0 8px 8px 0;
+  }
+.brandbrief-wrapper .preamble p {
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 16px; color: #4a4a4a;
+    line-height: 1.7;
+  }
+.brandbrief-wrapper .preamble p + p { margin-top: 12px; }
+.brandbrief-wrapper .preamble strong {
+    color: #14110c; font-weight: 600; font-style: normal;
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14.5px;
+  }
+
+  /* ==================== LAYOUT ==================== */
+.brandbrief-wrapper .doc-layout {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 60px 40px 80px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  /* ==================== SECTION NAV (STICKY) ==================== */
+.brandbrief-wrapper .sec-nav {
+    position: sticky;
+    top: 90px;
+    padding-right: 20px;
+    border-right: 1px solid #e6e1d8;
+  }
+.brandbrief-wrapper .sec-nav-title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: #8a6d28; font-weight: 600; margin-bottom: 18px;
+  }
+.brandbrief-wrapper .sec-nav-list { list-style: none; }
+.brandbrief-wrapper .sec-nav-list li { margin-bottom: 4px; }
+.brandbrief-wrapper .sec-nav-list a {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12.5px; color: #6b6b6b;
+    text-decoration: none;
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 6px 0;
+    transition: color 0.2s;
+    line-height: 1.45;
+  }
+.brandbrief-wrapper .sec-nav-list a:hover { color: #14110c; }
+.brandbrief-wrapper .sec-nav-list a .sec-num {
+    font-family: Georgia, serif; font-style: italic;
+    color: #b08d3e; font-size: 12px;
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+.brandbrief-wrapper .autosave-note {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e6e1d8;
+    border-radius: 6px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: #6b6b6b;
+  }
+.brandbrief-wrapper .autosave-note strong { color: #8a6d28; }
+
+  /* ==================== FORM CONTENT ==================== */
+.brandbrief-wrapper .form-content { max-width: 760px; }
+.brandbrief-wrapper .form-section {
+    padding: 44px 0;
+    border-top: 1px solid #e6e1d8;
+  }
+.brandbrief-wrapper .form-section:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+.brandbrief-wrapper .sec-header {
+    margin-bottom: 30px;
+    display: flex; align-items: baseline; gap: 16px;
+  }
+.brandbrief-wrapper .sec-num-large {
+    font-family: Georgia, serif; font-style: italic;
+    color: #b08d3e; font-size: 22px;
+    flex-shrink: 0;
+  }
+.brandbrief-wrapper .sec-title {
+    font-family: Georgia, serif; font-weight: 500;
+    font-size: 26px; line-height: 1.25;
+    color: #14110c;
+  }
+.brandbrief-wrapper .sec-title em { color: #b08d3e; font-style: italic; }
+.brandbrief-wrapper .sec-intro {
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 15px; color: #6b6b6b;
+    line-height: 1.65;
+    margin-bottom: 30px;
+    max-width: 620px;
+  }
+
+  /* ==================== FORM FIELDS ==================== */
+.brandbrief-wrapper .field {
+    margin-bottom: 28px;
+  }
+.brandbrief-wrapper .field-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+.brandbrief-wrapper .field-two-col .field { margin-bottom: 0; }
+.brandbrief-wrapper .field-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: #14110c; margin-bottom: 6px;
+    display: block;
+    letter-spacing: 0.2px;
+  }
+.brandbrief-wrapper .field-label .req {
+    color: #b08d3e; margin-left: 3px;
+  }
+.brandbrief-wrapper .field-hint {
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 13px; color: #8a8a8a;
+    margin-bottom: 10px;
+    line-height: 1.55;
+  }
+  .field-input,
+  .field-textarea,
+.brandbrief-wrapper .field-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14.5px;
+    color: #14110c;
+    background: #fff;
+    border: 1px solid #d8d3c6;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+  }
+  .field-input:focus,
+  .field-textarea:focus,
+.brandbrief-wrapper .field-select:focus {
+    outline: none;
+    border-color: #b08d3e;
+    box-shadow: 0 0 0 2px rgba(176, 141, 62, 0.15);
+  }
+.brandbrief-wrapper .field-textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+.brandbrief-wrapper .field-textarea.large { min-height: 140px; }
+  .field-radio-group,
+.brandbrief-wrapper .field-checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .field-radio-group.single-col,
+.brandbrief-wrapper .field-checkbox-group.single-col {
+    grid-template-columns: 1fr;
+  }
+  .field-radio,
+.brandbrief-wrapper .field-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #d8d3c6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: #14110c;
+    line-height: 1.5;
+  }
+  .field-radio:hover,
+.brandbrief-wrapper .field-checkbox:hover {
+    border-color: #b08d3e;
+    background: #fdfbf5;
+  }
+  .field-radio input,
+.brandbrief-wrapper .field-checkbox input {
+    flex-shrink: 0;
+    margin-top: 2px;
+    accent-color: #b08d3e;
+  }
+.brandbrief-wrapper .field-help {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px; color: #8a8a8a;
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+
+  /* Birthstone conditional block */
+.brandbrief-wrapper .birthstone-detail { display: none; margin-top: 18px; }
+.brandbrief-wrapper .birthstone-detail.active { display: block; }
+.brandbrief-wrapper .field-checkbox-group.months { grid-template-columns: 1fr 1fr 1fr; }
+.brandbrief-wrapper .birthstone-note {
+    background: #f6efdd;
+    border: 1px solid #e8dcbe;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px; color: #6b5d38; line-height: 1.6;
+  }
+  @media (max-width: 640px) {
+.brandbrief-wrapper .field-checkbox-group.months { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ==================== AUTHORIZATION ==================== */
+.brandbrief-wrapper .auth-section {
+    padding: 44px 0;
+    border-top: 1px solid #e6e1d8;
+  }
+.brandbrief-wrapper .auth-box {
+    background: #fff;
+    border: 2px solid #b08d3e;
+    border-radius: 10px;
+    padding: 36px 34px;
+    margin-top: 20px;
+  }
+.brandbrief-wrapper .auth-heading {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: #8a6d28; font-weight: 600; margin-bottom: 16px;
+  }
+.brandbrief-wrapper .auth-title {
+    font-family: Georgia, serif; font-weight: 500;
+    font-size: 24px; color: #14110c; margin-bottom: 20px;
+    line-height: 1.3;
+  }
+.brandbrief-wrapper .auth-text {
+    font-family: Georgia, serif;
+    font-size: 15.5px; line-height: 1.7; color: #3a3a3a;
+    margin-bottom: 14px;
+  }
+.brandbrief-wrapper .auth-list {
+    list-style: none;
+    margin: 18px 0;
+  }
+.brandbrief-wrapper .auth-list li {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px; line-height: 1.7;
+    padding: 8px 0 8px 22px;
+    position: relative;
+    color: #3a3a3a;
+  }
+.brandbrief-wrapper .auth-list li::before {
+    content: ""; position: absolute; left: 2px; top: 16px;
+    width: 5px; height: 5px; background: #b08d3e; transform: rotate(45deg);
+  }
+.brandbrief-wrapper .auth-emphasis {
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 16px; line-height: 1.65; color: #14110c;
+    padding: 20px 0;
+    border-top: 1px solid #ece7dc;
+    border-bottom: 1px solid #ece7dc;
+    margin: 24px 0;
+  }
+.brandbrief-wrapper .auth-signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
+.brandbrief-wrapper .auth-sig-field .field-label { color: #8a6d28; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
+.brandbrief-wrapper .auth-sig-field .auto-populated {
+    padding: 12px 14px;
+    background: #f6f1e6;
+    border: 1px solid #e6d9b8;
+    border-radius: 4px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13.5px;
+    color: #14110c;
+  }
+.brandbrief-wrapper .auth-sig-field .auto-populated em {
+    color: #8a6d28;
+    font-family: Georgia, serif;
+    font-size: 12px;
+  }
+.brandbrief-wrapper .auth-checkbox {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: #faf8f3;
+    border: 1px solid #e6e1d8;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+  }
+.brandbrief-wrapper .auth-checkbox input {
+    flex-shrink: 0;
+    margin-top: 3px;
+    accent-color: #b08d3e;
+    transform: scale(1.15);
+  }
+.brandbrief-wrapper .auth-checkbox label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    color: #14110c;
+    cursor: pointer;
+  }
+.brandbrief-wrapper .auth-checkbox label strong { color: #8a6d28; }
+
+  /* ==================== SUBMIT ==================== */
+.brandbrief-wrapper .submit-block {
+    margin-top: 44px;
+    padding: 32px 0 0;
+    text-align: center;
+    border-top: 1px solid #e6e1d8;
+  }
+.brandbrief-wrapper .btn-submit {
+    display: inline-block;
+    background: #14110c; color: #fff;
+    padding: 18px 44px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 600;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+.brandbrief-wrapper .btn-submit:hover { background: #b08d3e; }
+.brandbrief-wrapper .btn-save {
+    display: inline-block;
+    background: transparent;
+    color: #6b6b6b;
+    padding: 14px 28px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 600;
+    border: 1px solid #d8d3c6;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: all 0.2s;
+  }
+.brandbrief-wrapper .btn-save:hover {
+    border-color: #b08d3e;
+    color: #b08d3e;
+  }
+.brandbrief-wrapper .submit-note {
+    margin-top: 20px;
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 13.5px; color: #6b6b6b;
+    line-height: 1.6;
+  }
+
+  /* ==================== FOOTER ==================== */
+.brandbrief-wrapper footer {
+    background: #14110c; color: #fff;
+    padding: 40px 40px 30px;
+    margin-top: 80px;
+  }
+.brandbrief-wrapper .footer-inner {
+    max-width: 1120px; margin: 0 auto;
+    text-align: center;
+  }
+.brandbrief-wrapper .footer-brand {
+    font-family: Georgia, serif; font-size: 22px;
+    font-weight: 500; color: #fff; margin-bottom: 8px;
+  }
+.brandbrief-wrapper .footer-brand .dot { color: #c9a44c; }
+.brandbrief-wrapper .footer-note {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+  }
+.brandbrief-wrapper .footer-note a { color: #c9a44c; text-decoration: none; }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 900px) {
+.brandbrief-wrapper .nav { padding: 14px 20px; }
+.brandbrief-wrapper .nav-status { display: none; }
+.brandbrief-wrapper .page-header { padding: 50px 20px 40px; }
+.brandbrief-wrapper .page-title { font-size: 30px; }
+.brandbrief-wrapper .page-lede { font-size: 15px; }
+.brandbrief-wrapper .preamble { margin: 40px 20px 0; padding: 24px; }
+.brandbrief-wrapper .doc-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 40px 20px 60px;
+    }
+.brandbrief-wrapper .sec-nav {
+      position: static;
+      padding-right: 0;
+      padding-bottom: 20px;
+      border-right: none;
+      border-bottom: 1px solid #e6e1d8;
+    }
+.brandbrief-wrapper .sec-nav-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 20px;
+    }
+.brandbrief-wrapper .sec-title { font-size: 22px; }
+.brandbrief-wrapper .field-two-col { grid-template-columns: 1fr; gap: 0; }
+.brandbrief-wrapper .field-two-col .field { margin-bottom: 28px; }
+.brandbrief-wrapper .field-radio-group, .brandbrief-wrapper .field-checkbox-group {
+      grid-template-columns: 1fr;
+    }
+.brandbrief-wrapper .auth-signatures { grid-template-columns: 1fr; }
+.brandbrief-wrapper .auth-box { padding: 24px 20px; }
+  }
