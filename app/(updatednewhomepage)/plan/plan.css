@@ -1,0 +1,1208 @@
+/* Scoped CSS for Plan Page */
+
+/* ==================== RESET & BASE ==================== */
+/* skipped * { box-sizing: border-box; margin: 0; padding: 0; } */
+/* skipped html { scroll-behavior: smooth; scroll-padding-top: 80px; } */
+.talexia-wrapper {
+  font-family: Georgia, 'Cormorant Garamond', serif;
+  color: #14110c;
+  background: #faf8f3;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* skipped img { max-width: 100%; display: block; } */
+
+/* ==================== NAVIGATION ==================== */
+.talexia-wrapper .nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 248, 243, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e6e1d8;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.talexia-wrapper .nav-brand {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #14110c;
+  text-decoration: none;
+  letter-spacing: 0.3px;
+}
+
+.talexia-wrapper .nav-brand .dot {
+  color: #b08d3e;
+}
+
+.talexia-wrapper .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.talexia-wrapper .nav-links a {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #14110c;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.talexia-wrapper .nav-links a:hover {
+  color: #b08d3e;
+}
+
+.talexia-wrapper .nav-cta {
+  background: #14110c;
+  color: #fff !important;
+  padding: 9px 18px;
+  border-radius: 2px;
+}
+
+.talexia-wrapper .nav-cta:hover {
+  background: #b08d3e;
+  color: #fff !important;
+}
+
+/* ==================== PAGE HEADER ==================== */
+.talexia-wrapper .page-header {
+  text-align: center;
+  padding: 90px 40px 60px;
+  background: #fff;
+  border-bottom: 1px solid #e6e1d8;
+}
+
+.talexia-wrapper .page-eyebrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.talexia-wrapper .page-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 54px;
+  line-height: 1.15;
+  color: #14110c;
+  margin-bottom: 22px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: -0.3px;
+}
+
+.talexia-wrapper .page-title em {
+  color: #b08d3e;
+  font-style: italic;
+}
+
+.talexia-wrapper .page-lede {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.6;
+  color: #6b6b6b;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.talexia-wrapper .rule-ornament {
+  width: 60px;
+  height: 1px;
+  background: #b08d3e;
+  position: relative;
+  margin: 0 auto 28px;
+}
+
+.talexia-wrapper .rule-ornament::before,
+.talexia-wrapper .rule-ornament::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  background: #b08d3e;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.talexia-wrapper .rule-ornament::before {
+  left: -12px;
+}
+
+.talexia-wrapper .rule-ornament::after {
+  right: -12px;
+}
+
+/* ==================== CONTAINERS ==================== */
+.talexia-wrapper .container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.talexia-wrapper .container-narrow {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ==================== SECTION SHARED ==================== */
+.talexia-wrapper section {
+  padding: 90px 0;
+}
+
+.talexia-wrapper .section-eyebrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.talexia-wrapper .section-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.2;
+  color: #14110c;
+  margin-bottom: 18px;
+}
+
+.talexia-wrapper .section-title em {
+  color: #b08d3e;
+  font-style: italic;
+}
+
+.talexia-wrapper .section-lede {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #6b6b6b;
+  max-width: 620px;
+}
+
+/* ==================== SCOPE STATEMENT ==================== */
+.talexia-wrapper .scope-statement {
+  background: #f6f1e6;
+  padding: 40px 0;
+  border-bottom: 1px solid #e6e1d8;
+  text-align: center;
+}
+
+.talexia-wrapper .scope-statement-text {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #4a4a4a;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.talexia-wrapper .scope-statement-text strong {
+  color: #14110c;
+  font-weight: 500;
+  font-style: normal;
+  font-family: Georgia, serif;
+}
+
+.talexia-wrapper .scope-chips {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.talexia-wrapper .scope-chip {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 600;
+  padding: 6px 14px;
+  background: #fff;
+  border: 1px solid #e6d9b8;
+  border-radius: 20px;
+}
+
+/* ==================== MANAGED PLANS ==================== */
+.talexia-wrapper .managed-plans {
+  background: #fff;
+}
+
+.talexia-wrapper .plans-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* ==================== BILLING TOGGLE ==================== */
+.talexia-wrapper .billing-toggle-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto 44px;
+}
+
+.talexia-wrapper .billing-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.talexia-wrapper .billing-label {
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #a09a8d;
+  transition: color 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.talexia-wrapper .billing-label.active {
+  color: #14110c;
+}
+
+.talexia-wrapper .billing-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: #e6e1d8;
+  border-radius: 999px;
+  border: 1px solid #d8d1c4;
+  cursor: pointer;
+  transition: background 0.25s;
+  flex: none;
+  padding: 0;
+}
+
+.talexia-wrapper .billing-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(20, 17, 12, 0.25);
+  transition: transform 0.25s;
+}
+
+.talexia-wrapper .billing-switch.annual {
+  background: #b08d3e;
+  border-color: #b08d3e;
+}
+
+.talexia-wrapper .billing-switch.annual::after {
+  transform: translateX(24px);
+}
+
+.talexia-wrapper .billing-switch:focus-visible {
+  outline: 2px solid #b08d3e;
+  outline-offset: 2px;
+}
+
+.talexia-wrapper .billing-annual-note {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  color: #8a6d28;
+  letter-spacing: 0.3px;
+  min-height: 16px;
+}
+
+.talexia-wrapper .billing-annual-note strong {
+  font-weight: 600;
+}
+
+/* Annual price + saving states, toggled via JS */
+.plan-price .per-annual,
+.plan-annual-saving,
+.plan-annual-terms,
+.talexia-wrapper .plan-annual-fee {
+  display: none;
+}
+
+.talexia-wrapper .plans-annual .plan-price .per-monthly {
+  display: none;
+}
+
+.talexia-wrapper .plans-annual .plan-price .per-annual {
+  display: inline;
+}
+
+.talexia-wrapper .plans-annual .plan-annual-saving {
+  display: block;
+}
+
+.talexia-wrapper .plans-annual .plan-annual-terms {
+  display: block;
+}
+
+.talexia-wrapper .plans-annual .plan-monthly-fee {
+  display: none;
+}
+
+.talexia-wrapper .plans-annual .plan-annual-fee {
+  display: block;
+}
+
+.talexia-wrapper .plan-annual-saving {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: #7a6220;
+  background: #f6efdd;
+  border: 1px solid #e8dcbe;
+  border-radius: 4px;
+  padding: 7px 12px;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.talexia-wrapper .plan-annual-saving strong {
+  color: #14110c;
+  font-weight: 600;
+}
+
+.talexia-wrapper .plan-annual-terms {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  color: #8a857a;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.talexia-wrapper .plans-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.talexia-wrapper .plan-card {
+  background: #faf8f3;
+  border: 0.5px solid #e6e1d8;
+  border-radius: 14px;
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.talexia-wrapper .plan-card.feature {
+  border: 2px solid #b08d3e;
+  background: linear-gradient(180deg, #fffdf8 0%, #fbf6ea 100%);
+}
+
+.talexia-wrapper .plan-badge {
+  position: absolute;
+  top: -13px;
+  right: 24px;
+  background: #b08d3e;
+  color: #fff;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  font-weight: 600;
+}
+
+.talexia-wrapper .plan-name {
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: #14110c;
+  letter-spacing: 0.2px;
+}
+
+.talexia-wrapper .plan-tagline {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #6b6b6b;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.talexia-wrapper .plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 24px 0 4px;
+}
+
+.talexia-wrapper .plan-price .cur {
+  font-size: 22px;
+  color: #8a6d28;
+  font-weight: 500;
+}
+
+.talexia-wrapper .plan-price .amt {
+  font-size: 48px;
+  font-weight: 500;
+  color: #14110c;
+  line-height: 1;
+}
+
+.talexia-wrapper .plan-price .per {
+  font-size: 14px;
+  color: #6b6b6b;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin-left: 4px;
+}
+
+.talexia-wrapper .plan-volume {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #8a6d28;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.talexia-wrapper .plan-divider {
+  height: 1px;
+  background: #e6e1d8;
+  margin: 4px 0 20px;
+}
+
+.talexia-wrapper .plan-desc {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #4a4a4a;
+  margin-bottom: 22px;
+}
+
+.talexia-wrapper .plan-section-label {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+.talexia-wrapper .plan-feat {
+  list-style: none;
+  margin: 0 0 20px;
+}
+
+.talexia-wrapper .plan-feat li {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 8px 0 8px 20px;
+  color: #1a1a1a;
+  position: relative;
+  border-bottom: 1px solid #ece7dc;
+}
+
+.talexia-wrapper .plan-feat li:last-child {
+  border-bottom: none;
+}
+
+.talexia-wrapper .plan-feat li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 15px;
+  width: 5px;
+  height: 5px;
+  background: #b08d3e;
+  transform: rotate(45deg);
+}
+
+.talexia-wrapper .plan-fee {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  color: #6b6b6b;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #e6e1d8;
+  border-radius: 4px;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+.talexia-wrapper .plan-fee strong {
+  color: #14110c;
+}
+
+.talexia-wrapper .plan-cta {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.talexia-wrapper .btn {
+  display: inline-block;
+  text-decoration: none;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 15px 30px;
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+
+.talexia-wrapper .btn-dark {
+  background: #14110c;
+  color: #fff;
+}
+
+.talexia-wrapper .btn-dark:hover {
+  background: #b08d3e;
+}
+
+.talexia-wrapper .btn-gold {
+  background: #c9a44c;
+  color: #14110c;
+}
+
+.talexia-wrapper .btn-gold:hover {
+  background: #d9b45c;
+}
+
+.talexia-wrapper .btn-outline {
+  background: transparent;
+  color: #14110c;
+  border: 1px solid #14110c;
+}
+
+.talexia-wrapper .btn-outline:hover {
+  border-color: #b08d3e;
+  color: #b08d3e;
+}
+
+/* ==================== COMPARISON TABLE ==================== */
+.talexia-wrapper .comparison {
+  background: #faf8f3;
+}
+
+.talexia-wrapper .comparison-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.talexia-wrapper .comparison-table {
+  max-width: 820px;
+  margin: 0 auto;
+  background: #fff;
+  border: 0.5px solid #e6e1d8;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.talexia-wrapper .comp-row {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr;
+  border-bottom: 1px solid #ece7dc;
+}
+
+.talexia-wrapper .comp-row:last-child {
+  border-bottom: none;
+}
+
+.talexia-wrapper .comp-row.header {
+  background: #f6f1e6;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 600;
+}
+
+.talexia-wrapper .comp-row.header.feature-col {
+  color: #b08d3e;
+}
+
+.talexia-wrapper .comp-cell {
+  padding: 16px 22px;
+  border-right: 1px solid #ece7dc;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+}
+
+.talexia-wrapper .comp-cell:last-child {
+  border-right: none;
+}
+
+.talexia-wrapper .comp-cell.label {
+  color: #4a4a4a;
+  font-weight: 500;
+}
+
+.talexia-wrapper .comp-cell.center {
+  justify-content: center;
+  text-align: center;
+}
+
+.talexia-wrapper .comp-cell.feature-bg {
+  background: #fdfbf5;
+}
+
+.talexia-wrapper .comp-check {
+  color: #b08d3e;
+  font-size: 18px;
+  font-family: Georgia, serif;
+}
+
+.talexia-wrapper .comp-x {
+  color: #c8c0ae;
+  font-size: 16px;
+  font-family: Georgia, serif;
+}
+
+/* ==================== ATELIER ==================== */
+.talexia-wrapper .atelier {
+  background: #13110e;
+  padding: 100px 0;
+}
+
+.talexia-wrapper .atelier-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 0.9fr 1.4fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.talexia-wrapper .atelier-image {
+  background: #1a3547;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.talexia-wrapper .atelier-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.talexia-wrapper .atelier-caption {
+  position: absolute;
+  bottom: 16px;
+  left: 18px;
+  right: 18px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.talexia-wrapper .atelier-content {
+  color: #fff;
+}
+
+.talexia-wrapper .atelier-eyebrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: #c9a44c;
+  margin-bottom: 22px;
+  font-weight: 600;
+}
+
+.talexia-wrapper .atelier-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.15;
+  color: #fff;
+  margin-bottom: 24px;
+  letter-spacing: -0.2px;
+}
+
+.talexia-wrapper .atelier-title em {
+  color: #c9a44c;
+  font-style: italic;
+}
+
+.talexia-wrapper .atelier-desc {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 28px;
+}
+
+.talexia-wrapper .atelier-feat {
+  list-style: none;
+  margin-bottom: 34px;
+}
+
+.talexia-wrapper .atelier-feat li {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  padding: 8px 0 8px 20px;
+  color: rgba(255, 255, 255, 0.82);
+  position: relative;
+  line-height: 1.55;
+}
+
+.talexia-wrapper .atelier-feat li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 14px;
+  width: 5px;
+  height: 5px;
+  background: #c9a44c;
+  transform: rotate(45deg);
+}
+
+.talexia-wrapper .atelier-pricing {
+  padding-top: 26px;
+  border-top: 1px solid rgba(201, 164, 76, 0.22);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.talexia-wrapper .atelier-pricing-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.talexia-wrapper .atelier-pricing-label {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #c9a44c;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.talexia-wrapper .atelier-pricing-value {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #fff;
+}
+
+.talexia-wrapper .atelier-btn {
+  display: inline-block;
+  background: #c9a44c;
+  color: #14110c;
+  padding: 15px 28px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.talexia-wrapper .atelier-btn:hover {
+  background: #d9b45c;
+}
+
+/* ==================== BILLING TERMS ==================== */
+.talexia-wrapper .billing {
+  background: #fff;
+}
+
+.talexia-wrapper .billing-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.talexia-wrapper .billing-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.talexia-wrapper .billing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.talexia-wrapper .billing-card {
+  padding: 30px 26px;
+  background: #faf8f3;
+  border: 0.5px solid #e6e1d8;
+  border-radius: 10px;
+}
+
+.talexia-wrapper .billing-icon {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #b08d3e;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.talexia-wrapper .billing-title {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #14110c;
+  margin-bottom: 10px;
+}
+
+.talexia-wrapper .billing-desc {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #6b6b6b;
+}
+
+/* ==================== FAQ REFERENCES ==================== */
+.talexia-wrapper .faq-refs {
+  background: #faf8f3;
+}
+
+.talexia-wrapper .faq-refs-header {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.talexia-wrapper .faq-refs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.talexia-wrapper .faq-ref {
+  display: block;
+  padding: 22px 26px;
+  background: #fff;
+  border: 0.5px solid #e6e1d8;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+}
+
+.talexia-wrapper .faq-ref:hover {
+  border-color: #b08d3e;
+  transform: translateY(-2px);
+}
+
+.talexia-wrapper .faq-ref-q {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #14110c;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.talexia-wrapper .faq-ref-q .qmark {
+  color: #b08d3e;
+  font-style: italic;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.talexia-wrapper .faq-ref-arrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a6d28;
+  font-weight: 600;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.talexia-wrapper .faq-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.talexia-wrapper .faq-cta a {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #14110c;
+  text-decoration: none;
+  border-bottom: 1px solid #b08d3e;
+  padding-bottom: 4px;
+  font-weight: 600;
+}
+
+.talexia-wrapper .faq-cta a:hover {
+  color: #b08d3e;
+}
+
+/* ==================== CLOSING CTA ==================== */
+.talexia-wrapper .closing-cta {
+  background: linear-gradient(180deg, #faf8f3 0%, #f6f1e6 100%);
+  padding: 110px 0;
+  text-align: center;
+}
+
+.talexia-wrapper .closing-title {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: 42px;
+  line-height: 1.2;
+  color: #14110c;
+  margin-bottom: 20px;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: -0.2px;
+}
+
+.talexia-wrapper .closing-title em {
+  color: #b08d3e;
+  font-style: italic;
+}
+
+.talexia-wrapper .closing-sub {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 18px;
+  color: #6b6b6b;
+  max-width: 560px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.talexia-wrapper .closing-cta .btn {
+  display: inline-block;
+  width: auto;
+  padding: 17px 42px;
+  font-size: 12px;
+}
+
+/* ==================== FOOTER ==================== */
+.talexia-wrapper footer {
+  background: #14110c;
+  color: #fff;
+  padding: 60px 40px 30px;
+}
+
+.talexia-wrapper .footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.talexia-wrapper .footer-brand-block .footer-brand {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.talexia-wrapper .footer-brand-block .footer-brand .dot {
+  color: #c9a44c;
+}
+
+.talexia-wrapper .footer-tagline {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.talexia-wrapper .footer-col h4 {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c9a44c;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.talexia-wrapper .footer-col ul {
+  list-style: none;
+}
+
+.talexia-wrapper .footer-col li {
+  margin-bottom: 10px;
+}
+
+.talexia-wrapper .footer-col a {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.talexia-wrapper .footer-col a:hover {
+  color: #c9a44c;
+}
+
+.talexia-wrapper .footer-bottom {
+  max-width: 1120px;
+  margin: 50px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .talexia-wrapper .nav {
+    padding: 14px 20px;
+  }
+
+  .talexia-wrapper .nav-links {
+    gap: 20px;
+  }
+
+  .talexia-wrapper .nav-links a:not(.nav-cta) {
+    display: none;
+  }
+
+  .talexia-wrapper section {
+    padding: 60px 0;
+  }
+
+  .talexia-wrapper .page-header {
+    padding: 60px 20px 44px;
+  }
+
+  .talexia-wrapper .page-title {
+    font-size: 32px;
+  }
+
+  .talexia-wrapper .page-lede {
+    font-size: 16px;
+  }
+
+  .talexia-wrapper .container,
+  .talexia-wrapper .container-narrow,
+  .talexia-wrapper .billing-inner,
+  .talexia-wrapper .atelier-wrap {
+    padding: 0 20px;
+  }
+
+  .talexia-wrapper .section-title {
+    font-size: 28px;
+  }
+
+  .talexia-wrapper .plans-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .talexia-wrapper .comp-row {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+
+  .talexia-wrapper .comp-cell {
+    padding: 12px 14px;
+    font-size: 12.5px;
+  }
+
+  .talexia-wrapper .atelier-wrap {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .talexia-wrapper .atelier-image {
+    min-height: 380px;
+  }
+
+  .talexia-wrapper .atelier-title {
+    font-size: 34px;
+  }
+
+  .talexia-wrapper .atelier-pricing {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .talexia-wrapper .billing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .talexia-wrapper .faq-refs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .talexia-wrapper .closing-title {
+    font-size: 28px;
+  }
+
+  .talexia-wrapper .footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .talexia-wrapper .footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}

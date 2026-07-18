@@ -1,0 +1,179 @@
+/* ==================== FAQ PAGE ==================== */
+/* Uses exact same class names as faq.html, scoped under .talexia-wrapper */
+
+/* ==================== PAGE HEADER ==================== */
+.talexia-wrapper .page-header {
+  text-align: center;
+  padding: 90px 40px 70px;
+  border-bottom: 1px solid #e6e1d8;
+  background: #fff;
+}
+.talexia-wrapper .page-eyebrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 500; margin-bottom: 20px;
+}
+.talexia-wrapper .page-title {
+  font-family: Georgia, serif; font-weight: 400;
+  font-size: 52px; line-height: 1.15;
+  color: #14110c; margin-bottom: 20px;
+  max-width: 720px; margin-left: auto; margin-right: auto;
+}
+.talexia-wrapper .page-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .page-lede {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 19px; line-height: 1.55; color: #6b6b6b;
+  max-width: 600px; margin: 0 auto;
+}
+.talexia-wrapper .rule-ornament {
+  width: 60px; height: 1px; background: #b08d3e; position: relative;
+  margin: 0 auto 28px;
+}
+.talexia-wrapper .rule-ornament::before, .talexia-wrapper .rule-ornament::after {
+  content: ""; position: absolute; top: 50%; width: 5px; height: 5px;
+  background: #b08d3e; transform: translateY(-50%) rotate(45deg);
+}
+.talexia-wrapper .rule-ornament::before { left: -12px; }
+.talexia-wrapper .rule-ornament::after { right: -12px; }
+
+/* ==================== FAQ LAYOUT ==================== */
+.talexia-wrapper .faq-layout {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 70px 40px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+/* ==================== CATEGORY NAV ==================== */
+.talexia-wrapper .cat-nav {
+  position: sticky;
+  top: 90px;
+  padding-right: 20px;
+  border-right: 1px solid #e6e1d8;
+}
+.talexia-wrapper .cat-nav-title {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 600; margin-bottom: 20px;
+}
+.talexia-wrapper .cat-nav-list { list-style: none; }
+.talexia-wrapper .cat-nav-list li { margin-bottom: 6px; }
+.talexia-wrapper .cat-nav-list a {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px; color: #6b6b6b;
+  text-decoration: none;
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 8px 0;
+  transition: color 0.2s;
+  line-height: 1.5;
+}
+.talexia-wrapper .cat-nav-list a:hover { color: #14110c; }
+.talexia-wrapper .cat-nav-list a .cat-num {
+  font-family: Georgia, serif; font-style: italic;
+  color: #b08d3e; font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ==================== FAQ CONTENT ==================== */
+.talexia-wrapper .faq-content { max-width: 720px; }
+.talexia-wrapper .faq-category {
+  padding: 60px 0;
+  border-top: 1px solid #e6e1d8;
+}
+.talexia-wrapper .faq-category:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+.talexia-wrapper .cat-header { margin-bottom: 32px; }
+.talexia-wrapper .cat-header-eyebrow {
+  font-family: Georgia, serif; font-style: italic;
+  color: #b08d3e; font-size: 16px; margin-bottom: 8px;
+}
+.talexia-wrapper .cat-header-title {
+  font-family: Georgia, serif; font-weight: 400;
+  font-size: 34px; line-height: 1.2;
+  color: #14110c;
+}
+.talexia-wrapper .cat-header-title em { color: #b08d3e; font-style: italic; }
+
+/* ==================== FAQ ITEM ==================== */
+.talexia-wrapper .faq-item {
+  padding: 28px 0;
+  border-bottom: 1px solid #ece7dc;
+}
+.talexia-wrapper .faq-item:last-child { border-bottom: none; }
+.talexia-wrapper .faq-q {
+  font-family: Georgia, serif; font-size: 20px;
+  font-weight: 500; color: #14110c;
+  margin-bottom: 14px;
+  display: flex; align-items: flex-start; gap: 14px;
+  line-height: 1.35;
+}
+.talexia-wrapper .faq-q-mark {
+  color: #b08d3e; font-style: italic;
+  flex-shrink: 0;
+}
+.talexia-wrapper .faq-a {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14.5px; line-height: 1.75; color: #4a4a4a;
+  padding-left: 32px;
+}
+.talexia-wrapper .faq-a p { margin-bottom: 12px; }
+.talexia-wrapper .faq-a p:last-child { margin-bottom: 0; }
+.talexia-wrapper .faq-a strong { color: #14110c; font-weight: 600; }
+.talexia-wrapper .faq-a em {
+  color: #8a6d28;
+  font-family: Georgia, serif; font-style: italic;
+}
+.talexia-wrapper .faq-a ul {
+  margin: 4px 0 12px; padding-left: 20px;
+  list-style: none;
+}
+.talexia-wrapper .faq-a ul li {
+  padding: 4px 0 4px 16px;
+  position: relative;
+  font-size: 14px;
+}
+.talexia-wrapper .faq-a ul li::before {
+  content: ""; position: absolute; left: 0; top: 12px;
+  width: 4px; height: 4px; background: #b08d3e; transform: rotate(45deg);
+}
+.talexia-wrapper .faq-a code {
+  font-family: 'Courier New', monospace;
+  background: #f4efe4;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 13px;
+  color: #14110c;
+  letter-spacing: 0.5px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .talexia-wrapper .page-header { padding: 60px 20px 50px; }
+  .talexia-wrapper .page-title { font-size: 34px; }
+  .talexia-wrapper .page-lede { font-size: 16px; }
+  .talexia-wrapper .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 40px 20px;
+  }
+  .talexia-wrapper .cat-nav {
+    position: static;
+    padding-right: 0;
+    padding-bottom: 24px;
+    border-right: none;
+    border-bottom: 1px solid #e6e1d8;
+  }
+  .talexia-wrapper .cat-nav-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 20px;
+  }
+  .talexia-wrapper .cat-header-title { font-size: 26px; }
+  .talexia-wrapper .faq-q { font-size: 17px; }
+  .talexia-wrapper .faq-a { font-size: 14px; padding-left: 22px; }
+}
