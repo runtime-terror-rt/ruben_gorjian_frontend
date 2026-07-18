@@ -5,6 +5,15 @@ import Link from 'next/link';
 export default function PlansPreview() {
   const [cycle, setCycle] = useState<'monthly' | 'annual'>('monthly');
   const isAnnual = cycle === 'annual';
+  const billingNote = isAnnual ? (
+    <>Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly</>
+  ) : (
+    <><strong>Save 10%</strong> when you pay for a year up front.</>
+  );
+
+  const handleToggle = () => {
+    setCycle((prev) => (prev === 'annual' ? 'monthly' : 'annual'));
+  };
 
   return (
     <>
@@ -19,11 +28,49 @@ export default function PlansPreview() {
 
           <div className="billing-toggle-wrap">
             <div className="billing-toggle">
-              <span className={`billing-label ${!isAnnual ? 'active' : ''}`} id="labelMonthly" onClick={() => setCycle('monthly')}>Monthly</span>
-              <button type="button" className={`billing-switch ${isAnnual ? 'annual' : ''}`} id="billingSwitch" role="switch" aria-checked={isAnnual ? "true" : "false"} aria-label="Switch between monthly and annual billing" onClick={() => setCycle(isAnnual ? 'monthly' : 'annual')}></button>
-              <span className={`billing-label ${isAnnual ? 'active' : ''}`} id="labelAnnual" onClick={() => setCycle('annual')}>Annual</span>
+              <span
+                className={`billing-label ${!isAnnual ? 'active' : ''}`}
+                id="labelMonthly"
+                role="button"
+                tabIndex={0}
+                aria-pressed={!isAnnual}
+                onClick={() => setCycle('monthly')}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setCycle('monthly');
+                  }
+                }}
+              >
+                Monthly
+              </span>
+              <button
+                type="button"
+                className={`billing-switch ${isAnnual ? 'annual' : ''}`}
+                id="billingSwitch"
+                role="switch"
+                aria-checked={isAnnual}
+                aria-label="Switch between monthly and annual billing"
+                onClick={handleToggle}
+              ></button>
+              <span
+                className={`billing-label ${isAnnual ? 'active' : ''}`}
+                id="labelAnnual"
+                role="button"
+                tabIndex={0}
+                aria-pressed={isAnnual}
+                onClick={() => setCycle('annual')}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setCycle('annual');
+                  }
+                }}
+              >
+                Annual
+              </span>
             </div>
-            <div className="billing-annual-note" id="billingNote" dangerouslySetInnerHTML={{ __html: isAnnual ? 'Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly' : '<strong>Save 10%</strong> when you pay for a year up front.' }}></div>
+            <div className="billing-annual-note" id="billingNote">{billingNote}</div>
           </div>
 
           <div className={`plans-cards ${isAnnual ? 'plans-annual' : ''}`} id="plansCards">
@@ -47,9 +94,15 @@ export default function PlansPreview() {
               </ul>
               <p className="plan-desc" style={{ marginTop: '20px', fontSize: '13px', color: '#666', lineHeight: '1.4' }}>Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.</p>
               <div className="plan-cta">
-                <Link href={`/signup?plan=essentials&billing=${cycle}`} className="plan-btn plan-btn-outline" data-cta="essentials"
+                <Link
+                  href={`/signup?plan=essentials&billing=${cycle}`}
+                  className="plan-btn plan-btn-outline"
+                  data-cta="essentials"
                   data-label-monthly="Subscribe to Essentials"
-                  data-label-annual="Subscribe annually &mdash; $4,288/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $4,288/yr" : "Subscribe to Essentials" }}></Link>
+                  data-label-annual="Subscribe annually — $4,288/yr"
+                >
+                  {isAnnual ? 'Subscribe annually — $4,288/yr' : 'Subscribe to Essentials'}
+                </Link>
                 <div className="plan-annual-terms">Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly, with a 30-day reminder.</div>
               </div>
             </div>
@@ -74,9 +127,15 @@ export default function PlansPreview() {
                 <li>Seasonal editorial planning</li>
               </ul>
               <div className="plan-cta">
-                <Link href={`/signup?plan=signature&billing=${cycle}`} className="plan-btn plan-btn-dark" data-cta="signature"
+                <Link
+                  href={`/signup?plan=signature&billing=${cycle}`}
+                  className="plan-btn plan-btn-dark"
+                  data-cta="signature"
                   data-label-monthly="Subscribe to Signature"
-                  data-label-annual="Subscribe annually &mdash; $6,448/yr" dangerouslySetInnerHTML={{ __html: isAnnual ? "Subscribe annually &mdash; $6,448/yr" : "Subscribe to Signature" }}></Link>
+                  data-label-annual="Subscribe annually — $6,448/yr"
+                >
+                  {isAnnual ? 'Subscribe annually — $6,448/yr' : 'Subscribe to Signature'}
+                </Link>
                 <div className="plan-annual-terms">Paid in full today &middot; <strong>non-refundable</strong> &middot; auto-renews yearly, with a 30-day reminder.</div>
               </div>
             </div>

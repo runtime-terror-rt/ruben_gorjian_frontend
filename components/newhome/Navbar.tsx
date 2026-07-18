@@ -9,6 +9,7 @@ export default function Navbar() {
           <a href="/newhome#work">Work</a>
           <a href="/newhome#process">Process</a>
           <a href="/plan">Plans</a>
+          <a href="/newhome/case-studies">Case Studies</a>
           <a href="/newhome#atelier">Atelier</a>
           <a href="/newhome/faq">FAQ</a>
           <a href="/brandbrief">Brand Brief</a>
