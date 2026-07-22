@@ -17,6 +17,11 @@ export default function PlansPreview() {
             <p className="section-lede" style={{ margin: '20px auto 0' }}>Cancel anytime from your account. Both plans deliver the same editorial standard — the volume and cadence flex to your brand's scale.</p>
           </div>
 
+          <div style={{ maxWidth: '620px', margin: '0 auto 36px', textAlign: 'center', background: '#f6efdd', border: '1px solid #e8dcbe', borderRadius: '6px', padding: '16px 24px' }}>
+            <div style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: '11px', letterSpacing: '2.5px', textTransform: 'uppercase', color: '#8a6d28', fontWeight: 600, marginBottom: '6px' }}>Your first month, complimentary</div>
+            <div style={{ fontFamily: 'Georgia, serif', fontSize: '15px', lineHeight: 1.5, color: '#14110c' }}>Start with a full month free using code <strong style={{ color: '#8a6d28' }}>1MFREE</strong> at checkout. Enter your card to begin; cancel before the month ends and you&rsquo;re never charged. <span style={{ display: 'block', marginTop: '6px', fontSize: '12px', color: '#8a857a' }}>Limited to one free month per business.</span></div>
+          </div>
+
           <div className="billing-toggle-wrap">
             <div className="billing-toggle">
               <span className={`billing-label ${!isAnnual ? 'active' : ''}`} id="labelMonthly" onClick={() => setCycle('monthly')}>Monthly</span>
@@ -45,7 +50,7 @@ export default function PlansPreview() {
                 <li>Published to 2 platforms</li>
                 <li>Monthly content calendar</li>
               </ul>
-              <p className="plan-desc" style={{ marginTop: '20px', fontSize: '13px', color: '#666', lineHeight: '1.4' }}>Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.</p>
+              <p className="plan-note" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: '11.5px', lineHeight: 1.5, color: '#8a857a', margin: '-4px 0 0' }}>Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.</p>
               <div className="plan-cta">
                 <Link href={`/signup?plan=essentials&billing=${cycle}`} className="plan-btn plan-btn-outline" data-cta="essentials"
                   data-label-monthly="Subscribe to Essentials"

@@ -12,7 +12,7 @@ export default function Navbar() {
           <a href="/newhome/case-studies">Case Studies</a>
           <a href="/newhome#atelier">Atelier</a>
           <a href="/newhome/faq">FAQ</a>
-          <a href="/brandbrief">Brand Brief</a>
+          {/* <a href="/brandbrief">Brand Brief</a> */}
           <a href="/newhome/contact" className="nav-cta">Contact</a>
         </div>
       </nav>
