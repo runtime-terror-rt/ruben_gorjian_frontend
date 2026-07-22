@@ -206,38 +206,38 @@ export default function PlanPage() {
 
             <div className="comp-row">
               <div className="comp-cell label">Professional captions &amp; hashtags</div>
-              <div className="comp-cell center"><span className="comp-check">&check;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center"><span className="comp-check">✓</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">
               <div className="comp-cell label">Monthly content calendar</div>
-              <div className="comp-cell center"><span className="comp-check">&check;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center"><span className="comp-check">✓</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">
               <div className="comp-cell label">Monthly content plan preview</div>
               <div className="comp-cell center"><span className="comp-x">&mdash;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">
               <div className="comp-cell label">Seasonal editorial planning</div>
               <div className="comp-cell center"><span className="comp-x">&mdash;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">
               <div className="comp-cell label">Micro-animation on select visuals</div>
               <div className="comp-cell center"><span className="comp-x">&mdash;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">
               <div className="comp-cell label">Image preparation (phone photos accepted)</div>
               <div className="comp-cell center"><span className="comp-x">&mdash;</span></div>
-              <div className="comp-cell center feature-bg"><span className="comp-check">&check;</span></div>
+              <div className="comp-cell center feature-bg"><span className="comp-check">✓</span></div>
             </div>
 
             <div className="comp-row">

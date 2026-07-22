@@ -681,14 +681,23 @@
 
 .talexia-wrapper .comp-check {
   color: #b08d3e;
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  min-height: 18px;
+  font-size: 19px;
+  line-height: 1;
   font-family: Georgia, serif;
+  font-weight: 700;
+  transform: translateY(-1px);
 }
 
 .talexia-wrapper .comp-x {
   color: #c8c0ae;
   font-size: 16px;
   font-family: Georgia, serif;
+  line-height: 1;
 }
 
 /* ==================== ATELIER ==================== */
