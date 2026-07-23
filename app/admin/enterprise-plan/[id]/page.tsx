@@ -748,71 +748,10 @@ export default function EnterpriseInviteDetailsPage() {
                 </div>
               </div>
 
-              {/* 5. Production Details */}
-              <div className="space-y-6">
-                <h3 className="text-[11px] font-black text-rose-400 uppercase tracking-[0.25em] flex items-center gap-3">
-                  <span className="h-5 w-5 rounded-md bg-rose-400/10 flex items-center justify-center text-[10px]">5</span>
-                  Production Details
-                </h3>
-                
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Frequency</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {["None", "Every 3 Months", "Every 2 Months", "Monthly"].map((freq) => (
-                      <div 
-                        key={freq}
-                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootFrequency: freq }))}
-                        className={cn(
-                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
-                          formData.proPhotoShootFrequency === freq 
-                          ? "bg-rose-400/10 border-rose-400/40 text-rose-400" 
-                          : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
-                        )}
-                      >
-                        <Calendar className={cn("h-5 w-5 mb-2", formData.proPhotoShootFrequency === freq ? "text-rose-400" : "text-slate-600")} />
-                        <span className="text-[10px] font-black uppercase tracking-tight">{freq}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Photo Shoot Length</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    {["0", "1 Hour", "1.5 Hours", "3 Hours", "Custom"].map((len) => (
-                      <div 
-                        key={len}
-                        onClick={() => setFormData(prev => ({ ...prev, proPhotoShootLength: len }))}
-                        className={cn(
-                          "flex flex-col items-center justify-center p-4 rounded-xl border transition-all cursor-pointer text-center",
-                          formData.proPhotoShootLength === len 
-                          ? "bg-rose-400/10 border-rose-400/40 text-rose-400" 
-                          : "bg-white/5 border-white/5 text-slate-500 hover:border-white/10"
-                        )}
-                      >
-                        <Clock className={cn("h-5 w-5 mb-2", formData.proPhotoShootLength === len ? "text-rose-400" : "text-slate-600")} />
-                        <span className="text-[10px] font-black uppercase tracking-tight">{len}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {formData.proPhotoShootLength === "Custom" && (
-                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
-                      <Input 
-                        value={formData.otherPhotoShootLength}
-                        onChange={(e) => setFormData(prev => ({ ...prev, otherPhotoShootLength: e.target.value }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-rose-400/50 text-white font-bold text-sm"
-                        placeholder="e.g. 4 Hours, 8 Hours..."
-                        required={formData.proPhotoShootLength === "Custom"}
-                      />
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-4">
                   <h3 className="text-[11px] font-black text-cyan-400 uppercase tracking-[0.25em] flex items-center gap-3">
-                    <span className="h-5 w-5 rounded-md bg-cyan-400/10 flex items-center justify-center text-[10px]">6</span>
+                    <span className="h-5 w-5 rounded-md bg-cyan-400/10 flex items-center justify-center text-[10px]">5</span>
                     Additional Services
                   </h3>
                   <div className="space-y-3">
@@ -840,7 +779,7 @@ export default function EnterpriseInviteDetailsPage() {
 
                 <div className="space-y-4">
                   <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.25em] flex items-center gap-3">
-                    <span className="h-5 w-5 rounded-md bg-emerald-400/10 flex items-center justify-center text-[10px]">7</span>
+                    <span className="h-5 w-5 rounded-md bg-emerald-400/10 flex items-center justify-center text-[10px]">6</span>
                     Pricing & Validity
                   </h3>
                   <div className="grid grid-cols-2 gap-4">

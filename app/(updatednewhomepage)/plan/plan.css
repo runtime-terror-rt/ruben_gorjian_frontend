@@ -73,6 +73,26 @@
   color: #fff !important;
 }
 
+.talexia-wrapper .nav-signin {
+  border: 1px solid #14110c;
+  color: #14110c !important;
+  padding: 8px 18px;
+  border-radius: 2px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.talexia-wrapper .nav-signin:hover {
+  background: #b08d3e;
+  border-color: #b08d3e;
+  color: #fff !important;
+}
+
 /* ==================== PAGE HEADER ==================== */
 .talexia-wrapper .page-header {
   text-align: center;
@@ -392,6 +412,15 @@
   color: #8a857a;
   line-height: 1.5;
   margin-top: 10px;
+}
+
+.talexia-wrapper .plan-always-terms {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  color: #8a857a;
+  line-height: 1.5;
+  margin-top: 8px;
+  display: block;
 }
 
 .talexia-wrapper .plans-cards {
@@ -1129,7 +1158,7 @@
     gap: 20px;
   }
 
-  .talexia-wrapper .nav-links a:not(.nav-cta) {
+  .talexia-wrapper .nav-links a:not(.nav-cta):not(.nav-signin) {
     display: none;
   }
 
