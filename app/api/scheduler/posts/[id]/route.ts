@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 const BACKEND_URL =
   process.env.BACKEND_API_URL ||
@@ -15,7 +16,7 @@ export async function GET(
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/posts/${id}`, {
+    const res = await fetch(`${getBackendUrl()}/scheduler/posts/${id}`, {
       method: "GET",
       headers: {
         ...(token ? { Cookie: `token=${token}` } : {}),
@@ -40,17 +41,32 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    const patchData = await request.json().catch(() => ({}));
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const contentType = request.headers.get("content-type") || "";
+    const headers = await getBackendHeaders();
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/posts/${id}`, {
+    let patchData = {};
+
+    if (contentType.includes("application/json")) {
+      patchData = await request.json().catch(() => ({}));
+    } else if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData().catch(() => null);
+      if (formData) {
+        const dataStr = formData.get("data");
+        if (dataStr && typeof dataStr === "string") {
+          try {
+            patchData = JSON.parse(dataStr);
+          } catch (e) {
+            console.error("Failed to parse form data JSON", e);
+          }
+        }
+      }
+    }
+
+    headers["Content-Type"] = "application/json";
+
+    const res = await fetch(`${getBackendUrl()}/scheduler/posts/${id}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Cookie: `token=${token}` } : {}),
-      },
-      // Send the payload directly — backend expects flat fields, NOT { data: ... }
+      headers,
       body: JSON.stringify(patchData),
     });
 
@@ -75,7 +91,7 @@ export async function DELETE(
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
-    const res = await fetch(`${BACKEND_URL}/scheduler/posts/${id}`, {
+    const res = await fetch(`${getBackendUrl()}/scheduler/posts/${id}`, {
       method: "DELETE",
       headers: {
         ...(token ? { Cookie: `token=${token}` } : {}),

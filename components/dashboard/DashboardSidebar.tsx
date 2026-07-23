@@ -40,11 +40,11 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/dashboard",
         icon: LayoutDashboard,
       },
-      {
-        label: "Schedule On Calendly",
-        href: "https://calendly.com/talexia",
-        icon: CalendarClock,
-      },
+      // {
+      //   label: "Schedule On Calendly",
+      //   href: "https://calendly.com/talexia",
+      //   icon: CalendarClock,
+      // },
     ],
   },
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useState, Fragment } from "react";
+import { useMemo, useCallback, useState, Fragment, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -589,6 +589,9 @@ function ListView({
     : dayjs(startDate).startOf("month");
 
   // Sort posts chronologically
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const sortedPosts = useMemo(() => {
     return [...posts].sort((a, b) => {
       const dateA = userTimezone
@@ -600,6 +603,17 @@ function ListView({
       return dateA.valueOf() - dateB.valueOf();
     });
   }, [posts, userTimezone]);
+
+  // Reset page when sorting/filtering changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortedPosts.length]);
+
+  const totalPages = Math.ceil(sortedPosts.length / itemsPerPage);
+  const paginatedPosts = sortedPosts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="flex flex-col h-full space-y-4">
@@ -616,27 +630,87 @@ function ListView({
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedPosts.map((post) => {
-            const date = userTimezone
-              ? dayjs(post.scheduledFor).tz(userTimezone)
-              : dayjs(post.scheduledFor);
-            return (
-              <div key={post.id} className="w-full">
-                <CalendarItem
-                  post={post}
-                  date={date}
-                  display="day"
-                  onEdit={() => onEdit(post.id)}
-                  onDelete={() => deletePost(post.id)}
-                  onDuplicate={() => duplicatePost(post.id)}
-                  onPublish={
-                    publishPost ? () => publishPost(post.id) : undefined
-                  }
-                  isBeforeNow={false}
-                />
+          {/* Professional Header Row for List view */}
+          <div className="hidden sm:flex items-center px-5 py-4 gap-6 text-xs font-bold text-slate-300 uppercase tracking-wider bg-slate-800/60 rounded-[10px] border border-slate-700/50 mb-4 ml-1">
+            <div className="w-16 text-center shrink-0">Media</div>
+            <div className="flex-1 min-w-0">Content / Caption</div>
+            <div className="w-40 text-center shrink-0">Posting Date</div>
+            <div className="w-28 text-center shrink-0">Status</div>
+            <div className="w-24 hidden md:block text-center shrink-0">Platforms</div>
+            <div className="w-24 text-right shrink-0">Actions</div>
+          </div>
+
+          <div className="space-y-3">
+            {paginatedPosts.map((post) => {
+              const date = userTimezone
+                ? dayjs(post.scheduledFor).tz(userTimezone)
+                : dayjs(post.scheduledFor);
+              return (
+                <div key={post.id} className="w-full">
+                  <CalendarItem
+                    post={post}
+                    date={date}
+                    display="list"
+                    onEdit={() => onEdit(post.id)}
+                    onDelete={() => deletePost(post.id)}
+                    onDuplicate={() => duplicatePost(post.id)}
+                    onPublish={
+                      publishPost ? () => publishPost(post.id) : undefined
+                    }
+                    isBeforeNow={false}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-slate-700/50 mt-6">
+              <div className="text-sm text-slate-400">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, sortedPosts.length)} of {sortedPosts.length} entries
               </div>
-            );
-          })}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="bg-slate-800/50 border-slate-700"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <Button
+                      key={i}
+                      variant={currentPage === i + 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={clsx(
+                        "w-8 h-8 p-0",
+                        currentPage === i + 1 
+                          ? "bg-slate-200 text-slate-900 hover:bg-slate-300"
+                          : "bg-slate-800/50 border-slate-700 text-slate-400 hover:text-slate-200"
+                      )}
+                    >
+                      {i + 1}
+                    </Button>
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="bg-slate-800/50 border-slate-700"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -772,12 +846,12 @@ export default function EnhancedCalendar({
             : [],
         existingMedia: post.asset
           ? [
-              {
-                id: post.asset.id,
-                storageKey: post.asset.storageKey,
-                name: post.asset.storageKey.split("/").pop() || "Media",
-              },
-            ]
+            {
+              id: post.asset.id,
+              storageKey: post.asset.storageKey,
+              name: post.asset.storageKey.split("/").pop() || "Media",
+            },
+          ]
           : [],
         status: post.status,
       });
@@ -952,7 +1026,7 @@ export default function EnhancedCalendar({
                 className={clsx(
                   "rounded-none border-0",
                   display !== "day" &&
-                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Day view"
               >
@@ -966,7 +1040,7 @@ export default function EnhancedCalendar({
                 className={clsx(
                   "rounded-none border-0 border-l border-r border-slate-700",
                   display !== "week" &&
-                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Week view"
               >
@@ -980,7 +1054,7 @@ export default function EnhancedCalendar({
                 className={clsx(
                   "rounded-none border-0",
                   display !== "month" &&
-                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="Month view"
               >
@@ -994,7 +1068,7 @@ export default function EnhancedCalendar({
                 className={clsx(
                   "rounded-none border-0 border-l border-slate-700",
                   display !== "list" &&
-                    "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
+                  "text-slate-400 hover:text-slate-200 hover:bg-slate-800",
                 )}
                 title="List view"
               >
