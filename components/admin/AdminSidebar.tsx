@@ -69,7 +69,7 @@ export const NAV_SECTIONS: NavSection[] = [
         permission: "SUBSCRIPTION_MANAGE",
       },
       {
-        label: "Enterprise Plan",
+        label: "Custom Plans",
         href: "/admin/enterprise-plan",
         icon: ShieldCheck,
       },

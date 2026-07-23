@@ -68,8 +68,7 @@ export function MarkdownEditor({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between">
-        <label className="text-sm text-slate-300">Caption</label>
+      <div className="flex items-center justify-end">
         <div className="flex gap-1 border border-slate-700 rounded-md overflow-hidden">
           <button
             type="button"

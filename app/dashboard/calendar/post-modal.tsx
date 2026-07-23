@@ -184,6 +184,7 @@ export default function PostModal({
       setAssets([]);
       setAssetIds([]);
       setHashtagsInput("");
+      setSelectedFiles([]);
     }
   }, [open]);
 

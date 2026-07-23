@@ -19,9 +19,9 @@ function SignupPageInner() {
   useEffect(() => {
     const plan = searchParams.get("plan");
     if (!plan) {
-      setError("Please select a plan to continue. Redirecting to pricing...");
+      setError("Please select a plan to continue. Redirecting to plans...");
       const timer = setTimeout(() => {
-        router.push("/pricing");
+        router.push("/plan");
       }, 2500);
       return () => clearTimeout(timer);
     }
@@ -51,9 +51,9 @@ function SignupPageInner() {
     if (!pendingPlanCode) {
       setError("Please select a plan to continue.");
       setSubmitting(false);
-      // Redirect to pricing after a short delay
+      // Redirect to plan page after a short delay
       setTimeout(() => {
-        window.location.href = "/pricing";
+        window.location.href = "/plan";
       }, 2000);
       return;
     }
