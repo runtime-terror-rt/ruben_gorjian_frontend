@@ -642,7 +642,7 @@ export default function AdminPostsPage() {
         );
       case "DRAFT":
         return (
-          <Badge className="bg-slate-500/20 text-slate-400 border-slate-500/30">
+          <Badge className="bg-slate-500/20 text-[#6b6b6b] border-slate-500/30">
             Draft
           </Badge>
         );
@@ -667,8 +667,8 @@ export default function AdminPostsPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Post Management</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-semibold text-[#14110c]">Post Management</h1>
+          <p className="text-sm text-[#6b6b6b]">
             Monitor and manage all scheduled content across all users.
           </p>
         </div>
@@ -677,7 +677,7 @@ export default function AdminPostsPage() {
           size="sm"
           onClick={() => fetchPosts()}
           disabled={loading}
-          className="border-slate-700 hover:bg-slate-800 text-slate-300"
+          className="border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c]"
         >
           <RefreshCcw
             className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -695,17 +695,17 @@ export default function AdminPostsPage() {
         initialFilters={filters}
       />
 
-      <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-        <CardHeader className="pb-3 border-b border-slate-800">
+      <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm">
+        <CardHeader className="pb-3 border-b border-[#d9d4c9]">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <FileText className="h-5 w-5 text-lime-400" />
+            <FileText className="h-5 w-5 text-[#b08d3e]" />
             All Posts
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-slate-950/50">
-              <TableRow className="border-slate-800 hover:bg-transparent">
+            <TableHeader className="bg-[#faf8f3]">
+              <TableRow className="border-[#d9d4c9] hover:bg-transparent">
                 <TableHead className="w-[80px]">Media</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Caption / Title</TableHead>
@@ -721,7 +721,7 @@ export default function AdminPostsPage() {
                 <TableRow>
                   <TableCell colSpan={8} className="h-48 text-center">
                     <div className="flex flex-col items-center gap-2 text-slate-500">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#b08d3e] border-t-transparent" />
                       Loading posts...
                     </div>
                   </TableCell>
@@ -757,10 +757,10 @@ export default function AdminPostsPage() {
                   return (
                     <TableRow
                       key={post.id}
-                      className="border-slate-800 hover:bg-slate-800/30 transition-colors group"
+                      className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group"
                     >
                       <TableCell>
-                        <div className="h-12 w-12 rounded-lg bg-slate-800 overflow-hidden relative border border-slate-700 group-hover:border-slate-600 transition-colors">
+                        <div className="h-12 w-12 rounded-lg bg-[#e6e1d8] overflow-hidden relative border border-[#d9d4c9] group-hover:border-[#d9d4c9] transition-colors">
                           {mediaUrl ? (
                             <Image
                               src={mediaUrl}
@@ -779,7 +779,7 @@ export default function AdminPostsPage() {
                       </TableCell>
                       <TableCell>
                         {post.scheduleType === "PHOTO_SESSION" ? (
-                          <Badge className="bg-lime-400/10 text-lime-400 border-lime-400/20 gap-1">
+                          <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20 gap-1">
                             <Calendar className="h-3 w-3" /> Photo
                           </Badge>
                         ) : post.scheduleType === "VIDEO_SESSION" ? (
@@ -787,14 +787,14 @@ export default function AdminPostsPage() {
                             <Clock className="h-3 w-3" /> Video
                           </Badge>
                         ) : (
-                          <Badge className="bg-slate-800 text-slate-400 border-slate-700 gap-1">
+                          <Badge className="bg-[#e6e1d8] text-[#6b6b6b] border-[#d9d4c9] gap-1">
                             <FileText className="h-3 w-3" /> Post
                           </Badge>
                         )}
                       </TableCell>
                       <TableCell className="max-w-xs">
                         <div className="flex flex-col gap-0.5">
-                          <div className="line-clamp-2 text-sm text-slate-200 font-medium">
+                          <div className="line-clamp-2 text-sm text-[#14110c] font-medium">
                             {post.session?.title ||
                               post.sessionTitle ||
                               post.caption || (
@@ -812,7 +812,7 @@ export default function AdminPostsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-slate-200">
+                          <span className="text-sm font-medium text-[#14110c]">
                             {post.owner?.name ||
                               post.user?.fullName ||
                               post.user?.name ||
@@ -849,7 +849,7 @@ export default function AdminPostsPage() {
                               <Badge
                                 key={`${post.id}-${platform}-${idx}`}
                                 variant="outline"
-                                className="text-[10px] py-0 px-1.5 border-slate-700 bg-slate-900 text-slate-400 uppercase inline-flex items-center gap-1"
+                                className="text-[10px] py-0 px-1.5 border-[#d9d4c9] bg-[#ffffff] text-[#6b6b6b] uppercase inline-flex items-center gap-1"
                               >
                                 {Icon ? <Icon className="h-3 w-3" /> : null}
                                 {platform || "Unknown"}
@@ -896,12 +896,12 @@ export default function AdminPostsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <div className="text-sm font-medium text-slate-200">
+                          <div className="text-sm font-medium text-[#14110c]">
                             {post.scheduledFor 
                               ? fromUTC(post.scheduledFor, userTimezone).format("MMM D, YYYY")
                               : "Pending"}
                           </div>
-                          <div className="text-xs text-slate-400 flex items-center gap-1">
+                          <div className="text-xs text-[#6b6b6b] flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {post.scheduledFor 
                               ? fromUTC(post.scheduledFor, userTimezone).format("h:mm A")
@@ -918,17 +918,17 @@ export default function AdminPostsPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-8 border-slate-700 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center gap-1 px-3"
+                              className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] flex items-center gap-1 px-3"
                             >
                               Action <ChevronDown className="h-3 w-3" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"
-                            className="w-40 bg-slate-900 border-slate-800 text-slate-300"
+                            className="w-40 bg-[#ffffff] border-[#d9d4c9] text-[#14110c]"
                           >
                             <DropdownMenuItem
-                              className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
+                              className="hover:bg-[#e6e1d8] focus:bg-[#e6e1d8] cursor-pointer"
                               onClick={() => handleViewPost(post.id)}
                             >
                               <Eye className="h-4 w-4 mr-2" />
@@ -936,7 +936,7 @@ export default function AdminPostsPage() {
                             </DropdownMenuItem>
                             {post.status !== "POSTED" && (
                               <DropdownMenuItem
-                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer"
+                                className="hover:bg-[#e6e1d8] focus:bg-[#e6e1d8] cursor-pointer"
                                 onClick={() => handleEditPost(post.id)}
                               >
                                 <Calendar className="h-4 w-4 mr-2" />
@@ -945,7 +945,7 @@ export default function AdminPostsPage() {
                             )}
                             {post.status !== "POSTED" && (
                               <DropdownMenuItem
-                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-lime-400"
+                                className="hover:bg-[#e6e1d8] focus:bg-[#e6e1d8] cursor-pointer text-[#b08d3e]"
                                 onClick={() => handlePublishPost(post.id)}
                               >
                                 <Send className="h-4 w-4 mr-2" />
@@ -972,7 +972,7 @@ export default function AdminPostsPage() {
 
         {/* ── Pagination Footer ── */}
         {totalCount > 0 && (
-          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
+          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3]">
             <div className="text-xs text-slate-500 font-medium">
               Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalCount)} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} records
             </div>
@@ -982,11 +982,11 @@ export default function AdminPostsPage() {
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage <= 1}
-                className="bg-slate-900 border-slate-800 h-8 px-2"
+                className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="text-xs text-slate-400 px-2">
+              <span className="text-xs text-[#6b6b6b] px-2">
                 Page {currentPage} of {totalPages}
               </span>
               <Button
@@ -996,7 +996,7 @@ export default function AdminPostsPage() {
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage >= totalPages}
-                className="bg-slate-900 border-slate-800 h-8 px-2"
+                className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

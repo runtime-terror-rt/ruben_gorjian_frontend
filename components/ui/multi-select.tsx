@@ -93,13 +93,13 @@ export function MultiSelect({
         >
           <div className="flex flex-wrap gap-1">
             {selected.length === 0 ? (
-              <span className="text-slate-400">{placeholder}</span>
+              <span className="text-[#6b6b6b]">{placeholder}</span>
             ) : (
               selectedOptions.map((option) => (
                 <Badge
                   key={option.value}
                   variant="secondary"
-                  className="mr-1 bg-slate-700 text-slate-200"
+                  className="mr-1 bg-[#e6e1d8] text-[#14110c]"
                 >
                   {option.thumbnail && (
                     <Image
@@ -113,7 +113,7 @@ export function MultiSelect({
                   )}
                   {option.label}
                   {option.badge && (
-                    <span className="ml-1 text-xs text-slate-400">({option.badge})</span>
+                    <span className="ml-1 text-xs text-[#6b6b6b]">({option.badge})</span>
                   )}
                   <button
                     className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -128,7 +128,7 @@ export function MultiSelect({
                     }}
                     onClick={(e) => handleRemove(option.value, e)}
                   >
-                    <X className="h-3 w-3 text-slate-400 hover:text-slate-200" />
+                    <X className="h-3 w-3 text-[#6b6b6b] hover:text-[#14110c]" />
                   </button>
                 </Badge>
               ))
@@ -167,7 +167,7 @@ export function MultiSelect({
                 <div className="flex-1">
                   {option.label}
                   {option.badge && (
-                    <span className="ml-2 text-xs text-slate-400">({option.badge})</span>
+                    <span className="ml-2 text-xs text-[#6b6b6b]">({option.badge})</span>
                   )}
                 </div>
               </CommandItem>

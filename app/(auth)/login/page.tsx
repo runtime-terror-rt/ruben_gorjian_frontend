@@ -73,7 +73,7 @@ function LoginPageInner() {
           <div className="space-y-1">
             <label
               htmlFor="email"
-              className="text-xs font-semibold uppercase tracking-wide "
+              className="text-xs font-bold uppercase tracking-wide text-[#14110c]"
             >
               Email
             </label>
@@ -82,7 +82,7 @@ function LoginPageInner() {
               name="email"
               type="email"
               required
-              className="w-full rounded-lg border border-primary px-3 py-2 text-sm outline-none ring-primary focus:border-primary focus:ring-2"
+              className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-sm outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e]"
               onChange={(e) => setEmailValue(e.target.value)}
             />
           </div>
@@ -90,7 +90,7 @@ function LoginPageInner() {
           <div className="space-y-1">
             <label
               htmlFor="password"
-              className="text-xs font-semibold uppercase tracking-wide"
+              className="text-xs font-bold uppercase tracking-wide text-[#14110c]"
             >
               Password
             </label>
@@ -100,11 +100,11 @@ function LoginPageInner() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 required
-                className="w-full rounded-lg border border-primary px-3 py-2 text-sm outline-none ring-primary0 focus:border-primary focus:ring-2 pr-10"
+                className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-sm outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e] pr-10"
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-primary/50 hover:text-primary transition-colors focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6b6b] hover:text-[#14110c] transition-colors focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -119,7 +119,7 @@ function LoginPageInner() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition disabled:cursor-not-allowed disabled:opacity-70"
+            className="w-full inline-flex items-center justify-center rounded-lg bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70"
           >
             {submitting ? "Signing in..." : "Sign in"}
           </button>
@@ -128,7 +128,7 @@ function LoginPageInner() {
         <div className="mt-6">
           <div className="relative my-3">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-800" />
+              <span className="w-full border-t border-[#d9d4c9]" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-primary">or</span>
@@ -137,15 +137,14 @@ function LoginPageInner() {
           <GoogleLoginButton redirect={redirect} />
         </div>
 
-        <p className="mt-4 text-sm text-primary text-center">
+        <p className="mt-4 text-sm text-[#14110c] text-center">
           Don&apos;t have an account?{" "}
           {/* OLD: href={`/signup?redirect=${encodeURIComponent(redirect)}`} */}
           <Link
-            className="text-primary underline underline-offset-2"
-            href={`/signup?plan=${
-              searchParams.get("plan") || 
+            className="text-[#b08d3e] hover:text-[#8a6d28] font-semibold underline underline-offset-2"
+            href={`/signup?plan=${searchParams.get("plan") ||
               (redirect.includes("plan=") ? redirect.split("plan=")[1].split("&")[0] : "")
-            }&returnTo=${encodeURIComponent(redirect)}`}
+              }&returnTo=${encodeURIComponent(redirect)}`}
           >
             Sign up
           </Link>
@@ -168,7 +167,7 @@ function LoginPageInner() {
                 setError("Unable to resend verification email.");
               }
             }}
-            className="mt-4 w-full inline-flex items-center justify-center rounded-full border border-primary px-5 py-2 text-sm font-semibold text-slate-100 "
+            className="mt-4 w-full inline-flex items-center justify-center rounded-full border border-primary px-5 py-2 text-sm font-semibold text-[#14110c] "
           >
             Resend verification email
           </button>

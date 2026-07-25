@@ -512,8 +512,8 @@ export default function ScheduleVisitPage() {
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-4xl font-black text-white tracking-tight">
-              Session <span className="text-lime-400">Scheduling</span>
+            <h1 className="text-4xl font-black text-[#14110c] tracking-tight">
+              Session <span className="text-[#b08d3e]">Scheduling</span>
             </h1>
             {isAdmin && (
               <div className="px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full flex items-center gap-2">
@@ -532,13 +532,13 @@ export default function ScheduleVisitPage() {
                 "width=800,height=700,scrollbars=yes"
               );
             }}
-            className="bg-[#006BFF] hover:bg-[#005BE6] text-white shadow-[0_0_15px_rgba(0,107,255,0.3)] transition-all font-bold h-12 px-6 rounded-xl w-full md:w-auto"
+            className="bg-[#006BFF] hover:bg-[#005BE6] text-[#14110c] shadow-[0_0_15px_rgba(0,107,255,0.3)] transition-all font-bold h-12 px-6 rounded-xl w-full md:w-auto"
           >
             <CalendarIcon className="mr-2 h-5 w-5" />
             Schedule on Calendly
           </Button> */}
         </div>
-        <p className="text-slate-400 text-lg">
+        <p className="text-[#6b6b6b] text-lg">
           Book your professional photoshoot or video session. One slot per day
           for maximum quality.
         </p>
@@ -547,14 +547,14 @@ export default function ScheduleVisitPage() {
       <div className="grid gap-8 lg:grid-cols-12 items-start">
         {/* Left Column: Calendar Selection */}
         <div className="lg:col-span-8 space-y-6">
-          <Card className="border-slate-800 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl">
-            <CardHeader className="border-b border-slate-800 bg-slate-800/20 px-6 py-4">
+          <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-xl overflow-hidden shadow-2xl">
+            <CardHeader className="border-b border-[#d9d4c9] bg-[#e6e1d8]/20 px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-lime-400/10 rounded-lg">
-                    <CalendarIcon className="h-5 w-5 text-lime-400" />
+                  <div className="p-2 bg-[#b08d3e]/10 rounded-lg">
+                    <CalendarIcon className="h-5 w-5 text-[#b08d3e]" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-white">
+                  <CardTitle className="text-xl font-bold text-[#14110c]">
                     Select Date
                   </CardTitle>
                 </div>
@@ -563,18 +563,18 @@ export default function ScheduleVisitPage() {
                     variant="outline"
                     size="icon"
                     onClick={handlePrevMonth}
-                    className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white h-9 w-9 rounded-lg"
+                    className="border-[#d9d4c9] bg-[#e6e1d8]/50 hover:bg-[#e6e1d8] text-[#14110c] h-9 w-9 rounded-lg"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <span className="text-white font-semibold min-w-[120px] text-center">
+                  <span className="text-[#14110c] font-semibold min-w-[120px] text-center">
                     {currentDate.format("MMMM YYYY")}
                   </span>
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={handleNextMonth}
-                    className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white h-9 w-9 rounded-lg"
+                    className="border-[#d9d4c9] bg-[#e6e1d8]/50 hover:bg-[#e6e1d8] text-[#14110c] h-9 w-9 rounded-lg"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
@@ -615,24 +615,24 @@ export default function ScheduleVisitPage() {
                         "relative flex flex-col items-center justify-center aspect-square rounded-xl transition-all duration-300 group",
                         !isCurrentMonth && "opacity-20 cursor-default",
                         canSelect &&
-                          "hover:bg-lime-400/10 hover:border-lime-400/30 border border-transparent",
+                          "hover:bg-[#b08d3e]/10 hover:border-[#b08d3e]/30 border border-transparent",
                         isSelected &&
-                          "bg-lime-400 text-slate-900 font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-lime-400 scale-105 z-10",
+                          "bg-[#b08d3e] text-[#14110c] font-bold shadow-[0_0_25px_rgba(163,230,53,0.4)] border-[#b08d3e] scale-105 z-10",
                         !isSelected &&
                           isCurrentMonth &&
                           !isPast &&
-                          "bg-slate-800/40 text-slate-300 hover:scale-105",
+                          "bg-[#e6e1d8]/40 text-[#14110c] hover:scale-105",
                         isToday &&
                           !isSelected &&
-                          "border-lime-400/50 text-lime-400 font-bold",
+                          "border-[#b08d3e]/50 text-[#b08d3e] font-bold",
                         isPast &&
                           isCurrentMonth &&
-                          "bg-slate-900/20 text-slate-700 cursor-not-allowed",
+                          "bg-[#ffffff]/20 text-slate-700 cursor-not-allowed",
                       )}
                     >
                       <span className="text-sm">{day.date()}</span>
                       {sessionCount > 0 && (
-                        <div className="absolute top-1 right-1 bg-indigo-500 text-white text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                        <div className="absolute top-1 right-1 bg-indigo-500 text-[#14110c] text-[8px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
                           {sessionCount}
                         </div>
                       )}
@@ -641,13 +641,13 @@ export default function ScheduleVisitPage() {
                 })}
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-6 text-[10px] text-slate-500 border-t border-slate-800/50 pt-6 uppercase font-bold tracking-widest">
+              <div className="mt-8 flex flex-wrap gap-6 text-[10px] text-slate-500 border-t border-[#d9d4c9]/50 pt-6 uppercase font-bold tracking-widest">
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-slate-800" />
+                  <div className="h-2 w-2 rounded-full bg-[#e6e1d8]" />
                   <span>Available</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-lime-400 shadow-[0_0_8px_rgba(163,230,53,0.6)]" />
+                  <div className="h-2 w-2 rounded-full bg-[#b08d3e] shadow-[0_0_8px_rgba(163,230,53,0.6)]" />
                   <span>Selected</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -663,17 +663,17 @@ export default function ScheduleVisitPage() {
         <div className="lg:col-span-4 space-y-6">
           <Card
             className={clsx(
-              "border-slate-800 bg-slate-900/40 backdrop-blur-xl border-l-4 transition-all duration-500 shadow-2xl",
+              "border-[#d9d4c9] bg-[#ffffff] backdrop-blur-xl border-l-4 transition-all duration-500 shadow-2xl",
               editingSession ? "border-l-indigo-400" : "border-l-lime-400",
             )}
           >
             <CardHeader className="px-6 py-6 pb-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-2xl font-bold text-white">
+                  <CardTitle className="text-2xl font-bold text-[#14110c]">
                     {editingSession ? "Edit Session" : "Session Details"}
                   </CardTitle>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-[#6b6b6b] text-sm">
                     {editingSession
                       ? "Update your session requirements."
                       : "Fill in the requirements for your booking."}
@@ -684,7 +684,7 @@ export default function ScheduleVisitPage() {
                     variant="ghost"
                     size="sm"
                     onClick={resetForm}
-                    className="text-slate-500 hover:text-white"
+                    className="text-slate-500 hover:text-[#14110c]"
                   >
                     Cancel
                   </Button>
@@ -694,7 +694,7 @@ export default function ScheduleVisitPage() {
             <CardContent className="p-6">
               <form onSubmit={onSubmit} className="space-y-6">
                 <div className="space-y-4">
-                  <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]">
+                  <Label className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em]">
                     Session Type
                   </Label>
                   <div className="grid grid-cols-2 gap-4">
@@ -704,15 +704,15 @@ export default function ScheduleVisitPage() {
                       className={clsx(
                         "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
                         sessionType === "PHOTO_SESSION"
-                          ? "bg-lime-400/10 border-lime-400 text-white"
-                          : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300",
+                          ? "bg-[#b08d3e]/10 border-[#b08d3e] text-[#14110c]"
+                          : "bg-[#e6e1d8]/50 border-transparent text-slate-500 hover:border-[#d9d4c9] hover:text-[#14110c]",
                       )}
                     >
                       <Camera
                         className={clsx(
                           "h-8 w-8",
                           sessionType === "PHOTO_SESSION"
-                            ? "text-lime-400"
+                            ? "text-[#b08d3e]"
                             : "text-slate-600",
                         )}
                       />
@@ -733,8 +733,8 @@ export default function ScheduleVisitPage() {
                       className={clsx(
                         "flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300 relative",
                         sessionType === "VIDEO_SESSION"
-                          ? "bg-lime-400/10 border-lime-400 text-white"
-                          : "bg-slate-800/50 border-transparent text-slate-500 hover:border-slate-700 hover:text-slate-300",
+                          ? "bg-[#b08d3e]/10 border-[#b08d3e] text-[#14110c]"
+                          : "bg-[#e6e1d8]/50 border-transparent text-slate-500 hover:border-[#d9d4c9] hover:text-[#14110c]",
                         !hasVideoAddon &&
                           !isAdmin &&
                           "opacity-50 hover:border-transparent hover:text-slate-500 cursor-not-allowed",
@@ -744,7 +744,7 @@ export default function ScheduleVisitPage() {
                         className={clsx(
                           "h-8 w-8",
                           sessionType === "VIDEO_SESSION"
-                            ? "text-lime-400"
+                            ? "text-[#b08d3e]"
                             : "text-slate-600",
                         )}
                       />
@@ -765,9 +765,9 @@ export default function ScheduleVisitPage() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="title"
-                        className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
+                        className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
                       >
-                        <CheckCircle2 className="h-3 w-3 text-lime-400" />{" "}
+                        <CheckCircle2 className="h-3 w-3 text-[#b08d3e]" />{" "}
                         Session Title
                       </Label>
                       <Input
@@ -775,16 +775,16 @@ export default function ScheduleVisitPage() {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. Wedding Shoot"
-                        className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50 transition-all"
+                        className="bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] h-12 rounded-xl focus:ring-[#b08d3e]/50 transition-all"
                       />
                     </div>
                     <div className="space-y-4">
-                      <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                        <Clock className="h-3 w-3 text-lime-400" /> Select Time
+                      <Label className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <Clock className="h-3 w-3 text-[#b08d3e]" /> Select Time
                         Slot
                       </Label>
                       {!selectedDate ? (
-                        <div className="p-4 bg-slate-800/30 border border-dashed border-slate-700 rounded-xl text-center">
+                        <div className="p-4 bg-[#e6e1d8]/30 border border-dashed border-[#d9d4c9] rounded-xl text-center">
                           <p className="text-xs text-slate-500">
                             Please select a date first
                           </p>
@@ -800,10 +800,10 @@ export default function ScheduleVisitPage() {
                               className={clsx(
                                 "py-2 px-1 rounded-lg text-[11px] font-bold transition-all border",
                                 selectedTime === slot.time
-                                  ? "bg-lime-400 border-lime-400 text-slate-900 shadow-[0_0_15px_rgba(163,230,53,0.3)]"
+                                  ? "bg-[#b08d3e] border-[#b08d3e] text-[#14110c] shadow-[0_0_15px_rgba(163,230,53,0.3)]"
                                   : slot.available
-                                    ? "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-lime-400/50 hover:bg-lime-400/5"
-                                    : "bg-slate-900/20 border-transparent text-slate-600 cursor-not-allowed opacity-50",
+                                    ? "bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] hover:border-[#b08d3e]/50 hover:bg-[#b08d3e]/5"
+                                    : "bg-[#ffffff]/20 border-transparent text-slate-600 cursor-not-allowed opacity-50",
                               )}
                             >
                               {slot.label}
@@ -812,9 +812,9 @@ export default function ScheduleVisitPage() {
                         </div>
                       )}
                       {selectedTime && (
-                        <div className="flex items-center gap-2 px-3 py-2 bg-lime-400/10 border border-lime-400/20 rounded-lg">
-                          <Clock className="h-3 w-3 text-lime-400" />
-                          <span className="text-xs font-bold text-lime-400">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-[#b08d3e]/10 border border-[#b08d3e]/20 rounded-lg">
+                          <Clock className="h-3 w-3 text-[#b08d3e]" />
+                          <span className="text-xs font-bold text-[#b08d3e]">
                             Selected:{" "}
                             {availableSlots.find((s) => s.time === selectedTime)
                               ?.label || selectedTime}
@@ -827,9 +827,9 @@ export default function ScheduleVisitPage() {
                   <div className="space-y-2">
                     <Label
                       htmlFor="duration"
-                      className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
+                      className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
                     >
-                      <Loader2 className="h-3 w-3 text-lime-400" /> Duration
+                      <Loader2 className="h-3 w-3 text-[#b08d3e]" /> Duration
                       (Minutes)
                     </Label>
                     <div className="relative group">
@@ -850,7 +850,7 @@ export default function ScheduleVisitPage() {
                         onBlur={() => {
                           if (duration < 15) setDuration(15);
                         }}
-                        className="bg-slate-800/50 border-slate-700 text-white h-12 rounded-xl focus:ring-lime-400/50 pr-12"
+                        className="bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] h-12 rounded-xl focus:ring-[#b08d3e]/50 pr-12"
                       />
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500 uppercase">
                         Min
@@ -861,9 +861,9 @@ export default function ScheduleVisitPage() {
                   <div className="space-y-2">
                     <Label
                       htmlFor="notes"
-                      className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
+                      className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2"
                     >
-                      <CheckCircle2 className="h-3 w-3 text-lime-400" /> Notes /
+                      <CheckCircle2 className="h-3 w-3 text-[#b08d3e]" /> Notes /
                       Requirements
                     </Label>
                     <Textarea
@@ -872,17 +872,17 @@ export default function ScheduleVisitPage() {
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Share any specific requirements or location details..."
                       rows={4}
-                      className="bg-slate-800/50 border-slate-700 text-white rounded-xl focus:ring-lime-400/50 resize-none transition-all"
+                      className="bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] rounded-xl focus:ring-[#b08d3e]/50 resize-none transition-all"
                     />
                   </div>
 
                   {sessionType === "PHOTO_SESSION" && (
                     <div className="space-y-2">
-                      <Label className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                        <Camera className="h-3 w-3 text-lime-400" /> Upload
+                      <Label className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <Camera className="h-3 w-3 text-[#b08d3e]" /> Upload
                         Photos / Videos (Optional)
                       </Label>
-                      <div className="rounded-lg border border-dashed border-slate-700 bg-slate-800/30 p-3">
+                      <div className="rounded-lg border border-dashed border-[#d9d4c9] bg-[#e6e1d8]/30 p-3">
                         {!editingSession && (
                           <>
                             <input
@@ -891,13 +891,13 @@ export default function ScheduleVisitPage() {
                               multiple
                               onChange={(e) => handleFiles(e.target.files)}
                               className={clsx(
-                                "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                                "text-xs text-[#14110c] file:mr-3 file:rounded-md file:border file:border-[#d9d4c9] file:bg-[#e6e1d8] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[#14110c] hover:file:bg-[#e6e1d8]",
                               )}
                             />
-                            <div className="mt-2 text-xs text-slate-400">
+                            <div className="mt-2 text-xs text-[#6b6b6b]">
                               {uploading && <span>Uploading...</span>}
                               {assets.length > 0 && !uploading && (
-                                <span className="text-lime-300">
+                                <span className="text-[#8a6d28]">
                                   {assets.length} file(s) uploaded
                                 </span>
                               )}
@@ -917,9 +917,9 @@ export default function ScheduleVisitPage() {
                                 <label
                                   key={asset.id}
                                   className={clsx(
-                                    "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50",
+                                    "flex items-center gap-2 text-xs text-[#14110c] p-1.5 rounded cursor-pointer hover:bg-[#e6e1d8]/50",
                                     isSelected &&
-                                      "bg-slate-800/70 border border-lime-400/50",
+                                      "bg-[#e6e1d8]/70 border border-[#b08d3e]/50",
                                   )}
                                 >
                                   <input
@@ -954,7 +954,7 @@ export default function ScheduleVisitPage() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
-                      className="pt-4 space-y-4 border-t border-slate-800 mt-4"
+                      className="pt-4 space-y-4 border-t border-[#d9d4c9] mt-4"
                     >
                       <div className="flex items-center gap-2 text-amber-500">
                         <ShieldCheck className="h-4 w-4" />
@@ -966,7 +966,7 @@ export default function ScheduleVisitPage() {
                       <div className="space-y-2">
                         <Label
                           htmlFor="userId"
-                          className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]"
+                          className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em]"
                         >
                           Client User ID (Optional)
                         </Label>
@@ -975,14 +975,14 @@ export default function ScheduleVisitPage() {
                           value={targetUserId}
                           onChange={(e) => setTargetUserId(e.target.value)}
                           placeholder="e.g. user_123"
-                          className="bg-amber-500/5 border-amber-500/20 text-white h-12 rounded-xl focus:ring-amber-500/50"
+                          className="bg-amber-500/5 border-amber-500/20 text-[#14110c] h-12 rounded-xl focus:ring-amber-500/50"
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label
                           htmlFor="adminReason"
-                          className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]"
+                          className="text-[#14110c] text-[10px] font-black uppercase tracking-[0.2em]"
                         >
                           Admin Reason / Note
                         </Label>
@@ -991,7 +991,7 @@ export default function ScheduleVisitPage() {
                           value={adminReason}
                           onChange={(e) => setAdminReason(e.target.value)}
                           placeholder="e.g. Rescheduled by request"
-                          className="bg-amber-500/5 border-amber-500/20 text-white h-12 rounded-xl focus:ring-amber-500/50"
+                          className="bg-amber-500/5 border-amber-500/20 text-[#14110c] h-12 rounded-xl focus:ring-amber-500/50"
                         />
                       </div>
                     </motion.div>
@@ -1010,9 +1010,9 @@ export default function ScheduleVisitPage() {
                     "w-full h-14 text-lg font-black tracking-widest uppercase transition-all duration-500 rounded-2xl",
                     selectedDate && (!isDayBlocked() || editingSession)
                       ? editingSession
-                        ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
-                        : "bg-lime-400 hover:bg-lime-300 text-slate-900 shadow-[0_10px_30px_rgba(163,230,53,0.3)]"
-                      : "bg-slate-800 text-slate-500 cursor-not-allowed",
+                        ? "bg-indigo-500 hover:bg-indigo-400 text-[#14110c] shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
+                        : "bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] shadow-[0_10px_30px_rgba(163,230,53,0.3)]"
+                      : "bg-[#e6e1d8] text-slate-500 cursor-not-allowed",
                   )}
                 >
                   {submitting ? (
@@ -1052,14 +1052,14 @@ export default function ScheduleVisitPage() {
       </div>
 
       {/* Bookings List (Moved below for better layout balance) */}
-      <Card className="border-slate-800 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-xl mt-8">
-        <CardHeader className="border-b border-slate-800 bg-slate-800/20 px-6 py-4">
+      <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-xl overflow-hidden shadow-xl mt-8">
+        <CardHeader className="border-b border-[#d9d4c9] bg-[#e6e1d8]/20 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-indigo-400/10 rounded-lg">
                 <History className="h-5 w-5 text-indigo-400" />
               </div>
-              <CardTitle className="text-xl font-bold text-white">
+              <CardTitle className="text-xl font-bold text-[#14110c]">
                 Your Bookings
               </CardTitle>
             </div>
@@ -1068,17 +1068,17 @@ export default function ScheduleVisitPage() {
         <CardContent className="p-0">
           {loadingSessions ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
+              <Loader2 className="h-8 w-8 text-[#b08d3e] animate-spin" />
               <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
                 Loading sessions...
               </p>
             </div>
           ) : userBookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-              <div className="p-4 bg-slate-800/50 rounded-full mb-4">
+              <div className="p-4 bg-[#e6e1d8]/50 rounded-full mb-4">
                 <CalendarDays className="h-8 w-8 text-slate-600" />
               </div>
-              <p className="text-slate-400 font-medium">
+              <p className="text-[#6b6b6b] font-medium">
                 No sessions scheduled yet.
               </p>
               <p className="text-slate-600 text-sm mt-1">
@@ -1086,15 +1086,15 @@ export default function ScheduleVisitPage() {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-800/50">
+            <div className="divide-y divide-[#d9d4c9]/50">
               {paginatedBookings.map((s) => (
                 <div
                   key={s.id}
                   className={clsx(
                     "group flex items-center justify-between p-4 transition-all duration-300",
                     editingSession?.id === s.id
-                      ? "bg-lime-400/5 border-l-4 border-lime-400"
-                      : "hover:bg-slate-800/30 border-l-4 border-transparent",
+                      ? "bg-[#b08d3e]/5 border-l-4 border-[#b08d3e]"
+                      : "hover:bg-[#e6e1d8]/30 border-l-4 border-transparent",
                   )}
                 >
                   <div className="flex items-center gap-4">
@@ -1113,17 +1113,17 @@ export default function ScheduleVisitPage() {
                       )}
                     </div>
                     <div>
-                      <h4 className="text-white font-bold">
+                      <h4 className="text-[#14110c] font-bold">
                         {s.session?.title ||
                           s.sessionTitle ||
                           "Untitled Session"}
                       </h4>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
+                        <span className="text-xs text-[#6b6b6b] flex items-center gap-1">
                           <CalendarIcon className="h-3 w-3" />
                           {fromUTC(s.scheduledAt, userTimezone).format("MMM D, YYYY")}
                         </span>
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
+                        <span className="text-xs text-[#6b6b6b] flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {fromUTC(s.scheduledAt, userTimezone).format("HH:mm")}
                         </span>
@@ -1135,7 +1135,7 @@ export default function ScheduleVisitPage() {
                               ? "bg-green-500/10 text-green-500"
                               : s.status?.toUpperCase() === "PENDING"
                                 ? "bg-amber-500/10 text-amber-500 animate-pulse"
-                                : "bg-slate-700/30 text-slate-500",
+                                : "bg-[#e6e1d8]/30 text-slate-500",
                           )}
                         >
                           {s.status}
@@ -1153,7 +1153,7 @@ export default function ScheduleVisitPage() {
                                   href={m.url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 group/media transition-transform hover:scale-110 active:scale-95"
+                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-[#d9d4c9] bg-[#e6e1d8] group/media transition-transform hover:scale-110 active:scale-95"
                                 >
                                   {m.mediaType === "IMAGE" ||
                                   m.mimeType?.startsWith("image/") ? (
@@ -1163,12 +1163,12 @@ export default function ScheduleVisitPage() {
                                       className="h-full w-full object-cover"
                                     />
                                   ) : (
-                                    <div className="h-full w-full flex items-center justify-center bg-slate-800">
-                                      <Video className="h-4 w-4 text-lime-400" />
+                                    <div className="h-full w-full flex items-center justify-center bg-[#e6e1d8]">
+                                      <Video className="h-4 w-4 text-[#b08d3e]" />
                                     </div>
                                   )}
                                   {i === 3 && (s.media?.length || 0) > 4 && (
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-[#14110c]">
                                       +{(s.media?.length || 0) - 4}
                                     </div>
                                   )}
@@ -1180,7 +1180,7 @@ export default function ScheduleVisitPage() {
                                   href={url}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 transition-transform hover:scale-110 active:scale-95"
+                                  className="relative h-10 w-10 rounded-lg overflow-hidden border border-[#d9d4c9] bg-[#e6e1d8] transition-transform hover:scale-110 active:scale-95"
                                 >
                                   <img
                                     src={url}
@@ -1188,7 +1188,7 @@ export default function ScheduleVisitPage() {
                                     className="h-full w-full object-cover"
                                   />
                                   {i === 3 && (s.assets?.length || 0) > 4 && (
-                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-white">
+                                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-[10px] font-bold text-[#14110c]">
                                       +{(s.assets?.length || 0) - 4}
                                     </div>
                                   )}
@@ -1200,7 +1200,7 @@ export default function ScheduleVisitPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     {isAdmin && (
-                      <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1 bg-[#e6e1d8]/80 p-1 rounded-lg border border-[#d9d4c9] opacity-0 group-hover:opacity-100 transition-opacity">
                         {["pending", "completed", "canceled"].map((status) => (
                           <Button
                             key={status}
@@ -1232,8 +1232,8 @@ export default function ScheduleVisitPage() {
                             className={clsx(
                               "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
                               s.status === status
-                                ? "bg-lime-400 text-slate-900"
-                                : "text-slate-500 hover:text-white hover:bg-slate-700",
+                                ? "bg-[#b08d3e] text-[#14110c]"
+                                : "text-slate-500 hover:text-[#14110c] hover:bg-[#e6e1d8]",
                             )}
                           >
                             {status === "SCHEDULED"
@@ -1249,7 +1249,7 @@ export default function ScheduleVisitPage() {
                       // variant="ghost"
                       size="sm"
                       onClick={() => handleEditSession(s)}
-                      className="h-9 text-slate-400 font-bold"
+                      className="h-9 text-[#6b6b6b] font-bold"
                     >
                       Edit
                     </Button>
@@ -1263,12 +1263,12 @@ export default function ScheduleVisitPage() {
                     variant="outline"
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage((p) => p - 1)}
-                    className="border-slate-700 text-white"
+                    className="border-[#d9d4c9] text-[#14110c]"
                   >
                     Prev
                   </Button>
 
-                  <div className="text-slate-400 text-sm">
+                  <div className="text-[#6b6b6b] text-sm">
                     Page {currentPage} of {totalPages}
                   </div>
 
@@ -1276,7 +1276,7 @@ export default function ScheduleVisitPage() {
                     variant="outline"
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage((p) => p + 1)}
-                    className="border-slate-700 text-white"
+                    className="border-[#d9d4c9] text-[#14110c]"
                   >
                     Next
                   </Button>

@@ -88,8 +88,8 @@ export default function CouponUsagesPage() {
       header: "User",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <User className="h-3 w-3 text-slate-400" />
+          <div className="flex items-center gap-2 text-[#14110c] font-medium">
+            <User className="h-3 w-3 text-[#6b6b6b]" />
             {row.original.userName || "Anonymous"}
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-500">
@@ -103,7 +103,7 @@ export default function CouponUsagesPage() {
       accessorKey: "usedAt",
       header: "Used At",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2 text-sm text-slate-300">
+        <div className="flex items-center gap-2 text-sm text-[#14110c]">
           <Calendar className="h-4 w-4 text-slate-500" />
           {format(new Date(row.original.usedAt), "MMM d, yyyy HH:mm:ss")}
         </div>
@@ -113,7 +113,7 @@ export default function CouponUsagesPage() {
       accessorKey: "id",
       header: "Usage ID",
       cell: ({ row }) => (
-        <code className="text-[10px] text-slate-500 font-mono bg-slate-800/50 px-1.5 py-0.5 rounded border border-slate-700/50">
+        <code className="text-[10px] text-slate-500 font-mono bg-[#e6e1d8]/50 px-1.5 py-0.5 rounded border border-[#d9d4c9]/50">
           {row.original.id}
         </code>
       ),
@@ -144,23 +144,23 @@ export default function CouponUsagesPage() {
           variant="ghost" 
           size="icon" 
           onClick={() => router.back()}
-          className="rounded-full h-10 w-10 text-slate-400 hover:text-white hover:bg-slate-800"
+          className="rounded-full h-10 w-10 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8]"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-              <History className="h-6 w-6 text-lime-400" />
+            <h1 className="text-2xl font-bold text-[#14110c] flex items-center gap-2">
+              <History className="h-6 w-6 text-[#b08d3e]" />
               Coupon Usages
             </h1>
             {data?.coupon && (
-              <Badge variant="outline" className="bg-lime-400/10 text-lime-400 border-lime-400/20 px-3 py-1 font-mono text-base">
+              <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20 px-3 py-1 font-mono text-base">
                 {data.coupon.code}
               </Badge>
             )}
           </div>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[#6b6b6b] mt-1">
             Viewing redemption history for this discount code.
           </p>
         </div>
@@ -169,21 +169,21 @@ export default function CouponUsagesPage() {
       {/* Stats Summary */}
       {data?.coupon && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-1">
+          <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
             <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Total Redemptions</p>
-            <p className="text-2xl font-bold text-white">{data.coupon.usedCount}</p>
+            <p className="text-2xl font-bold text-[#14110c]">{data.coupon.usedCount}</p>
           </div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-1">
+          <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
             <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Remaining Uses</p>
-            <p className="text-2xl font-bold text-white">{Math.max(0, data.coupon.maxUses - data.coupon.usedCount)}</p>
+            <p className="text-2xl font-bold text-[#14110c]">{Math.max(0, data.coupon.maxUses - data.coupon.usedCount)}</p>
           </div>
-          <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 space-y-1">
+          <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
             <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Utilization</p>
             <div className="flex items-center gap-3">
-              <p className="text-2xl font-bold text-white">{Math.round((data.coupon.usedCount / data.coupon.maxUses) * 100)}%</p>
-              <div className="h-2 flex-1 bg-slate-800 rounded-full overflow-hidden">
+              <p className="text-2xl font-bold text-[#14110c]">{Math.round((data.coupon.usedCount / data.coupon.maxUses) * 100)}%</p>
+              <div className="h-2 flex-1 bg-[#e6e1d8] rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-lime-500 transition-all"
+                  className="h-full bg-[#b08d3e] transition-all"
                   style={{ width: `${Math.min(100, (data.coupon.usedCount / data.coupon.maxUses) * 100)}%` }}
                 />
               </div>
@@ -193,13 +193,13 @@ export default function CouponUsagesPage() {
       )}
 
       {/* Usages Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
         {/* Table Filter */}
-        <div className="p-4 border-b border-slate-800 bg-slate-800/20 flex items-center gap-2">
+        <div className="p-4 border-b border-[#d9d4c9] bg-[#e6e1d8]/20 flex items-center gap-2">
           <Search className="h-4 w-4 text-slate-500" />
           <Input 
             placeholder="Filter by user email or name..."
-            className="h-9 bg-transparent border-none text-slate-300 focus-visible:ring-0 placeholder:text-slate-600 max-w-sm"
+            className="h-9 bg-transparent border-none text-[#14110c] focus-visible:ring-0 placeholder:text-slate-600 max-w-sm"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -207,17 +207,17 @@ export default function CouponUsagesPage() {
 
         {isLoading ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-lime-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
             <p className="text-slate-500 text-sm">Loading usage history...</p>
           </div>
         ) : (
           <>
             <Table>
-              <TableHeader className="bg-slate-800/50">
+              <TableHeader className="bg-[#e6e1d8]/50">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-slate-800">
+                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#d9d4c9]">
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-slate-400 font-semibold py-4">
+                      <TableHead key={header.id} className="text-[#6b6b6b] font-semibold py-4">
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
@@ -227,7 +227,7 @@ export default function CouponUsagesPage() {
               <TableBody>
                 {filteredUsages.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
+                    <TableRow key={row.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors">
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="py-4">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -247,7 +247,7 @@ export default function CouponUsagesPage() {
 
             {/* Pagination */}
             {data?.pagination && data.pagination.pages > 1 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t border-slate-800 bg-slate-800/20">
+              <div className="flex items-center justify-between px-4 py-4 border-t border-[#d9d4c9] bg-[#e6e1d8]/20">
                 <div className="text-xs text-slate-500">
                   Showing page {data.pagination.page} of {data.pagination.pages} ({data.pagination.total} total)
                 </div>
@@ -255,7 +255,7 @@ export default function CouponUsagesPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 border-slate-700 bg-slate-900 text-slate-300 hover:text-white"
+                    className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:text-[#14110c]"
                     disabled={page === 1}
                     onClick={() => setPage(p => p - 1)}
                   >
@@ -264,7 +264,7 @@ export default function CouponUsagesPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 border-slate-700 bg-slate-900 text-slate-300 hover:text-white"
+                    className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:text-[#14110c]"
                     disabled={page === data.pagination.pages}
                     onClick={() => setPage(p => p + 1)}
                   >

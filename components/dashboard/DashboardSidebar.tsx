@@ -146,30 +146,30 @@ export function DashboardSidebar({
         {/* Mobile Drawer */}
         <aside
           className={cn(
-            "fixed left-0 top-0 z-50 h-full w-64 transform bg-slate-900 border-r border-slate-800 transition-transform duration-300 ease-in-out lg:hidden flex flex-col min-h-0",
+            "fixed left-0 top-0 z-50 h-full w-64 transform bg-[#ffffff] border-r border-[#d9d4c9] transition-transform duration-300 ease-in-out lg:hidden flex flex-col min-h-0",
             isOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
           <div className="flex h-full flex-col min-h-0">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-[#d9d4c9] p-4 flex-shrink-0">
               <Link
                 href="/"
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               >
-                <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center">
-                  <span className="text-sm font-bold text-slate-900">T</span>
+                <div className="h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center">
+                  <span className="text-sm font-bold text-[#14110c]">T</span>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white">
+                  <div className="text-sm font-semibold text-[#14110c]">
                     Talexia
                   </div>
-                  <div className="text-xs text-slate-400">Dashboard</div>
+                  <div className="text-xs text-[#6b6b6b]">Dashboard</div>
                 </div>
               </Link>
               <button
                 onClick={onClose}
-                className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
                 aria-label="Close sidebar"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -196,14 +196,14 @@ export function DashboardSidebar({
                           className={cn(
                             "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                             active
-                              ? "bg-lime-400/10 text-lime-300"
-                              : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                              ? "bg-[#b08d3e]/10 text-[#8a6d28]"
+                              : "text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c]",
                           )}
                         >
                           <Icon className="h-5 w-5 flex-shrink-0" />
                           <span className="flex-1 text-left">{item.label}</span>
                           {item.badge && (
-                            <span className="rounded-full bg-lime-400 px-2 py-0.5 text-xs font-semibold text-slate-900">
+                            <span className="rounded-full bg-[#b08d3e] px-2 py-0.5 text-xs font-semibold text-[#14110c]">
                               {item.badge}
                             </span>
                           )}
@@ -216,10 +216,10 @@ export function DashboardSidebar({
             </nav>
 
             {/* Footer */}
-            <div className="border-t border-slate-800 p-4 space-y-2 flex-shrink-0">
+            <div className="border-t border-[#d9d4c9] p-4 space-y-2 flex-shrink-0">
               <button
                 onClick={() => handleNavClick("/faq")}
-                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
               >
                 <HelpCircle className="h-4 w-4" />
                 <span>Help & Support</span>
@@ -227,7 +227,7 @@ export function DashboardSidebar({
               {showUpgradePlan && (
                 <button
                   onClick={() => handleNavClick("/dashboard/billing")}
-                  className="w-full flex items-center gap-2 rounded-lg bg-lime-400/10 border border-lime-400/20 px-3 py-2 text-sm text-lime-300 hover:bg-lime-400/20"
+                  className="w-full flex items-center gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/20 px-3 py-2 text-sm text-[#8a6d28] hover:bg-[#b08d3e]/20"
                 >
                   <Zap className="h-4 w-4" />
                   <span>Upgrade Plan</span>
@@ -244,39 +244,39 @@ export function DashboardSidebar({
   return (
     <aside
       className={cn(
-        "hidden lg:flex fixed left-0 top-0 z-30 h-full min-h-0 flex-col border-r border-slate-800 bg-slate-900 transition-all duration-300",
+        "hidden lg:flex fixed left-0 top-0 z-30 h-full min-h-0 flex-col border-r border-[#d9d4c9] bg-[#ffffff] transition-all duration-300",
         isCollapsed ? "w-20" : "w-64",
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 p-4 h-16 flex-shrink-0">
+      <div className="flex items-center justify-between border-b border-[#d9d4c9] p-4 h-16 flex-shrink-0">
         {!isCollapsed ? (
           <Link
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-slate-900">T</span>
+            <div className="h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-bold text-[#14110c]">T</span>
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-white truncate">
+              <div className="text-sm font-semibold text-[#14110c] truncate">
                 Talexia
               </div>
-              <div className="text-xs text-slate-400 truncate">Dashboard</div>
+              <div className="text-xs text-[#6b6b6b] truncate">Dashboard</div>
             </div>
           </Link>
         ) : (
           <Link
             href="/"
-            className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center hover:opacity-80 transition-opacity"
+            className="mx-auto h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center hover:opacity-80 transition-opacity"
           >
-            <span className="text-sm font-bold text-slate-900">T</span>
+            <span className="text-sm font-bold text-[#14110c]">T</span>
           </Link>
         )}
         {!isCollapsed && (
           <button
             onClick={onToggleCollapse}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
             aria-label="Collapse sidebar"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -286,10 +286,10 @@ export function DashboardSidebar({
 
       {/* Collapsed Expand Button */}
       {isCollapsed && (
-        <div className="border-b border-slate-800 p-2">
+        <div className="border-b border-[#d9d4c9] p-2">
           <button
             onClick={onToggleCollapse}
-            className="w-full rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="w-full rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
             aria-label="Expand sidebar"
           >
             <ChevronRight className="h-5 w-5 mx-auto" />
@@ -317,8 +317,8 @@ export function DashboardSidebar({
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       active
-                        ? "bg-lime-400/10 text-lime-300"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                        ? "bg-[#b08d3e]/10 text-[#8a6d28]"
+                        : "text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c]",
                       isCollapsed && "justify-center",
                     )}
                     title={isCollapsed ? item.label : undefined}
@@ -328,7 +328,7 @@ export function DashboardSidebar({
                       <>
                         <span className="flex-1 text-left">{item.label}</span>
                         {item.badge && (
-                          <span className="rounded-full bg-lime-400 px-2 py-0.5 text-xs font-semibold text-slate-900">
+                          <span className="rounded-full bg-[#b08d3e] px-2 py-0.5 text-xs font-semibold text-[#14110c]">
                             {item.badge}
                           </span>
                         )}
@@ -344,10 +344,10 @@ export function DashboardSidebar({
 
       {/* Footer */}
       {!isCollapsed && (
-        <div className="border-t border-slate-800 p-4 space-y-2 flex-shrink-0">
+        <div className="border-t border-[#d9d4c9] p-4 space-y-2 flex-shrink-0">
           <button
             onClick={() => handleNavClick("/faq")}
-            className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
           >
             <HelpCircle className="h-4 w-4" />
             <span>Help & Support</span>
@@ -355,7 +355,7 @@ export function DashboardSidebar({
           {showUpgradePlan && (
             <button
               onClick={() => handleNavClick("/dashboard/billing")}
-              className="w-full flex items-center gap-2 rounded-lg bg-lime-400/10 border border-lime-400/20 px-3 py-2 text-sm text-lime-300 hover:bg-lime-400/20"
+              className="w-full flex items-center gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/20 px-3 py-2 text-sm text-[#8a6d28] hover:bg-[#b08d3e]/20"
             >
               <Zap className="h-4 w-4" />
               <span>Upgrade Plan</span>
@@ -366,10 +366,10 @@ export function DashboardSidebar({
 
       {/* Collapsed Footer Icons */}
       {isCollapsed && (
-        <div className="border-t border-slate-800 p-2 space-y-2">
+        <div className="border-t border-[#d9d4c9] p-2 space-y-2">
           <button
             onClick={() => handleNavClick("/faq")}
-            className="w-full rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="w-full rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
             title="Help & Support"
           >
             <HelpCircle className="h-5 w-5 mx-auto" />
@@ -377,7 +377,7 @@ export function DashboardSidebar({
           {showUpgradePlan && (
             <button
               onClick={() => handleNavClick("/dashboard/billing")}
-              className="w-full rounded-lg p-2 text-lime-300 hover:bg-lime-400/20"
+              className="w-full rounded-lg p-2 text-[#8a6d28] hover:bg-[#b08d3e]/20"
               title="Upgrade Plan"
             >
               <Zap className="h-5 w-5 mx-auto" />

@@ -97,17 +97,17 @@ export default function ClientSelectionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] xl:max-w-6xl bg-[#0b0f1a] border-slate-800/60 text-slate-100 p-0 overflow-hidden flex flex-col h-[85vh] shadow-[0_0_50px_rgba(0,0,0,0.5)] border-t border-slate-700/30">
+      <DialogContent className="max-w-[95vw] xl:max-w-6xl bg-[#0b0f1a] border-[#d9d4c9]/60 text-[#14110c] p-0 overflow-hidden flex flex-col h-[85vh] shadow-[0_0_50px_rgba(0,0,0,0.5)] border-t border-[#d9d4c9]/30">
         <style dangerouslySetInnerHTML={{ __html: `
           *::-webkit-scrollbar { display: none !important; }
           * { -ms-overflow-style: none !important; scrollbar-width: none !important; }
           .modal-gradient { background: radial-gradient(circle at top left, rgba(163, 230, 53, 0.04), transparent 40%), radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.04), transparent 40%); }
         `}} />
         
-        <DialogHeader className="p-5 border-b border-slate-800/50 shrink-0 relative modal-gradient">
+        <DialogHeader className="p-5 border-b border-[#d9d4c9]/50 shrink-0 relative modal-gradient">
           <DialogTitle className="text-xl font-semibold flex items-center gap-3">
-            <div className="p-2 bg-lime-400/10 rounded-xl border border-lime-400/20">
-              <User className="h-5 w-5 text-lime-400" />
+            <div className="p-2 bg-[#b08d3e]/10 rounded-xl border border-[#b08d3e]/20">
+              <User className="h-5 w-5 text-[#b08d3e]" />
             </div>
             Select Client
           </DialogTitle>
@@ -120,15 +120,15 @@ export default function ClientSelectionModal({
               placeholder="Search database..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-10 bg-[#060810] border-slate-800/80 focus:ring-lime-500/10 focus:border-lime-500/40 text-sm rounded-xl transition-all"
+              className="pl-11 h-10 bg-[#060810] border-[#d9d4c9]/80 focus:ring-lime-500/10 focus:border-lime-500/40 text-sm rounded-xl transition-all"
             />
           </div>
 
-          <div className="flex-1 border border-slate-800 rounded-xl overflow-hidden flex flex-col bg-slate-950/50">
-            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar border-b border-slate-800">
+          <div className="flex-1 border border-[#d9d4c9] rounded-xl overflow-hidden flex flex-col bg-[#faf8f3]">
+            <div className="overflow-y-auto overflow-x-auto flex-1 custom-scrollbar border-b border-[#d9d4c9]">
               <Table className="min-w-full table-auto">
-                <TableHeader className="bg-slate-950/80 backdrop-blur-md sticky top-0 z-20">
-                  <TableRow className="border-slate-800 hover:bg-transparent uppercase tracking-widest text-[10px] font-bold">
+                <TableHeader className="bg-[#faf8f3] backdrop-blur-md sticky top-0 z-20">
+                  <TableRow className="border-[#d9d4c9] hover:bg-transparent uppercase tracking-widest text-[10px] font-bold">
                     <TableHead className="text-slate-500 h-10 px-4">Name</TableHead>
                     <TableHead className="text-slate-500 h-10 px-4">Email Address</TableHead>
                     <TableHead className="text-slate-500 h-10 px-4">User ID</TableHead>
@@ -141,8 +141,8 @@ export default function ClientSelectionModal({
                         <TableCell colSpan={4} className="h-[460px] text-center">
                           <div className="flex flex-col items-center justify-center gap-4">
                             <div className="relative">
-                              <Loader2 className="h-8 w-8 animate-spin text-lime-400" />
-                              <div className="absolute inset-0 blur-lg bg-lime-400/20 animate-pulse" />
+                              <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
+                              <div className="absolute inset-0 blur-lg bg-[#b08d3e]/20 animate-pulse" />
                             </div>
                             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Accessing Database...</p>
                           </div>
@@ -152,7 +152,7 @@ export default function ClientSelectionModal({
                       <TableRow className="hover:bg-transparent border-none">
                         <TableCell colSpan={4} className="h-[460px] text-center">
                           <div className="flex flex-col items-center justify-center gap-3 text-slate-600">
-                            <div className="p-4 bg-slate-900/50 rounded-full border border-slate-800/50">
+                            <div className="p-4 bg-[#ffffff] rounded-full border border-[#d9d4c9]/50">
                               <Search className="h-8 w-8 opacity-20" />
                             </div>
                             <p className="text-sm font-semibold">No clients found</p>
@@ -164,22 +164,22 @@ export default function ClientSelectionModal({
                         {clients.map((client) => (
                           <TableRow
                             key={client.id}
-                            className="border-slate-800/30 hover:bg-lime-400/[0.03] transition-all group cursor-pointer h-[46px]"
+                            className="border-[#d9d4c9]/30 hover:bg-[#b08d3e]/[0.03] transition-all group cursor-pointer h-[46px]"
                             onClick={() => onSelect(client)}
                           >
                             <TableCell className="px-4 py-0">
-                              <span className="font-semibold text-slate-300 group-hover:text-lime-400 transition-colors block text-sm truncate">
+                              <span className="font-semibold text-[#14110c] group-hover:text-[#b08d3e] transition-colors block text-sm truncate">
                                 {client.fullName || client.name || "N/A"}
                               </span>
                             </TableCell>
                             <TableCell className="px-4 py-0">
-                              <div className="flex items-center gap-2 text-slate-500 group-hover:text-slate-300 transition-colors text-sm truncate">
+                              <div className="flex items-center gap-2 text-slate-500 group-hover:text-[#14110c] transition-colors text-sm truncate">
                                 <Mail className="h-3 w-3 opacity-30 shrink-0" />
                                 <span className="truncate">{client.email}</span>
                               </div>
                             </TableCell>
                             <TableCell className="px-4 py-0 font-mono text-[9px]">
-                              <div className="flex items-center gap-2 text-slate-600 group-hover:text-slate-400 transition-colors">
+                              <div className="flex items-center gap-2 text-slate-600 group-hover:text-[#6b6b6b] transition-colors">
                                 <Hash className="h-2.5 w-2.5 opacity-20 shrink-0" />
                                 <span className="truncate">{client.id}</span>
                               </div>
@@ -187,7 +187,7 @@ export default function ClientSelectionModal({
                             <TableCell className="text-right pr-6 py-0">
                               <Button
                                 size="sm"
-                                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-4 h-7 rounded-lg text-[10px] uppercase tracking-wider shadow-lg shadow-lime-400/10 active:scale-95 transition-all"
+                                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black px-4 h-7 rounded-lg text-[10px] uppercase tracking-wider shadow-lg shadow-lime-400/10 active:scale-95 transition-all"
                               >
                                 Select
                               </Button>
@@ -209,9 +209,9 @@ export default function ClientSelectionModal({
             
             {/* Pagination Controls */}
             {!searchQuery && totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-950/80">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#faf8f3]">
                 <div className="text-xs text-slate-500">
-                  Showing page <span className="font-bold text-white">{currentPage}</span> of <span className="font-bold text-white">{totalPages}</span>
+                  Showing page <span className="font-bold text-[#14110c]">{currentPage}</span> of <span className="font-bold text-[#14110c]">{totalPages}</span>
                   {totalCount > 0 && <span> ({totalCount} total)</span>}
                 </div>
                 <div className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export default function ClientSelectionModal({
                     size="sm"
                     onClick={() => fetchClients(currentPage - 1)}
                     disabled={currentPage === 1 || loading}
-                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
+                    className="h-8 border-[#d9d4c9] bg-[#ffffff] hover:bg-[#e6e1d8] text-[#14110c]"
                   >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Prev
                   </Button>
@@ -229,7 +229,7 @@ export default function ClientSelectionModal({
                     size="sm"
                     onClick={() => fetchClients(currentPage + 1)}
                     disabled={currentPage === totalPages || loading}
-                    className="h-8 border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300"
+                    className="h-8 border-[#d9d4c9] bg-[#ffffff] hover:bg-[#e6e1d8] text-[#14110c]"
                   >
                     Next <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>

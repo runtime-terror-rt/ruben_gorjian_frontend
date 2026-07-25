@@ -307,10 +307,10 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-slate-400">
+          <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
             Settings
           </p>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             {activeTab === "profile" 
               ? "Account & Business" 
               : activeTab === "brand-brief" 
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                   ? "Full Management"
                   : "Security"}
           </h1>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-[#14110c]">
             {activeTab === "profile" 
               ? "Keep your profile and business info up to date." 
               : activeTab === "brand-brief"
@@ -332,7 +332,7 @@ export default function SettingsPage() {
         {activeTab === "profile" && (
           <Button
             variant="ghost"
-            className="rounded-full px-4 py-2 text-white/60 hover:text-white"
+            className="rounded-full px-4 py-2 text-[#14110c]/60 hover:text-[#14110c]"
             onClick={() => {
               setForm(initialForm);
               setMessage(null);
@@ -345,17 +345,17 @@ export default function SettingsPage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-slate-800">
+      <div className="flex border-b border-[#d9d4c9]">
         <button
           onClick={() => setActiveTab("profile")}
           className={cn(
             "px-6 py-3 text-sm font-medium transition-colors relative",
-            activeTab === "profile" ? "text-lime-400" : "text-slate-400 hover:text-white"
+            activeTab === "profile" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
           )}
         >
           Profile
           {activeTab === "profile" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
           )}
         </button>
         {hasBrandBrief && (
@@ -363,12 +363,12 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("brand-brief")}
             className={cn(
               "px-6 py-3 text-sm font-medium transition-colors relative",
-              activeTab === "brand-brief" ? "text-lime-400" : "text-slate-400 hover:text-white"
+              activeTab === "brand-brief" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
             )}
           >
             Brand Brief
             {activeTab === "brand-brief" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
             )}
           </button>
         )}
@@ -377,12 +377,12 @@ export default function SettingsPage() {
             onClick={() => setActiveTab("full-management")}
             className={cn(
               "px-6 py-3 text-sm font-medium transition-colors relative",
-              activeTab === "full-management" ? "text-lime-400" : "text-slate-400 hover:text-white"
+              activeTab === "full-management" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
             )}
           >
             Full Management
             {activeTab === "full-management" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
             )}
           </button>
         )}
@@ -390,12 +390,12 @@ export default function SettingsPage() {
           onClick={() => setActiveTab("security")}
           className={cn(
             "px-6 py-3 text-sm font-medium transition-colors relative",
-            activeTab === "security" ? "text-lime-400" : "text-slate-400 hover:text-white"
+            activeTab === "security" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
           )}
         >
           Security
           {activeTab === "security" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-lime-400" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
           )}
         </button>
       </div>
@@ -403,7 +403,7 @@ export default function SettingsPage() {
       {activeTab === "profile" && (
         <div className="space-y-6">
           {loading ? (
-            <p className="text-xs text-slate-400">Loading settings...</p>
+            <p className="text-xs text-[#6b6b6b]">Loading settings...</p>
           ) : null}
           {error ? <p className="text-xs text-red-300">{error}</p> : null}
 
@@ -411,13 +411,13 @@ export default function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Profile</CardTitle>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#6b6b6b]">
                   Your contact details for notifications and support.
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-wrap items-center gap-4">
-                  <div className="relative h-16 w-16 rounded-full border border-slate-700 bg-slate-900 overflow-hidden flex items-center justify-center">
+                  <div className="relative h-16 w-16 rounded-full border border-[#d9d4c9] bg-[#ffffff] overflow-hidden flex items-center justify-center">
                     {avatarSrc ? (
                       <Image
                         src={avatarSrc}
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                         unoptimized
                       />
                     ) : (
-                      <User className="h-6 w-6 text-slate-300" />
+                      <User className="h-6 w-6 text-[#14110c]" />
                     )}
                   </div>
 
@@ -445,9 +445,9 @@ export default function SettingsPage() {
                       variant="outline"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={avatarUploading || avatarRemoving}
-                      className="rounded-full border-slate-700 text-slate-200 hover:bg-slate-800"
+                      className="rounded-full border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8]"
                     >
-                      <Camera className="mr-2.5 h-4 w-4 text-lime-400" />
+                      <Camera className="mr-2.5 h-4 w-4 text-[#b08d3e]" />
                       {avatarUploading ? "Uploading..." : "Upload photo"}
                     </Button>
                     <Button
@@ -459,7 +459,7 @@ export default function SettingsPage() {
                         avatarUploading ||
                         (!settings?.profile.avatar.storageKey && !avatarPreviewUrl)
                       }
-                      className="rounded-full text-slate-400 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                      className="rounded-full text-[#6b6b6b] hover:text-red-400 hover:bg-red-500/5 transition-colors"
                     >
                       <Trash2 className="mr-2.5 h-4 w-4" />
                       {avatarRemoving ? "Removing..." : "Remove photo"}
@@ -488,7 +488,7 @@ export default function SettingsPage() {
                       type="email"
                       value={form.email}
                       readOnly
-                      className="bg-slate-950/60"
+                      className="bg-[#faf8f3]"
                     />
                     <p className="text-xs text-slate-500">
                       Email is managed by your login provider.
@@ -505,7 +505,7 @@ export default function SettingsPage() {
                     maxLength={300}
                     rows={3}
                     className={cn(
-                      "flex w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm",
+                      "flex w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] shadow-sm",
                       "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
                     )}
                     placeholder="Tell us a bit about your business or role."
@@ -518,7 +518,7 @@ export default function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Business</CardTitle>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#6b6b6b]">
                   Tell us about your business for better recommendations.
                 </p>
               </CardHeader>
@@ -560,7 +560,7 @@ export default function SettingsPage() {
                       id="timezone"
                       value={form.timezone}
                       onChange={(e) => setForm(prev => ({ ...prev, timezone: e.target.value }))}
-                      className="flex w-full rounded-md border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300"
+                      className="flex w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] shadow-sm focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300"
                     >
                       <optgroup label="Asia">
                         <option value="Asia/Dhaka">Asia/Dhaka (Bangladesh — UTC+6)</option>
@@ -612,7 +612,7 @@ export default function SettingsPage() {
               >
                 {saving ? "Saving..." : "Save settings"}
               </Button>
-              {message ? <p className="text-xs text-slate-300">{message}</p> : null}
+              {message ? <p className="text-xs text-[#14110c]">{message}</p> : null}
             </div>
           </form>
         </div>
@@ -622,23 +622,23 @@ export default function SettingsPage() {
         <div className="space-y-6">
           {brandBriefQuery.isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <RefreshCw className="h-8 w-8 text-lime-400 animate-spin" />
-              <p className="text-sm text-slate-400">Fetching your brand brief...</p>
+              <RefreshCw className="h-8 w-8 text-[#b08d3e] animate-spin" />
+              <p className="text-sm text-[#6b6b6b]">Fetching your brand brief...</p>
             </div>
           ) : !brief ? (
-            <Card className="border-slate-800 bg-slate-900/40">
+            <Card className="border-[#d9d4c9] bg-[#ffffff]">
               <CardContent className="py-12 text-center">
-                <p className="text-slate-400">No brand brief found. Please complete your onboarding first.</p>
+                <p className="text-[#6b6b6b]">No brand brief found. Please complete your onboarding first.</p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">Submission Overview</h2>
+                <h2 className="text-lg font-semibold text-[#14110c]">Submission Overview</h2>
                 <Button 
                   onClick={handleDownloadPdf} 
                   disabled={isDownloading}
-                  className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold rounded-full"
+                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-bold rounded-full"
                 >
                   {isDownloading ? (
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -691,18 +691,18 @@ export default function SettingsPage() {
                   { label: "Special Notes", value: brief.specialNotes },
                 ]} />
 
-                <Card className="border-slate-800 bg-[#0B0F19]">
-                  <CardHeader className="pb-3 border-b border-slate-800">
-                    <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-lime-400" />
+                <Card className="border-[#d9d4c9] bg-[#ffffff]">
+                  <CardHeader className="pb-3 border-b border-[#d9d4c9]">
+                    <CardTitle className="text-sm font-bold text-[#6b6b6b] uppercase tracking-widest flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-[#b08d3e]" />
                       06. Sample Captions
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-4 space-y-4">
                     {[brief.captionSample1, brief.captionSample2, brief.captionSample3].map((cap, i) => (
-                      <div key={i} className="p-3 rounded-lg bg-slate-900/60 border border-slate-800/50">
+                      <div key={i} className="p-3 rounded-lg bg-[#ffffff]/60 border border-[#d9d4c9]/50">
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sample {i + 1}</p>
-                        <p className="text-sm text-slate-200 italic">"{cap || "N/A"}"</p>
+                        <p className="text-sm text-[#14110c] italic">"{cap || "N/A"}"</p>
                       </div>
                     ))}
                   </CardContent>
@@ -717,23 +717,23 @@ export default function SettingsPage() {
         <div className="space-y-6">
           {fullManagementQuery.isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <RefreshCw className="h-8 w-8 text-lime-400 animate-spin" />
-              <p className="text-sm text-slate-400">Fetching your full management details...</p>
+              <RefreshCw className="h-8 w-8 text-[#b08d3e] animate-spin" />
+              <p className="text-sm text-[#6b6b6b]">Fetching your full management details...</p>
             </div>
           ) : !fullManagementData ? (
-            <Card className="border-slate-800 bg-slate-900/40">
+            <Card className="border-[#d9d4c9] bg-[#ffffff]">
               <CardContent className="py-12 text-center">
-                <p className="text-slate-400">No full management details found. Please complete your onboarding first.</p>
+                <p className="text-[#6b6b6b]">No full management details found. Please complete your onboarding first.</p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">Full Management Overview</h2>
+                <h2 className="text-lg font-semibold text-[#14110c]">Full Management Overview</h2>
                 <Button 
                   onClick={handleDownloadFullManagementPdf} 
                   disabled={isDownloading}
-                  className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold rounded-full"
+                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-bold rounded-full"
                 >
                   {isDownloading ? (
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -778,16 +778,16 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Security</CardTitle>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#6b6b6b]">
                 Manage how you sign in and protect your account.
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 space-y-3">
+              <div className="rounded-xl border border-[#d9d4c9] bg-[#faf8f3] px-4 py-3 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-white">Password</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-sm font-semibold text-[#14110c]">Password</p>
+                    <p className="text-xs text-[#6b6b6b]">
                       Update your account password.
                     </p>
                   </div>
@@ -807,13 +807,13 @@ export default function SettingsPage() {
                 </div>
 
                 {!showPwForm && pwMessage && (
-                  <p className="text-xs text-lime-400 pt-1">{pwMessage}</p>
+                  <p className="text-xs text-[#b08d3e] pt-1">{pwMessage}</p>
                 )}
 
                 {showPwForm && (
-                  <div className="space-y-3 pt-2 border-t border-slate-800">
+                  <div className="space-y-3 pt-2 border-t border-[#d9d4c9]">
                     {pwError && <p className="text-xs text-red-400">{pwError}</p>}
-                    {pwMessage && <p className="text-xs text-lime-400">{pwMessage}</p>}
+                    {pwMessage && <p className="text-xs text-[#b08d3e]">{pwMessage}</p>}
                     <div className="space-y-2">
                       <Label htmlFor="currentPw">Current password</Label>
                       <div className="relative">
@@ -828,7 +828,7 @@ export default function SettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowCurrentPw((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b6b6b] hover:text-[#14110c]"
                         >
                           {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -848,7 +848,7 @@ export default function SettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowNextPw((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b6b6b] hover:text-[#14110c]"
                         >
                           {showNextPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -868,7 +868,7 @@ export default function SettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowConfirmPw((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b6b6b] hover:text-[#14110c]"
                         >
                           {showConfirmPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
@@ -919,10 +919,10 @@ export default function SettingsPage() {
 
 function DetailCard({ title, items }: { title: string, items: { label: string, value: any }[] }) {
   return (
-    <Card className="border-slate-800 bg-[#0B0F19]">
-      <CardHeader className="pb-3 border-b border-slate-800">
-        <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-lime-400" />
+    <Card className="border-[#d9d4c9] bg-[#ffffff]">
+      <CardHeader className="pb-3 border-b border-[#d9d4c9]">
+        <CardTitle className="text-sm font-bold text-[#6b6b6b] uppercase tracking-widest flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-[#b08d3e]" />
           {title}
         </CardTitle>
       </CardHeader>
@@ -930,7 +930,7 @@ function DetailCard({ title, items }: { title: string, items: { label: string, v
         {items.map((item, i) => (
           <div key={i}>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.label}</p>
-            <p className="text-sm text-white mt-0.5">{item.value || "—"}</p>
+            <p className="text-sm text-[#14110c] mt-0.5">{item.value || "—"}</p>
           </div>
         ))}
       </CardContent>

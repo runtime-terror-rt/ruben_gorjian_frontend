@@ -78,7 +78,7 @@ export function SheetContent({ side = "left", children, className }: SheetConten
       <div className="absolute inset-0 bg-black/50" onClick={() => ctx.setOpen(false)} />
       <div
         className={cn(
-          "relative h-full w-72 max-w-[80vw] bg-slate-900 border border-slate-800 shadow-xl",
+          "relative h-full w-72 max-w-[80vw] bg-[#ffffff] border border-[#d9d4c9] shadow-xl",
           side === "left" ? "ml-0" : "ml-auto",
           className
         )}
@@ -90,15 +90,15 @@ export function SheetContent({ side = "left", children, className }: SheetConten
 }
 
 export function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("px-4 pt-4 pb-2 border-b border-slate-800", className)} {...props} />;
+  return <div className={cn("px-4 pt-4 pb-2 border-b border-[#d9d4c9]", className)} {...props} />;
 }
 
 export function SheetTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h2 className={cn("text-base font-semibold text-white", className)} {...props} />;
+  return <h2 className={cn("text-base font-semibold text-[#14110c]", className)} {...props} />;
 }
 
 export function SheetDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("mt-1 text-sm text-slate-400", className)} {...props} />;
+  return <p className={cn("mt-1 text-sm text-[#6b6b6b]", className)} {...props} />;
 }
 
 export function SheetClose({ children, className }: { children: React.ReactNode; className?: string }) {

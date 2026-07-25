@@ -72,10 +72,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-slate-300/40 bg-transparent text-slate-300/40",
-        secondary: "border-slate-300/40 bg-transparent text-slate-300/40",
+        default: "border-slate-300/40 bg-transparent text-[#14110c]/40",
+        secondary: "border-slate-300/40 bg-transparent text-[#14110c]/40",
         destructive: "border-red-300/40 bg-transparent text-red-300/40",
-        outline: "border-lime-300/40 bg-transparent text-lime-300/40",
+        outline: "border-lime-300/40 bg-transparent text-[#8a6d28]/40",
       },
     },
     defaultVariants: {
@@ -283,8 +283,8 @@ export default function SubmissionsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-          <p className="text-slate-400">Loading submissions...</p>
+        <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff]/60 p-6">
+          <p className="text-[#6b6b6b]">Loading submissions...</p>
         </div>
       </div>
     );
@@ -322,10 +322,10 @@ export default function SubmissionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-[#14110c]">
             Document Submissions
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-[#6b6b6b] mt-1">
             Submit documents and media files for admin processing
           </p>
         </div>
@@ -340,14 +340,14 @@ export default function SubmissionsPage() {
       </div>
 
       {quota && (
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardContent className="pt-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-[#6b6b6b]">
                   Visual quota this period
                 </p>
-                <p className="text-xl font-semibold text-white">
+                <p className="text-xl font-semibold text-[#14110c]">
                   {quota.remaining} remaining
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
@@ -361,7 +361,7 @@ export default function SubmissionsPage() {
               )}
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center justify-between text-xs text-[#6b6b6b]">
                 <span>Used + reserved</span>
                 <span>
                   {quota.used + quota.reserved} /{" "}
@@ -398,13 +398,13 @@ export default function SubmissionsPage() {
 
       {/* Submissions List */}
       {submissions.length === 0 ? (
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardContent className="py-12 text-center">
             <Upload className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">
+            <h3 className="text-lg font-medium text-[#14110c] mb-2">
               No submissions yet
             </h3>
-            <p className="text-sm text-slate-400 mb-6">
+            <p className="text-sm text-[#6b6b6b] mb-6">
               Submit documents and media files for admin review and processing
             </p>
             <Button onClick={() => setUploadDialogOpen(true)} className="gap-2">
@@ -418,7 +418,7 @@ export default function SubmissionsPage() {
           {submissions.map((submission) => (
             <Card
               key={submission.id}
-              className="border-slate-800 bg-slate-900/60"
+              className="border-[#d9d4c9] bg-[#ffffff]/60"
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -427,11 +427,11 @@ export default function SubmissionsPage() {
                       <CardTitle className="text-base">
                         Submission #{submission.id.slice(0, 8)}
                       </CardTitle>
-                      {/* <Badge variant="secondary" className="text-xs text-lime-300"> */}
+                      {/* <Badge variant="secondary" className="text-xs text-[#8a6d28]"> */}
                       {getStatusBadge(submission.status)}
                       {/* </Badge> */}
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[#6b6b6b]">
                       Submitted {formatDate(submission.createdAt)}
                     </p>
                   </div>
@@ -440,11 +440,11 @@ export default function SubmissionsPage() {
               <CardContent className="space-y-4">
                 {/* User Note */}
                 {submission.userNote && (
-                  <div className="rounded-lg bg-slate-800/50 p-3">
-                    <p className="text-xs font-medium text-slate-300 mb-1">
+                  <div className="rounded-lg bg-[#e6e1d8]/50 p-3">
+                    <p className="text-xs font-medium text-[#14110c] mb-1">
                       Your Note:
                     </p>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-[#6b6b6b]">
                       {submission.userNote}
                     </p>
                   </div>
@@ -464,23 +464,23 @@ export default function SubmissionsPage() {
 
                 {/* Files */}
                 <div>
-                  <p className="text-xs font-medium text-slate-300 mb-2">
+                  <p className="text-xs font-medium text-[#14110c] mb-2">
                     Files ({submission.fileCount})
                   </p>
                   <div className="grid gap-2">
                     {submission.files.map((file) => (
                       <div
                         key={file.id}
-                        className="flex items-center gap-3 rounded-lg bg-slate-800/30 p-3"
+                        className="flex items-center gap-3 rounded-lg bg-[#e6e1d8]/30 p-3"
                       >
-                        <div className="text-slate-400">
+                        <div className="text-[#6b6b6b]">
                           {getFileIcon(file.fileType)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white truncate">
+                          <p className="text-sm font-medium text-[#14110c] truncate">
                             {file.fileName}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-[#6b6b6b]">
                             {formatFileSize(file.fileSize)}
                           </p>
                         </div>
@@ -502,7 +502,7 @@ export default function SubmissionsPage() {
 
                 {/* Latest Event */}
                 {submission.latestEvent && submission.latestEvent.note && (
-                  <div className="text-xs text-slate-400 border-t border-slate-800 pt-3">
+                  <div className="text-xs text-[#6b6b6b] border-t border-[#d9d4c9] pt-3">
                     <span className="font-medium">Latest update:</span>{" "}
                     {submission.latestEvent.note}
                     <span className="ml-2">
@@ -524,8 +524,8 @@ export default function SubmissionsPage() {
 
       {/* Pagination */}
       {total > pageSize && (
-        <div className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <p className="text-sm text-slate-400">
+        <div className="flex items-center justify-between rounded-lg border border-[#d9d4c9] bg-[#ffffff]/60 p-4">
+          <p className="text-sm text-[#6b6b6b]">
             Showing {(page - 1) * pageSize + 1} to{" "}
             {Math.min(page * pageSize, total)} of {total} submission
             {total !== 1 ? "s" : ""}

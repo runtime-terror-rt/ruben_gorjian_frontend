@@ -641,15 +641,15 @@ export default function PostModal({
         onClick={onClose}
       />
       <div
-        className="relative w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900/95 shadow-2xl max-h-[90vh] flex flex-col pointer-events-auto overflow-hidden"
+        className="relative w-full max-w-lg rounded-2xl border border-[#d9d4c9] bg-[#faf8f3]/95 shadow-2xl max-h-[90vh] flex flex-col pointer-events-auto overflow-hidden"
         style={{ animation: "modalFade 200ms ease-out" }}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#d9d4c9] flex-shrink-0">
           <div>
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-[#14110c]">
               {isEditing ? "Edit Post" : "New Post"}
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {isEditing
                 ? "Update your scheduled post"
                 : "Schedule a post for your connected accounts"}
@@ -659,7 +659,7 @@ export default function PostModal({
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="text-slate-300 hover:text-white"
+            className="text-[#14110c] hover:text-[#14110c]"
           >
             Close
           </Button>
@@ -671,7 +671,7 @@ export default function PostModal({
           {...scrollHandlers}
         >
           <div className="space-y-2">
-            <label className="text-sm text-slate-300">
+            <label className="text-sm text-[#14110c]">
               Media{" "}
               {requiresMedia && (
                 <span className="text-amber-400/70">
@@ -679,7 +679,7 @@ export default function PostModal({
                 </span>
               )}
             </label>
-            <div className="rounded-lg border border-dashed border-slate-700 bg-slate-950/60 p-3">
+            <div className="rounded-lg border border-dashed border-[#d9d4c9] bg-[#faf8f3] p-3">
               {!isEditing && (
                 <>
                   <input
@@ -689,14 +689,14 @@ export default function PostModal({
                     onChange={(e) => handleFiles(e.target.files)}
                     disabled={isPosted}
                     className={clsx(
-                      "text-xs text-slate-200 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-100 hover:file:bg-slate-700",
+                      "text-xs text-[#14110c] file:mr-3 file:rounded-md file:border file:border-[#d9d4c9] file:bg-[#e6e1d8] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[#14110c] hover:file:bg-[#e6e1d8]",
                       isPosted && "opacity-50 cursor-not-allowed",
                     )}
                   />
-                  <div className="mt-2 text-xs text-slate-400">
+                  <div className="mt-2 text-xs text-[#6b6b6b]">
                     {uploading && <span>Uploading...</span>}
                     {assets.length > 0 && !uploading && (
-                      <span className="text-lime-300">
+                      <span className="text-[#8a6d28]">
                         {assets.length} file(s) uploaded
                       </span>
                     )}
@@ -717,7 +717,7 @@ export default function PostModal({
               )}
               {assets.length > 0 && (
                 <div className="mt-3 space-y-1">
-                  <div className="text-xs text-slate-300 font-medium">
+                  <div className="text-xs text-[#14110c] font-medium">
                     {allowsMultipleMedia
                       ? "Select media (multiple allowed)"
                       : "Select one asset"}
@@ -754,13 +754,13 @@ export default function PostModal({
                         <label
                           key={id}
                           className={clsx(
-                            "flex items-center gap-2 text-xs text-slate-200 p-1.5 rounded cursor-pointer hover:bg-slate-800/50 transition-all",
+                            "flex items-center gap-2 text-xs text-[#14110c] p-1.5 rounded cursor-pointer hover:bg-[#e6e1d8]/50 transition-all",
                             isSelected &&
-                              "bg-slate-800/70 border border-lime-400/50",
+                              "bg-[#e6e1d8]/70 border border-[#b08d3e]/50",
                           )}
                         >
                           {thumbUrl ? (
-                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700">
+                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-[#d9d4c9]">
                               <img
                                 src={thumbUrl}
                                 alt=""
@@ -769,8 +769,8 @@ export default function PostModal({
                             </div>
                           ) : "isLocal" in asset &&
                             asset.file?.type.startsWith("video/") ? (
-                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-slate-700 bg-slate-800 flex items-center justify-center">
-                              <span className="text-[8px] font-bold text-slate-400">
+                            <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0 border border-[#d9d4c9] bg-[#e6e1d8] flex items-center justify-center">
+                              <span className="text-[8px] font-bold text-[#6b6b6b]">
                                 VIDEO
                               </span>
                             </div>
@@ -817,7 +817,7 @@ export default function PostModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-300 flex items-center gap-1">
+            <label className="text-sm text-[#14110c] flex items-center gap-1">
               Caption <span className="text-rose-500">*</span>
             </label>
             <MarkdownEditor
@@ -830,9 +830,9 @@ export default function PostModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-slate-300">Hashtags</label>
+            <label className="text-sm text-[#14110c]">Hashtags</label>
             <textarea
-              className="w-full rounded-lg border border-slate-800 bg-slate-950/80 p-2 text-sm text-white focus:border-lime-400 focus:outline-none"
+              className="w-full rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-2 text-sm text-[#14110c] focus:border-[#b08d3e] focus:outline-none"
               rows={2}
               value={hashtagsInput}
               onChange={(e) => setHashtagsInput(e.target.value)}
@@ -851,12 +851,12 @@ export default function PostModal({
               disabled={isPosted}
             />
             <div className="space-y-2">
-              <label className="text-sm text-slate-300">Accounts</label>
-              <div className="max-h-32 overflow-y-auto rounded-lg border border-slate-800 bg-slate-950/60 p-2 space-y-1">
+              <label className="text-sm text-[#14110c]">Accounts</label>
+              <div className="max-h-32 overflow-y-auto rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-2 space-y-1">
                 {socialAccounts.map((acc) => (
                   <label
                     key={acc.id}
-                    className="flex items-center gap-2 text-sm text-slate-200 cursor-pointer"
+                    className="flex items-center gap-2 text-sm text-[#14110c] cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -868,10 +868,10 @@ export default function PostModal({
                         isPosted && "opacity-50 cursor-not-allowed",
                       )}
                     />
-                    <span className="text-xs rounded px-1.5 py-0.5 border border-slate-700 text-slate-300">
+                    <span className="text-xs rounded px-1.5 py-0.5 border border-[#d9d4c9] text-[#14110c]">
                       {acc.platform}
                     </span>
-                    <span className="truncate text-sm text-slate-100">
+                    <span className="truncate text-sm text-[#14110c]">
                       {acc.displayName || acc.id}
                     </span>
                   </label>
@@ -900,11 +900,11 @@ export default function PostModal({
           )}
         </div>
 
-        <div className="flex justify-end gap-2 px-5 py-4 border-t border-slate-800 flex-shrink-0">
+        <div className="flex justify-end gap-2 px-5 py-4 border-t border-[#d9d4c9] flex-shrink-0">
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-slate-300 hover:text-white"
+            className="text-[#14110c] hover:text-[#14110c]"
           >
             Cancel
           </Button>
@@ -933,7 +933,7 @@ export default function PostModal({
             <Button
               onClick={handleSubmit}
               disabled={submitting}
-              className="bg-lime-400 text-slate-900 hover:bg-lime-300"
+              className="bg-[#b08d3e] text-[#14110c] hover:bg-[#e6e1d8]"
             >
               {submitting
                 ? isEditing
@@ -948,7 +948,7 @@ export default function PostModal({
             <Button
               onClick={handlePublishNow}
               disabled={submitting}
-              className="bg-sky-500 text-white hover:bg-sky-400"
+              className="bg-sky-500 text-[#14110c] hover:bg-sky-400"
             >
               {submitting ? "Publishing..." : "Publish Now"}
             </Button>

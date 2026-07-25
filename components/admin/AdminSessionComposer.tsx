@@ -241,22 +241,22 @@ export default function AdminSessionComposer({
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Calendar Picker */}
-        <Card className="border-slate-800 bg-slate-900/50">
-          <CardHeader className="py-4 border-b border-slate-800">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]">
+          <CardHeader className="py-4 border-b border-[#d9d4c9]">
             <div className="flex items-center justify-between">
               <CardTitle className="text-sm font-bold flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4 text-lime-400" />
+                <CalendarIcon className="h-4 w-4 text-[#b08d3e]" />
                 Select Date
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(currentDate.subtract(1, "month"))}>
-                  <ChevronLeft className="h-4 w-4 text-lime-400" />
+                  <ChevronLeft className="h-4 w-4 text-[#b08d3e]" />
                 </Button>
-                <span className="text-xs font-bold min-w-[80px] text-center text-lime-400">
+                <span className="text-xs font-bold min-w-[80px] text-center text-[#b08d3e]">
                   {currentDate.format("MMM YYYY")}
                 </span>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCurrentDate(currentDate.add(1, "month"))}>
-                  <ChevronRight className="h-4 w-4 text-lime-400" />
+                  <ChevronRight className="h-4 w-4 text-[#b08d3e]" />
                 </Button>
               </div>
             </div>
@@ -287,7 +287,7 @@ export default function AdminSessionComposer({
                       "aspect-square rounded-lg text-xs flex flex-col items-center justify-center transition-all relative",
                       !isCurrentMonth && "opacity-0 pointer-events-none",
                       isPast && "text-slate-600 cursor-not-allowed",
-                      isSelected ? "bg-lime-400 text-slate-950 font-bold shadow-lg shadow-lime-400/20" : "hover:bg-slate-800 text-slate-300"
+                      isSelected ? "bg-[#b08d3e] text-slate-950 font-bold shadow-lg shadow-lime-400/20" : "hover:bg-[#e6e1d8] text-[#14110c]"
                     )}
                   >
                     <span>{day.date()}</span>
@@ -295,8 +295,8 @@ export default function AdminSessionComposer({
                       <div className={cn(
                         "absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-black shadow-lg z-10",
                         isSelected 
-                          ? "bg-slate-900 text-lime-400 border border-lime-400/20" 
-                          : "bg-emerald-500 text-white shadow-emerald-500/30"
+                          ? "bg-[#ffffff] text-[#b08d3e] border border-[#b08d3e]/20" 
+                          : "bg-emerald-500 text-[#14110c] shadow-emerald-500/30"
                       )}>
                         {sessionCount}
                       </div>
@@ -309,10 +309,10 @@ export default function AdminSessionComposer({
         </Card>
 
         {/* Time Picker */}
-        <Card className="border-slate-800 bg-slate-900/50">
-          <CardHeader className="py-4 border-b border-slate-800">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]">
+          <CardHeader className="py-4 border-b border-[#d9d4c9]">
             <CardTitle className="text-sm font-bold flex items-center gap-2">
-              <Clock className="h-4 w-4 text-lime-400" />
+              <Clock className="h-4 w-4 text-[#b08d3e]" />
               Select Time
             </CardTitle>
           </CardHeader>
@@ -331,10 +331,10 @@ export default function AdminSessionComposer({
                     className={cn(
                       "py-2.5 px-1 rounded-lg text-[11px] font-bold border transition-all",
                       selectedTime === slot.time 
-                        ? "bg-lime-400 border-lime-400 text-slate-950 shadow-[0_0_15px_rgba(163,230,53,0.3)]" 
+                        ? "bg-[#b08d3e] border-[#b08d3e] text-slate-950 shadow-[0_0_15px_rgba(163,230,53,0.3)]" 
                         : slot.available 
-                          ? "bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-800 hover:border-lime-400/50 hover:text-lime-400" 
-                          : "bg-slate-900 border-transparent text-slate-600 cursor-not-allowed opacity-50"
+                          ? "bg-[#e6e1d8]/50 border-[#d9d4c9]/50 text-[#14110c] hover:bg-[#e6e1d8] hover:border-[#b08d3e]/50 hover:text-[#b08d3e]" 
+                          : "bg-[#ffffff] border-transparent text-slate-600 cursor-not-allowed opacity-50"
                     )}
                   >
                     {slot.label}
@@ -346,7 +346,7 @@ export default function AdminSessionComposer({
         </Card>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/40">
+      <Card className="border-[#d9d4c9] bg-[#ffffff]">
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -378,7 +378,7 @@ export default function AdminSessionComposer({
                   id="duration"
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
-                  className="w-full bg-slate-800 border-slate-700 rounded-lg h-10 text-sm px-3 outline-none focus:ring-1 focus:ring-lime-400"
+                  className="w-full bg-[#e6e1d8] border-[#d9d4c9] rounded-lg h-10 text-sm px-3 outline-none focus:ring-1 focus:ring-[#b08d3e]"
                 >
                   <option value={30}>30 Minutes</option>
                   <option value={60}>60 Minutes</option>
@@ -395,7 +395,7 @@ export default function AdminSessionComposer({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Spring Collection Photoshoot"
-                className="bg-slate-800 border-slate-700 h-11"
+                className="bg-[#e6e1d8] border-[#d9d4c9] h-11"
               />
             </div>
 
@@ -406,7 +406,7 @@ export default function AdminSessionComposer({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Details about location, outfits, etc."
-                className="bg-slate-800 border-slate-700 min-h-[80px]"
+                className="bg-[#e6e1d8] border-[#d9d4c9] min-h-[80px]"
               />
             </div>
 
@@ -417,7 +417,7 @@ export default function AdminSessionComposer({
                 value={adminReason}
                 onChange={(e) => setAdminReason(e.target.value)}
                 placeholder="Reason for manual scheduling..."
-                className="bg-slate-800 border-slate-700 h-11"
+                className="bg-[#e6e1d8] border-[#d9d4c9] h-11"
               />
             </div>
 
@@ -427,7 +427,7 @@ export default function AdminSessionComposer({
                   type="button"
                   variant="outline"
                   onClick={onCancelEdit}
-                  className="flex-1 h-12 text-slate-300 border-slate-700 bg-slate-900 rounded-xl"
+                  className="flex-1 h-12 text-[#14110c] border-[#d9d4c9] bg-[#ffffff] rounded-xl"
                 >
                   Cancel Edit
                 </Button>
@@ -438,8 +438,8 @@ export default function AdminSessionComposer({
                 className={cn(
                   "flex-1 h-12 font-bold text-lg rounded-xl shadow-lg",
                   editingSession 
-                    ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/20"
-                    : "bg-lime-400 hover:bg-lime-500 text-slate-950 shadow-lime-400/20"
+                    ? "bg-indigo-500 hover:bg-indigo-600 text-[#14110c] shadow-indigo-500/20"
+                    : "bg-[#b08d3e] hover:bg-[#b08d3e] text-slate-950 shadow-lime-400/20"
                 )}
               >
                 {submitting ? (

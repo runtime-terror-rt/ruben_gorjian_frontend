@@ -338,8 +338,8 @@ export default function BillingPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-          <p className="text-slate-400">Loading billing information...</p>
+        <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff]/60 p-6">
+          <p className="text-[#6b6b6b]">Loading billing information...</p>
         </div>
       </div>
     );
@@ -352,13 +352,13 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-slate-400">
+          <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
             Billing
           </p>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             Subscription & Invoices
           </h1>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-[#14110c]">
             {/* Review your current plan and manage billing details. */}
           </p>
         </div>
@@ -370,12 +370,12 @@ export default function BillingPage() {
       )}
 
       {successMessage && (
-        <div className="rounded-lg border border-lime-500/50 bg-lime-500/10 px-3 py-2 text-sm text-lime-100 flex items-center justify-between">
+        <div className="rounded-lg border border-lime-500/50 bg-[#b08d3e]/10 px-3 py-2 text-sm text-lime-100 flex items-center justify-between">
           <span>{successMessage}</span>
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0 hover:bg-lime-500/20"
+            className="h-6 w-6 p-0 hover:bg-[#b08d3e]/20"
             onClick={() => setSuccessMessage(null)}
           >
             <XCircle className="h-4 w-4" />
@@ -383,31 +383,31 @@ export default function BillingPage() {
         </div>
       )}
 
-      <Card className="border-slate-800 bg-slate-900/40">
-        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800 pb-4">
+      <Card className="border-[#d9d4c9] bg-[#ffffff]">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-[#d9d4c9] pb-4">
           <div>
-            <CardTitle className="text-lg font-semibold text-white">Current Subscription</CardTitle>
-            <p className="text-xs text-slate-400 mt-1">
+            <CardTitle className="text-lg font-semibold text-[#14110c]">Current Subscription</CardTitle>
+            <p className="text-xs text-[#6b6b6b] mt-1">
               Manage your active plan and subscription settings.
             </p>
           </div>
-          <div className="rounded-full bg-lime-400/10 p-2">
-            <CreditCard className="h-5 w-5 text-lime-400" />
+          <div className="rounded-full bg-[#b08d3e]/10 p-2">
+            <CreditCard className="h-5 w-5 text-[#b08d3e]" />
           </div>
         </CardHeader>
         <CardContent className="pt-6">
           {!plan ? (
-            <div className="rounded-xl border border-dashed border-slate-800 bg-slate-950/40 p-12 text-center">
-              <div className="mx-auto w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-4">
+            <div className="rounded-xl border border-dashed border-[#d9d4c9] bg-[#faf8f3] p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-[#ffffff] flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 text-slate-600" />
               </div>
-              <p className="text-slate-400 font-medium">No active plan found</p>
+              <p className="text-[#6b6b6b] font-medium">No active plan found</p>
               <p className="mt-2 text-sm text-slate-500 max-w-xs mx-auto">
                 Subscribe to a plan below to start scheduling and managing your social content.
               </p>
               <Button 
                 variant="outline" 
-                className="mt-6 rounded-full border-slate-700 text-slate-300"
+                className="mt-6 rounded-full border-[#d9d4c9] text-[#14110c]"
                 onClick={() => {
                   document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" });
                 }}
@@ -419,11 +419,11 @@ export default function BillingPage() {
             <div className="space-y-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-xl font-bold text-[#14110c]">
                     {currentPlanDisplay?.name ?? "—"}
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="text-2xl font-bold text-lime-400">
+                    <p className="text-2xl font-bold text-[#b08d3e]">
                       {currentPlanDisplay && currentPlanDisplay.price >= 0
                         ? formatCurrency(currentPlanDisplay.price, currentPlanDisplay.currency)
                         : "—"}
@@ -438,7 +438,7 @@ export default function BillingPage() {
                         </span>
                       )}
                     </div>
-                    <Badge variant="outline" className="ml-2 border-lime-400/30 text-lime-400 bg-lime-400/5">
+                    <Badge variant="outline" className="ml-2 border-[#b08d3e]/30 text-[#b08d3e] bg-[#b08d3e]/5">
                       {currentPlanDisplay?.priceType ?? "Standard"}
                     </Badge>
                   </div>
@@ -446,7 +446,7 @@ export default function BillingPage() {
 
                 <div className="flex items-center gap-3">
                   <Button
-                    className="rounded-full bg-lime-500 hover:bg-lime-400 text-black px-6 font-bold"
+                    className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-black px-6 font-bold"
                     disabled={portalLoading}
                     onClick={async () => {
                       setPortalLoading(true);
@@ -465,7 +465,7 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-800/50">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[#d9d4c9]/50">
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Status</p>
                   <div className="flex items-center gap-1.5">
@@ -473,7 +473,7 @@ export default function BillingPage() {
                       "w-2 h-2 rounded-full",
                       plan.status === "ACTIVE" ? "bg-green-500" : "bg-amber-500"
                     )} />
-                    <span className="text-sm font-semibold text-slate-200 capitalize">
+                    <span className="text-sm font-semibold text-[#14110c] capitalize">
                       {plan.status.toLowerCase()}
                     </span>
                   </div>
@@ -482,19 +482,19 @@ export default function BillingPage() {
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
                     {plan.cancelAtPeriodEnd ? "Expires On" : "Next Payment"}
                   </p>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-[#14110c]">
                     {currentPlanDisplay?.renewsAt ?? "—"}
                   </p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Platforms</p>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-[#14110c]">
                     {plan.platformLimit ?? 4} included
                   </p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Billing</p>
-                  <p className="text-sm font-semibold text-slate-200 capitalize">
+                  <p className="text-sm font-semibold text-[#14110c] capitalize">
                     {currentPlanDisplay?.interval === "year" ? "Yearly" : "Monthly"}
                   </p>
                 </div>
@@ -516,17 +516,17 @@ export default function BillingPage() {
               )}
 
               {plan.scheduledChange && (
-                <div className="rounded-xl border border-lime-500/30 bg-lime-500/5 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="rounded-xl border border-lime-500/30 bg-[#b08d3e]/5 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-lime-500/10 p-1.5 mt-0.5">
-                      <Clock className="h-4 w-4 text-lime-400" />
+                    <div className="rounded-full bg-[#b08d3e]/10 p-1.5 mt-0.5">
+                      <Clock className="h-4 w-4 text-[#b08d3e]" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-lime-200">Scheduled Plan Change</p>
-                      <p className="text-xs text-lime-400/80 mt-1 leading-relaxed">
-                        Moving to <span className="font-bold text-lime-300">
+                      <p className="text-xs text-[#b08d3e]/80 mt-1 leading-relaxed">
+                        Moving to <span className="font-bold text-[#8a6d28]">
                           {getPlanByLookupKey(plan.scheduledChange.targetPlanCode as PlanKey)?.name || plan.scheduledChange.targetPlanCode}
-                        </span> ({plan.scheduledChange.targetBillingCycle}) effective <span className="font-bold text-lime-300">
+                        </span> ({plan.scheduledChange.targetBillingCycle}) effective <span className="font-bold text-[#8a6d28]">
                           {new Date(plan.scheduledChange.effectiveAt).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -539,7 +539,7 @@ export default function BillingPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-full border-lime-500/30 text-lime-400 hover:bg-lime-500/20 bg-transparent h-8 px-4 text-xs font-bold uppercase tracking-wider"
+                    className="rounded-full border-lime-500/30 text-[#b08d3e] hover:bg-[#b08d3e]/20 bg-transparent h-8 px-4 text-xs font-bold uppercase tracking-wider"
                     onClick={() => setConfirmCancelSchedule(true)}
                   >
                     Cancel Change
@@ -568,21 +568,21 @@ export default function BillingPage() {
         <CardHeader className="flex items-center justify-between">
           <div>
             <CardTitle>Plans</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Choose or change your plan. Your current plan is highlighted; you
               cannot resubscribe to it. */}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-lime-300" />
-            <div className="flex p-1 bg-slate-950 rounded-full border border-slate-800 mr-2">
+            <Zap className="h-5 w-5 text-[#8a6d28]" />
+            <div className="flex p-1 bg-[#faf8f3] rounded-full border border-[#d9d4c9] mr-2">
               <button
                 onClick={() => setBillingCycle("monthly")}
                 className={cn(
                   "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition",
                   billingCycle === "monthly"
-                    ? "bg-lime-500 text-slate-900"
-                    : "text-slate-400 hover:text-slate-200",
+                    ? "bg-[#b08d3e] text-[#14110c]"
+                    : "text-[#6b6b6b] hover:text-[#14110c]",
                 )}
               >
                 Monthly
@@ -592,8 +592,8 @@ export default function BillingPage() {
                 className={cn(
                   "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition",
                   billingCycle === "yearly"
-                    ? "bg-lime-500 text-slate-900"
-                    : "text-slate-400 hover:text-slate-200",
+                    ? "bg-[#b08d3e] text-[#14110c]"
+                    : "text-[#6b6b6b] hover:text-[#14110c]",
                 )}
               >
                 Yearly
@@ -674,36 +674,36 @@ export default function BillingPage() {
                     className={cn(
                       "rounded-2xl border p-5 shadow-sm transition",
                       isCurrent
-                        ? "border-lime-400/50 bg-lime-400/10"
-                        : "border-slate-800 bg-slate-900/60 hover:border-slate-700",
+                        ? "border-[#b08d3e]/50 bg-[#b08d3e]/10"
+                        : "border-[#d9d4c9] bg-[#ffffff]/60 hover:border-[#d9d4c9]",
                     )}
                   >
                     <div className="min-h-[52px]">
                       {isCurrent ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-lime-300">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
                           <Check className="h-3 w-3" />
                           Current plan
                         </span>
                       ) : PLAN_BADGES[planKey] ? (
-                        <span className="inline-flex rounded-full bg-slate-700 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">
+                        <span className="inline-flex rounded-full bg-[#e6e1d8] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#14110c]">
                           {PLAN_BADGES[planKey]}
                         </span>
                       ) : null}
                     </div>
-                    <h2 className="mt-3 text-lg font-semibold text-white">
+                    <h2 className="mt-3 text-lg font-semibold text-[#14110c]">
                       {catalogPlan?.name ?? planKey}
                     </h2>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-2 text-sm text-[#6b6b6b]">
                       {PLAN_SUBTITLES[planKey]}
                     </p>
-                    <p className="mt-5 text-4xl font-semibold leading-none text-white">
+                    <p className="mt-5 text-4xl font-semibold leading-none text-[#14110c]">
                       {formatPlanPrice(displayPrice)}
                     </p>
                     <p className="mt-2 text-xs text-slate-500">{billingNote}</p>
 
                     {isCurrent ? (
                       <Button
-                        className="mt-5 w-full rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
+                        className="mt-5 w-full rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
                         disabled={portalLoading}
                         onClick={async () => {
                           setPortalLoading(true);
@@ -723,7 +723,7 @@ export default function BillingPage() {
                     ) : (
                       <Button
                         size="sm"
-                        className="mt-5 w-full rounded-full bg-lime-500 text-black hover:bg-lime-400 font-bold"
+                        className="mt-5 w-full rounded-full bg-[#b08d3e] text-black hover:bg-[#b08d3e] font-bold"
                         disabled={checkoutLoading !== null}
                         onClick={() => startCheckout(planKey)}
                       >
@@ -748,7 +748,7 @@ export default function BillingPage() {
                                     "data-tooltip-content": tooltip,
                                   }
                                 : {})}
-                              className="flex items-start gap-2 text-sm text-slate-300"
+                              className="flex items-start gap-2 text-sm text-[#14110c]"
                             >
                               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#4a5dff]" />
                               <span>{label}</span>
@@ -759,7 +759,7 @@ export default function BillingPage() {
                     )}
                     <Tooltip
                       id={`pricing-tooltip-billing-${planKey}`}
-                      className="!bg-slate-900 max-w-xs !text-slate-200 !border !border-slate-800 !rounded-xl !p-3 !text-xs !shadow-2xl !opacity-100 z-50"
+                      className="!bg-[#ffffff] max-w-xs !text-[#14110c] !border !border-[#d9d4c9] !rounded-xl !p-3 !text-xs !shadow-2xl !opacity-100 z-50"
                       noArrow={false}
                     />
                   </article>
@@ -776,7 +776,7 @@ export default function BillingPage() {
         <Card>
           <CardHeader>
             <CardTitle>Plan Limits</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Your plan includes these features */}
             </p>
           </CardHeader>
@@ -809,7 +809,7 @@ export default function BillingPage() {
         <Card>
           <CardHeader>
             <CardTitle>Usage This Month</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Track your monthly usage */}
             </p>
           </CardHeader>
@@ -844,11 +844,11 @@ export default function BillingPage() {
         <CardHeader className="flex items-center justify-between">
           <div>
             <CardTitle>Invoices</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Most recent invoices */}
             </p>
           </div>
-          <Receipt className="h-5 w-5 text-lime-300" />
+          <Receipt className="h-5 w-5 text-[#8a6d28]" />
         </CardHeader>
         <CardContent>
           {invoices.length > 0 ? (
@@ -856,7 +856,7 @@ export default function BillingPage() {
               {/* Desktop Table View - hidden on mobile */}
               <div className="hidden md:block overflow-x-auto">
                 <div className="min-w-full">
-                  <div className="grid grid-cols-5 gap-4 text-xs uppercase tracking-wide text-slate-400 pb-2 border-b border-slate-800">
+                  <div className="grid grid-cols-5 gap-4 text-xs uppercase tracking-wide text-[#6b6b6b] pb-2 border-b border-[#d9d4c9]">
                     <div>Invoice #</div>
                     <div>Amount</div>
                     <div>Status</div>
@@ -866,12 +866,12 @@ export default function BillingPage() {
                   {invoices.map((invoice) => (
                     <div
                       key={invoice.id}
-                      className="grid grid-cols-5 gap-4 items-center py-3 border-b border-slate-800/50 last:border-0 text-sm"
+                      className="grid grid-cols-5 gap-4 items-center py-3 border-b border-[#d9d4c9]/50 last:border-0 text-sm"
                     >
-                      <div className="font-mono text-xs text-slate-300 truncate">
+                      <div className="font-mono text-xs text-[#14110c] truncate">
                         {invoice.number || invoice.id.slice(-8)}
                       </div>
-                      <div className="font-semibold text-white">
+                      <div className="font-semibold text-[#14110c]">
                         {formatCurrency(invoice.amount, invoice.currency)}
                       </div>
                       <div>
@@ -881,13 +881,13 @@ export default function BillingPage() {
                               ? "bg-green-500/20 text-green-300"
                               : invoice.status === "open"
                                 ? "bg-amber-500/20 text-amber-300"
-                                : "bg-slate-700/50 text-slate-300"
+                                : "bg-[#e6e1d8]/50 text-[#14110c]"
                           }`}
                         >
                           {invoice.status}
                         </span>
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-[#6b6b6b]">
                         {invoice.createdAt
                           ? new Date(invoice.createdAt).toLocaleDateString(
                               "en-US",
@@ -905,7 +905,7 @@ export default function BillingPage() {
                             href={invoice.hostedInvoiceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-lime-400 hover:text-lime-300 hover:underline"
+                            className="text-xs text-[#b08d3e] hover:text-[#8a6d28] hover:underline"
                           >
                             View
                           </a>
@@ -923,41 +923,41 @@ export default function BillingPage() {
                 {invoices.map((invoice) => (
                   <div
                     key={invoice.id}
-                    className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-3"
+                    className="rounded-xl border border-[#d9d4c9] bg-[#faf8f3] p-4 space-y-3"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Invoice #</p>
-                        <p className="text-sm font-mono text-white">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Invoice #</p>
+                        <p className="text-sm font-mono text-[#14110c]">
                           {invoice.number || invoice.id.slice(-8)}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-slate-400 mb-1">Amount</p>
-                        <p className="text-sm font-semibold text-white">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Amount</p>
+                        <p className="text-sm font-semibold text-[#14110c]">
                           {formatCurrency(invoice.amount, invoice.currency)}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#d9d4c9]">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Status</p>
+                        <p className="text-xs text-[#6b6b6b] mb-1">Status</p>
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             invoice.status === "paid"
                               ? "bg-green-500/20 text-green-300"
                               : invoice.status === "open"
                                 ? "bg-amber-500/20 text-amber-300"
-                                : "bg-slate-700/50 text-slate-300"
+                                : "bg-[#e6e1d8]/50 text-[#14110c]"
                           }`}
                         >
                           {invoice.status}
                         </span>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-slate-400 mb-1">Date</p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Date</p>
+                        <p className="text-xs text-[#14110c]">
                           {invoice.createdAt
                             ? new Date(invoice.createdAt).toLocaleDateString(
                                 "en-US",
@@ -978,7 +978,7 @@ export default function BillingPage() {
                           href={invoice.hostedInvoiceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-full rounded-lg bg-lime-400/10 border border-lime-400/30 px-3 py-2 text-xs font-medium text-lime-300 hover:bg-lime-400/20 transition"
+                          className="inline-flex items-center justify-center w-full rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/30 px-3 py-2 text-xs font-medium text-[#8a6d28] hover:bg-[#b08d3e]/20 transition"
                         >
                           View Invoice
                         </a>
@@ -989,7 +989,7 @@ export default function BillingPage() {
               </div>
             </>
           ) : (
-            <div className="text-sm text-slate-300 py-4">No invoices yet.</div>
+            <div className="text-sm text-[#14110c] py-4">No invoices yet.</div>
           )}
           {error && <p className="text-xs text-red-300 mt-4">{error}</p>}
         </CardContent>
@@ -1000,15 +1000,15 @@ export default function BillingPage() {
         open={schedulingPlan !== null}
         onOpenChange={() => setSchedulingPlan(null)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-lime-400" />
+              <Calendar className="h-5 w-5 text-[#b08d3e]" />
               Schedule Plan Change
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               You are about to schedule a plan change to{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {schedulingPlan ? getPlanByLookupKey(schedulingPlan)?.name : ""}
               </span>
               . This change will take effect at the end of your current billing
@@ -1016,9 +1016,9 @@ export default function BillingPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
-            <div className="rounded-lg bg-slate-950/50 p-4 border border-slate-800">
+            <div className="rounded-lg bg-[#faf8f3] p-4 border border-[#d9d4c9]">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-slate-400">New Plan:</span>
+                <span className="text-[#6b6b6b]">New Plan:</span>
                 <span className="font-semibold">
                   {schedulingPlan
                     ? getPlanByLookupKey(schedulingPlan)?.name
@@ -1026,8 +1026,8 @@ export default function BillingPage() {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Effective Date:</span>
-                <span className="font-semibold text-lime-400">
+                <span className="text-[#6b6b6b]">Effective Date:</span>
+                <span className="font-semibold text-[#b08d3e]">
                   {currentPlanDisplay?.renewsAt}
                 </span>
               </div>
@@ -1041,14 +1041,14 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setSchedulingPlan(null)}
               disabled={actionLoading}
             >
               Cancel
             </Button>
             <Button
-              className="rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
+              className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
               onClick={() =>
                 schedulingPlan && schedulePlanChange(schedulingPlan, billingCycle)
               }
@@ -1064,35 +1064,35 @@ export default function BillingPage() {
         open={confirmCancelSub}
         onOpenChange={() => setConfirmCancelSub(false)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-400" />
               Cancel Subscription
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               Are you sure you want to cancel your subscription? You will
               maintain access to all features until{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {currentPlanDisplay?.renewsAt}
               </span>
               , after which your subscription will end.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#14110c]">
               Once canceled, you will lose access to:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-slate-400">
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
                 <XCircle className="h-4 w-4 shrink-0 text-red-400" />
                 <span>Automated scheduling & calendar management</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-slate-400">
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
                 <XCircle className="h-4 w-4 shrink-0 text-red-400" />
                 <span>AI-powered content generation</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-slate-400">
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
                 <XCircle className="h-4 w-4 shrink-0 text-red-400" />
                 <span>Platform management & analytics</span>
               </li>
@@ -1101,7 +1101,7 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setConfirmCancelSub(false)}
               disabled={actionLoading}
             >
@@ -1123,16 +1123,16 @@ export default function BillingPage() {
         open={confirmCancelSchedule}
         onOpenChange={() => setConfirmCancelSchedule(false)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-lime-400" />
+              <Clock className="h-5 w-5 text-[#b08d3e]" />
               Cancel Scheduled Change
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               Are you sure you want to cancel the scheduled plan change? Your
               current plan will remain active and will renew normally on{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {currentPlanDisplay?.renewsAt}
               </span>
               .
@@ -1141,14 +1141,14 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setConfirmCancelSchedule(false)}
               disabled={actionLoading}
             >
               No, Keep Scheduled Change
             </Button>
             <Button
-              className="rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
+              className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
               onClick={cancelScheduledChange}
               disabled={actionLoading}
             >
@@ -1163,9 +1163,9 @@ export default function BillingPage() {
 
 function PlanDetail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-sm font-semibold text-white">{value}</p>
+    <div className="rounded-xl border border-[#d9d4c9] bg-[#faf8f3] p-3">
+      <p className="text-xs text-[#6b6b6b]">{label}</p>
+      <p className="text-sm font-semibold text-[#14110c]">{value}</p>
     </div>
   );
 }

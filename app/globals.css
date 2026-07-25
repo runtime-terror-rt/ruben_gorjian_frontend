@@ -9,6 +9,11 @@
   --color-accent: #d25ffd;
   --color-primary: #1e2248;
   --color-secondary: #55596a;
+  --dashboard-bg: #faf8f3;
+  --dashboard-surface: #ffffff;
+  --dashboard-text: #14110c;
+  --dashboard-muted: #6b6b6b;
+  --dashboard-border: #d9d4c9;
 }
 
 body {
@@ -48,4 +53,73 @@ html::-webkit-scrollbar {
   button {
     @apply px-4 py-2;
   }
+}
+
+/* Shared dashboard theme (user + admin) */
+.dashboard-theme {
+  background:
+    radial-gradient(circle at top left, rgba(176, 141, 62, 0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(176, 141, 62, 0.06), transparent 28%),
+    var(--dashboard-bg);
+  color: var(--dashboard-text);
+  font-family: Georgia, "Cormorant Garamond", serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-theme h1,
+.dashboard-theme h2,
+.dashboard-theme h3,
+.dashboard-theme h4,
+.dashboard-theme h5,
+.dashboard-theme h6 {
+  font-family: Georgia, 'Cormorant Garamond', serif !important;
+}
+
+.dashboard-theme .dashboard-muted {
+  color: var(--dashboard-muted);
+}
+
+.dashboard-theme .dashboard-primary-btn {
+  background-color: #14110c;
+  border: 1px solid #14110c;
+  color: #faf8f3;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-theme .dashboard-primary-btn:hover {
+  background-color: #b08d3e;
+  border-color: #b08d3e;
+  color: #14110c;
+  box-shadow: 0 10px 24px rgba(176, 141, 62, 0.24);
+}
+
+.dashboard-theme .dashboard-primary-btn:disabled {
+  background-color: #d9d4c9;
+  border-color: #d9d4c9;
+  color: #8f8a80;
+  box-shadow: none;
+}
+
+.dashboard-theme .dashboard-outline-btn {
+  background-color: #ffffff;
+  border: 1px solid #d9d4c9;
+  color: #14110c;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.dashboard-theme .dashboard-outline-btn:hover {
+  background-color: #e6e1d8;
+  color: #14110c;
+}
+
+.dashboard-theme button,
+.dashboard-theme input,
+.dashboard-theme select,
+.dashboard-theme textarea {
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }

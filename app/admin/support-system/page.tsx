@@ -96,7 +96,7 @@ function StatusBadge({ status }: { status: SubmissionStatus }) {
   const s = status.toUpperCase();
   if (s === "RESOLVED") {
     return (
-      <Badge className="bg-lime-500/20 text-lime-400 border-lime-500/20">
+      <Badge className="bg-[#b08d3e]/20 text-[#b08d3e] border-lime-500/20">
         Resolved
       </Badge>
     );
@@ -110,7 +110,7 @@ function StatusBadge({ status }: { status: SubmissionStatus }) {
   }
   return (
     <Badge
-      className="bg-orange-500 text-white border-none font-bold px-3 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
+      className="bg-orange-500 text-[#14110c] border-none font-bold px-3 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
     >
       Pending
     </Badge>
@@ -244,7 +244,7 @@ export default function SupportSystemPage() {
       header: "User",
       cell: ({ row }) => (
         <div className="flex flex-col min-w-0">
-          <span className="font-medium text-slate-200 truncate">
+          <span className="font-medium text-[#14110c] truncate">
             {row.original.fullName}
           </span>
           <span className="text-[10px] text-slate-500 font-mono truncate" title={row.original.email}>
@@ -258,7 +258,7 @@ export default function SupportSystemPage() {
       header: "Business",
       cell: ({ row }) => (
         <div className="flex flex-col min-w-0">
-          <span className="text-slate-300 font-medium truncate">
+          <span className="text-[#14110c] font-medium truncate">
             {row.original.businessName}
           </span>
           <span className="text-[10px] text-slate-500 truncate" title={row.original.websiteHandle}>
@@ -276,7 +276,7 @@ export default function SupportSystemPage() {
     //         <Badge
     //           key={i}
     //           variant="outline"
-    //           className="text-[10px] h-5 bg-slate-800/30 text-white/40 font-light border-slate-700/50"
+    //           className="text-[10px] h-5 bg-[#e6e1d8]/30 text-[#14110c]/40 font-light border-[#d9d4c9]/50"
     //         >
     //           {i}
     //         </Badge>
@@ -298,7 +298,7 @@ export default function SupportSystemPage() {
       accessorKey: "createdAt",
       header: "Submitted",
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5 text-slate-400">
+        <div className="flex items-center gap-1.5 text-[#6b6b6b]">
           <Calendar className="h-3 w-3" />
           <span className="text-xs">{formatDate(row.original.createdAt)}</span>
         </div>
@@ -315,10 +315,10 @@ export default function SupportSystemPage() {
     //         <Button
     //           variant="outline"
     //           size="sm"
-    //           className={`h-7 px-3 text-[10px] font-bold rounded-full border-slate-800 transition-all ${
+    //           className={`h-7 px-3 text-[10px] font-bold rounded-full border-[#d9d4c9] transition-all ${
     //             isResolved
-    //               ? "bg-lime-500/10 text-lime-400 border-lime-500/20 hover:bg-slate-800"
-    //               : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white"
+    //               ? "bg-[#b08d3e]/10 text-[#b08d3e] border-lime-500/20 hover:bg-[#e6e1d8]"
+    //               : "bg-[#ffffff] text-[#6b6b6b] border-[#d9d4c9] hover:text-[#14110c]"
     //           }`}
     //           onClick={() =>
     //             statusMutation.mutate({
@@ -345,25 +345,25 @@ export default function SupportSystemPage() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg"
+                  className="h-8 w-8 p-0 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8] rounded-lg"
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-48 bg-slate-900 border-slate-800 text-slate-200 shadow-2xl rounded-xl p-1"
+                className="w-48 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] shadow-2xl rounded-xl p-1"
               >
                 <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-2 py-1.5">
                   Action Menu
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-slate-800" />
+                <DropdownMenuSeparator className="bg-[#e6e1d8]" />
                 <DropdownMenuItem
                   onClick={() => {
                     setSelectedSubmission(sub);
                     setIsDetailsOpen(true);
                   }}
-                  className="rounded-lg focus:bg-slate-800 focus:text-lime-400"
+                  className="rounded-lg focus:bg-[#e6e1d8] focus:text-[#b08d3e]"
                 >
                   <Eye className="mr-2 h-4 w-4" /> View Details
                 </DropdownMenuItem>
@@ -374,7 +374,7 @@ export default function SupportSystemPage() {
                       status: "RESOLVED",
                     })
                   }
-                  className="rounded-lg focus:bg-slate-800 focus:text-lime-400"
+                  className="rounded-lg focus:bg-[#e6e1d8] focus:text-[#b08d3e]"
                   disabled={sub.status === "RESOLVED" || statusMutation.isPending}
                 >
                   <CheckCircle className="mr-2 h-4 w-4" /> Resolved
@@ -406,14 +406,14 @@ export default function SupportSystemPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-lime-400/10 flex items-center justify-center border border-lime-400/20 shadow-lg shadow-lime-400/5">
-            <MessageSquare className="h-6 w-6 text-lime-400" />
+          <div className="h-12 w-12 rounded-2xl bg-[#b08d3e]/10 flex items-center justify-center border border-[#b08d3e]/20 shadow-lg shadow-lime-400/5">
+            <MessageSquare className="h-6 w-6 text-[#b08d3e]" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">
+            <h1 className="text-3xl font-bold text-[#14110c] tracking-tight">
               Support System
             </h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-[#6b6b6b] text-sm mt-1">
               Analyze and respond to contact form submissions effectively.
             </p>
           </div>
@@ -422,7 +422,7 @@ export default function SupportSystemPage() {
           <Button
             variant="outline"
             size="sm"
-            className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800"
+            className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8]"
             onClick={() =>
               queryClient.invalidateQueries({
                 queryKey: ["contact-submissions"],
@@ -439,7 +439,7 @@ export default function SupportSystemPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-slate-900/40 border-white/5 p-4 flex items-center gap-4 group hover:bg-slate-800/40 transition-colors">
+        <Card className="bg-[#ffffff] border-white/5 p-4 flex items-center gap-4 group hover:bg-[#e6e1d8]/40 transition-colors">
           <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
             <Clock className="h-5 w-5" />
           </div>
@@ -447,12 +447,12 @@ export default function SupportSystemPage() {
             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">
               Pending
             </p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xl font-bold text-[#14110c]">
               {pendingQuery.data ?? 0}
             </p>
           </div>
         </Card>
-        <Card className="bg-slate-900/40 border-white/5 p-4 flex items-center gap-4 group hover:bg-slate-800/40 transition-colors">
+        <Card className="bg-[#ffffff] border-white/5 p-4 flex items-center gap-4 group hover:bg-[#e6e1d8]/40 transition-colors">
           <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
             <Mail className="h-5 w-5" />
           </div>
@@ -460,20 +460,20 @@ export default function SupportSystemPage() {
             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">
               Replied
             </p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xl font-bold text-[#14110c]">
               {repliedQuery.data ?? 0}
             </p>
           </div>
         </Card>
-        <Card className="bg-slate-900/40 border-white/5 p-4 flex items-center gap-4 group hover:bg-slate-800/40 transition-colors">
-          <div className="h-10 w-10 rounded-xl bg-lime-500/10 flex items-center justify-center text-lime-500">
+        <Card className="bg-[#ffffff] border-white/5 p-4 flex items-center gap-4 group hover:bg-[#e6e1d8]/40 transition-colors">
+          <div className="h-10 w-10 rounded-xl bg-[#b08d3e]/10 flex items-center justify-center text-lime-500">
             <CheckCircle className="h-5 w-5" />
           </div>
           <div>
             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">
               Resolved
             </p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xl font-bold text-[#14110c]">
               {resolvedQuery.data ?? 0}
             </p>
           </div>
@@ -481,7 +481,7 @@ export default function SupportSystemPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col lg:flex-row gap-4 items-end bg-slate-900/50 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+      <div className="flex flex-col lg:flex-row gap-4 items-end bg-[#ffffff] p-4 rounded-xl border border-white/5 backdrop-blur-sm">
         <div className="flex-1 space-y-2">
           <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest pl-1">
             Search Submissions
@@ -492,7 +492,7 @@ export default function SupportSystemPage() {
               placeholder="Filter by name and email"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-slate-950/50 border-slate-800 focus-visible:ring-lime-500/50 h-11"
+              className="pl-10 bg-[#faf8f3] border-[#d9d4c9] focus-visible:ring-lime-500/50 h-11"
             />
           </div>
         </div>
@@ -504,7 +504,7 @@ export default function SupportSystemPage() {
             id="status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950/50 border-slate-800 h-11"
+            className="bg-[#faf8f3] border-[#d9d4c9] h-11"
           >
             <option value="ALL">All Status</option>
             <option value="PENDING">Pending</option>
@@ -515,7 +515,7 @@ export default function SupportSystemPage() {
       </div>
 
       {/* Table */}
-      <Card className="border-white/5 bg-slate-900/40 backdrop-blur-md overflow-hidden transition-all shadow-2xl">
+      <Card className="border-white/5 bg-[#ffffff] backdrop-blur-md overflow-hidden transition-all shadow-2xl">
         <div className="w-full">
           <Table className="table-fixed w-full">
             <colgroup>
@@ -525,7 +525,7 @@ export default function SupportSystemPage() {
               <col className="w-[18%]" />
               <col className="w-[10%]" />
             </colgroup>
-            <TableHeader className="bg-slate-950/40">
+            <TableHeader className="bg-[#faf8f3]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
                   key={headerGroup.id}
@@ -553,7 +553,7 @@ export default function SupportSystemPage() {
                   <TableRow key={i} className="border-white/5 animate-pulse">
                     <TableCell
                       colSpan={columns.length}
-                      className="h-16 bg-slate-800/10"
+                      className="h-16 bg-[#e6e1d8]/10"
                     />
                   </TableRow>
                 ))
@@ -580,7 +580,7 @@ export default function SupportSystemPage() {
                     className="h-48 text-center text-slate-500"
                   >
                     <div className="flex flex-col items-center justify-center gap-4">
-                      <div className="h-16 w-16 rounded-full bg-slate-800/40 flex items-center justify-center">
+                      <div className="h-16 w-16 rounded-full bg-[#e6e1d8]/40 flex items-center justify-center">
                         <MessageSquare className="h-8 w-8 opacity-20" />
                       </div>
                       <p className="text-sm font-medium">
@@ -595,7 +595,7 @@ export default function SupportSystemPage() {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-t border-white/5 bg-slate-950/20 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3] gap-4">
           <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
             <span>Total: {submissionsQuery.data?.total ?? 0} records</span>
           </div>
@@ -605,11 +605,11 @@ export default function SupportSystemPage() {
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="bg-slate-900 border-slate-800 h-8"
+              className="bg-[#ffffff] border-[#d9d4c9] h-8"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-xs text-slate-400 px-2 font-mono">
+            <span className="text-xs text-[#6b6b6b] px-2 font-mono">
               Page {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount() || 1}
             </span>
@@ -618,7 +618,7 @@ export default function SupportSystemPage() {
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="bg-slate-900 border-slate-800 h-8"
+              className="bg-[#ffffff] border-[#d9d4c9] h-8"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

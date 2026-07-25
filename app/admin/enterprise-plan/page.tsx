@@ -212,7 +212,7 @@ function StatusBadge({ status }: { status: string }) {
   switch (s) {
     case "PAYMENT_COMPLETED":
       return (
-        <Badge className="bg-lime-500/20 text-lime-400 border-lime-400/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest animate-pulse shadow-[0_0_15px_rgba(163,230,53,0.1)]">
+        <Badge className="bg-[#b08d3e]/20 text-[#b08d3e] border-[#b08d3e]/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest animate-pulse shadow-[0_0_15px_rgba(163,230,53,0.1)]">
           <CheckCircle2 className="h-3 w-3" />
           PAYMENT_COMPLETED
         </Badge>
@@ -585,11 +585,11 @@ export default function EnterprisePlanPage() {
       header: "Client / Company",
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center text-lime-400 group-hover:bg-lime-400 group-hover:text-slate-950 transition-colors">
+          <div className="h-10 w-10 rounded-xl bg-[#e6e1d8] border border-white/5 flex items-center justify-center text-[#b08d3e] group-hover:bg-[#b08d3e] group-hover:text-slate-950 transition-colors">
             <Building2 className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-white tracking-tight">{row.original.companyName}</span>
+            <span className="font-bold text-[#14110c] tracking-tight">{row.original.companyName}</span>
             <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{row.original.fullName}</span>
           </div>
         </div>
@@ -603,7 +603,7 @@ export default function EnterprisePlanPage() {
         const formattedIndustry = industry.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
         return (
           <div className="flex items-center">
-            <span className="text-slate-200 font-bold text-[13px] tracking-tight">
+            <span className="text-[#14110c] font-bold text-[13px] tracking-tight">
               {formattedIndustry}
             </span>
           </div>
@@ -615,7 +615,7 @@ export default function EnterprisePlanPage() {
       header: "Contact Details",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 text-slate-300">
+          <div className="flex items-center gap-1.5 text-[#14110c]">
             <Mail className="h-3 w-3 text-slate-500" />
             <span className="text-sm">{row.original.email}</span>
           </div>
@@ -633,12 +633,12 @@ export default function EnterprisePlanPage() {
       header: "Plan & Pricing",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="text-slate-200 font-bold text-sm">{row.original.proposal?.planName || row.original.planName}</span>
+          <span className="text-[#14110c] font-bold text-sm">{row.original.proposal?.planName || row.original.planName}</span>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[11px] text-lime-400 font-black tracking-wider">
+            <span className="text-[11px] text-[#b08d3e] font-black tracking-wider">
               {formatAmount(row.original.proposal?.amount || row.original.amount || 0, row.original.proposal?.currency || row.original.currency || "usd")}
             </span>
-            <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest border-l border-slate-800 pl-2">
+            <span className="text-[9px] text-slate-600 font-bold uppercase tracking-widest border-l border-[#d9d4c9] pl-2">
               {row.original.proposal?.billingCycle || row.original.billingCycle}
             </span>
           </div>
@@ -650,7 +650,7 @@ export default function EnterprisePlanPage() {
       header: "Timeline",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
+          <div className="flex items-center gap-1.5 text-[#6b6b6b] text-[11px]">
             <Send className="h-3 w-3" />
             <span>Sent: {formatDate(row.original.createdAt)}</span>
           </div>
@@ -678,17 +678,17 @@ export default function EnterprisePlanPage() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-9 w-9 p-0 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl"
+                  className="h-9 w-9 p-0 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8] rounded-xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-800 rounded-2xl p-2 shadow-2xl">
+              <DropdownMenuContent align="end" className="w-56 bg-[#ffffff] border-[#d9d4c9] rounded-2xl p-2 shadow-2xl">
                 <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-500 tracking-widest px-3 py-2">Management</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() => router.push(`/admin/enterprise-plan/${invite.id}`)}
-                  className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
+                  className="rounded-lg py-2.5 cursor-pointer focus:bg-[#e6e1d8] text-[#14110c]"
                 >
                   <Eye className="mr-3 h-4 w-4 text-blue-400" />
                   <span className="font-medium">View Details</span>
@@ -698,13 +698,13 @@ export default function EnterprisePlanPage() {
                     e.stopPropagation();
                     handleEditClick(invite.id);
                   }}
-                  className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
+                  className="rounded-lg py-2.5 cursor-pointer focus:bg-[#e6e1d8] text-[#14110c]"
                   disabled={invite.status === "PAYMENT_COMPLETED"}
                 >
                   {isDetailLoading && editingInviteId === invite.id ? (
-                    <Loader2 className="mr-3 h-4 w-4 animate-spin text-lime-400" />
+                    <Loader2 className="mr-3 h-4 w-4 animate-spin text-[#b08d3e]" />
                   ) : (
-                    <Edit3 className="mr-3 h-4 w-4 text-lime-400" />
+                    <Edit3 className="mr-3 h-4 w-4 text-[#b08d3e]" />
                   )}
                   <span className="font-medium">Edit Proposal</span>
                 </DropdownMenuItem>
@@ -713,9 +713,9 @@ export default function EnterprisePlanPage() {
                     e.stopPropagation();
                     copyInviteLink();
                   }}
-                  className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
+                  className="rounded-lg py-2.5 cursor-pointer focus:bg-[#e6e1d8] text-[#14110c]"
                 >
-                  <Copy className="mr-3 h-4 w-4 text-lime-400" />
+                  <Copy className="mr-3 h-4 w-4 text-[#b08d3e]" />
                   <span className="font-medium">Copy Invite Link</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -723,14 +723,14 @@ export default function EnterprisePlanPage() {
                     e.stopPropagation();
                     resendMutation.mutate(invite.id);
                   }}
-                  className="rounded-lg py-2.5 cursor-pointer focus:bg-slate-800 text-white"
+                  className="rounded-lg py-2.5 cursor-pointer focus:bg-[#e6e1d8] text-[#14110c]"
                   disabled={invite.status === "PAYMENT_COMPLETED" || invite.status === "CANCELED"}
                 >
                   <Mail className="mr-3 h-4 w-4 text-amber-400" />
                   <span className="font-medium">Resend Email</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-slate-800 my-1" />
+                <DropdownMenuSeparator className="bg-[#e6e1d8] my-1" />
 
                 {invite.status !== "CANCELED" && invite.status !== "PAYMENT_COMPLETED" && (
                   <DropdownMenuItem
@@ -802,12 +802,12 @@ export default function EnterprisePlanPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <div className="h-10 w-10 rounded-2xl bg-lime-400 flex items-center justify-center text-slate-950 shadow-[0_0_20px_rgba(163,230,53,0.3)]">
+            <div className="h-10 w-10 rounded-2xl bg-[#b08d3e] flex items-center justify-center text-slate-950 shadow-[0_0_20px_rgba(163,230,53,0.3)]">
               <ShieldCheck className="h-6 w-6" />
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Custom Plans</h1>
+            <h1 className="text-3xl font-black text-[#14110c] tracking-tight">Custom Plans</h1>
           </div>
-          <p className="text-slate-400 text-sm font-medium ml-1">
+          <p className="text-[#6b6b6b] text-sm font-medium ml-1">
             Manage custom enterprise proposals and brand brief submissions.
           </p>
         </div>
@@ -815,17 +815,17 @@ export default function EnterprisePlanPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <TabsList className="bg-slate-900/50 border border-white/5 p-1 rounded-2xl h-14">
+          <TabsList className="bg-[#ffffff] border border-white/5 p-1 rounded-2xl h-14">
             <TabsTrigger 
               value="enterprise" 
-              className="rounded-xl px-6 h-full data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
+              className="rounded-xl px-6 h-full data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
             >
               <ClipboardList className="h-4 w-4 mr-2" />
               Custom Plans
             </TabsTrigger>
             <TabsTrigger 
               value="brand-brief" 
-              className="rounded-xl px-6 h-full data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
+              className="rounded-xl px-6 h-full data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-black uppercase text-[10px] tracking-widest transition-all"
             >
               <FileText className="h-4 w-4 mr-2" />
               Brand Brief
@@ -837,14 +837,14 @@ export default function EnterprisePlanPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
+                className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
                 onClick={() => queryClient.invalidateQueries({ queryKey: ["enterprise-invites"] })}
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${invitesQuery.isFetching ? "animate-spin" : ""}`} />
                 Sync Data
               </Button>
               <Button
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
                 onClick={() => {
                   resetForm();
                   setIsCreateModalOpen(true);
@@ -860,7 +860,7 @@ export default function EnterprisePlanPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
+                className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] h-11 px-5 rounded-xl font-bold transition-all active:scale-95"
                 onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-brand-briefs"] })}
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${brandBriefsQuery.isFetching ? "animate-spin" : ""}`} />
@@ -874,7 +874,7 @@ export default function EnterprisePlanPage() {
           {/* Main Content Area */}
           <div className="space-y-4">
             {/* Filters Bar */}
-            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-slate-900/60 p-2 rounded-[1.5rem] border border-white/5 backdrop-blur-md">
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-[#ffffff]/60 p-2 rounded-[1.5rem] border border-white/5 backdrop-blur-md">
               <div className="relative flex-1 w-full lg:max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                 <Input
@@ -884,18 +884,18 @@ export default function EnterprisePlanPage() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="pl-11 bg-transparent border-none focus-visible:ring-0 h-10 text-sm text-slate-200 placeholder:text-slate-600 font-medium"
+                  className="pl-11 bg-transparent border-none focus-visible:ring-0 h-10 text-sm text-[#14110c] placeholder:text-slate-600 font-medium"
                 />
               </div>
               <div className="flex items-center gap-2 pr-2 w-full lg:w-auto">
-                <div className="h-6 w-[1px] bg-slate-800 mx-2 hidden lg:block" />
+                <div className="h-6 w-[1px] bg-[#e6e1d8] mx-2 hidden lg:block" />
                 <select
                   value={statusFilter}
                   onChange={(e) => {
                     setStatusFilter(e.target.value);
                     setPage(1);
                   }}
-                  className="bg-slate-800/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 px-3 outline-none"
+                  className="bg-[#e6e1d8]/80 border-white/5 h-9 w-full lg:w-44 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#14110c] px-3 outline-none"
                 >
                   <option value="ALL">All Categories</option>
                   <option value="PENDING">PENDING</option>
@@ -909,10 +909,10 @@ export default function EnterprisePlanPage() {
             </div>
 
             {/* Table Container */}
-            <Card className="border-white/5 bg-slate-950/20 backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
+            <Card className="border-white/5 bg-[#faf8f3] backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
               <div className="overflow-x-auto scrollbar-hide">
                 <Table>
-                  <TableHeader className="bg-slate-900/60 border-b border-white/5">
+                  <TableHeader className="bg-[#ffffff]/60 border-b border-white/5">
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
                         {headerGroup.headers.map((header) => (
@@ -940,14 +940,14 @@ export default function EnterprisePlanPage() {
                               <AlertCircle className="h-10 w-10 text-rose-500 -rotate-12" />
                             </div>
                             <div className="space-y-1">
-                              <p className="text-white font-black text-xl tracking-tight">Sync Failure</p>
+                              <p className="text-[#14110c] font-black text-xl tracking-tight">Sync Failure</p>
                               <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium">
                             {(invitesQuery.error as any)?.message || "The neural link to the backend was interrupted unexpectedly."}
                           </p>
                         </div>
                         <Button
                           variant="outline"
-                          className="mt-2 border-slate-800 bg-slate-900/50 text-slate-300 rounded-xl hover:bg-white hover:text-slate-950 transition-all font-black px-6 uppercase text-[10px] tracking-widest"
+                          className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-white hover:text-slate-950 transition-all font-black px-6 uppercase text-[10px] tracking-widest"
                           onClick={() => invitesQuery.refetch()}
                         >
                           <RefreshCw className="h-3 w-3 mr-2" />
@@ -974,16 +974,16 @@ export default function EnterprisePlanPage() {
                   <TableRow className="hover:bg-transparent">
                     <TableCell colSpan={columns.length} className="h-80 text-center">
                       <div className="flex flex-col items-center justify-center gap-4">
-                        <div className="h-20 w-20 rounded-3xl bg-slate-900 flex items-center justify-center border border-white/5 shadow-inner">
+                        <div className="h-20 w-20 rounded-3xl bg-[#ffffff] flex items-center justify-center border border-white/5 shadow-inner">
                           <Building2 className="h-10 w-10 text-slate-800" />
                         </div>
                         <div className="space-y-1">
-                          <p className="text-white font-black text-xl tracking-tight">Pipeline Empty</p>
+                          <p className="text-[#14110c] font-black text-xl tracking-tight">Pipeline Empty</p>
                           <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium">Add your first high-value client to begin tracking their lifecycle.</p>
                         </div>
                         <Button
                           variant="outline"
-                          className="mt-2 border-slate-800 bg-slate-900/50 text-slate-300 rounded-xl hover:bg-slate-800 hover:text-white transition-all font-bold px-6"
+                          className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all font-bold px-6"
                           onClick={() => {
                             setSearch("");
                             setStatusFilter("ALL");
@@ -1003,7 +1003,7 @@ export default function EnterprisePlanPage() {
           <div className="flex items-center justify-between p-6 border-t border-white/5 bg-black/40">
             <div className="flex items-center gap-4">
               <div className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-lime-400 animate-pulse" />
+                <div className="h-1.5 w-1.5 rounded-full bg-[#b08d3e] animate-pulse" />
                 Live Feed: {invitesQuery.data?.total ?? 0} Global Records
               </div>
             </div>
@@ -1013,12 +1013,12 @@ export default function EnterprisePlanPage() {
                 size="sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white"
+                className="bg-[#ffffff] border-[#d9d4c9] h-9 px-4 rounded-xl transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] hover:text-[#14110c]"
               >
                 Prev
               </Button>
-              <div className="flex items-center gap-2 px-3 h-9 bg-slate-950 border border-white/5 rounded-xl text-[11px] font-black text-white">
-                <span className="text-lime-400">{page}</span>
+              <div className="flex items-center gap-2 px-3 h-9 bg-[#faf8f3] border border-white/5 rounded-xl text-[11px] font-black text-[#14110c]">
+                <span className="text-[#b08d3e]">{page}</span>
                 <span className="opacity-20">/</span>
                 <span>{Math.ceil((invitesQuery.data?.total ?? 0) / pageSize) || 1}</span>
               </div>
@@ -1027,7 +1027,7 @@ export default function EnterprisePlanPage() {
                 size="sm"
                 onClick={() => setPage(p => p + 1)}
                 disabled={page >= Math.ceil((invitesQuery.data?.total ?? 0) / pageSize)}
-                className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white"
+                className="bg-[#ffffff] border-[#d9d4c9] h-9 px-4 rounded-xl transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] hover:text-[#14110c]"
               >
                 Next
               </Button>
@@ -1038,10 +1038,10 @@ export default function EnterprisePlanPage() {
         </TabsContent>
 
         <TabsContent value="brand-brief" className="space-y-8 mt-0 outline-none">
-          <Card className="border-white/5 bg-slate-950/20 backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
+          <Card className="border-white/5 bg-[#faf8f3] backdrop-blur-xl overflow-hidden rounded-[2rem] shadow-2xl">
             <div className="overflow-x-auto scrollbar-hide">
               <Table>
-                <TableHeader className="bg-slate-900/60 border-b border-white/5">
+                <TableHeader className="bg-[#ffffff]/60 border-b border-white/5">
                   <TableRow className="hover:bg-transparent border-none">
                     <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-left">Restaurant / Brand</TableHead>
                     <TableHead className="text-slate-600 py-5 px-6 font-bold uppercase text-[9px] tracking-[0.2em] text-center">Location</TableHead>
@@ -1065,16 +1065,16 @@ export default function EnterprisePlanPage() {
                       <TableRow key={bb.id} className="border-white/5 hover:bg-white/[0.03] transition-all group border-b last:border-b-0">
                         <TableCell className="py-6 px-6">
                           <div className="flex flex-col">
-                            <span className="font-bold text-white tracking-tight">{bb.restaurantName}</span>
-                            <span className="text-[10px] text-lime-400 font-bold uppercase tracking-wider">{bb.proposal?.planName || "Enterprise"}</span>
+                            <span className="font-bold text-[#14110c] tracking-tight">{bb.restaurantName}</span>
+                            <span className="text-[10px] text-[#b08d3e] font-bold uppercase tracking-wider">{bb.proposal?.planName || "Enterprise"}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="py-6 px-6 text-center text-slate-300 text-sm">{bb.location}</TableCell>
-                        <TableCell className="py-6 px-6 text-center text-slate-300 text-sm">{bb.businessType}</TableCell>
-                        <TableCell className="py-6 px-6 text-center text-slate-400 text-xs">{formatDate(bb.submissionDate)}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm">{bb.location}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm">{bb.businessType}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#6b6b6b] text-xs">{formatDate(bb.submissionDate)}</TableCell>
                         <TableCell className="py-6 px-6 text-center">
                           <div className="flex flex-col">
-                            <span className="text-slate-200 font-medium text-sm">{bb.user.name}</span>
+                            <span className="text-[#14110c] font-medium text-sm">{bb.user.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">{bb.user.email}</span>
                           </div>
                         </TableCell>
@@ -1082,7 +1082,7 @@ export default function EnterprisePlanPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 w-9 p-0 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-xl"
+                            className="h-9 w-9 p-0 text-[#6b6b6b] hover:text-blue-400 hover:bg-blue-400/10 rounded-xl"
                             onClick={() => {
                               setSelectedBbId(bb.id);
                               setIsBbDetailsOpen(true);
@@ -1116,11 +1116,11 @@ export default function EnterprisePlanPage() {
                   size="sm"
                   onClick={() => setBbPage(p => Math.max(1, p - 1))}
                   disabled={bbPage === 1}
-                  className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white"
+                  className="bg-[#ffffff] border-[#d9d4c9] h-9 px-4 rounded-xl text-[10px] font-black uppercase text-[#6b6b6b] hover:text-[#14110c]"
                 >
                   Prev
                 </Button>
-                <div className="text-[11px] font-black text-white px-3">
+                <div className="text-[11px] font-black text-[#14110c] px-3">
                   {bbPage} / {brandBriefsQuery.data?.data?.totalPages || 1}
                 </div>
                 <Button
@@ -1128,7 +1128,7 @@ export default function EnterprisePlanPage() {
                   size="sm"
                   onClick={() => setBbPage(p => p + 1)}
                   disabled={bbPage >= (brandBriefsQuery.data?.data?.totalPages || 1)}
-                  className="bg-slate-900/50 border-slate-800 h-9 px-4 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white"
+                  className="bg-[#ffffff] border-[#d9d4c9] h-9 px-4 rounded-xl text-[10px] font-black uppercase text-[#6b6b6b] hover:text-[#14110c]"
                 >
                   Next
                 </Button>
@@ -1147,29 +1147,29 @@ export default function EnterprisePlanPage() {
           setIsCreateModalOpen(open);
         }}
       >
-        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
+        <DialogContent className="bg-[#faf8f3] backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
           <div className="px-6 py-5 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-lime-400/5 blur-[100px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#b08d3e]/5 blur-[100px] pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <div>
-                <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Enterprise Proposal Forge</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-[#14110c] tracking-tighter uppercase">Enterprise Proposal Forge</DialogTitle>
                 <DialogDescription className="text-slate-500 text-xs font-medium tracking-tight mt-0.5">
                   Engineer a high-performance custom plan for priority enterprise clients.
                 </DialogDescription>
               </div>
-              <div className="h-12 w-12 rounded-2xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
+              <div className="h-12 w-12 rounded-2xl bg-[#b08d3e]/10 flex items-center justify-center text-[#b08d3e] border border-[#b08d3e]/20">
                 <ShieldCheck className="h-6 w-6" />
               </div>
             </div>
           </div>
 
-          <div className="flex-1 px-6 py-6 bg-slate-950/40 overflow-y-auto">
+          <div className="flex-1 px-6 py-6 bg-[#faf8f3] overflow-y-auto">
             <form id="enterprise-proposal-form" onSubmit={handleCreateSubmit} className="space-y-10">
 
               {/* 1. Client Information */}
               <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.25em] flex items-center gap-3">
-                  <span className="h-5 w-5 rounded-md bg-lime-400/10 flex items-center justify-center text-[10px]">1</span>
+                <h3 className="text-[11px] font-black text-[#b08d3e] uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-[#b08d3e]/10 flex items-center justify-center text-[10px]">1</span>
                   Client Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1178,7 +1178,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.planName}
                       onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enter PlanName"
                       required
                     />
@@ -1188,7 +1188,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.companyName}
                       onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enter CompanyName"
                       required
                     />
@@ -1198,7 +1198,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.fullName}
                       onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enter FullName"
                       required
                     />
@@ -1209,7 +1209,7 @@ export default function EnterprisePlanPage() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder=" Enter Email"
                       required
                     />
@@ -1242,12 +1242,12 @@ export default function EnterprisePlanPage() {
                         "flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer group",
                         formData.industry === ind.value
                           ? "bg-blue-400/10 border-blue-400/40 text-blue-400"
-                          : "bg-white/5 border-white/5 text-slate-400 hover:border-white/10"
+                          : "bg-white/5 border-white/5 text-[#6b6b6b] hover:border-white/10"
                       )}
                     >
                       <div className={cn(
                         "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all",
-                        formData.industry === ind.value ? "border-blue-400" : "border-slate-700"
+                        formData.industry === ind.value ? "border-blue-400" : "border-[#d9d4c9]"
                       )}>
                         {formData.industry === ind.value && <div className="h-2 w-2 rounded-full bg-blue-400" />}
                       </div>
@@ -1265,7 +1265,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.otherIndustry}
                       onChange={(e) => setFormData(prev => ({ ...prev, otherIndustry: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enter business category..."
                       required={formData.industry === "OTHER"}
                     />
@@ -1293,7 +1293,7 @@ export default function EnterprisePlanPage() {
                     >
                       <div className={cn(
                         "h-5 w-5 rounded-md border flex items-center justify-center transition-colors",
-                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-slate-700"
+                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-[#d9d4c9]"
                       )}>
                         {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
                       </div>
@@ -1316,7 +1316,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.postsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, postsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1325,7 +1325,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.reelsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1334,7 +1334,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.microReelsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                 </div>
@@ -1356,12 +1356,12 @@ export default function EnterprisePlanPage() {
                       )}
                     >
                       <div className="flex flex-col">
-                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-slate-400")}>Caption & Hashtags</span>
+                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-[#6b6b6b]")}>Caption & Hashtags</span>
                         <span className="text-[9px] text-slate-600 font-medium">Expert copywriting for all posts</span>
                       </div>
                       <div className={cn(
                         "h-5 w-10 rounded-full relative transition-colors p-1",
-                        formData.captionHashtags ? "bg-cyan-400" : "bg-slate-800"
+                        formData.captionHashtags ? "bg-cyan-400" : "bg-[#e6e1d8]"
                       )}>
                         <div className={cn(
                           "h-3 w-3 rounded-full bg-white transition-all shadow-sm",
@@ -1378,12 +1378,12 @@ export default function EnterprisePlanPage() {
                       )}
                     >
                       <div className="flex flex-col">
-                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-slate-400")}>Auto Scheduling</span>
+                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-[#6b6b6b]")}>Auto Scheduling</span>
                         <span className="text-[9px] text-slate-600 font-medium">Automated publishing pipeline</span>
                       </div>
                       <div className={cn(
                         "h-5 w-10 rounded-full relative transition-colors p-1",
-                        formData.scheduling ? "bg-cyan-400" : "bg-slate-800"
+                        formData.scheduling ? "bg-cyan-400" : "bg-[#e6e1d8]"
                       )}>
                         <div className={cn(
                           "h-3 w-3 rounded-full bg-white transition-all shadow-sm",
@@ -1409,7 +1409,7 @@ export default function EnterprisePlanPage() {
                           type="number"
                           value={formData.amount}
                           onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))}
-                          className="bg-slate-900/50 border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-white font-black text-sm"
+                          className="bg-[#ffffff] border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-[#14110c] font-black text-sm"
                         />
                       </div>
                     </div>
@@ -1419,7 +1419,7 @@ export default function EnterprisePlanPage() {
                         type="number"
                         value={formData.expiresInDays}
                         onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))}
-                        className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-white font-bold text-sm"
+                        className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-[#14110c] font-bold text-sm"
                         min={1}
                         required
                       />
@@ -1430,14 +1430,14 @@ export default function EnterprisePlanPage() {
 
               {/* 8. Internal Notes */}
               <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                <h3 className="text-[11px] font-black text-[#6b6b6b] uppercase tracking-[0.25em] flex items-center gap-3">
                   <span className="h-5 w-5 rounded-md bg-slate-400/10 flex items-center justify-center text-[10px]">8</span>
                   Internal Notes (Admin Only)
                 </h3>
                 <textarea
                   value={formData.internalNotes}
                   onChange={(e) => setFormData(prev => ({ ...prev, internalNotes: e.target.value }))}
-                  className="w-full bg-slate-900/50 border border-white/5 rounded-2xl p-4 text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 min-h-[100px] placeholder:text-slate-700"
+                  className="w-full bg-[#ffffff] border border-white/5 rounded-2xl p-4 text-[#14110c] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#d9d4c9] min-h-[100px] placeholder:text-slate-700"
                   placeholder="Special instructions, priority notes, or follow-up requirements..."
                 />
               </div>
@@ -1445,7 +1445,7 @@ export default function EnterprisePlanPage() {
             </form>
           </div>
 
-          <div className="px-6 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+          <div className="px-6 py-5 border-t border-white/5 bg-[#faf8f3] backdrop-blur-md flex items-center justify-between">
             <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               Secure Proposal Dispatch
@@ -1455,14 +1455,14 @@ export default function EnterprisePlanPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateModalOpen(false)}
-                className="border-white/5 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
+                className="border-white/5 bg-white/5 text-[#6b6b6b] h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-[#14110c] transition-all"
               >
                 Discard
               </Button>
               <Button
                 form="enterprise-proposal-form"
                 type="submit"
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(163,230,53,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(163,230,53,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]"
                 disabled={createInviteMutation.isPending}
               >
                 {createInviteMutation.isPending ? (
@@ -1478,14 +1478,14 @@ export default function EnterprisePlanPage() {
       </Dialog>
 
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[850px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
+        <DialogContent className="bg-[#faf8f3] backdrop-blur-3xl border-white/10 sm:max-w-[850px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border">
           {inviteDetailsQuery.isLoading ? (
             <div className="p-20 flex flex-col items-center justify-center space-y-6">
               <div className="relative">
-                <Loader2 className="h-10 w-10 text-lime-400 animate-spin" />
-                <div className="absolute inset-0 blur-xl bg-lime-400/20 animate-pulse" />
+                <Loader2 className="h-10 w-10 text-[#b08d3e] animate-spin" />
+                <div className="absolute inset-0 blur-xl bg-[#b08d3e]/20 animate-pulse" />
               </div>
-              <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-[10px]">Synchronizing Data...</p>
+              <p className="text-[#6b6b6b] font-black uppercase tracking-[0.2em] text-[10px]">Synchronizing Data...</p>
             </div>
           ) : inviteDetailsQuery.data?.invite ? (
             (() => {
@@ -1497,14 +1497,14 @@ export default function EnterprisePlanPage() {
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_left,rgba(163,230,53,0.05),transparent)] pointer-events-none" />
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lime-400">
+                        <div className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#b08d3e]">
                           <Building2 className="h-6 w-6" />
                         </div>
                         <div>
-                          <h2 className="text-2xl font-black text-white tracking-tight">{invite.companyName}</h2>
+                          <h2 className="text-2xl font-black text-[#14110c] tracking-tight">{invite.companyName}</h2>
                           <div className="flex items-center gap-3 text-slate-500 font-bold uppercase tracking-widest text-[9px] mt-0.5">
                             <span>{invite.fullName}</span>
-                            <div className="h-1 w-1 rounded-full bg-slate-800" />
+                            <div className="h-1 w-1 rounded-full bg-[#e6e1d8]" />
                             <span>{invite.email}</span>
                           </div>
                         </div>
@@ -1514,12 +1514,12 @@ export default function EnterprisePlanPage() {
                   </div>
 
                   {/* Body - Grid Layout to avoid scroll */}
-                  <div className="p-8 grid grid-cols-1 md:grid-cols-5 gap-8 bg-slate-950/40">
+                  <div className="p-8 grid grid-cols-1 md:grid-cols-5 gap-8 bg-[#faf8f3]">
                     {/* Lifecycle - Left Column */}
                     <div className="md:col-span-2 space-y-6">
                       <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Activity Lifecycle</h3>
                       <div className="space-y-4 relative">
-                        <div className="absolute top-2 left-5 bottom-2 w-[1px] bg-slate-800" />
+                        <div className="absolute top-2 left-5 bottom-2 w-[1px] bg-[#e6e1d8]" />
                         {[
                           { id: "PENDING", label: "ISSUED", date: invite.createdAt, icon: Send },
                           { id: "VIEWED", label: "VIEWED", date: invite.viewedAt, icon: Eye },
@@ -1531,12 +1531,12 @@ export default function EnterprisePlanPage() {
                             <div key={idx} className="flex gap-4 items-center relative z-10">
                               <div className={cn(
                                 "h-10 w-10 rounded-lg flex items-center justify-center border transition-all",
-                                isActive ? "bg-lime-400/10 text-lime-400 border-lime-400/20" : "bg-slate-900 text-slate-700 border-white/5"
+                                isActive ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20" : "bg-[#ffffff] text-slate-700 border-white/5"
                               )}>
                                 <step.icon className="h-4 w-4" />
                               </div>
                               <div>
-                                <p className={cn("text-[9px] font-black uppercase tracking-widest", isActive ? "text-white" : "text-slate-700")}>{step.label}</p>
+                                <p className={cn("text-[9px] font-black uppercase tracking-widest", isActive ? "text-[#14110c]" : "text-slate-700")}>{step.label}</p>
                                 <p className="text-[10px] text-slate-500 font-medium">{step.date ? formatDate(step.date) : "Pending"}</p>
                               </div>
                             </div>
@@ -1547,14 +1547,14 @@ export default function EnterprisePlanPage() {
 
                     {/* Proposal Details - Right Column */}
                     <div className="md:col-span-3 space-y-6">
-                      <div className="bg-slate-900/50 border border-white/5 rounded-2xl p-6 space-y-6">
+                      <div className="bg-[#ffffff] border border-white/5 rounded-2xl p-6 space-y-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-[9px] font-black text-lime-400 uppercase tracking-widest mb-1">Current Proposal</p>
-                            <h3 className="text-xl font-black text-white tracking-tight">{invite.proposal?.planName || invite.planName}</h3>
+                            <p className="text-[9px] font-black text-[#b08d3e] uppercase tracking-widest mb-1">Current Proposal</p>
+                            <h3 className="text-xl font-black text-[#14110c] tracking-tight">{invite.proposal?.planName || invite.planName}</h3>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-black text-white tracking-tighter">
+                            <p className="text-2xl font-black text-[#14110c] tracking-tighter">
                               {formatAmount(invite.proposal?.amount || invite.amount || 0, invite.proposal?.currency || invite.currency || "usd")}
                             </p>
                             <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5">/ {invite.proposal?.billingCycle || invite.billingCycle}</p>
@@ -1566,16 +1566,16 @@ export default function EnterprisePlanPage() {
                             <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Social Content</p>
                             <div className="space-y-1">
                               <div className="flex justify-between text-[11px]">
-                                <span className="text-slate-400">Monthly Posts</span>
-                                <span className="text-white font-bold">{invite.postsPerMonth || 0}</span>
+                                <span className="text-[#6b6b6b]">Monthly Posts</span>
+                                <span className="text-[#14110c] font-bold">{invite.postsPerMonth || 0}</span>
                               </div>
                               <div className="flex justify-between text-[11px]">
-                                <span className="text-slate-400">Monthly Reels</span>
-                                <span className="text-white font-bold">{invite.reelsPerMonth || 0}</span>
+                                <span className="text-[#6b6b6b]">Monthly Reels</span>
+                                <span className="text-[#14110c] font-bold">{invite.reelsPerMonth || 0}</span>
                               </div>
                               <div className="flex justify-between text-[11px]">
-                                <span className="text-slate-400">Micro Content</span>
-                                <span className="text-white font-bold">{invite.microReelsPerMonth || 0}</span>
+                                <span className="text-[#6b6b6b]">Micro Content</span>
+                                <span className="text-[#14110c] font-bold">{invite.microReelsPerMonth || 0}</span>
                               </div>
                             </div>
                           </div>
@@ -1586,23 +1586,23 @@ export default function EnterprisePlanPage() {
                         <div className="grid grid-cols-1 gap-4">
                           <div className="p-4 bg-white/5 rounded-xl border border-white/5">
                             <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">Industry / Category</p>
-                            <p className="text-sm text-white font-bold tracking-tight">{invite.industry?.replace(/_/g, ' ') || "GENERAL"}</p>
+                            <p className="text-sm text-[#14110c] font-bold tracking-tight">{invite.industry?.replace(/_/g, ' ') || "GENERAL"}</p>
                           </div>
                         </div>
 
                         <div className="flex flex-wrap gap-4 pt-2">
-                          <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.captionHashtags ? "text-lime-400" : "text-slate-700")}>
-                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.captionHashtags ? "bg-lime-400" : "bg-slate-800")} /> AI Captions
+                          <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.captionHashtags ? "text-[#b08d3e]" : "text-slate-700")}>
+                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.captionHashtags ? "bg-[#b08d3e]" : "bg-[#e6e1d8]")} /> AI Captions
                           </div>
                           <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", invite.scheduling ? "text-indigo-400" : "text-slate-700")}>
-                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.scheduling ? "bg-indigo-400" : "bg-slate-800")} /> Auto Scheduling
+                            <div className={cn("h-1.5 w-1.5 rounded-full", invite.scheduling ? "bg-indigo-400" : "bg-[#e6e1d8]")} /> Auto Scheduling
                           </div>
                         </div>
 
                         {invite.internalNotes && (
                           <div className="pt-4 border-t border-white/5">
                             <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Internal Admin Notes</p>
-                            <p className="text-[11px] text-slate-400 leading-relaxed italic">"{invite.internalNotes}"</p>
+                            <p className="text-[11px] text-[#6b6b6b] leading-relaxed italic">"{invite.internalNotes}"</p>
                           </div>
                         )}
                       </div>
@@ -1615,11 +1615,11 @@ export default function EnterprisePlanPage() {
                   </div>
 
                   {/* Footer */}
-                  <div className="p-8 pt-4 border-t border-white/5 bg-slate-950/60 backdrop-blur-md flex justify-end">
+                  <div className="p-8 pt-4 border-t border-white/5 bg-[#faf8f3] backdrop-blur-md flex justify-end">
                     <Button
                       variant="outline"
                       onClick={() => setIsDetailsModalOpen(false)}
-                      className="border-white/10 bg-white/5 text-slate-400 h-11 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all"
+                      className="border-white/10 bg-white/5 text-[#6b6b6b] h-11 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-[#14110c] transition-all"
                     >
                       Close Details
                     </Button>
@@ -1629,7 +1629,7 @@ export default function EnterprisePlanPage() {
             })()
           ) : (
             <div className="p-20 text-center">
-              <p className="text-white font-bold">Failed to load proposal details.</p>
+              <p className="text-[#14110c] font-bold">Failed to load proposal details.</p>
               <Button onClick={() => setIsDetailsModalOpen(false)} className="mt-4">Close</Button>
             </div>
           )}
@@ -1653,10 +1653,10 @@ export default function EnterprisePlanPage() {
 
             {/* Text */}
             <div className="space-y-2">
-              <DialogTitle className="text-2xl font-black text-white tracking-tight">
+              <DialogTitle className="text-2xl font-black text-[#14110c] tracking-tight">
                 Permanently Delete?
               </DialogTitle>
-              <DialogDescription className="text-slate-400 text-sm font-medium leading-relaxed">
+              <DialogDescription className="text-[#6b6b6b] text-sm font-medium leading-relaxed">
                 This will permanently erase the enterprise invite record and all associated proposal data.
                 <br />
                 <span className="text-red-400 font-bold mt-1 inline-block">This action cannot be undone.</span>
@@ -1669,7 +1669,7 @@ export default function EnterprisePlanPage() {
             <button
               onClick={() => inviteToDelete && deleteMutation.mutate(inviteToDelete)}
               disabled={deleteMutation.isPending}
-              className="w-full h-14 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white shadow-[0_8px_30px_rgba(220,38,38,0.35)]"
+              className="w-full h-14 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-[#14110c] shadow-[0_8px_30px_rgba(220,38,38,0.35)]"
             >
               {deleteMutation.isPending ? (
                 <>
@@ -1686,7 +1686,7 @@ export default function EnterprisePlanPage() {
 
             <button
               onClick={() => setIsConfirmDeleteOpen(false)}
-              className="w-full h-12 rounded-2xl font-bold text-[12px] tracking-wider uppercase transition-all active:scale-95 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5 hover:border-white/10"
+              className="w-full h-12 rounded-2xl font-bold text-[12px] tracking-wider uppercase transition-all active:scale-95 bg-white/5 hover:bg-white/10 text-[#6b6b6b] hover:text-[#14110c] border border-white/5 hover:border-white/10"
             >
               Cancel
             </button>
@@ -1699,12 +1699,12 @@ export default function EnterprisePlanPage() {
         open={isEditModalOpen}
         onOpenChange={(open) => setIsEditModalOpen(open)}
       >
-        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
+        <DialogContent className="bg-[#faf8f3] backdrop-blur-3xl border-white/10 sm:max-w-[1000px] rounded-[2rem] p-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden border flex flex-col max-h-[95vh]">
           <div className="px-6 py-5 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/5 blur-[100px] pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <div>
-                <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Modify Proposal</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-[#14110c] tracking-tighter uppercase">Modify Proposal</DialogTitle>
                 <DialogDescription className="text-slate-500 text-xs font-medium tracking-tight mt-0.5">
                   Update project scope and pricing for priority enterprise clients.
                 </DialogDescription>
@@ -1715,12 +1715,12 @@ export default function EnterprisePlanPage() {
             </div>
           </div>
 
-          <div className="flex-1 px-6 py-6 bg-slate-950/40 overflow-y-auto scrollbar-hide">
+          <div className="flex-1 px-6 py-6 bg-[#faf8f3] overflow-y-auto scrollbar-hide">
             <form id="enterprise-update-form" onSubmit={handleUpdateSubmit} className="space-y-10">
               {/* 1. Client Information */}
               <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-lime-400 uppercase tracking-[0.25em] flex items-center gap-3">
-                  <span className="h-5 w-5 rounded-md bg-lime-400/10 flex items-center justify-center text-[10px]">1</span>
+                <h3 className="text-[11px] font-black text-[#b08d3e] uppercase tracking-[0.25em] flex items-center gap-3">
+                  <span className="h-5 w-5 rounded-md bg-[#b08d3e]/10 flex items-center justify-center text-[10px]">1</span>
                   Client Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1729,7 +1729,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.planName}
                       onChange={(e) => setFormData(prev => ({ ...prev, planName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enterprise Growth"
                       required
                     />
@@ -1739,7 +1739,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.companyName}
                       onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Company Name"
                       required
                     />
@@ -1749,7 +1749,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.fullName}
                       onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="Full Name"
                       required
                     />
@@ -1760,7 +1760,7 @@ export default function EnterprisePlanPage() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-lime-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-[#b08d3e]/50 text-[#14110c] font-bold text-sm"
                       placeholder="enterprise.client@example.com"
                       required
                     />
@@ -1793,12 +1793,12 @@ export default function EnterprisePlanPage() {
                         "flex items-center gap-3 p-3.5 rounded-xl border transition-all cursor-pointer group",
                         formData.industry === ind.value
                           ? "bg-blue-400/10 border-blue-400/40 text-blue-400"
-                          : "bg-white/5 border-white/5 text-slate-400 hover:border-white/10"
+                          : "bg-white/5 border-white/5 text-[#6b6b6b] hover:border-white/10"
                       )}
                     >
                       <div className={cn(
                         "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all",
-                        formData.industry === ind.value ? "border-blue-400" : "border-slate-700"
+                        formData.industry === ind.value ? "border-blue-400" : "border-[#d9d4c9]"
                       )}>
                         {formData.industry === ind.value && <div className="h-2 w-2 rounded-full bg-blue-400" />}
                       </div>
@@ -1812,7 +1812,7 @@ export default function EnterprisePlanPage() {
                     <Input
                       value={formData.otherIndustry}
                       onChange={(e) => setFormData(prev => ({ ...prev, otherIndustry: e.target.value }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-blue-400/50 text-[#14110c] font-bold text-sm"
                       placeholder="Enter business category..."
                       required={formData.industry === "OTHER"}
                     />
@@ -1840,7 +1840,7 @@ export default function EnterprisePlanPage() {
                     >
                       <div className={cn(
                         "h-5 w-5 rounded-md border flex items-center justify-center transition-colors",
-                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-slate-700"
+                        formData.socialPlatforms.includes(platform) ? "bg-indigo-400 border-indigo-400" : "border-[#d9d4c9]"
                       )}>
                         {formData.socialPlatforms.includes(platform) && <CheckSquare className="h-3 w-3 text-slate-950" />}
                       </div>
@@ -1863,7 +1863,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.postsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, postsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1872,7 +1872,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.reelsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, reelsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1881,7 +1881,7 @@ export default function EnterprisePlanPage() {
                       type="number"
                       value={formData.microReelsPerMonth}
                       onChange={(e) => setFormData(prev => ({ ...prev, microReelsPerMonth: parseInt(e.target.value) }))}
-                      className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-white font-bold text-sm"
+                      className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-amber-400/50 text-[#14110c] font-bold text-sm"
                     />
                   </div>
                 </div>
@@ -1896,20 +1896,20 @@ export default function EnterprisePlanPage() {
                   <div className="space-y-3">
                     <div onClick={() => setFormData(prev => ({ ...prev, captionHashtags: !prev.captionHashtags }))} className={cn("flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer", formData.captionHashtags ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5")}>
                       <div className="flex flex-col">
-                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-slate-400")}>Caption & Hashtags</span>
+                        <span className={cn("text-xs font-bold", formData.captionHashtags ? "text-cyan-400" : "text-[#6b6b6b]")}>Caption & Hashtags</span>
                         <span className="text-[9px] text-slate-600 font-medium">Expert copywriting for all posts</span>
                       </div>
-                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.captionHashtags ? "bg-cyan-400" : "bg-slate-800")}>
+                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.captionHashtags ? "bg-cyan-400" : "bg-[#e6e1d8]")}>
                         <div className={cn("h-3 w-3 rounded-full bg-white transition-all shadow-sm", formData.captionHashtags ? "ml-5" : "ml-0")} />
                       </div>
                     </div>
 
                     <div onClick={() => setFormData(prev => ({ ...prev, scheduling: !prev.scheduling }))} className={cn("flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer", formData.scheduling ? "bg-cyan-400/10 border-cyan-400/30" : "bg-white/5 border-white/5")}>
                       <div className="flex flex-col">
-                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-slate-400")}>Auto Scheduling</span>
+                        <span className={cn("text-xs font-bold", formData.scheduling ? "text-cyan-400" : "text-[#6b6b6b]")}>Auto Scheduling</span>
                         <span className="text-[9px] text-slate-600 font-medium">Automated publishing pipeline</span>
                       </div>
-                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.scheduling ? "bg-cyan-400" : "bg-slate-800")}>
+                      <div className={cn("h-5 w-10 rounded-full relative transition-colors p-1", formData.scheduling ? "bg-cyan-400" : "bg-[#e6e1d8]")}>
                         <div className={cn("h-3 w-3 rounded-full bg-white transition-all shadow-sm", formData.scheduling ? "ml-5" : "ml-0")} />
                       </div>
                     </div>
@@ -1926,12 +1926,12 @@ export default function EnterprisePlanPage() {
                       <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Monthly Price (USD)</Label>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400 font-black">$</span>
-                        <Input type="number" value={formData.amount} onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))} className="bg-slate-900/50 border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-white font-black text-sm" />
+                        <Input type="number" value={formData.amount} onChange={(e) => setFormData(prev => ({ ...prev, amount: parseInt(e.target.value) }))} className="bg-[#ffffff] border-white/5 h-11 pl-8 rounded-xl focus-visible:ring-emerald-400/50 text-[#14110c] font-black text-sm" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-slate-500 ml-1 uppercase tracking-wider">Expires In (Days)</Label>
-                      <Input type="number" value={formData.expiresInDays} onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))} className="bg-slate-900/50 border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-white font-bold text-sm" min={1} required />
+                      <Input type="number" value={formData.expiresInDays} onChange={(e) => setFormData(prev => ({ ...prev, expiresInDays: parseInt(e.target.value) }))} className="bg-[#ffffff] border-white/5 h-11 rounded-xl focus-visible:ring-emerald-400/50 text-[#14110c] font-bold text-sm" min={1} required />
                     </div>
                   </div>
                 </div>
@@ -1939,28 +1939,28 @@ export default function EnterprisePlanPage() {
 
               {/* 8. Internal Notes */}
               <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] flex items-center gap-3">
+                <h3 className="text-[11px] font-black text-[#6b6b6b] uppercase tracking-[0.25em] flex items-center gap-3">
                   <span className="h-5 w-5 rounded-md bg-slate-400/10 flex items-center justify-center text-[10px]">8</span>
                   Internal Notes (Admin Only)
                 </h3>
                 <textarea
                   value={formData.internalNotes}
                   onChange={(e) => setFormData(prev => ({ ...prev, internalNotes: e.target.value }))}
-                  className="w-full bg-slate-900/50 border border-white/5 rounded-2xl p-4 text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-slate-800 min-h-[100px] placeholder:text-slate-700"
+                  className="w-full bg-[#ffffff] border border-white/5 rounded-2xl p-4 text-[#14110c] font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#d9d4c9] min-h-[100px] placeholder:text-slate-700"
                   placeholder="Special instructions, priority notes, or follow-up requirements..."
                 />
               </div>
             </form>
           </div>
 
-          <div className="px-6 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+          <div className="px-6 py-5 border-t border-white/5 bg-[#faf8f3] backdrop-blur-md flex items-center justify-between">
             <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
               <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
               Update Authorization
             </div>
             <div className="flex items-center gap-3">
-              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)} className="border-white/5 bg-white/5 text-slate-400 h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-white transition-all">Discard</Button>
-              <Button form="enterprise-update-form" type="submit" className="bg-blue-500 hover:bg-blue-400 text-white font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(59,130,246,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]" disabled={updateMutation.isPending}>
+              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)} className="border-white/5 bg-white/5 text-[#6b6b6b] h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 hover:text-[#14110c] transition-all">Discard</Button>
+              <Button form="enterprise-update-form" type="submit" className="bg-blue-500 hover:bg-blue-400 text-[#14110c] font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(59,130,246,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]" disabled={updateMutation.isPending}>
                 {updateMutation.isPending ? <Loader2 className="h-5 w-5 mr-3 animate-spin" /> : <ArrowRight className="h-4 w-4 mr-3 stroke-[3px]" />}
                 Confirm Updates
               </Button>
@@ -1971,10 +1971,10 @@ export default function EnterprisePlanPage() {
 
       {/* Brand Brief Details Modal */}
       <Dialog open={isBbDetailsOpen} onOpenChange={setIsBbDetailsOpen}>
-        <DialogContent className="bg-slate-950/95 backdrop-blur-3xl border-white/10 sm:max-w-[1100px] rounded-[2.5rem] p-0 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <DialogContent className="bg-[#faf8f3] backdrop-blur-3xl border-white/10 sm:max-w-[1100px] rounded-[2.5rem] p-0 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
           {bbDetailsQuery.isLoading ? (
             <div className="h-96 flex flex-col items-center justify-center gap-4">
-              <Loader2 className="h-12 w-12 animate-spin text-lime-400" />
+              <Loader2 className="h-12 w-12 animate-spin text-[#b08d3e]" />
               <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Decrypting Brand Data...</p>
             </div>
           ) : details ? (
@@ -1982,9 +1982,9 @@ export default function EnterprisePlanPage() {
               {/* Header */}
               <div className="px-8 py-6 bg-gradient-to-br from-slate-800/20 to-transparent border-b border-white/5 flex items-center justify-between">
                 <div>
-                  <DialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Brand Brief Intel</DialogTitle>
+                  <DialogTitle className="text-2xl font-black text-[#14110c] tracking-tighter uppercase">Brand Brief Intel</DialogTitle>
                   <div className="flex items-center gap-3 mt-1">
-                    <Badge className="bg-lime-400 text-slate-950 font-black px-2 py-0.5 rounded-md text-[9px] tracking-widest">{details.restaurantName}</Badge>
+                    <Badge className="bg-[#b08d3e] text-slate-950 font-black px-2 py-0.5 rounded-md text-[9px] tracking-widest">{details.restaurantName}</Badge>
                     <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">{details.user.email}</span>
                   </div>
                 </div>
@@ -1992,31 +1992,31 @@ export default function EnterprisePlanPage() {
                   <button
                     onClick={() => handleDownloadPdf(details.id, details.restaurantName)}
                     disabled={isDownloading}
-                    className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-[#14110c] hover:bg-white/10 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isDownloading ? (
-                      <Loader2 className="h-4 w-4 text-lime-400 animate-spin" />
+                      <Loader2 className="h-4 w-4 text-[#b08d3e] animate-spin" />
                     ) : (
-                      <Download className="h-4 w-4 text-lime-400 group-hover:scale-110 transition-transform" />
+                      <Download className="h-4 w-4 text-[#b08d3e] group-hover:scale-110 transition-transform" />
                     )}
                     <span className="text-[11px] font-black uppercase tracking-widest">
                       {isDownloading ? "Generating..." : "Download PDF"}
                     </span>
                   </button>
-                  <div className="h-14 w-14 rounded-3xl bg-lime-400/10 flex items-center justify-center text-lime-400 border border-lime-400/20">
+                  <div className="h-14 w-14 rounded-3xl bg-[#b08d3e]/10 flex items-center justify-center text-[#b08d3e] border border-[#b08d3e]/20">
                     <FileText className="h-7 w-7" />
                   </div>
                 </div>
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-8 space-y-10 scrollbar-hide bg-slate-950/20">
+              <div className="flex-1 overflow-y-auto p-8 space-y-10 scrollbar-hide bg-[#faf8f3]">
                 {/* Section Generator */}
                 {[
                   {
                     title: "01 Identity & Presence",
-                    color: "text-lime-400",
-                    bg: "bg-lime-400/10",
+                    color: "text-[#b08d3e]",
+                    bg: "bg-[#b08d3e]/10",
                     fields: [
                       { label: "Restaurant Name", value: details.restaurantName },
                       { label: "Location", value: details.location },
@@ -2100,7 +2100,7 @@ export default function EnterprisePlanPage() {
                               {field.value}
                             </a>
                           ) : (
-                            <p className="text-sm font-medium text-slate-200 leading-relaxed">{field.value || "—"}</p>
+                            <p className="text-sm font-medium text-[#14110c] leading-relaxed">{field.value || "—"}</p>
                           )}
                         </div>
                       ))}
@@ -2110,14 +2110,14 @@ export default function EnterprisePlanPage() {
               </div>
 
               {/* Footer */}
-              <div className="px-8 py-5 border-t border-white/5 bg-slate-950/80 backdrop-blur-md flex items-center justify-between">
+              <div className="px-8 py-5 border-t border-white/5 bg-[#faf8f3] backdrop-blur-md flex items-center justify-between">
                 <div className="flex items-center gap-3 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
-                  <div className="h-2 w-2 rounded-full bg-lime-400" />
+                  <div className="h-2 w-2 rounded-full bg-[#b08d3e]" />
                   Intel Verified • {formatDate(details.createdAt)}
                 </div>
                 <Button 
                   onClick={() => setIsBbDetailsOpen(false)}
-                  className="bg-white/5 hover:bg-white/10 text-white font-black h-12 px-10 rounded-2xl border border-white/10 uppercase tracking-widest text-[10px]"
+                  className="bg-white/5 hover:bg-white/10 text-[#14110c] font-black h-12 px-10 rounded-2xl border border-white/10 uppercase tracking-widest text-[10px]"
                 >
                   Close Intel
                 </Button>

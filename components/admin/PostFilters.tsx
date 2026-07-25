@@ -93,10 +93,10 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl backdrop-blur-sm shadow-xl">
+    <div className="flex flex-col gap-4 p-4 bg-[#ffffff] border border-[#d9d4c9] rounded-xl backdrop-blur-sm shadow-xl">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-slate-400 text-sm font-semibold uppercase tracking-wider">
-          <Filter className="h-4 w-4 text-lime-400" />
+        <div className="flex items-center gap-2 text-[#6b6b6b] text-sm font-semibold uppercase tracking-wider">
+          <Filter className="h-4 w-4 text-[#b08d3e]" />
           Filter Management
         </div>
         {(filters.platform !== "all" ||
@@ -108,7 +108,7 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="h-8 text-slate-400 hover:text-rose-400 hover:bg-rose-400/10 gap-2 text-xs font-bold"
+              className="h-8 text-[#6b6b6b] hover:text-rose-400 hover:bg-rose-400/10 gap-2 text-xs font-bold"
             >
               <X className="h-3.5 w-3.5" />
               Reset All
@@ -120,19 +120,19 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
         {/* User Search (Email + Modal Trigger) */}
         <div className="md:col-span-5 relative group">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-            <Mail className="h-4 w-4 text-slate-500 group-focus-within:text-lime-400 transition-colors" />
+            <Mail className="h-4 w-4 text-slate-500 group-focus-within:text-[#b08d3e] transition-colors" />
           </div>
           <Input
             placeholder="Search by user email..."
             value={localUserEmail}
             onChange={(e) => setLocalUserEmail(e.target.value)}
-            className="pl-10 pr-12 bg-slate-950 border-slate-800 focus:ring-lime-500/20 focus:border-lime-500/50 h-11 text-sm transition-all"
+            className="pl-10 pr-12 bg-[#faf8f3] border-[#d9d4c9] focus:ring-lime-500/20 focus:border-lime-500/50 h-11 text-sm transition-all"
           />
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsModalOpen(true)}
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-slate-500 hover:text-lime-400 hover:bg-lime-400/10"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-slate-500 hover:text-[#b08d3e] hover:bg-[#b08d3e]/10"
             title="Browse Clients"
           >
             <Users className="h-4.5 w-4.5" />
@@ -145,7 +145,7 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
             <Select
               value={filters.platform}
               onChange={(e) => updateDropdown("platform", e.target.value)}
-              className="bg-slate-950 border-slate-800 h-11 text-slate-200 text-sm font-medium focus:ring-lime-500/20"
+              className="bg-[#faf8f3] border-[#d9d4c9] h-11 text-[#14110c] text-sm font-medium focus:ring-lime-500/20"
             >
               {PLATFORMS.map((p) => (
                 <option key={p.value} value={p.value}>
@@ -162,7 +162,7 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
             <Select
               value={filters.status}
               onChange={(e) => updateDropdown("status", e.target.value)}
-              className="bg-slate-950 border-slate-800 h-11 text-slate-200 text-sm font-medium focus:ring-lime-500/20"
+              className="bg-[#faf8f3] border-[#d9d4c9] h-11 text-[#14110c] text-sm font-medium focus:ring-lime-500/20"
             >
               {POST_STATUSES.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -174,7 +174,7 @@ export default function PostFilters({ onFilterChange, initialFilters, type = "po
             <Select
               value={filters.sessionStatus}
               onChange={(e) => updateDropdown("sessionStatus", e.target.value)}
-              className="bg-slate-950 border-slate-800 h-11 text-slate-200 text-sm font-medium focus:ring-lime-500/20"
+              className="bg-[#faf8f3] border-[#d9d4c9] h-11 text-[#14110c] text-sm font-medium focus:ring-lime-500/20"
             >
               {SESSION_STATUSES.map((s) => (
                 <option key={s.value} value={s.value}>

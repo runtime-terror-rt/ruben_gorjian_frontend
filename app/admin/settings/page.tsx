@@ -316,32 +316,32 @@ export default function AdminSettingsPage() {
   return (
     <div className="p-6 space-y-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-          <SettingsIcon className="h-8 w-8 text-lime-400" />
+        <h1 className="text-3xl font-black text-[#14110c] tracking-tight flex items-center gap-3">
+          <SettingsIcon className="h-8 w-8 text-[#b08d3e]" />
           Settings
         </h1>
-        <p className="text-slate-400 font-medium">
+        <p className="text-[#6b6b6b] font-medium">
           Manage your administrative profile and system-wide configurations.
         </p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="bg-slate-900 border border-slate-800 p-1 h-12 rounded-2xl">
+        <TabsList className="bg-[#ffffff] border border-[#d9d4c9] p-1 h-12 rounded-2xl">
           <TabsTrigger
             value="profile"
-            className="rounded-xl px-8 data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
           >
             <User className="h-4 w-4 mr-2" /> Profile
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="rounded-xl px-8 data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
           >
             <Lock className="h-4 w-4 mr-2" /> Security
           </TabsTrigger>
           {/* <TabsTrigger
             value="system"
-            className="rounded-xl px-8 data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
           >
             <SettingsIcon className="h-4 w-4 mr-2" /> System
           </TabsTrigger> */}
@@ -349,9 +349,9 @@ export default function AdminSettingsPage() {
 
         {/* PROFILE TAB */}
         <TabsContent value="profile" className="space-y-6">
-          <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-sm rounded-3xl overflow-hidden">
+          <Card className="bg-[#ffffff] border-[#d9d4c9] backdrop-blur-sm rounded-3xl overflow-hidden">
             <CardHeader className="border-b border-white/5 bg-white/5">
-              <CardTitle className="text-white">Admin Profile</CardTitle>
+              <CardTitle className="text-[#14110c]">Admin Profile</CardTitle>
               <CardDescription className="text-slate-500">
                 Your public identity within the management dashboard.
               </CardDescription>
@@ -360,7 +360,7 @@ export default function AdminSettingsPage() {
               {/* Avatar Section */}
               <div className="flex items-center gap-6">
                 <div className="relative group">
-                  <div className="h-24 w-24 rounded-full border-2 border-slate-800 bg-slate-950 flex items-center justify-center overflow-hidden shadow-2xl transition-all group-hover:border-lime-400/50">
+                  <div className="h-24 w-24 rounded-full border-2 border-[#d9d4c9] bg-[#faf8f3] flex items-center justify-center overflow-hidden shadow-2xl transition-all group-hover:border-[#b08d3e]/50">
                     {avatarUrl ? (
                       <Image
                         src={avatarUrl}
@@ -376,7 +376,7 @@ export default function AdminSettingsPage() {
                   </div>
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-lime-400 text-slate-950 flex items-center justify-center shadow-lg hover:bg-lime-300 transition-colors"
+                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#b08d3e] text-slate-950 flex items-center justify-center shadow-lg hover:bg-[#e6e1d8] transition-colors"
                   >
                     <Camera className="h-4 w-4" />
                   </button>
@@ -389,7 +389,7 @@ export default function AdminSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-sm font-bold text-white tracking-wide uppercase">
+                  <h4 className="text-sm font-bold text-[#14110c] tracking-wide uppercase">
                     Profile Photo
                   </h4>
                   <p className="text-xs text-slate-500 max-w-[200px]">
@@ -424,7 +424,7 @@ export default function AdminSettingsPage() {
                         fullName: e.target.value,
                       })
                     }
-                    className="bg-slate-950 border-slate-800 rounded-xl h-11 focus:ring-lime-400"
+                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 focus:ring-[#b08d3e]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -434,7 +434,7 @@ export default function AdminSettingsPage() {
                   <Input
                     value={settingsQuery.data?.profile.email || ""}
                     disabled
-                    className="bg-slate-950/50 border-slate-800 rounded-xl h-11 text-slate-500 cursor-not-allowed italic"
+                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 text-slate-500 cursor-not-allowed italic"
                   />
                 </div>
                 <div className="md:col-span-2 space-y-2">
@@ -447,7 +447,7 @@ export default function AdminSettingsPage() {
                       setProfileForm({ ...profileForm, bio: e.target.value })
                     }
                     rows={4}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-lime-400 transition-all"
+                    className="w-full bg-[#faf8f3] border border-[#d9d4c9] rounded-xl p-3 text-sm text-[#14110c] focus:outline-none focus:ring-2 focus:ring-[#b08d3e] transition-all"
                     placeholder="Brief description about your role or background..."
                   />
                 </div>
@@ -455,7 +455,7 @@ export default function AdminSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateProfileMutation.isPending}
-                    className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black px-10 h-11 rounded-xl transition-all shadow-[0_10px_20px_rgba(163,230,53,0.2)]"
+                    className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black px-10 h-11 rounded-xl transition-all shadow-[0_10px_20px_rgba(163,230,53,0.2)]"
                   >
                     {updateProfileMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -472,9 +472,9 @@ export default function AdminSettingsPage() {
 
         {/* SECURITY TAB */}
         <TabsContent value="security" className="space-y-6">
-          <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-sm rounded-3xl overflow-hidden">
+          <Card className="bg-[#ffffff] border-[#d9d4c9] backdrop-blur-sm rounded-3xl overflow-hidden">
             <CardHeader className="border-b border-white/5 bg-white/5">
-              <CardTitle className="text-white">Security & Password</CardTitle>
+              <CardTitle className="text-[#14110c]">Security & Password</CardTitle>
               <CardDescription className="text-slate-500">
                 Update your password to keep your administrative account secure.
               </CardDescription>
@@ -495,13 +495,13 @@ export default function AdminSettingsPage() {
                           "current-password": e.target.value,
                         })
                       }
-                      className="bg-slate-950 border-slate-800 rounded-xl h-11 pr-10"
+                      className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 pr-10"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })}
-                      className="absolute right-3 top-3 text-slate-500 hover:text-white"
+                      className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
                     >
                       {showPassword.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -522,13 +522,13 @@ export default function AdminSettingsPage() {
                             "new-password": e.target.value,
                           })
                         }
-                        className="bg-slate-950 border-slate-800 rounded-xl h-11 pr-10"
+                        className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 pr-10"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
-                        className="absolute right-3 top-3 text-slate-500 hover:text-white"
+                        className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
                       >
                         {showPassword.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -548,22 +548,22 @@ export default function AdminSettingsPage() {
                             "confirm-password": e.target.value,
                           })
                         }
-                        className="bg-slate-950 border-slate-800 rounded-xl h-11 pr-10"
+                        className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 pr-10"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword({ ...showPassword, confirm: !showPassword.confirm })}
-                        className="absolute right-3 top-3 text-slate-500 hover:text-white"
+                        className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
                       >
                         {showPassword.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
                 </div>
-                <div className="pt-4 flex items-center gap-4 bg-lime-400/5 p-4 rounded-2xl border border-lime-400/10">
-                  <AlertCircle className="h-5 w-5 text-lime-400 flex-shrink-0" />
-                  <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
+                <div className="pt-4 flex items-center gap-4 bg-[#b08d3e]/5 p-4 rounded-2xl border border-[#b08d3e]/10">
+                  <AlertCircle className="h-5 w-5 text-[#b08d3e] flex-shrink-0" />
+                  <p className="text-[10px] text-[#6b6b6b] leading-relaxed font-medium">
                     Changing your password will immediately terminate any other
                     active sessions. You will need to log back in on other
                     devices.
@@ -590,9 +590,9 @@ export default function AdminSettingsPage() {
 
         {/* SYSTEM TAB (LEGACY) */}
         <TabsContent value="system" className="space-y-6">
-          <Card className="bg-slate-900/40 border-slate-800 backdrop-blur-sm rounded-3xl overflow-hidden">
+          <Card className="bg-[#ffffff] border-[#d9d4c9] backdrop-blur-sm rounded-3xl overflow-hidden">
             <CardHeader className="border-b border-white/5 bg-white/5">
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-[#14110c] flex items-center gap-2">
                 System Global Routing
               </CardTitle>
               <CardDescription className="text-slate-500">
@@ -603,20 +603,20 @@ export default function AdminSettingsPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
-                  className="bg-slate-800 border-slate-700 text-slate-300"
+                  className="bg-[#e6e1d8] border-[#d9d4c9] text-[#14110c]"
                 >
                   Total Users: {globalRoutingQuery.data?.totalUsers ?? "—"}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="bg-lime-400/10 border-lime-400/20 text-lime-400"
+                  className="bg-[#b08d3e]/10 border-[#b08d3e]/20 text-[#b08d3e]"
                 >
                   Native Count:{" "}
                   {globalRoutingQuery.data?.modeCounts?.FORCE_NATIVE ?? "—"}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="bg-blue-400/10 border-blue-400/20 text-white"
+                  className="bg-blue-400/10 border-blue-400/20 text-[#14110c]"
                 >
                   Upload-Post:{" "}
                   {globalRoutingQuery.data?.modeCounts?.FORCE_UPLOAD_POST ??
@@ -637,7 +637,7 @@ export default function AdminSettingsPage() {
                         mode: e.target.value as RoutingMode,
                       })
                     }
-                    className="bg-slate-950 border-slate-800 rounded-xl h-11"
+                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11"
                   >
                     <option value="FORCE_NATIVE">Force Native (Default)</option>
                     <option value="FORCE_UPLOAD_POST">Force Upload-Post</option>
@@ -652,7 +652,7 @@ export default function AdminSettingsPage() {
                     onChange={(e) =>
                       setUserChosenScope(e.target.value as ApplyScope)
                     }
-                    className="bg-slate-950 border-slate-800 rounded-xl h-11"
+                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11"
                   >
                     <option value="USERS_ONLY">General Users Only</option>
                     <option value="ALL_USERS">
@@ -663,7 +663,7 @@ export default function AdminSettingsPage() {
               </div>
 
               {effectiveGlobalDefault.mode === "FORCE_UPLOAD_POST" && (
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-6 space-y-4">
+                <div className="rounded-2xl border border-[#d9d4c9] bg-[#faf8f3] p-6 space-y-4">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                     Platform Toggles (Upload-Post Only)
                   </p>
@@ -687,9 +687,9 @@ export default function AdminSettingsPage() {
                     ].map((p) => (
                       <label
                         key={p.id}
-                        className="flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-900 group cursor-pointer hover:border-lime-400/50 transition-all"
+                        className="flex items-center justify-between p-3 rounded-xl border border-[#d9d4c9] bg-[#ffffff] group cursor-pointer hover:border-[#b08d3e]/50 transition-all"
                       >
-                        <span className="text-sm font-bold text-slate-300 group-hover:text-white">
+                        <span className="text-sm font-bold text-[#14110c] group-hover:text-[#14110c]">
                           {p.label}
                         </span>
                         <Checkbox
@@ -700,7 +700,7 @@ export default function AdminSettingsPage() {
                               [p.field]: !!val,
                             })
                           }
-                          className="border-slate-600 data-[state=checked]:bg-lime-400 data-[state=checked]:border-lime-400"
+                          className="border-[#d9d4c9] data-[state=checked]:bg-[#b08d3e] data-[state=checked]:border-[#b08d3e]"
                         />
                       </label>
                     ))}

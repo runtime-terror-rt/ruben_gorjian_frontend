@@ -518,8 +518,8 @@ export default function AdminUserDetailPage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-800 border-t-lime-400"></div>
-          <p className="text-sm text-slate-400">Loading user details...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#d9d4c9] border-t-lime-400"></div>
+          <p className="text-sm text-[#6b6b6b]">Loading user details...</p>
         </div>
       </div>
     );
@@ -550,10 +550,10 @@ export default function AdminUserDetailPage() {
           <Button variant="ghost" onClick={() => router.push("/admin/users")}>
             ← Back to Users
           </Button>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             {user?.name || user?.email || "User"}
           </h1>
-          <p className="text-sm text-slate-400">{user?.email}</p>
+          <p className="text-sm text-[#6b6b6b]">{user?.email}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {user?.isFounder && (
               <Badge className="bg-lime-300/20 text-lime-200 border-lime-300/40">
@@ -631,31 +631,31 @@ export default function AdminUserDetailPage() {
         <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Scheduled Posts
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.scheduledPostsCount}
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Published Posts
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.publishedPostsCount}
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Failed Posts
               </CardTitle>
             </CardHeader>
@@ -667,12 +667,12 @@ export default function AdminUserDetailPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Connected Platforms
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.connectedPlatformsCount}
               </div>
               <div className="text-xs text-slate-500">
@@ -682,24 +682,24 @@ export default function AdminUserDetailPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Platform Limit
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.platformLimit ?? "—"}
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-slate-400">
+              <CardTitle className="text-sm font-medium text-[#6b6b6b]">
                 Uploaded Media
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.uploadedMediaCount}
               </div>
             </CardContent>
@@ -721,13 +721,13 @@ export default function AdminUserDetailPage() {
 
       {userQuery.isLoading ? (
         <Card>
-          <CardContent className="py-8 text-center text-slate-400">
+          <CardContent className="py-8 text-center text-[#6b6b6b]">
             Loading user...
           </CardContent>
         </Card>
       ) : !user ? (
         <Card>
-          <CardContent className="py-8 text-center text-slate-400">
+          <CardContent className="py-8 text-center text-[#6b6b6b]">
             User not found.
           </CardContent>
         </Card>
@@ -740,7 +740,7 @@ export default function AdminUserDetailPage() {
                   <CardHeader>
                     <CardTitle>Account Details</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-slate-300">
+                  <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-slate-500">Name</span>
                       <span>{user.name ?? "—"}</span>
@@ -758,8 +758,8 @@ export default function AdminUserDetailPage() {
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-slate-500">Email Verified</span>
                       <span>{user.emailVerified ? (
-                        <span className="flex items-center gap-1 text-lime-400">
-                          Yes <span className="text-[10px] bg-lime-400/20 px-1 rounded">✔</span>
+                        <span className="flex items-center gap-1 text-[#b08d3e]">
+                          Yes <span className="text-[10px] bg-[#b08d3e]/20 px-1 rounded">✔</span>
                         </span>
                       ) : "No"}</span>
                     </div>
@@ -820,7 +820,7 @@ export default function AdminUserDetailPage() {
                   <CardHeader>
                     <CardTitle>Personal Profile</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-slate-300">
+                  <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-slate-500">Full Name</span>
                       <span>{userQuery.data.profile?.fullName ?? "—"}</span>
@@ -836,7 +836,7 @@ export default function AdminUserDetailPage() {
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-slate-500">Website</span>
                       {userQuery.data.profile?.website ? (
-                        <a href={userQuery.data.profile.website} target="_blank" rel="noreferrer" className="text-lime-400 hover:underline">
+                        <a href={userQuery.data.profile.website} target="_blank" rel="noreferrer" className="text-[#b08d3e] hover:underline">
                           Visit Site ↗
                         </a>
                       ) : "—"}
@@ -847,7 +847,7 @@ export default function AdminUserDetailPage() {
                     </div>
                     <div className="mt-4">
                       <span className="text-slate-500 block mb-1">Bio</span>
-                      <p className="p-3 rounded bg-slate-950/40 border border-white/5 italic text-slate-400">
+                      <p className="p-3 rounded bg-[#faf8f3] border border-white/5 italic text-[#6b6b6b]">
                         {userQuery.data.profile?.bio ?? "No bio provided."}
                       </p>
                     </div>
@@ -858,7 +858,7 @@ export default function AdminUserDetailPage() {
                   <CardHeader>
                     <CardTitle>Brand Identity</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-sm text-slate-300">
+                  <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-slate-500">Target Audience</span>
                       <span>{userQuery.data.brandProfile?.audience ?? "—"}</span>
@@ -897,14 +897,14 @@ export default function AdminUserDetailPage() {
                   <CardHeader>
                     <CardTitle>Onboarding Details (Full Management)</CardTitle>
                   </CardHeader>
-                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-sm text-slate-300">
+                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-sm text-[#14110c]">
                     <div className="space-y-1">
                       <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Visual Style</span>
-                      <span className="font-medium text-white">{userQuery.data.brandProfile.fullManagementOnboardingData.visualStylePreference ?? "—"}</span>
+                      <span className="font-medium text-[#14110c]">{userQuery.data.brandProfile.fullManagementOnboardingData.visualStylePreference ?? "—"}</span>
                     </div>
                     <div className="space-y-1">
                       <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Frequency</span>
-                      <span className="font-medium text-white">{userQuery.data.brandProfile.fullManagementOnboardingData.postingFrequencyPreference ?? "—"}</span>
+                      <span className="font-medium text-[#14110c]">{userQuery.data.brandProfile.fullManagementOnboardingData.postingFrequencyPreference ?? "—"}</span>
                     </div>
                     <div className="space-y-1">
                       <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Platforms</span>
@@ -952,12 +952,12 @@ export default function AdminUserDetailPage() {
                       <option value="FORCE_UPLOAD_POST">Upload-Post</option>
                     </Select>
                   </div>
-                  <div className="rounded-md border border-slate-800 bg-slate-950/50 p-3">
-                    <p className="mb-2 text-xs text-slate-400">
+                  <div className="rounded-md border border-[#d9d4c9] bg-[#faf8f3] p-3">
+                    <p className="mb-2 text-xs text-[#6b6b6b]">
                       Upload-Post platform toggles
                     </p>
                     <div className="space-y-2">
-                      <label className="flex items-center justify-between text-sm text-slate-200">
+                      <label className="flex items-center justify-between text-sm text-[#14110c]">
                         Instagram
                         <Checkbox
                           checked={routingState.useInstagram}
@@ -969,7 +969,7 @@ export default function AdminUserDetailPage() {
                           }
                         />
                       </label>
-                      <label className="flex items-center justify-between text-sm text-slate-200">
+                      <label className="flex items-center justify-between text-sm text-[#14110c]">
                         Facebook
                         <Checkbox
                           checked={routingState.useFacebook}
@@ -981,7 +981,7 @@ export default function AdminUserDetailPage() {
                           }
                         />
                       </label>
-                      <label className="flex items-center justify-between text-sm text-slate-200">
+                      <label className="flex items-center justify-between text-sm text-[#14110c]">
                         TikTok
                         <Checkbox
                           checked={routingState.useTiktok}
@@ -1011,7 +1011,7 @@ export default function AdminUserDetailPage() {
               <CardHeader>
                 <CardTitle>Subscription</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm text-slate-300">
+              <CardContent className="space-y-3 text-sm text-[#14110c]">
                 <div className="grid gap-2 md:grid-cols-2">
                   <div>Plan: {subscription?.planCode ?? "—"}</div>
                   <div>Status: {subscription?.status ?? "—"}</div>
@@ -1076,7 +1076,7 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                    <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">ID</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Scheduled For</TableHead>
@@ -1089,7 +1089,7 @@ export default function AdminUserDetailPage() {
                       <TableRow>
                         <TableCell
                           colSpan={5}
-                          className="text-center text-slate-400"
+                          className="text-center text-[#6b6b6b]"
                         >
                           Loading...
                         </TableCell>
@@ -1098,15 +1098,15 @@ export default function AdminUserDetailPage() {
                       <TableRow>
                         <TableCell
                           colSpan={5}
-                          className="text-center text-slate-400"
+                          className="text-center text-[#6b6b6b]"
                         >
                           No scheduled items found.
                         </TableCell>
                       </TableRow>
                     ) : (
                       scheduledItems.map((item) => (
-                        <TableRow key={item.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors group">
-                          <TableCell className="text-xs font-mono text-slate-300">
+                        <TableRow key={item.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/40 transition-colors group">
+                          <TableCell className="text-xs font-mono text-[#14110c]">
                             {item.id.slice(0, 8)}
                           </TableCell>
                           <TableCell>
@@ -1123,7 +1123,7 @@ export default function AdminUserDetailPage() {
                               {item.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs text-slate-300">
+                          <TableCell className="text-xs text-[#14110c]">
                             {formatDateTime(item.scheduledFor)}
                           </TableCell>
                           <TableCell>
@@ -1132,14 +1132,14 @@ export default function AdminUserDetailPage() {
                                 <Badge
                                   key={target.id}
                                   variant="outline"
-                                  className="text-[10px] border-slate-700 text-slate-300"
+                                  className="text-[10px] border-[#d9d4c9] text-[#14110c]"
                                 >
                                   {target.platform}
                                 </Badge>
                               ))}
                             </div>
                           </TableCell>
-                          <TableCell className="text-xs max-w-xs truncate text-slate-200 group-hover:text-white transition-colors">
+                          <TableCell className="text-xs max-w-xs truncate text-[#14110c] group-hover:text-[#14110c] transition-colors">
                             {item.caption
                               ? item.caption.slice(0, 50) +
                                 (item.caption.length > 50 ? "..." : "")
@@ -1151,7 +1151,7 @@ export default function AdminUserDetailPage() {
                   </TableBody>
                 </Table>
                 {scheduledItemsTotal > 10 && (
-                  <div className="mt-4 flex items-center justify-between text-sm text-slate-400">
+                  <div className="mt-4 flex items-center justify-between text-sm text-[#6b6b6b]">
                     <div>
                       Page {scheduledItemsPage} of {scheduledItemsTotalPages}
                     </div>
@@ -1203,7 +1203,7 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                    <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Invoice</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Amount</TableHead>
@@ -1216,31 +1216,31 @@ export default function AdminUserDetailPage() {
                       <TableRow>
                         <TableCell
                           colSpan={5}
-                          className="text-center text-slate-400"
+                          className="text-center text-[#6b6b6b]"
                         >
                           No invoices found.
                         </TableCell>
                       </TableRow>
                     ) : (
                       invoicesQuery.data?.items.map((invoice) => (
-                        <TableRow key={invoice.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors">
-                          <TableCell className="font-medium text-slate-200">{invoice.number ?? invoice.id}</TableCell>
+                        <TableRow key={invoice.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/40 transition-colors">
+                          <TableCell className="font-medium text-[#14110c]">{invoice.number ?? invoice.id}</TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-slate-300 border-slate-700">
+                            <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-[#14110c] border-[#d9d4c9]">
                               {invoice.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-slate-200 font-medium">
+                          <TableCell className="text-[#14110c] font-medium">
                             {(invoice.amount / 100).toLocaleString("en-GB", {
                               style: "currency",
                               currency: invoice.currency.toUpperCase(),
                             })}
                           </TableCell>
-                          <TableCell className="text-sm text-slate-400">{formatDate(invoice.createdAt)}</TableCell>
+                          <TableCell className="text-sm text-[#6b6b6b]">{formatDate(invoice.createdAt)}</TableCell>
                           <TableCell>
                             {invoice.hostedInvoiceUrl ? (
                               <a
-                                className="text-lime-400 hover:text-lime-300 hover:underline font-medium text-sm transition-colors"
+                                className="text-[#b08d3e] hover:text-[#8a6d28] hover:underline font-medium text-sm transition-colors"
                                 href={invoice.hostedInvoiceUrl}
                                 target="_blank"
                                 rel="noreferrer"
@@ -1268,7 +1268,7 @@ export default function AdminUserDetailPage() {
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b border-slate-800 hover:bg-transparent">
+                    <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Action</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Actor</TableHead>
                       <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Time</TableHead>
@@ -1279,21 +1279,21 @@ export default function AdminUserDetailPage() {
                       <TableRow>
                         <TableCell
                           colSpan={3}
-                          className="text-center text-slate-400"
+                          className="text-center text-[#6b6b6b]"
                         >
                           No admin actions recorded.
                         </TableCell>
                       </TableRow>
                     ) : (
                       auditLogsQuery.data?.items.map((log) => (
-                        <TableRow key={log.id} className="border-slate-800 hover:bg-slate-800/40 transition-colors">
-                          <TableCell className="font-medium text-slate-200">
-                            <Badge variant="secondary" className="bg-slate-800 text-slate-300 hover:bg-slate-700">
+                        <TableRow key={log.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/40 transition-colors">
+                          <TableCell className="font-medium text-[#14110c]">
+                            <Badge variant="secondary" className="bg-[#e6e1d8] text-[#14110c] hover:bg-[#e6e1d8]">
                               {log.action}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-sm text-slate-300">{log.actorEmail}</TableCell>
-                          <TableCell className="text-sm text-slate-400">{formatDateTime(log.createdAt)}</TableCell>
+                          <TableCell className="text-sm text-[#14110c]">{log.actorEmail}</TableCell>
+                          <TableCell className="text-sm text-[#6b6b6b]">{formatDateTime(log.createdAt)}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -1341,7 +1341,7 @@ export default function AdminUserDetailPage() {
             </div>
           )}
           {confirmAction?.type === "cancel" && (
-            <label className="flex items-center gap-2 text-sm text-slate-200">
+            <label className="flex items-center gap-2 text-sm text-[#14110c]">
               <Checkbox
                 checked={cancelAtPeriodEnd}
                 onCheckedChange={(value) =>
@@ -1363,7 +1363,7 @@ export default function AdminUserDetailPage() {
               variant="default"
               className={
                 confirmAction?.type === "delete"
-                  ? "bg-red-600 hover:bg-red-700 text-white"
+                  ? "bg-red-600 hover:bg-red-700 text-[#14110c]"
                   : ""
               }
             >

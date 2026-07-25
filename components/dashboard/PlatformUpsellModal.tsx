@@ -72,24 +72,24 @@ export function PlatformUpsellModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[450px] bg-slate-950 border-slate-800 shadow-2xl">
+      <DialogContent className="sm:max-w-[450px] bg-[#faf8f3] border-[#d9d4c9] shadow-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-amber-500/20 rounded-2xl">
               <Share2 className="h-6 w-6 text-amber-400" />
             </div>
-            <DialogTitle className="text-2xl font-bold text-white">
+            <DialogTitle className="text-2xl font-bold text-[#14110c]">
               Expand Your Reach
             </DialogTitle>
           </div>
-          <DialogDescription className="text-slate-400 text-lg leading-relaxed">
+          <DialogDescription className="text-[#6b6b6b] text-lg leading-relaxed">
             Add extra platform slots to connect more of your social media accounts. You can add up to 2 additional slots.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-6">
           <div className="space-y-3">
-            <Label htmlFor="quantity" className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+            <Label htmlFor="quantity" className="text-[#6b6b6b] font-bold uppercase tracking-widest text-[10px]">
               Additional Platforms (Max {maxAvailable})
             </Label>
             <div className="flex items-center gap-4">
@@ -103,21 +103,21 @@ export function PlatformUpsellModal({
                   const val = parseInt(e.target.value) || 0;
                   setQuantity(Math.min(maxAvailable, Math.max(1, val)));
                 }}
-                className="bg-slate-900 border-slate-700 text-white h-12 text-lg font-bold focus:ring-amber-400"
+                className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] h-12 text-lg font-bold focus:ring-amber-400"
               />
               <div className="text-slate-500 font-medium italic">slots</div>
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4">
+          <div className="p-6 rounded-2xl bg-[#ffffff] border border-[#d9d4c9] space-y-4">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-slate-400">Price per Platform</span>
-              <span className="text-white font-bold">${PLATFORM_UNIT_PRICE} / month</span>
+              <span className="text-[#6b6b6b]">Price per Platform</span>
+              <span className="text-[#14110c] font-bold">${PLATFORM_UNIT_PRICE} / month</span>
             </div>
-            <div className="h-px bg-slate-800" />
+            <div className="h-px bg-[#e6e1d8]" />
             <div className="flex justify-between items-end">
               <div className="space-y-1">
-                <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">Instant Payment</span>
+                <span className="text-[#6b6b6b] text-xs font-bold uppercase tracking-widest">Instant Payment</span>
                 <div className="text-3xl font-black text-amber-400 tracking-tight">
                   ${totalAmount}
                 </div>
@@ -147,7 +147,7 @@ export function PlatformUpsellModal({
           <Button 
             variant="ghost" 
             onClick={() => onOpenChange(false)}
-            className="text-slate-500 hover:text-white hover:bg-transparent"
+            className="text-slate-500 hover:text-[#14110c] hover:bg-transparent"
           >
             Cancel
           </Button>

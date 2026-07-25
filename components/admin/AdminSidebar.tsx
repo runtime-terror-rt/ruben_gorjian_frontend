@@ -223,25 +223,25 @@ export function AdminSidebar({
         {/* Mobile Drawer */}
         <aside
           className={cn(
-            "fixed left-0 top-0 z-50 h-full w-64 transform bg-slate-900 border-r border-slate-800 transition-transform duration-300 ease-in-out lg:hidden flex flex-col min-h-0",
+            "fixed left-0 top-0 z-50 h-full w-64 transform bg-[#ffffff] border-r border-[#d9d4c9] transition-transform duration-300 ease-in-out lg:hidden flex flex-col min-h-0",
             isOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           <div className="flex h-full flex-col min-h-0">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 p-4 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-[#d9d4c9] p-4 flex-shrink-0">
               <Link href="/" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
-                <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center">
-                  <span className="text-sm font-bold text-slate-900">T</span>
+                <div className="h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center">
+                  <span className="text-sm font-bold text-[#14110c]">T</span>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-white">Talexia</div>
-                  <div className="text-xs text-slate-400">Admin Panel</div>
+                  <div className="text-sm font-semibold text-[#14110c]">Talexia</div>
+                  <div className="text-xs text-[#6b6b6b]">Admin Panel</div>
                 </div>
               </Link>
               <button
                 onClick={onClose}
-                className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
                 aria-label="Close sidebar"
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -268,14 +268,14 @@ export function AdminSidebar({
                           className={cn(
                             "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                             active
-                              ? "bg-lime-400/10 text-lime-300"
-                              : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                              ? "bg-[#b08d3e]/10 text-[#8a6d28]"
+                              : "text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c]"
                           )}
                         >
                           <Icon className="h-5 w-5 flex-shrink-0" />
                           <span className="flex-1 text-left">{item.label}</span>
                           {item.badge && (
-                            <span className="rounded-full bg-lime-400 px-2 py-0.5 text-xs font-semibold text-slate-900">
+                            <span className="rounded-full bg-[#b08d3e] px-2 py-0.5 text-xs font-semibold text-[#14110c]">
                               {item.badge}
                             </span>
                           )}
@@ -288,12 +288,12 @@ export function AdminSidebar({
             </nav>
 
             {/* Footer */}
-            <div className="border-t border-slate-800 p-4 flex-shrink-0">
+            <div className="border-t border-[#d9d4c9] p-4 flex-shrink-0">
               {/* <a
                 href="https://www.talexia.us/execution-case-studies"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
               >
                 <BookOpen className="h-4 w-4" />
                 <span>Documentation</span>
@@ -303,14 +303,14 @@ export function AdminSidebar({
               {/* <div className={`mt-2 mx-1 flex items-center gap-2 px-3 py-2 rounded-xl ${
                 isSuperAdmin
                   ? "bg-amber-400/10 border border-amber-400/20"
-                  : "bg-slate-800/60 border border-slate-700/50"
+                  : "bg-[#e6e1d8]/60 border border-[#d9d4c9]/50"
               }`}>
                 <div className={`h-2 w-2 rounded-full flex-shrink-0 ${
-                  isSuperAdmin ? "bg-amber-400" : "bg-lime-400"
+                  isSuperAdmin ? "bg-amber-400" : "bg-[#b08d3e]"
                 }`} />
                 <div className="min-w-0">
                   <p className={`text-[10px] font-black uppercase tracking-widest truncate ${
-                    isSuperAdmin ? "text-amber-300" : "text-lime-300"
+                    isSuperAdmin ? "text-amber-300" : "text-[#8a6d28]"
                   }`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </p>
@@ -333,31 +333,31 @@ export function AdminSidebar({
   return (
     <aside
       className={cn(
-        "hidden lg:flex fixed left-0 top-0 z-30 h-full min-h-0 flex-col border-r border-slate-800 bg-slate-900 transition-all duration-300",
+        "hidden lg:flex fixed left-0 top-0 z-30 h-full min-h-0 flex-col border-r border-[#d9d4c9] bg-[#ffffff] transition-all duration-300",
         isCollapsed ? "w-20" : "w-64"
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800 p-4 h-16 flex-shrink-0">
+      <div className="flex items-center justify-between border-b border-[#d9d4c9] p-4 h-16 flex-shrink-0">
         {!isCollapsed ? (
           <Link href="/" className="flex items-center gap-2 group hover:opacity-80 transition-opacity">
-            <div className="h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-slate-900">T</span>
+            <div className="h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-bold text-[#14110c]">T</span>
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-white truncate">Talexia</div>
-              <div className="text-xs text-slate-400 truncate">Admin Panel</div>
+              <div className="text-sm font-semibold text-[#14110c] truncate">Talexia</div>
+              <div className="text-xs text-[#6b6b6b] truncate">Admin Panel</div>
             </div>
           </Link>
         ) : (
-          <Link href="/" className="mx-auto h-8 w-8 rounded-lg bg-lime-400 flex items-center justify-center hover:opacity-80 transition-opacity">
-            <span className="text-sm font-bold text-slate-900">T</span>
+          <Link href="/" className="mx-auto h-8 w-8 rounded-lg bg-[#b08d3e] flex items-center justify-center hover:opacity-80 transition-opacity">
+            <span className="text-sm font-bold text-[#14110c]">T</span>
           </Link>
         )}
         {!isCollapsed && (
           <button
             onClick={onToggleCollapse}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
             aria-label="Collapse sidebar"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -367,10 +367,10 @@ export function AdminSidebar({
 
       {/* Collapsed Expand Button */}
       {isCollapsed && (
-        <div className="border-b border-slate-800 p-2">
+        <div className="border-b border-[#d9d4c9] p-2">
           <button
             onClick={onToggleCollapse}
-            className="w-full rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="w-full rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
             aria-label="Expand sidebar"
           >
             <ChevronRight className="h-5 w-5 mx-auto" />
@@ -398,8 +398,8 @@ export function AdminSidebar({
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       active
-                        ? "bg-lime-400/10 text-lime-300"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                        ? "bg-[#b08d3e]/10 text-[#8a6d28]"
+                        : "text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c]",
                       isCollapsed && "justify-center"
                     )}
                     title={isCollapsed ? item.label : undefined}
@@ -409,7 +409,7 @@ export function AdminSidebar({
                       <>
                         <span className="flex-1 text-left">{item.label}</span>
                         {item.badge && (
-                          <span className="rounded-full bg-lime-400 px-2 py-0.5 text-xs font-semibold text-slate-900">
+                          <span className="rounded-full bg-[#b08d3e] px-2 py-0.5 text-xs font-semibold text-[#14110c]">
                             {item.badge}
                           </span>
                         )}
@@ -425,12 +425,12 @@ export function AdminSidebar({
 
       {/* Footer */}
       {!isCollapsed && (
-        <div className="border-t border-slate-800 pt-10 p-4 flex-shrink-0">
+        <div className="border-t border-[#d9d4c9] pt-10 p-4 flex-shrink-0">
           {/* <a
             href="https://www.talexia.us/execution-case-studies"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
           >
             <BookOpen className="h-4 w-4" />
             <span>Documentation</span>

@@ -157,14 +157,14 @@ export default function AdminClientSessionsList({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-48">
-        <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
+        <Loader2 className="h-8 w-8 text-[#b08d3e] animate-spin" />
       </div>
     );
   }
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center p-12 bg-slate-900/20 border border-dashed border-slate-800 rounded-3xl">
+      <div className="text-center p-12 bg-[#ffffff]/20 border border-dashed border-[#d9d4c9] rounded-3xl">
         <CalendarIcon className="h-12 w-12 text-slate-700 mx-auto mb-4" />
         <p className="text-slate-500 font-medium">
           No sessions found for this client.
@@ -195,17 +195,17 @@ export default function AdminClientSessionsList({
           onClick={() =>
             setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))
           }
-          className="border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+          className="border-[#d9d4c9] bg-[#faf8f3] hover:bg-[#ffffff] text-[#14110c]"
         >
           <ArrowUpDown className="h-4 w-4 mr-2" />
           Sort by Created{" "}
           {sortOrder === "desc" ? "(Newest First)" : "(Oldest First)"}
         </Button>
       </div>
-      <div className="overflow-hidden border border-slate-800 rounded-2xl bg-slate-950/50">
+      <div className="overflow-hidden border border-[#d9d4c9] rounded-2xl bg-[#faf8f3]">
         <Table>
-          <TableHeader className="bg-slate-900/50">
-            <TableRow className="border-slate-800">
+          <TableHeader className="bg-[#ffffff]">
+            <TableRow className="border-[#d9d4c9]">
               <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                 Type
               </TableHead>
@@ -227,11 +227,11 @@ export default function AdminClientSessionsList({
             {paginatedSessions.map((session) => (
               <TableRow
                 key={session.id}
-                className="border-slate-800 hover:bg-slate-800/30 transition-colors"
+                className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors"
               >
                 <TableCell>
                   {session.scheduleType === "PHOTO_SESSION" ? (
-                    <div className="flex items-center gap-2 text-lime-400">
+                    <div className="flex items-center gap-2 text-[#b08d3e]">
                       <Camera className="h-4 w-4" />
                       <span className="text-xs font-bold">Photo</span>
                     </div>
@@ -242,14 +242,14 @@ export default function AdminClientSessionsList({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="font-medium text-white text-sm">
+                <TableCell className="font-medium text-[#14110c] text-sm">
                   {session.sessionTitle ||
                     session.session?.title ||
                     "Untitled Session"}
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="text-xs text-slate-300 font-bold">
+                    <span className="text-xs text-[#14110c] font-bold">
                       {dayjs
                         .tz(
                           session.scheduledAt || session.scheduledFor,
@@ -275,19 +275,19 @@ export default function AdminClientSessionsList({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-white"
+                        className="h-8 w-8 text-[#6b6b6b] hover:text-[#14110c]"
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                       align="end"
-                      className="bg-slate-900 border-slate-800 text-slate-300"
+                      className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c]"
                     >
                       {onEditSession && (
                         <DropdownMenuItem
                           onClick={() => onEditSession(session)}
-                          className="gap-2 focus:bg-slate-800 focus:text-white"
+                          className="gap-2 focus:bg-[#e6e1d8] focus:text-[#14110c]"
                         >
                           <Edit className="h-4 w-4 text-blue-400" /> Edit
                           Session
@@ -297,7 +297,7 @@ export default function AdminClientSessionsList({
                         onClick={() =>
                           handleUpdateStatus(session.id, "SCHEDULED")
                         }
-                        className="gap-2 focus:bg-slate-800 focus:text-white"
+                        className="gap-2 focus:bg-[#e6e1d8] focus:text-[#14110c]"
                       >
                         <CheckCircle2 className="h-4 w-4 text-emerald-500" />{" "}
                         Mark Scheduled
@@ -306,7 +306,7 @@ export default function AdminClientSessionsList({
                         onClick={() =>
                           handleUpdateStatus(session.id, "COMPLETED")
                         }
-                        className="gap-2 focus:bg-slate-800 focus:text-white"
+                        className="gap-2 focus:bg-[#e6e1d8] focus:text-[#14110c]"
                       >
                         <CheckCircle2 className="h-4 w-4 text-blue-500" /> Mark
                         Completed
@@ -315,12 +315,12 @@ export default function AdminClientSessionsList({
                         onClick={() =>
                           handleUpdateStatus(session.id, "CANCELLED")
                         }
-                        className="gap-2 focus:bg-slate-800 focus:text-white"
+                        className="gap-2 focus:bg-[#e6e1d8] focus:text-[#14110c]"
                       >
                         <XCircle className="h-4 w-4 text-rose-500" /> Cancel
                         Session
                       </DropdownMenuItem>
-                      <div className="h-px bg-slate-800 my-1" />
+                      <div className="h-px bg-[#e6e1d8] my-1" />
                       <DropdownMenuItem
                         onClick={() => handleDelete(session.id)}
                         className="gap-2 text-rose-400 focus:bg-rose-500/10 focus:text-rose-400"
@@ -336,18 +336,18 @@ export default function AdminClientSessionsList({
         </Table>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-900/30">
+          <div className="flex items-center justify-between p-4 border-t border-[#d9d4c9] bg-[#ffffff]/30">
             <div className="text-xs text-slate-500">
               Showing{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {(currentPage - 1) * itemsPerPage + 1}
               </span>{" "}
               to{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {Math.min(currentPage * itemsPerPage, sortedSessions.length)}
               </span>{" "}
               of{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {sortedSessions.length}
               </span>{" "}
               sessions
@@ -358,7 +358,7 @@ export default function AdminClientSessionsList({
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="h-8 border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+                className="h-8 border-[#d9d4c9] bg-[#faf8f3] hover:bg-[#ffffff] text-[#14110c]"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" /> Prev
               </Button>
@@ -369,7 +369,7 @@ export default function AdminClientSessionsList({
                   setCurrentPage((p) => Math.min(totalPages, p + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="h-8 border-slate-800 bg-slate-950 hover:bg-slate-900 text-slate-300"
+                className="h-8 border-[#d9d4c9] bg-[#faf8f3] hover:bg-[#ffffff] text-[#14110c]"
               >
                 Next <ChevronRight className="h-4 w-4 ml-1" />
               </Button>

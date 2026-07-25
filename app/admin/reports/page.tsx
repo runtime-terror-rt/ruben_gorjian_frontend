@@ -36,36 +36,36 @@ function ReportsContent() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Business Analytics</h1>
-        <p className="text-slate-400">Comprehensive overview of Talexia's performance and client activity.</p>
+        <h1 className="text-3xl font-bold text-[#14110c] mb-2">Business Analytics</h1>
+        <p className="text-[#6b6b6b]">Comprehensive overview of Talexia's performance and client activity.</p>
       </div>
 
       {/* Top Level Stats */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-slate-800 bg-slate-900/60 transition-all hover:border-lime-400/30">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-[#b08d3e]/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Total Revenue</p>
-                <p className="text-2xl font-bold text-white mt-1">${stats.monthlyRevenue.toLocaleString()}</p>
+                <p className="text-sm font-medium text-[#6b6b6b]">Total Revenue</p>
+                <p className="text-2xl font-bold text-[#14110c] mt-1">${stats.monthlyRevenue.toLocaleString()}</p>
               </div>
-              <div className="p-3 rounded-xl bg-lime-400/10 text-lime-400 border border-lime-400/20">
+              <div className="p-3 rounded-xl bg-[#b08d3e]/10 text-[#b08d3e] border border-[#b08d3e]/20">
                 <DollarSign className="h-6 w-6" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-lime-400 font-medium">
+            <div className="mt-4 flex items-center text-xs text-[#b08d3e] font-medium">
               <TrendingUp className="h-3 w-3 mr-1" />
               <span>+12.5% from last month</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-800 bg-slate-900/60 transition-all hover:border-lime-400/30">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-[#b08d3e]/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Active Clients</p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.activeClients}</p>
+                <p className="text-sm font-medium text-[#6b6b6b]">Active Clients</p>
+                <p className="text-2xl font-bold text-[#14110c] mt-1">{stats.activeClients}</p>
               </div>
               <div className="p-3 rounded-xl bg-blue-400/10 text-blue-400 border border-blue-400/20">
                 <Users className="h-6 w-6" />
@@ -78,29 +78,29 @@ function ReportsContent() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-800 bg-slate-900/60 transition-all hover:border-lime-400/30">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-[#b08d3e]/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Success Rate</p>
-                <p className="text-2xl font-bold text-white mt-1">{successRate}%</p>
+                <p className="text-sm font-medium text-[#6b6b6b]">Success Rate</p>
+                <p className="text-2xl font-bold text-[#14110c] mt-1">{successRate}%</p>
               </div>
-              <div className="p-3 rounded-xl bg-lime-400/10 text-lime-400 border border-lime-400/20">
+              <div className="p-3 rounded-xl bg-[#b08d3e]/10 text-[#b08d3e] border border-[#b08d3e]/20">
                 <CheckCircle className="h-6 w-6" />
               </div>
             </div>
             <div className="mt-4">
-              <Progress value={successRate} className="h-1 bg-slate-800" />
+              <Progress value={successRate} className="h-1 bg-[#e6e1d8]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-800 bg-slate-900/60 transition-all hover:border-red-400/30">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-red-400/30">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-400">Cancellations</p>
-                <p className="text-2xl font-bold text-white mt-1">{stats.cancellations}</p>
+                <p className="text-sm font-medium text-[#6b6b6b]">Cancellations</p>
+                <p className="text-2xl font-bold text-[#14110c] mt-1">{stats.cancellations}</p>
               </div>
               <div className="p-3 rounded-xl bg-red-400/10 text-red-400 border border-red-400/20">
                 <AlertCircle className="h-6 w-6" />
@@ -115,19 +115,19 @@ function ReportsContent() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Posting Health */}
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-lime-400" />
+            <CardTitle className="text-[#14110c] flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-[#b08d3e]" />
               Posting Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-end justify-around h-32 gap-2">
               {[65, 45, 78, 90, 85, 95, 80].map((height, i) => (
-                <div key={i} className="w-full bg-slate-800 rounded-t-md relative group">
+                <div key={i} className="w-full bg-[#e6e1d8] rounded-t-md relative group">
                   <div 
-                    className="absolute bottom-0 left-0 right-0 bg-lime-400/50 group-hover:bg-lime-400 transition-all rounded-t-sm" 
+                    className="absolute bottom-0 left-0 right-0 bg-[#b08d3e]/50 group-hover:bg-[#b08d3e] transition-all rounded-t-sm" 
                     style={{ height: `${height}%` }}
                   />
                 </div>
@@ -144,11 +144,11 @@ function ReportsContent() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-6">
-              <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-4 rounded-xl bg-[#e6e1d8]/40 border border-[#d9d4c9]/50">
                 <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Scheduled</p>
-                <p className="text-2xl font-bold text-white">{stats.totalPosts}</p>
+                <p className="text-2xl font-bold text-[#14110c]">{stats.totalPosts}</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <div className="p-4 rounded-xl bg-[#e6e1d8]/40 border border-[#d9d4c9]/50">
                 <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Failed</p>
                 <p className="text-2xl font-bold text-red-400">{stats.failedPosts}</p>
               </div>
@@ -157,10 +157,10 @@ function ReportsContent() {
         </Card>
 
         {/* Platform Distribution */}
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-lime-400" />
+            <CardTitle className="text-[#14110c] flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[#b08d3e]" />
               Platform Distribution
             </CardTitle>
           </CardHeader>
@@ -168,35 +168,35 @@ function ReportsContent() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2 text-slate-300">
+                  <div className="flex items-center gap-2 text-[#14110c]">
                     <Instagram className="h-4 w-4 text-pink-400" />
                     <span>Instagram</span>
                   </div>
-                  <span className="font-bold text-white">{stats.platforms.instagram} posts</span>
+                  <span className="font-bold text-[#14110c]">{stats.platforms.instagram} posts</span>
                 </div>
-                <Progress value={50} className="h-2 bg-slate-800" indicatorClassName="bg-pink-400" />
+                <Progress value={50} className="h-2 bg-[#e6e1d8]" indicatorClassName="bg-pink-400" />
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2 text-slate-300">
+                  <div className="flex items-center gap-2 text-[#14110c]">
                     <Facebook className="h-4 w-4 text-blue-500" />
                     <span>Facebook</span>
                   </div>
-                  <span className="font-bold text-white">{stats.platforms.facebook} posts</span>
+                  <span className="font-bold text-[#14110c]">{stats.platforms.facebook} posts</span>
                 </div>
-                <Progress value={33} className="h-2 bg-slate-800" indicatorClassName="bg-blue-500" />
+                <Progress value={33} className="h-2 bg-[#e6e1d8]" indicatorClassName="bg-blue-500" />
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
-                  <div className="flex items-center gap-2 text-slate-300">
-                    <Tiktok className="h-4 w-4 text-white" />
+                  <div className="flex items-center gap-2 text-[#14110c]">
+                    <Tiktok className="h-4 w-4 text-[#14110c]" />
                     <span>TikTok</span>
                   </div>
-                  <span className="font-bold text-white">{stats.platforms.tiktok} posts</span>
+                  <span className="font-bold text-[#14110c]">{stats.platforms.tiktok} posts</span>
                 </div>
-                <Progress value={17} className="h-2 bg-slate-800" indicatorClassName="bg-white" />
+                <Progress value={17} className="h-2 bg-[#e6e1d8]" indicatorClassName="bg-white" />
               </div>
             </div>
           </CardContent>
@@ -204,9 +204,9 @@ function ReportsContent() {
       </div>
 
       {/* Recent Alerts */}
-      <Card className="border-slate-800 bg-slate-900/60">
+      <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-[#14110c] flex items-center gap-2">
             <Clock className="h-5 w-5 text-red-500" />
             Recent Issues & Alerts
           </CardTitle>
@@ -217,8 +217,8 @@ function ReportsContent() {
               <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-red-400/5 border border-red-400/10">
                 <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-white">Post Failed for Client #293</p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-sm font-semibold text-[#14110c]">Post Failed for Client #293</p>
+                  <p className="text-xs text-[#6b6b6b] mt-1">
                     Instagram API returned: 'OAuth exception: Invalid token'. Client notified to reconnect.
                   </p>
                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter mt-2">
@@ -237,7 +237,7 @@ function ReportsContent() {
 export default function ReportsPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <Suspense fallback={<div className="text-white">Loading analytics...</div>}>
+      <Suspense fallback={<div className="text-[#14110c]">Loading analytics...</div>}>
         <ReportsContent />
       </Suspense>
     </div>

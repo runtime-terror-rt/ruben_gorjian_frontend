@@ -113,7 +113,7 @@ export default function SchedulerFailuresPage() {
         );
       case "CLOSED":
         return (
-          <Badge className="bg-slate-500/20 text-slate-400 border-slate-500/30">
+          <Badge className="bg-slate-500/20 text-[#6b6b6b] border-slate-500/30">
             Closed
           </Badge>
         );
@@ -134,11 +134,11 @@ export default function SchedulerFailuresPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-[#14110c] flex items-center gap-2">
             <AlertCircle className="h-7 w-7 text-rose-500" />
             Scheduler Failures
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#6b6b6b]">
             Track and manage post publishing failures reported by the scheduler.
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function SchedulerFailuresPage() {
           size="sm"
           onClick={() => fetchTickets(currentPage)}
           disabled={loading}
-          className="border-slate-700 hover:bg-slate-800 text-slate-300 h-9"
+          className="border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c] h-9"
         >
           <RefreshCcw
             className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -156,13 +156,13 @@ export default function SchedulerFailuresPage() {
         </Button>
       </div>
 
-      <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm overflow-hidden">
-        <CardHeader className="pb-3 border-b border-slate-800 bg-slate-900/80">
-          <CardTitle className="flex items-center gap-2 text-lg font-medium text-slate-200">
-            <Info className="h-5 w-5 text-lime-400" />
+      <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm overflow-hidden">
+        <CardHeader className="pb-3 border-b border-[#d9d4c9] bg-[#ffffff]/80">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium text-[#14110c]">
+            <Info className="h-5 w-5 text-[#b08d3e]" />
             Failure Logs
             {totalCount > 0 && (
-              <span className="ml-2 text-xs font-normal text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
+              <span className="ml-2 text-xs font-normal text-slate-500 bg-[#e6e1d8] px-2 py-0.5 rounded-full">
                 {totalCount} Total
               </span>
             )}
@@ -171,14 +171,14 @@ export default function SchedulerFailuresPage() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-950/50">
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400 font-semibold">User</TableHead>
-                  <TableHead className="text-slate-400 font-semibold">Platform</TableHead>
-                  <TableHead className="text-slate-400 font-semibold">Failure Reason</TableHead>
-                  <TableHead className="text-slate-400 font-semibold">Status</TableHead>
-                  <TableHead className="text-slate-400 font-semibold">Created At</TableHead>
-                  <TableHead className="text-slate-400 font-semibold text-right">Actions</TableHead>
+              <TableHeader className="bg-[#faf8f3]">
+                <TableRow className="border-[#d9d4c9] hover:bg-transparent">
+                  <TableHead className="text-[#6b6b6b] font-semibold">User</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold">Platform</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold">Failure Reason</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold">Status</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold">Created At</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -186,7 +186,7 @@ export default function SchedulerFailuresPage() {
                   <TableRow>
                     <TableCell colSpan={6} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
-                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#b08d3e] border-t-transparent" />
                         <span className="text-sm">Fetching failure records...</span>
                       </div>
                     </TableCell>
@@ -198,7 +198,7 @@ export default function SchedulerFailuresPage() {
                       className="h-64 text-center"
                     >
                       <div className="flex flex-col items-center justify-center gap-2 text-slate-500">
-                        <div className="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center mb-2">
+                        <div className="h-12 w-12 rounded-full bg-[#e6e1d8] flex items-center justify-center mb-2">
                           <AlertCircle className="h-6 w-6 text-slate-600" />
                         </div>
                         <p className="text-sm font-medium">No failure tickets found</p>
@@ -210,11 +210,11 @@ export default function SchedulerFailuresPage() {
                   tickets.map((ticket) => (
                     <TableRow
                       key={ticket.id}
-                      className="border-slate-800 hover:bg-slate-800/30 transition-colors group"
+                      className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group"
                     >
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                          <div className="flex items-center gap-2 text-sm font-medium text-[#14110c]">
                             <User className="h-3.5 w-3.5 text-slate-500" />
                             {ticket.userEmail.split('@')[0]}
                           </div>
@@ -230,7 +230,7 @@ export default function SchedulerFailuresPage() {
                             <Badge
                               key={`${ticket.id}-${p}-${idx}`}
                               variant="outline"
-                              className="text-[10px] py-0 px-2 border-slate-700 bg-slate-950 text-slate-400 uppercase inline-flex items-center gap-1.5 h-6"
+                              className="text-[10px] py-0 px-2 border-[#d9d4c9] bg-[#faf8f3] text-[#6b6b6b] uppercase inline-flex items-center gap-1.5 h-6"
                             >
                               {getPlatformIcon(p)}
                               {p}
@@ -240,7 +240,7 @@ export default function SchedulerFailuresPage() {
                       </TableCell>
                       <TableCell className="max-w-md">
                         <div 
-                          className="text-sm text-slate-300 line-clamp-2 leading-relaxed"
+                          className="text-sm text-[#14110c] line-clamp-2 leading-relaxed"
                           title={ticket.failureReason}
                         >
                           {ticket.failureReason}
@@ -251,7 +251,7 @@ export default function SchedulerFailuresPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <div className="text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                          <div className="text-sm font-medium text-[#14110c] flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5 text-slate-500" />
                             {dayjs(ticket.createdAt ).format("MMM D, YYYY")}
                           </div>
@@ -267,7 +267,7 @@ export default function SchedulerFailuresPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 text-slate-400 hover:text-white hover:bg-slate-800 gap-1"
+                            className="h-8 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8] gap-1"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                             View Post
@@ -283,31 +283,31 @@ export default function SchedulerFailuresPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800 bg-slate-900/50">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-[#d9d4c9] bg-[#ffffff]">
               <div className="text-xs text-slate-500">
-                Showing <span className="font-medium text-slate-300">{(currentPage - 1) * pageSize + 1}</span> to{" "}
-                <span className="font-medium text-slate-300">{Math.min(currentPage * pageSize, totalCount)}</span> of{" "}
-                <span className="font-medium text-slate-300">{totalCount}</span> results
+                Showing <span className="font-medium text-[#14110c]">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+                <span className="font-medium text-[#14110c]">{Math.min(currentPage * pageSize, totalCount)}</span> of{" "}
+                <span className="font-medium text-[#14110c]">{totalCount}</span> results
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 border-slate-700 bg-slate-900 text-slate-400 disabled:opacity-50"
+                  className="h-8 w-8 border-[#d9d4c9] bg-[#ffffff] text-[#6b6b6b] disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                   disabled={currentPage === 1 || loading}
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
-                   <span className="text-sm font-medium text-white">{currentPage}</span>
+                   <span className="text-sm font-medium text-[#14110c]">{currentPage}</span>
                    <span className="text-sm text-slate-500">/</span>
                    <span className="text-sm text-slate-500">{totalPages}</span>
                 </div>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 border-slate-700 bg-slate-900 text-slate-400 disabled:opacity-50"
+                  className="h-8 w-8 border-[#d9d4c9] bg-[#ffffff] text-[#6b6b6b] disabled:opacity-50"
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages || loading}
                 >

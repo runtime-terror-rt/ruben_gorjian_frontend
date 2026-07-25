@@ -184,7 +184,7 @@ function TagInput({
   };
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-2 sm:p-3">
+    <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-2 sm:p-3">
       <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {value.map((t, idx) => (
           <button
@@ -192,10 +192,10 @@ function TagInput({
             key={`${t}-${idx}`}
             onClick={() => remove(idx)}
             className={cn(
-              "px-3 py-1 text-slate-200 text-[10px] sm:text-xs font-semibold hover:bg-rose-500/20 hover:text-rose-300 transition-colors",
+              "px-3 py-1 text-[#14110c] text-[10px] sm:text-xs font-semibold hover:bg-rose-500/20 hover:text-rose-300 transition-colors",
               variant === "pill"
                 ? "rounded-full bg-slate-100/10"
-                : "rounded-lg bg-slate-800",
+                : "rounded-lg bg-[#e6e1d8]",
             )}
             title="Remove"
           >
@@ -221,7 +221,7 @@ function TagInput({
               setDraft("");
             }}
             placeholder={placeholder}
-            className="w-full bg-transparent outline-none text-sm text-slate-200 placeholder:text-slate-600 h-9 pr-10"
+            className="w-full bg-transparent outline-none text-sm text-[#14110c] placeholder:text-slate-600 h-9 pr-10"
           />
           {draft.trim() && (
             <button
@@ -232,7 +232,7 @@ function TagInput({
               }}
               
             >
-              <Plus className="h-4 w-4 text-white" size={30} />
+              <Plus className="h-4 w-4 text-[#14110c]" size={30} />
             </button>
           )}
         </div>
@@ -549,58 +549,58 @@ export default function AdminCaseStudiesPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Case Studies</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-bold text-[#14110c]">Case Studies</h1>
+          <p className="text-sm text-[#6b6b6b]">
             Create, update, activate/inactivate and delete case studies.
           </p>
         </div>
         <Button
           onClick={openCreate}
-          className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
         >
           <Plus className="h-4 w-4 mr-2" />
           Create Case Study
         </Button>
       </div>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <div className="text-sm text-slate-300 font-semibold">
-            Total: <span className="text-white">{totals.total}</span>
+      <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
+        <div className="p-4 border-b border-[#d9d4c9] flex items-center justify-between">
+          <div className="text-sm text-[#14110c] font-semibold">
+            Total: <span className="text-[#14110c]">{totals.total}</span>
           </div>
         </div>
 
         {listQuery.isLoading ? (
-          <div className="p-10 flex items-center justify-center gap-3 text-slate-400">
+          <div className="p-10 flex items-center justify-center gap-3 text-[#6b6b6b]">
             <Loader2 className="h-5 w-5 animate-spin" />
             Loading case studies...
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-800">
-                <TableHead className="text-slate-400">Title</TableHead>
-                <TableHead className="text-slate-400 hidden md:table-cell">
+              <TableRow className="border-[#d9d4c9]">
+                <TableHead className="text-[#6b6b6b]">Title</TableHead>
+                <TableHead className="text-[#6b6b6b] hidden md:table-cell">
                   Location
                 </TableHead>
-                <TableHead className="text-slate-400 hidden lg:table-cell">
+                <TableHead className="text-[#6b6b6b] hidden lg:table-cell">
                   Order
                 </TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400 hidden sm:table-cell">
+                <TableHead className="text-[#6b6b6b]">Status</TableHead>
+                <TableHead className="text-[#6b6b6b] hidden sm:table-cell">
                   Media
                 </TableHead>
-                <TableHead className="text-slate-400 hidden xl:table-cell">
+                <TableHead className="text-[#6b6b6b] hidden xl:table-cell">
                   Updated
                 </TableHead>
-                <TableHead className="text-slate-400 text-right">
+                <TableHead className="text-[#6b6b6b] text-right">
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.length === 0 ? (
-                <TableRow className="border-slate-800">
+                <TableRow className="border-[#d9d4c9]">
                   <TableCell
                     colSpan={7}
                     className="py-10 text-center text-slate-500"
@@ -624,10 +624,10 @@ export default function AdminCaseStudiesPage() {
                   );
 
                   return (
-                    <TableRow key={cs.id} className="border-slate-800">
-                      <TableCell className="text-slate-200">
+                    <TableRow key={cs.id} className="border-[#d9d4c9]">
+                      <TableCell className="text-[#14110c]">
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl border border-slate-800 bg-slate-800/40 overflow-hidden flex items-center justify-center">
+                          <div className="h-10 w-10 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/40 overflow-hidden flex items-center justify-center">
                             {logoUrl ? (
                               <img
                                 src={logoUrl}
@@ -639,7 +639,7 @@ export default function AdminCaseStudiesPage() {
                             )}
                           </div>
                           <div className="min-w-0">
-                            <div className="font-bold text-white truncate">
+                            <div className="font-bold text-[#14110c] truncate">
                               {cs.title || "Untitled"}
                             </div>
                             <div className="text-xs text-slate-500 truncate">
@@ -648,10 +648,10 @@ export default function AdminCaseStudiesPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-slate-400 hidden md:table-cell">
+                      <TableCell className="text-[#6b6b6b] hidden md:table-cell">
                         {cs.location || "—"}
                       </TableCell>
-                      <TableCell className="text-slate-400 hidden lg:table-cell">
+                      <TableCell className="text-[#6b6b6b] hidden lg:table-cell">
                         {typeof cs.displayOrder === "number"
                           ? cs.displayOrder
                           : "—"}
@@ -669,7 +669,7 @@ export default function AdminCaseStudiesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">
-                        <div className="flex items-center gap-3 text-xs text-slate-400">
+                        <div className="flex items-center gap-3 text-xs text-[#6b6b6b]">
                           <span className="inline-flex items-center gap-1">
                             <ImageIcon className="h-4 w-4" /> {imageCount}
                           </span>
@@ -684,7 +684,7 @@ export default function AdminCaseStudiesPage() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-slate-400 hidden xl:table-cell">
+                      <TableCell className="text-[#6b6b6b] hidden xl:table-cell">
                         {cs.updatedAt
                           ? dayjs(cs.updatedAt).format("MMM D, YYYY")
                           : "—"}
@@ -695,7 +695,7 @@ export default function AdminCaseStudiesPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-slate-400 hover:text-white"
+                              className="text-[#6b6b6b] hover:text-[#14110c]"
                             >
                               <MoreHorizontal className="h-5 w-5" />
                             </Button>
@@ -746,25 +746,25 @@ export default function AdminCaseStudiesPage() {
             </TableBody>
           </Table>
         )}
-        <div className="p-4 border-t border-slate-800 flex items-center justify-end">
+        <div className="p-4 border-t border-[#d9d4c9] flex items-center justify-end">
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="border-slate-700"
+              className="border-[#d9d4c9]"
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Prev
             </Button>
             <div className="text-xs text-slate-500 font-semibold">
-              Page <span className="text-slate-200">{page}</span> /{" "}
-              <span className="text-slate-200">{totals.pages}</span>
+              Page <span className="text-[#14110c]">{page}</span> /{" "}
+              <span className="text-[#14110c]">{totals.pages}</span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="border-slate-700"
+              className="border-[#d9d4c9]"
               disabled={page >= totals.pages}
               onClick={() => setPage((p) => Math.min(totals.pages, p + 1))}
             >
@@ -778,15 +778,15 @@ export default function AdminCaseStudiesPage() {
         open={dialogOpen}
         onOpenChange={(o) => !saveMutation.isPending && setDialogOpen(o)}
       >
-        <DialogContent className="w-full max-w-[98vw] sm:max-w-[95vw] lg:max-w-6xl bg-[#0b0e14] border-slate-800/50 max-h-[98vh] flex flex-col p-0 overflow-hidden shadow-2xl">
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-800/40">
+        <DialogContent className="w-full max-w-[98vw] sm:max-w-[95vw] lg:max-w-6xl bg-[#0b0e14] border-[#d9d4c9]/50 max-h-[98vh] flex flex-col p-0 overflow-hidden shadow-2xl">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-[#d9d4c9]/40">
             <button
               onClick={() => setDialogOpen(false)}
-              className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400 hover:text-white"
+              className="p-2 hover:bg-white/5 rounded-full transition-colors text-[#6b6b6b] hover:text-[#14110c]"
             >
               <X className="h-5 w-5" />
             </button>
-            <h2 className="text-xl font-bold text-white font-sora">
+            <h2 className="text-xl font-bold text-[#14110c] font-sora">
               {editing ? "Update Case Study" : "Create Case Study"}
             </h2>
             <button
@@ -820,7 +820,7 @@ export default function AdminCaseStudiesPage() {
                       <Input
                         placeholder="e.g. The Quantum Rebranding"
                         {...form.register("title", { required: true })}
-                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl focus:ring-1 focus:ring-indigo-500/50"
+                        className="h-12 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl focus:ring-1 focus:ring-indigo-500/50"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -833,7 +833,7 @@ export default function AdminCaseStudiesPage() {
                           <Input
                             placeholder="San Francisco, CA"
                             {...form.register("location", { required: true })}
-                            className="h-12 pl-10 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                            className="h-12 pl-10 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl"
                           />
                         </div>
                       </div>
@@ -848,14 +848,14 @@ export default function AdminCaseStudiesPage() {
                             valueAsNumber: true,
                             required: true,
                           })}
-                          className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                          className="h-12 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl"
                         />
                       </div>
                     </div>
 
-                    <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 sm:p-5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
+                    <div className="bg-[#ffffff] border border-[#d9d4c9]/60 rounded-2xl p-4 sm:p-5 flex items-center justify-between group hover:border-indigo-500/30 transition-all">
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-white transition-colors group-hover:text-indigo-300">
+                        <h4 className="text-sm font-bold text-[#14110c] transition-colors group-hover:text-indigo-300">
                           Active Status
                         </h4>
                         <p className="text-[11px] text-slate-500">
@@ -871,7 +871,7 @@ export default function AdminCaseStudiesPage() {
                             onClick={() => field.onChange(!field.value)}
                             className={cn(
                               "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 p-0.5",
-                              field.value ? "bg-lime-400" : "bg-rose-500",
+                              field.value ? "bg-[#b08d3e]" : "bg-rose-500",
                             )}
                           >
                             <span className="sr-only">
@@ -903,7 +903,7 @@ export default function AdminCaseStudiesPage() {
                       <Textarea
                         placeholder="Describe the soul of the project in a single punchy sentence..."
                         {...form.register("tagline", { required: true })}
-                        className="min-h-[100px] bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-2xl resize-none"
+                        className="min-h-[100px] bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-2xl resize-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -913,7 +913,7 @@ export default function AdminCaseStudiesPage() {
                       <Input
                         placeholder="e.g. Discovery Phase"
                         {...form.register("cycleTitle", { required: true })}
-                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                        className="h-12 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
@@ -940,7 +940,7 @@ export default function AdminCaseStudiesPage() {
                       <Input
                         placeholder="e.g. Project Architecture"
                         {...form.register("structureTitle", { required: true })}
-                        className="h-12 bg-slate-900/50 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                        className="h-12 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl"
                       />
                     </div>
                     <div className="space-y-2">
@@ -991,9 +991,9 @@ export default function AdminCaseStudiesPage() {
                           }}
                           className="hidden"
                         />
-                        <div className="border-2 border-dashed border-slate-800 p-8 flex flex-col items-center justify-center gap-4 bg-slate-900/20 group-hover:bg-slate-900/40 group-hover:border-indigo-500/50 transition-all relative z-10 min-h-[160px]">
+                        <div className="border-2 border-dashed border-[#d9d4c9] p-8 flex flex-col items-center justify-center gap-4 bg-[#ffffff]/20 group-hover:bg-[#ffffff] group-hover:border-indigo-500/50 transition-all relative z-10 min-h-[160px]">
                           {logoFiles && logoFiles.length > 0 ? (
-                            <div className="absolute inset-0 z-0 bg-slate-950">
+                            <div className="absolute inset-0 z-0 bg-[#faf8f3]">
                               <FilePreview
                                 file={logoFiles[0]}
                                 className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity"
@@ -1008,7 +1008,7 @@ export default function AdminCaseStudiesPage() {
                               </div>
                             </div>
                           ) : editing?.logoUrl || getMediaUrl(editing?.logo) ? (
-                            <div className="absolute inset-0 z-0 bg-slate-950">
+                            <div className="absolute inset-0 z-0 bg-[#faf8f3]">
                               <img
                                 src={
                                   editing?.logoUrl ||
@@ -1019,18 +1019,18 @@ export default function AdminCaseStudiesPage() {
                                 className="h-full w-full object-contain opacity-50 group-hover:opacity-30 transition-opacity"
                               />
                               <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-white/10 text-white px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-white/20">
+                                <div className="bg-white/10 text-[#14110c] px-4 py-2 rounded-xl backdrop-blur-md font-bold text-sm border border-white/20">
                                   Change Logo
                                 </div>
                               </div>
                             </div>
                           ) : (
                             <>
-                              <div className="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <div className="h-12 w-12 rounded-xl bg-[#e6e1d8] flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <Upload className="h-6 w-6 text-indigo-400" />
                               </div>
                               <div className="text-center">
-                                <p className="text-sm font-bold text-slate-200">
+                                <p className="text-sm font-bold text-[#14110c]">
                                   Drop Logo Here
                                 </p>
                                 <p className="text-[10px] text-slate-500 mt-1">
@@ -1057,7 +1057,7 @@ export default function AdminCaseStudiesPage() {
                         {/* Add Button */}
                         <div
                           onClick={() => imagesInputRef.current?.click()}
-                          className="aspect-square rounded-2xl border-2 border-dashed border-slate-800 bg-slate-900/40 flex items-center justify-center cursor-pointer hover:bg-slate-800/60 hover:border-indigo-500/40 transition-all group relative overflow-hidden"
+                          className="aspect-square rounded-2xl border-2 border-dashed border-[#d9d4c9] bg-[#ffffff] flex items-center justify-center cursor-pointer hover:bg-[#e6e1d8]/60 hover:border-indigo-500/40 transition-all group relative overflow-hidden"
                         >
                           <input
                             type="file"
@@ -1073,7 +1073,7 @@ export default function AdminCaseStudiesPage() {
                           ? selectedImages.map((file, i) => (
                               <div
                                 key={`new-${i}`}
-                                className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group"
+                                className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] overflow-hidden relative group"
                               >
                                 <FilePreview
                                   file={file}
@@ -1082,12 +1082,12 @@ export default function AdminCaseStudiesPage() {
                                 <button
                                   type="button"
                                   onClick={() => removeImage(i)}
-                                  className="absolute top-1 right-1 bg-rose-500/80 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500"
+                                  className="absolute top-1 right-1 bg-rose-500/80 text-[#14110c] rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500"
                                 >
                                   <X className="h-3 w-3" />
                                 </button>
                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
-                                  <span className="text-[10px] font-bold text-white px-2 text-center truncate w-full">
+                                  <span className="text-[10px] font-bold text-[#14110c] px-2 text-center truncate w-full">
                                     {file.name}
                                   </span>
                                 </div>
@@ -1099,7 +1099,7 @@ export default function AdminCaseStudiesPage() {
                             ? editing.images.map((img: any, i: number) => (
                                 <div
                                   key={`existing-${i}`}
-                                  className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden relative group"
+                                  className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] overflow-hidden relative group"
                                 >
                                   <img
                                     src={getMediaUrl(img) || ""}
@@ -1111,7 +1111,7 @@ export default function AdminCaseStudiesPage() {
                             : [1, 2, 3].map((i) => (
                                 <div
                                   key={`placeholder-${i}`}
-                                  className="aspect-square rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-center"
+                                  className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] flex items-center justify-center"
                                 >
                                   <ImageIcon className="h-6 w-6 text-slate-800" />
                                 </div>
@@ -1123,10 +1123,10 @@ export default function AdminCaseStudiesPage() {
 
                 {/* Cinematic Component */}
                 <section className="space-y-6">
-                  <div className="bg-[#151922] border border-slate-800/50 rounded-3xl p-6 space-y-6">
+                  <div className="bg-[#151922] border border-[#d9d4c9]/50 rounded-3xl p-6 space-y-6">
                     <div className="flex items-center gap-2 text-indigo-400">
                       <Clapperboard className="h-5 w-5" />
-                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-[#14110c]">
                         Cinematic Component
                       </h3>
                     </div>
@@ -1135,10 +1135,10 @@ export default function AdminCaseStudiesPage() {
                       <Input
                         placeholder="Video Component Title"
                         {...form.register("videoTitle")}
-                        className="h-12 bg-slate-800/40 border-slate-800 text-slate-100 placeholder:text-slate-600 rounded-xl"
+                        className="h-12 bg-[#e6e1d8]/40 border-[#d9d4c9] text-[#14110c] placeholder:text-slate-600 rounded-xl"
                       />
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1 bg-slate-800/40 border border-slate-800 rounded-xl px-4 flex items-center justify-between h-12 text-slate-300 text-sm overflow-hidden">
+                        <div className="flex-1 bg-[#e6e1d8]/40 border border-[#d9d4c9] rounded-xl px-4 flex items-center justify-between h-12 text-[#14110c] text-sm overflow-hidden">
                           {videoFiles && videoFiles.length > 0 ? (
                             <span className="truncate text-teal-300 font-bold" title={videoFiles[0].name}>
                               {videoFiles[0].name.length > 20 
@@ -1191,11 +1191,11 @@ export default function AdminCaseStudiesPage() {
               </div>
             </div>
 
-            <div className="mt-12 flex flex-col sm:flex-row items-center justify-end gap-5 border-t border-slate-800/50 pt-8 pb-4">
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-end gap-5 border-t border-[#d9d4c9]/50 pt-8 pb-4">
               <Button
                 type="button"
                 variant="outline"
-                className="w-full sm:w-auto h-14 min-w-[140px] rounded-2xl border-slate-700 bg-transparent text-slate-300 hover:bg-white/5 hover:text-white font-black uppercase tracking-widest text-xs transition-all"
+                className="w-full sm:w-auto h-14 min-w-[140px] rounded-2xl border-[#d9d4c9] bg-transparent text-[#14110c] hover:bg-white/5 hover:text-[#14110c] font-black uppercase tracking-widest text-xs transition-all"
                 onClick={() => setDialogOpen(false)}
                 disabled={saveMutation.isPending}
               >
@@ -1204,7 +1204,7 @@ export default function AdminCaseStudiesPage() {
               <Button
                 type="submit"
                 disabled={saveMutation.isPending}
-                className="w-full sm:w-auto h-14 min-w-[240px] rounded-2xl bg-gradient-to-r from-fuchsia-500 to-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="w-full sm:w-auto h-14 min-w-[240px] rounded-2xl bg-gradient-to-r from-fuchsia-500 to-indigo-600 text-[#14110c] font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 {saveMutation.isPending ? (
                   <span className="flex items-center gap-2">
@@ -1226,11 +1226,11 @@ export default function AdminCaseStudiesPage() {
         open={!!deleteTarget}
         onOpenChange={(o) => !o && setDeleteTarget(null)}
       >
-        <DialogContent className="max-w-md bg-slate-950 border-slate-800">
+        <DialogContent className="max-w-md bg-[#faf8f3] border-[#d9d4c9]">
           <DialogHeader>
-            <DialogTitle className="text-white">Delete case study?</DialogTitle>
+            <DialogTitle className="text-[#14110c]">Delete case study?</DialogTitle>
           </DialogHeader>
-          <div className="text-sm text-slate-400">
+          <div className="text-sm text-[#6b6b6b]">
             This action cannot be undone.{" "}
             {deleteTarget?.title ? `“${deleteTarget.title}”` : ""}
           </div>
@@ -1238,7 +1238,7 @@ export default function AdminCaseStudiesPage() {
             <Button
               type="button"
               variant="outline"
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
               onClick={() => setDeleteTarget(null)}
               disabled={deleteMutation.isPending}
             >
@@ -1246,7 +1246,7 @@ export default function AdminCaseStudiesPage() {
             </Button>
             <Button
               type="button"
-              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+              className="bg-rose-600 hover:bg-rose-500 text-[#14110c] font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               disabled={deleteMutation.isPending || !deleteTarget?.id}
               onClick={() =>
                 deleteTarget?.id && deleteMutation.mutate(deleteTarget.id)

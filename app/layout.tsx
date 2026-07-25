@@ -51,8 +51,7 @@ export default function RootLayout({
               error: "border-red-500/40",
               warning: "border-amber-400/40",
               info: "border-sky-400/40",
-            },
-          }}
+            } }}
         />
         <ErrorBoundary>
           <SessionProvider>

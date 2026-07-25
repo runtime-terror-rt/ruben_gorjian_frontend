@@ -113,7 +113,7 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
       );
     }
     return (
-      <Badge className="bg-lime-500/10 text-lime-400 border-lime-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+      <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-lime-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
         <CheckCircle className="h-3 w-3" />
         Active
       </Badge>
@@ -129,7 +129,7 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
   }
   if (s === "INCOMPLETE") {
     return (
-      <Badge variant="secondary" className="bg-slate-500/10 text-slate-400 border-slate-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+      <Badge variant="secondary" className="bg-slate-500/10 text-[#6b6b6b] border-slate-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
         <RefreshCw className="h-3 w-3" />
         Incomplete
       </Badge>
@@ -235,7 +235,7 @@ export default function AdminSubscriptionsPage() {
       header: "User",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="font-medium text-slate-200">{row.original.userEmail}</span>
+          <span className="font-medium text-[#14110c]">{row.original.userEmail}</span>
           <span className="text-[10px] text-slate-500 font-mono">{row.original.userId}</span>
         </div>
       ),
@@ -245,7 +245,7 @@ export default function AdminSubscriptionsPage() {
       header: "Plan",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="text-slate-300">{row.original.planName}</span>
+          <span className="text-[#14110c]">{row.original.planName}</span>
           <span className="text-[10px] text-slate-500">{row.original.planCategory}</span>
         </div>
       ),
@@ -259,7 +259,7 @@ export default function AdminSubscriptionsPage() {
       accessorKey: "priceType",
       header: "Type",
       cell: ({ row }) => (
-        <Badge variant={row.original.priceType === "FOUNDER" ? "secondary" : "outline"} className="text-[10px] h-5 border-slate-700 bg-slate-800/50 text-slate-300">
+        <Badge variant={row.original.priceType === "FOUNDER" ? "secondary" : "outline"} className="text-[10px] h-5 border-[#d9d4c9] bg-[#e6e1d8]/50 text-[#14110c]">
           {row.original.priceType}
         </Badge>
       ),
@@ -272,7 +272,7 @@ export default function AdminSubscriptionsPage() {
       accessorKey: "currentPeriodEnd",
       header: "Next Billing",
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5 text-slate-400">
+        <div className="flex items-center gap-1.5 text-[#6b6b6b]">
           <Calendar className="h-3 w-3" />
           <span>{formatDate(row.original.currentPeriodEnd)}</span>
         </div>
@@ -291,31 +291,31 @@ export default function AdminSubscriptionsPage() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-800">
+              <Button variant="ghost" className="h-8 w-8 p-0 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8]">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-slate-800">
+            <DropdownMenuContent align="end" className="w-48 bg-[#ffffff] border-[#d9d4c9]">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem 
                 onClick={() => setConfirmAction({ type: "refresh", subscription: sub })}
-                className="hover:bg-slate-800 cursor-pointer"
+                className="hover:bg-[#e6e1d8] cursor-pointer"
               >
                 <RefreshCw className="mr-2 h-4 w-4" /> Sync from Stripe
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => setInvoiceUserId(sub.userId)}
-                className="hover:bg-slate-800 cursor-pointer"
+                className="hover:bg-[#e6e1d8] cursor-pointer"
               >
                 <CreditCard className="mr-2 h-4 w-4" /> View Invoices
               </DropdownMenuItem>
               
-              <DropdownMenuSeparator className="bg-slate-800" />
+              <DropdownMenuSeparator className="bg-[#e6e1d8]" />
               
               {sub.status === "ACTIVE" && !sub.cancelAtPeriodEnd && (
                 <DropdownMenuItem 
                   onClick={() => setConfirmAction({ type: "cancel-schedule", subscription: sub })}
-                  className="hover:bg-slate-800 cursor-pointer text-amber-400"
+                  className="hover:bg-[#e6e1d8] cursor-pointer text-amber-400"
                 >
                   Schedule Cancel
                 </DropdownMenuItem>
@@ -324,7 +324,7 @@ export default function AdminSubscriptionsPage() {
               {sub.cancelAtPeriodEnd && (
                 <DropdownMenuItem 
                   onClick={() => setConfirmAction({ type: "resume", subscription: sub })}
-                  className="hover:bg-lime-500/10 cursor-pointer text-lime-400 font-medium"
+                  className="hover:bg-[#b08d3e]/10 cursor-pointer text-[#b08d3e] font-medium"
                 >
                   Resume Sub
                 </DropdownMenuItem>
@@ -372,8 +372,8 @@ export default function AdminSubscriptionsPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Subscriptions</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="text-3xl font-bold text-[#14110c] tracking-tight">Subscriptions</h1>
+          <p className="text-[#6b6b6b] text-sm mt-1">
             Real-time management for Stripe billing and user plans.
           </p>
         </div>
@@ -381,7 +381,7 @@ export default function AdminSubscriptionsPage() {
           <Button 
             variant="outline" 
             size="sm" 
-            className="border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800"
+            className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8]"
             onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] })}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${subscriptionsQuery.isFetching ? "animate-spin" : ""}`} />
@@ -391,7 +391,7 @@ export default function AdminSubscriptionsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col lg:flex-row gap-4 items-end bg-slate-900/50 p-4 rounded-xl border border-white/5 backdrop-blur-sm">
+      <div className="flex flex-col lg:flex-row gap-4 items-end bg-[#ffffff] p-4 rounded-xl border border-white/5 backdrop-blur-sm">
         <div className="flex-1 space-y-2">
           <label className="text-[10px] uppercase font-bold text-slate-500 tracking-widest pl-1">Search User</label>
           <div className="relative">
@@ -400,7 +400,7 @@ export default function AdminSubscriptionsPage() {
               placeholder="Filter by email or user ID..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-slate-950/50 border-slate-800 focus-visible:ring-lime-500/50 h-11"
+              className="pl-10 bg-[#faf8f3] border-[#d9d4c9] focus-visible:ring-lime-500/50 h-11"
             />
           </div>
         </div>
@@ -410,7 +410,7 @@ export default function AdminSubscriptionsPage() {
             id="status-filter"
             value={statusFilter} 
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950/50 border-slate-800 h-11"
+            className="bg-[#faf8f3] border-[#d9d4c9] h-11"
           >
             <option value="ALL">All Status</option>
             <option value="ACTIVE">Active</option>
@@ -421,9 +421,9 @@ export default function AdminSubscriptionsPage() {
       </div>
 
       {/* Table */}
-      <Card className="border-white/5 bg-slate-900/40 backdrop-blur-md overflow-hidden">
+      <Card className="border-white/5 bg-[#ffffff] backdrop-blur-md overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-950/40">
+          <TableHeader className="bg-[#faf8f3]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="border-white/5 hover:bg-transparent">
                 {headerGroup.headers.map((header) => (
@@ -438,7 +438,7 @@ export default function AdminSubscriptionsPage() {
             {subscriptionsQuery.isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-white/5 animate-pulse">
-                  <TableCell colSpan={columns.length} className="h-16 bg-slate-800/10" />
+                  <TableCell colSpan={columns.length} className="h-16 bg-[#e6e1d8]/10" />
                 </TableRow>
               ))
             ) : table.getRowModel().rows?.length ? (
@@ -465,7 +465,7 @@ export default function AdminSubscriptionsPage() {
         </Table>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
+        <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3]">
           <div className="text-xs text-slate-500 font-medium">
             Showing {filteredData.length} records
           </div>
@@ -475,11 +475,11 @@ export default function AdminSubscriptionsPage() {
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="bg-slate-900 border-slate-800 h-8"
+              className="bg-[#ffffff] border-[#d9d4c9] h-8"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-xs text-slate-400 px-2">
+            <span className="text-xs text-[#6b6b6b] px-2">
               Page {table.getState().pagination.pageIndex + 1}
             </span>
             <Button
@@ -487,7 +487,7 @@ export default function AdminSubscriptionsPage() {
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="bg-slate-900 border-slate-800 h-8"
+              className="bg-[#ffffff] border-[#d9d4c9] h-8"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -499,7 +499,7 @@ export default function AdminSubscriptionsPage() {
 
       {/* Confirmation Dialog */}
       <Dialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
-        <DialogContent className="bg-slate-900 border-slate-800">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9]">
           <DialogHeader>
             <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
               confirmAction?.type === 'cancel-immediate' ? 'bg-red-500/20' : 'bg-amber-500/20'
@@ -513,7 +513,7 @@ export default function AdminSubscriptionsPage() {
                confirmAction?.type === 'cancel-schedule' ? 'Schedule Cancellation?' :
                confirmAction?.type === 'resume' ? 'Resume Subscription?' : 'Sync Subscription?'}
             </DialogTitle>
-            <DialogDescription className="text-center text-slate-400 mt-2">
+            <DialogDescription className="text-center text-[#6b6b6b] mt-2">
               {confirmAction?.type === 'cancel-immediate' ? 
                 'This will terminate the subscription with Stripe right now. The user will lose access immediately.' :
                confirmAction?.type === 'cancel-schedule' ? 
@@ -527,7 +527,7 @@ export default function AdminSubscriptionsPage() {
             <Button 
               variant="outline" 
               onClick={() => setConfirmAction(null)} 
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-2 sm:order-1"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-2 sm:order-1"
             >
               Go Back
             </Button>
@@ -537,8 +537,8 @@ export default function AdminSubscriptionsPage() {
               className={cn(
                 "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-1 sm:order-2",
                 confirmAction?.type === 'cancel-immediate' ? 'bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none' : 
-                confirmAction?.type === 'resume' ? 'bg-lime-500 hover:bg-lime-600 text-slate-950 shadow-[0_15px_30px_rgba(34,197,94,0.3)]' :
-                'bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]'
+                confirmAction?.type === 'resume' ? 'bg-[#b08d3e] hover:bg-lime-600 text-slate-950 shadow-[0_15px_30px_rgba(34,197,94,0.3)]' :
+                'bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]'
               )}
               disabled={
                 refreshMutation.isPending || 
@@ -555,10 +555,10 @@ export default function AdminSubscriptionsPage() {
 
       {/* Invoices Sheet/Modal */}
       <Dialog open={!!invoiceUserId} onOpenChange={(open) => !open && setInvoiceUserId(null)}>
-        <DialogContent className="bg-slate-950 border-slate-800 sm:max-w-[700px] max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogContent className="bg-[#faf8f3] border-[#d9d4c9] sm:max-w-[700px] max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-lime-400" />
+              <CreditCard className="h-5 w-5 text-[#b08d3e]" />
               Invoices History
             </DialogTitle>
             <DialogDescription>
@@ -568,7 +568,7 @@ export default function AdminSubscriptionsPage() {
           
           <div className="flex-1 overflow-auto mt-4 px-1">
             <Table>
-              <TableHeader className="sticky top-0 bg-slate-950">
+              <TableHeader className="sticky top-0 bg-[#faf8f3]">
                 <TableRow className="border-white/5">
                   <TableHead>Number</TableHead>
                   <TableHead>Amount</TableHead>
@@ -581,17 +581,17 @@ export default function AdminSubscriptionsPage() {
                 {invoicesQuery.isLoading ? (
                    Array.from({ length: 3 }).map((_, i) => (
                     <TableRow key={i} className="animate-pulse border-white/5">
-                      <TableCell colSpan={5} className="h-12 bg-slate-900/50" />
+                      <TableCell colSpan={5} className="h-12 bg-[#ffffff]" />
                     </TableRow>
                   ))
                 ) : invoicesQuery.data?.items?.length ? (
                   invoicesQuery.data.items.map((inv) => (
-                    <TableRow key={inv.id} className="border-white/5 hover:bg-white/5 text-slate-300">
+                    <TableRow key={inv.id} className="border-white/5 hover:bg-white/5 text-[#14110c]">
                       <TableCell className="font-mono text-[10px]">{inv.number ?? inv.id.slice(0, 8)}</TableCell>
-                      <TableCell className="font-bold text-white">{formatAmount(inv.amount, inv.currency)}</TableCell>
+                      <TableCell className="font-bold text-[#14110c]">{formatAmount(inv.amount, inv.currency)}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={`h-4 text-[9px] ${
-                          inv.status === 'paid' ? 'border-lime-500/50 text-lime-400' : ''
+                          inv.status === 'paid' ? 'border-lime-500/50 text-[#b08d3e]' : ''
                         }`}>
                           {inv.status.toUpperCase()}
                         </Badge>
@@ -603,7 +603,7 @@ export default function AdminSubscriptionsPage() {
                             href={inv.hostedInvoiceUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] text-lime-400 hover:text-white transition-colors"
+                            className="inline-flex items-center gap-1 text-[10px] text-[#b08d3e] hover:text-[#14110c] transition-colors"
                           >
                             View <ExternalLink className="h-3 w-3" />
                           </a>
@@ -625,7 +625,7 @@ export default function AdminSubscriptionsPage() {
           <div className="mt-6 pt-4 border-t border-white/5">
              <Button 
                variant="outline" 
-               className="w-full border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base" 
+               className="w-full border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base" 
                onClick={() => setInvoiceUserId(null)}
              >
                Close History
