@@ -82,7 +82,7 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
 
       // If requirePlan is true and no plan is found, redirect to pricing
       if (requirePlan && !pendingPlanCode) {
-        window.location.href = "/pricing";
+        router.push("/pricing");
         return;
       }
 
@@ -114,7 +114,7 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
       const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
 
       if (isAdmin) {
-        window.location.href = "/admin";
+        router.push("/admin");
         return;
       }
 
@@ -124,19 +124,19 @@ export function GoogleLoginButton({ returnTo, redirect, requirePlan }: Props) {
 
       // 1. If no payment (no subscription or status is not ACTIVE/TRIALING)
       if (!subscription || (subscription.status !== "ACTIVE" && subscription.status !== "TRIALING")) {
-        window.location.href = "/pricing";
+        router.push("/pricing");
         return;
       }
 
       // 2. If has payment but onboarding not done
       if (!onboardingCompleted) {
-        window.location.href = "/onboarding";
+        router.push("/onboarding");
         return;
       }
 
       // 3. Both exist (or it's a specific returnTo)
       const validated = validateReturnTo(finalReturnTo) || "/dashboard";
-      window.location.href = validated;
+      router.push(validated);
     } catch (err: any) {
       console.error("Google login error:", err);
       toast.error(err.message || "Unable to sign in with Google");

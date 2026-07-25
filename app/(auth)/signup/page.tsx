@@ -53,7 +53,7 @@ function SignupPageInner() {
       setSubmitting(false);
       // Redirect to plan page after a short delay
       setTimeout(() => {
-        window.location.href = "/plan";
+        router.push("/plan");
       }, 2000);
       return;
     }
@@ -87,10 +87,10 @@ function SignupPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-primary text-primary p-6 shadow-xl">
-        <h1 className="text-2xl font-semibold sora ">Create account</h1>
-        <p className="mt-2 text-sm">
+    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4" style={{ fontFamily: "Georgia, serif" }}>
+      <div className="w-full max-w-md rounded-xl border border-[#d9d4c9] bg-white text-[#14110c] p-8 shadow-[0_18px_44px_rgba(20,17,12,0.06)]">
+        <h1 className="text-3xl font-normal text-[#14110c] tracking-tight">Create account</h1>
+        <p className="mt-2 text-[13.5px] text-[#6b6b6b]" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", lineHeight: "1.65" }}>
           Create your account. We&apos;ll send you an email to verify before you
           pick a plan.
         </p>
@@ -110,7 +110,8 @@ function SignupPageInner() {
           <div className="space-y-1">
             <label
               htmlFor="email"
-              className="text-xs font-bold uppercase tracking-wide text-[#14110c]"
+              className="text-[11px] font-semibold uppercase tracking-[2px] text-[#14110c]"
+              style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
               Email
             </label>
@@ -119,14 +120,16 @@ function SignupPageInner() {
               name="email"
               type="email"
               required
-              className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-sm outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e]"
+              className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-[13.5px] text-[#14110c] outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e] transition-colors bg-white"
+              style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             />
           </div>
 
           <div className="space-y-1">
             <label
               htmlFor="password"
-              className="text-xs font-bold uppercase tracking-wide text-[#14110c]"
+              className="text-[11px] font-semibold uppercase tracking-[2px] text-[#14110c]"
+              style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
             >
               Password
             </label>
@@ -137,7 +140,8 @@ function SignupPageInner() {
                 type={showPassword ? "text" : "password"}
                 minLength={8}
                 required
-                className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-sm outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e] pr-10"
+                className="w-full rounded-lg border border-[#d9d4c9] px-3 py-3 text-[13.5px] text-[#14110c] outline-none focus:border-[#b08d3e] focus:ring-2 focus:ring-[#b08d3e] pr-10 transition-colors bg-white"
+                style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
               />
               <button
                 type="button"
@@ -156,7 +160,8 @@ function SignupPageInner() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full inline-flex items-center justify-center rounded-lg bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-70"
+            className="w-full inline-flex items-center justify-center rounded-sm bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3.5 text-[11px] font-semibold tracking-[2px] uppercase text-white transition-all disabled:cursor-not-allowed disabled:opacity-70 mt-2"
+            style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
           >
             {submitting ? "Creating..." : "Create account"}
           </button>
@@ -165,18 +170,18 @@ function SignupPageInner() {
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-[#d9d4c9]" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-primary">or</span>
+              <div className="relative flex justify-center text-[10px] uppercase tracking-[2px]" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+                <span className="bg-white px-2 text-[#6b6b6b]">or</span>
               </div>
             </div>
             <GoogleLoginButton returnTo={returnTo} requirePlan={true} />
           </div>
         </form>
 
-        <p className="mt-4 text-sm text-primary text-center">
+        <p className="mt-5 text-[13.5px] text-[#6b6b6b] text-center" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
           Already have an account?{" "}
           <Link
-            className="text-primary underline underline-offset-2"
+            className="text-[#b08d3e] hover:text-[#8a6d28] font-semibold underline underline-offset-2 transition-colors"
             href={`/login?returnTo=${encodeURIComponent(returnTo)}`}
           >
             Log in
@@ -191,7 +196,7 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-white text-primary flex items-center justify-center">
+        <div className="min-h-screen bg-[#faf8f3] text-[#14110c] flex items-center justify-center" style={{ fontFamily: "Georgia, serif" }}>
           Loading...
         </div>
       }

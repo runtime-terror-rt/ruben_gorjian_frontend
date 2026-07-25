@@ -362,8 +362,8 @@ function SocialPageInner() {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-blue-600 text-[#14110c]">
-                  <Facebook className="h-5 w-5" />
+                <div className="text-[#1877F2]">
+                  <Facebook className="h-8 w-8" />
                 </div>
                 <div>
                   <CardTitle className="text-[#14110c]">Facebook</CardTitle>
@@ -451,7 +451,7 @@ function SocialPageInner() {
         >
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-[#14110c]">
+              <div className="p-2 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] text-white shadow-sm">
                 <Instagram className="h-5 w-5" />
               </div>
               <div>
@@ -536,7 +536,7 @@ function SocialPageInner() {
         >
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-black text-[#14110c] border border-[#d9d4c9]">
+              <div className="p-2 rounded-xl bg-black text-white border border-[#d9d4c9] shadow-sm">
                 <Tiktok className="h-5 w-5" />
               </div>
               <div>
@@ -618,8 +618,8 @@ function SocialPageInner() {
               {facebookAccount && (
                 <div className="flex items-center justify-between p-3 border border-[#d9d4c9] rounded-lg bg-[#e6e1d8]/30">
                   <div className="flex items-center space-x-3">
-                    <div className="p-1.5 rounded bg-blue-600 text-[#14110c]">
-                      <Facebook className="h-4 w-4" />
+                    <div className="text-[#1877F2]">
+                      <Facebook className="h-6 w-6" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-[#14110c]">
@@ -644,7 +644,7 @@ function SocialPageInner() {
               {instagramAccount && (
                 <div className="flex items-center justify-between p-3 border border-[#d9d4c9] rounded-lg bg-[#e6e1d8]/30">
                   <div className="flex items-center space-x-3">
-                    <div className="p-1.5 rounded bg-gradient-to-r from-pink-500 to-orange-400 text-[#14110c]">
+                    <div className="p-1.5 rounded-lg bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] text-white">
                       <Instagram className="h-4 w-4" />
                     </div>
                     <div>
@@ -672,7 +672,7 @@ function SocialPageInner() {
               {tiktokAccount && (
                 <div className="flex items-center justify-between p-3 border border-[#d9d4c9] rounded-lg bg-[#e6e1d8]/30">
                   <div className="flex items-center space-x-3">
-                    <div className="p-1.5 rounded bg-black text-[#14110c] border border-[#d9d4c9]">
+                    <div className="p-1.5 rounded-lg bg-black text-white border border-[#d9d4c9]">
                       <Tiktok className="h-4 w-4" />
                     </div>
                     <div>
