@@ -1,4 +1,5 @@
 "use client";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import {
@@ -46,7 +47,7 @@ const Pie = dynamic(() => import("recharts").then(mod => mod.Pie), { ssr: false 
 const Cell = dynamic(() => import("recharts").then(mod => mod.Cell), { ssr: false });
 const Sector = dynamic(() => import("recharts").then(mod => mod.Sector), { ssr: false });
 
-const PLAN_COLORS = ["#a3e635", "#818cf8", "#fbbf24", "#f87171", "#2dd4bf"];
+const PLAN_COLORS = ["#b08d3e", "#14110c", "#6b6b6b", "#d9d4c9", "#8a6d28"];
 const RADIAN = Math.PI / 180;
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
@@ -520,17 +521,17 @@ export default function AdminPage() {
               Checking
             </span>
           ) : uploadPostError ? (
-            <span className="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-red-300/10 px-3 py-1 text-xs font-semibold text-red-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-300/10 px-3 py-1 text-xs font-semibold text-red-600">
               <AlertCircle className="h-3.5 w-3.5" />
               {uploadPostError}
             </span>
           ) : uploadPostHealth?.ok ? (
-            <span className="inline-flex items-center gap-2 rounded-full border border-lime-300/40 bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-lime-500/40 bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-700">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Healthy
             </span>
           ) : (
-            <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-700">
               <AlertCircle className="h-3.5 w-3.5" />
               Not configured
             </span>
@@ -559,16 +560,16 @@ export default function AdminPage() {
       {/* --- Premium Overview Cards --- */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Users Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-[#b08d3e]/30">
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-[#b08d3e]/30">
           <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#b08d3e]/5 blur-2xl transition-all group-hover:bg-[#b08d3e]/10" />
           <div className="flex items-start justify-between">
             <div className="rounded-2xl bg-[#b08d3e]/10 p-3 text-[#b08d3e]">
               <Users className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Platform Users</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Platform Users</p>
             <div className="mt-1 flex items-baseline gap-2">
               <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.users?.total ?? "—"}</h2>
               <span className="text-xs font-bold text-[#b08d3e]">+{overviewStats?.users?.newThisMonth ?? 0} this month</span>
@@ -576,68 +577,68 @@ export default function AdminPage() {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Accounts</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Active Accounts</p>
               <p className="text-sm font-black text-[#14110c]">{overviewStats?.users?.active ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Verified</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Verified</p>
               <p className="text-sm font-black text-[#14110c]">{overviewStats?.users?.emailVerified ?? 0}</p>
             </div>
           </div>
         </div>
 
         {/* Subscription Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-indigo-400/30">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-indigo-400/5 blur-2xl transition-all group-hover:bg-indigo-400/10" />
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-indigo-500/30">
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-indigo-600/5 blur-2xl transition-all group-hover:bg-indigo-600/10" />
           <div className="flex items-start justify-between">
-            <div className="rounded-2xl bg-indigo-400/10 p-3 text-indigo-400">
+            <div className="rounded-2xl bg-indigo-600/10 p-3 text-indigo-600">
               <Crown className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Active Subscriptions</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Active Subscriptions</p>
             <div className="mt-1 flex items-baseline gap-2">
               <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.subscriptions?.active ?? "—"}</h2>
-              <span className="text-xs font-bold text-indigo-400">Total: {overviewStats?.subscriptions?.total ?? 0}</span>
+              <span className="text-xs font-bold text-indigo-600">Total: {overviewStats?.subscriptions?.total ?? 0}</span>
             </div>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Monthly Plans</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Monthly Plans</p>
               <p className="text-sm font-black text-[#14110c]">{overviewStats?.subscriptions?.monthly ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Yearly Plans</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Yearly Plans</p>
               <p className="text-sm font-black text-[#14110c]">{overviewStats?.subscriptions?.yearly ?? 0}</p>
             </div>
           </div>
         </div>
 
         {/* Schedule Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-amber-400/30">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-amber-400/5 blur-2xl transition-all group-hover:bg-amber-400/10" />
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-amber-500/30">
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-amber-500/5 blur-2xl transition-all group-hover:bg-amber-500/10" />
           <div className="flex items-start justify-between">
-            <div className="rounded-2xl bg-amber-400/10 p-3 text-amber-400">
+            <div className="rounded-2xl bg-amber-500/10 p-3 text-amber-700">
               <CalendarDays className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Post Capacity</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Post Capacity</p>
             <div className="mt-1 flex items-baseline gap-2">
               <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.schedules?.total ?? "—"}</h2>
-              <span className="text-xs font-bold text-amber-400">Pending: {overviewStats?.schedules?.pending ?? 0}</span>
+              <span className="text-xs font-bold text-amber-700">Pending: {overviewStats?.schedules?.pending ?? 0}</span>
             </div>
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Successfully Posted</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Successfully Posted</p>
               <p className="text-sm font-black text-[#14110c]">{overviewStats?.schedules?.posted ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Execution Failed</p>
-              <p className="text-sm font-black text-red-400">{overviewStats?.schedules?.failed ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Execution Failed</p>
+              <p className="text-sm font-black text-red-600">{overviewStats?.schedules?.failed ?? 0}</p>
             </div>
           </div>
         </div>
@@ -651,12 +652,12 @@ export default function AdminPage() {
               <TrendingUp className="h-5 w-5 text-[#b08d3e]" />
               Financial Revenue Overview
             </h3>
-            <p className="text-sm text-slate-500 font-medium tracking-tight">Real-time revenue trends and plan performance.</p>
+            <p className="text-sm text-[#6b6b6b] font-medium tracking-tight">Real-time revenue trends and plan performance.</p>
           </div>
           
           <div className="flex items-center gap-2 bg-[#ffffff] p-1 rounded-2xl border border-white/5 backdrop-blur-md">
             <div className="flex items-center px-3 border-r border-[#d9d4c9]">
-              <Calendar className="h-4 w-4 text-slate-500 mr-2" />
+              <Calendar className="h-4 w-4 text-[#6b6b6b] mr-2" />
               <select 
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(parseInt(e.target.value))}
@@ -666,7 +667,7 @@ export default function AdminPage() {
               </select>
             </div>
             <div className="flex items-center px-3">
-              <Filter className="h-4 w-4 text-slate-500 mr-2" />
+              <Filter className="h-4 w-4 text-[#6b6b6b] mr-2" />
               <select 
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
@@ -685,7 +686,7 @@ export default function AdminPage() {
 
         <div className="grid gap-8 lg:grid-cols-5">
           {/* Main Trend Line Chart */}
-          <div className="lg:col-span-3 relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+          <div className="lg:col-span-3 relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
             <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#b08d3e]/5 blur-[120px]" />
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -694,11 +695,11 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-[#14110c] uppercase tracking-widest">Revenue Growth Trend</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Cumulative Monthly Performance</p>
+                  <p className="text-[11px] text-[#6b6b6b] font-bold uppercase tracking-tight">Cumulative Monthly Performance</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Total Period Revenue</p>
+                <p className="text-[10px] font-black text-[#6b6b6b] uppercase tracking-widest">Total Period Revenue</p>
                 <p className="text-2xl font-black text-[#b08d3e] tracking-tighter">
                   {formatCurrency(revenueData?.summary?.totalRevenueCents ?? 0)}
                 </p>
@@ -710,14 +711,14 @@ export default function AdminPage() {
                 <LineChart data={revenueData?.trend || []}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a3e635" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#a3e635" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#b08d3e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#b08d3e" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#d9d4c9" vertical={false} />
                   <XAxis 
                     dataKey="month" 
-                    stroke="#475569" 
+                    stroke="#6b6b6b" 
                     fontSize={10} 
                     fontWeight="bold" 
                     tickLine={false} 
@@ -725,7 +726,7 @@ export default function AdminPage() {
                     tickFormatter={(val) => val.slice(0, 3)}
                   />
                   <YAxis 
-                    stroke="#475569" 
+                    stroke="#6b6b6b" 
                     fontSize={10} 
                     fontWeight="bold" 
                     tickLine={false} 
@@ -733,17 +734,17 @@ export default function AdminPage() {
                     tickFormatter={(val) => `$${val/1000}k`}
                   />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '12px' }}
-                    itemStyle={{ fontWeight: 'bold' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d9d4c9', borderRadius: '12px', fontSize: '12px', color: '#14110c' }}
+                    itemStyle={{ fontWeight: 'bold', color: '#14110c' }}
                     formatter={(value: any) => [formatCurrency(value), "Revenue"]}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="revenueCents" 
-                    stroke="#a3e635" 
+                    stroke="#b08d3e" 
                     strokeWidth={4} 
-                    dot={{ fill: '#a3e635', strokeWidth: 2, r: 4 }} 
-                    activeDot={{ r: 8, stroke: '#0f172a', strokeWidth: 4 }}
+                    dot={{ fill: '#b08d3e', strokeWidth: 2, r: 4 }} 
+                    activeDot={{ r: 8, stroke: '#14110c', strokeWidth: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -751,15 +752,15 @@ export default function AdminPage() {
           </div>
 
           {/* Plan Distribution Pie Chart - Increased Width (lg:col-span-2) */}
-          <div className="lg:col-span-2 relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
-             <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-400/5 blur-[120px]" />
+          <div className="lg:col-span-2 relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+             <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-600/5 blur-[120px]" />
              <div className="flex items-center gap-3 mb-8">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-400/10 text-indigo-400 ring-1 ring-indigo-400/20">
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-600/10 text-indigo-600 ring-1 ring-indigo-400/20">
                   <PieChart className="h-5 w-5" />
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-[#14110c] uppercase tracking-widest">Plan Performance</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Revenue Share by Plan</p>
+                  <p className="text-[11px] text-[#6b6b6b] font-bold uppercase tracking-tight">Revenue Share by Plan</p>
                 </div>
               </div>
 
@@ -785,8 +786,8 @@ export default function AdminPage() {
                       ))}
                     </Pie>
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '12px' }}
-                      itemStyle={{ fontWeight: 'black' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d9d4c9', borderRadius: '12px', fontSize: '12px', color: '#14110c' }}
+                      itemStyle={{ fontWeight: 'black', color: '#14110c' }}
                       formatter={(value: any) => formatCurrency(value)}
                     />
                   </PieChartComp>
@@ -795,7 +796,7 @@ export default function AdminPage() {
 
               <div className="mt-6 space-y-2 min-h-[180px]">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Detailed breakdown</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b]">Detailed breakdown</p>
                   <div className="flex items-center gap-1 bg-[#faf8f3] p-1 rounded-xl border border-white/5">
                     <Button 
                       variant="outline"
@@ -806,7 +807,7 @@ export default function AdminPage() {
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
-                    <span className="text-[10px] font-black text-slate-500 font-mono px-2 min-w-[40px] text-center">
+                    <span className="text-[10px] font-black text-[#6b6b6b] font-mono px-2 min-w-[40px] text-center">
                       {planBreakdownPage} / {Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize) || 1}
                     </span>
                     <Button 
@@ -830,7 +831,7 @@ export default function AdminPage() {
                           <div className="h-2 w-2 rounded-full border border-white/20" style={{ backgroundColor: PLAN_COLORS[originalIndex % PLAN_COLORS.length] }} />
                           <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-[#14110c] uppercase tracking-tighter truncate max-w-[150px]">{plan.planName}</span>
-                            <span className="text-[9px] text-slate-500 font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
+                            <span className="text-[9px] text-[#6b6b6b] font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
                           </div>
                         </div>
                         <span className="text-xs font-black text-[#14110c]">{formatCurrency(plan.revenueCents)}</span>
@@ -839,7 +840,7 @@ export default function AdminPage() {
                   })}
                 {(revenueData?.plans?.length || 0) === 0 && (
                   <div className="h-32 flex items-center justify-center">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">No plan data available</p>
+                    <p className="text-[10px] font-black text-[#6b6b6b] uppercase tracking-widest italic">No plan data available</p>
                   </div>
                 )}
               </div>
@@ -847,20 +848,20 @@ export default function AdminPage() {
         </div>
 
         {/* --- Recent Activity Feed --- */}
-        <div className="relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+        <div className="relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
           <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-[#b08d3e]/5 blur-[120px]" />
-          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-400/5 blur-[100px]" />
+          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-600/5 blur-[100px]" />
 
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 ring-1 ring-white/10 shadow-lg">
-                <Activity className="h-5 w-5 text-[#14110c]" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#b08d3e] ring-2 ring-slate-900 animate-pulse" />
+              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[#14110c] to-[#14110c] ring-1 ring-white/10 shadow-lg">
+                <Activity className="h-5 w-5 text-[#b08d3e]" />
+                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#b08d3e] ring-2 ring-[#14110c] animate-pulse" />
               </div>
               <div>
                 <h4 className="text-base font-black text-[#14110c] tracking-tight">Recent Platform Activity</h4>
-                <p className="text-[11px] text-slate-500 font-semibold">
+                <p className="text-[11px] text-[#6b6b6b] font-semibold">
                   {activityData?.total
                     ? `${activityData.total} total events · Page ${activityPage} of ${activityData.totalPages ?? 1}`
                     : "Live event feed"}
@@ -898,8 +899,8 @@ export default function AdminPage() {
           {/* Activity Items Grid */}
           {(!activityLoading || activityData) && (
             <div
-              className="grid gap-3 sm:grid-cols-2 max-h-[680px] overflow-y-auto"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#1e293b transparent" }}
+              className="grid gap-3 sm:grid-cols-2 max-h-[680px] overflow-y-auto overflow-x-hidden"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#d9d4c9 transparent" }}
             >
               {(activityData?.items ?? []).map((item: any) => {
                 const isUser    = item.type === "USER_CREATED";
@@ -909,17 +910,17 @@ export default function AdminPage() {
                 return (
                   <div
                     key={item.id}
-                    className={`flex items-start gap-3 p-4 rounded-2xl border transition-all duration-200 hover:scale-[1.01]
+                    className={`flex items-start gap-3 p-4 rounded-2xl border transition-all duration-200
                       ${isUser
                         ? "border-[#b08d3e]/10 bg-[#b08d3e]/[0.03] hover:bg-[#b08d3e]/[0.06] hover:border-[#b08d3e]/20"
-                        : "border-indigo-400/10 bg-indigo-400/[0.03] hover:bg-indigo-400/[0.07] hover:border-indigo-400/20"
+                        : "border-indigo-500/10 bg-indigo-600/[0.03] hover:bg-indigo-600/[0.07] hover:border-indigo-500/20"
                       }`}
                   >
                     {/* Icon */}
                     <div className={`flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-xl ring-1
                       ${isUser
                         ? "bg-[#b08d3e]/10 text-[#b08d3e] ring-[#b08d3e]/20"
-                        : "bg-indigo-400/10 text-indigo-400 ring-indigo-400/20"
+                        : "bg-indigo-600/10 text-indigo-600 ring-indigo-400/20"
                       }`}
                     >
                       {isUser
@@ -936,7 +937,7 @@ export default function AdminPage() {
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest
                             ${isUser
                               ? "bg-[#b08d3e]/10 text-[#b08d3e] border border-[#b08d3e]/20"
-                              : "bg-indigo-400/10 text-indigo-400 border border-indigo-400/20"
+                              : "bg-indigo-600/10 text-indigo-600 border border-indigo-500/20"
                             }`}
                           >
                             {isUser ? "New User" : "Subscription"}
@@ -944,7 +945,7 @@ export default function AdminPage() {
                           {billing && (
                             <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest
                               ${billing === "YEARLY"
-                                ? "bg-amber-400/10 text-amber-300 border border-amber-400/20"
+                                ? "bg-amber-500/10 text-amber-700 border border-amber-500/20"
                                 : "bg-[#e6e1d8]/60 text-[#6b6b6b] border border-[#d9d4c9]/50"
                               }`}
                             >
@@ -952,7 +953,7 @@ export default function AdminPage() {
                             </span>
                           )}
                         </div>
-                        <span className="text-[10px] text-slate-600 font-semibold whitespace-nowrap">
+                        <span className="text-[10px] text-[#6b6b6b] font-semibold whitespace-nowrap">
                           {formatTimeAgo(item.createdAt)}
                         </span>
                       </div>
@@ -965,15 +966,15 @@ export default function AdminPage() {
                       {/* Footer chips */}
                       <div className="flex items-center gap-2 flex-wrap">
                         <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#ffffff]/80 border border-white/5">
-                          <Users className="h-2.5 w-2.5 text-slate-500" />
+                          <Users className="h-2.5 w-2.5 text-[#6b6b6b]" />
                           <span className="text-[10px] text-[#6b6b6b] font-semibold truncate max-w-[160px]">
                             {item.user?.name ?? item.user?.email}
                           </span>
                         </div>
                         {planCode && (
                           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                            <Zap className="h-2.5 w-2.5 text-indigo-400" />
-                            <span className="text-[10px] text-indigo-300 font-black">{planCode}</span>
+                            <Zap className="h-2.5 w-2.5 text-indigo-600" />
+                            <span className="text-[10px] text-indigo-600 font-black">{planCode}</span>
                           </div>
                         )}
                       </div>
@@ -985,9 +986,9 @@ export default function AdminPage() {
               {/* Empty state */}
               {(activityData?.items ?? []).length === 0 && !activityLoading && (
                 <div className="sm:col-span-2 text-center py-16 rounded-3xl border border-dashed border-[#d9d4c9]">
-                  <Activity className="h-10 w-10 text-slate-700 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-slate-500">No activity recorded yet.</p>
-                  <p className="text-xs text-slate-600 mt-1">Events will appear here as users join and subscribe.</p>
+                  <Activity className="h-10 w-10 text-[#14110c] mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-[#6b6b6b]">No activity recorded yet.</p>
+                  <p className="text-xs text-[#6b6b6b] mt-1">Events will appear here as users join and subscribe.</p>
                 </div>
               )}
             </div>
@@ -995,60 +996,14 @@ export default function AdminPage() {
 
           {/* ── Pagination Footer ── */}
           {activityData && activityData.totalPages > 1 && (
-            <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-
-              {/* Left: results info */}
-              <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
-                Showing page{" "}
-                <span className="text-[#14110c] font-black">{activityPage}</span>
-                {" "}of{" "}
-                <span className="text-[#14110c] font-black">{activityData.totalPages}</span>
-                {" "}·{" "}
-                <span className="text-[#14110c] font-black">{activityData.total}</span> total events
-              </p>
-
-              {/* Center: page number pills */}
-              <div className="flex items-center gap-3">
-                {Array.from({ length: activityData.totalPages }, (_, i) => i + 1).map((pg) => (
-                  <button
-                    key={pg}
-                    onClick={() => setActivityPage(pg)}
-                    disabled={activityLoading}
-                    className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
-                      pg === activityPage
-                        ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-[#14110c] shadow-lg shadow-lime-400/20 scale-110"
-                        : "bg-[#e6e1d8]/60 text-[#6b6b6b] border border-[#d9d4c9]/50 hover:border-[#b08d3e]/40 hover:text-[#8a6d28] hover:bg-[#e6e1d8]/60"
-                    } disabled:cursor-not-allowed`}
-                  >
-                    {pg}
-                  </button>
-                ))}
-              </div>
-
-              {/* Right: Prev / Next */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActivityPage(p => Math.max(1, p - 1))}
-                  disabled={activityLoading || activityPage <= 1}
-                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/60 text-[11px] font-black text-[#14110c] uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                >
-                  <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Previous
-                </button>
-                <button
-                  onClick={() => setActivityPage(p => p + 1)}
-                  disabled={activityLoading || !activityData?.hasNextPage}
-                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-[#14110c] uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                >
-                  Next Page
-                  <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            <AdminPagination
+              currentPage={activityPage}
+              totalPages={activityData.totalPages}
+              totalItems={activityData.total}
+              onPageChange={setActivityPage}
+              isLoading={activityLoading}
+              className="mt-6 pt-5 border-t border-[#d9d4c9]/50 flex flex-col sm:flex-row items-center justify-between gap-4"
+            />
           )}
         </div>
       </div>
@@ -1064,7 +1019,7 @@ export default function AdminPage() {
               onClick={() => setActiveTab(tab.key as Tab)}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
                 activeTab === tab.key
-                  ? "bg-[#b08d3e] text-slate-950 shadow"
+                  ? "bg-[#b08d3e] text-[#14110c] shadow"
                   : "text-[#14110c] hover:bg-[#e6e1d8]/70"
               }`}
             >
@@ -1079,7 +1034,7 @@ export default function AdminPage() {
               </span>
             )}
             {error && (
-              <span className="inline-flex items-center gap-1 text-red-300">
+              <span className="inline-flex items-center gap-1 text-red-600">
                 <AlertCircle className="h-3 w-3" />
                 {error}
               </span>
@@ -1119,7 +1074,7 @@ export default function AdminPage() {
                           {user.emailVerified ? (
                             <CheckCircle2 className="h-4 w-4 text-[#8a6d28]" />
                           ) : (
-                            <AlertCircle className="h-4 w-4 text-amber-300" />
+                            <AlertCircle className="h-4 w-4 text-amber-700" />
                           )}
                         </div>
                         <p className="text-xs text-[#6b6b6b]">
@@ -1152,7 +1107,7 @@ export default function AdminPage() {
                           disabled={savingUserId === user.id}
                           className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold border transition ${
                             user.isFounder
-                              ? "border-lime-300 text-lime-200 bg-lime-300/10"
+                              ? "border-lime-500 text-lime-700 bg-lime-300/10"
                               : "border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8]/60"
                           }`}
                         >
@@ -1256,7 +1211,7 @@ export default function AdminPage() {
                       <p className="text-xs text-[#6b6b6b]">{sub.userId}</p>
                     </div>
                     {sub.userIsFounder && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-200 border border-lime-300/40">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-700 border border-lime-500/40">
                         <Crown className="h-3 w-3" />
                         Founder
                       </span>
@@ -1331,7 +1286,7 @@ export default function AdminPage() {
                       >
                         <div className="flex items-center justify-between gap-2 mb-2">
                           <StatusBadge status={post.status} small />
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-[#6b6b6b]">
                             Created {formatDate(post.createdAt)}
                           </p>
                         </div>
@@ -1345,7 +1300,7 @@ export default function AdminPage() {
                                 {target.platform}
                                 <StatusBadge status={target.status} small />
                               </div>
-                              <p className="text-slate-500 mt-0.5">
+                              <p className="text-[#6b6b6b] mt-0.5">
                                 {target.status === "POSTED"
                                   ? `Published ${formatDate(target.publishedAt)}`
                                   : target.scheduledFor
@@ -1353,7 +1308,7 @@ export default function AdminPage() {
                                   : "Draft"}
                               </p>
                               {target.errorMessage && (
-                                <p className="text-red-400 mt-0.5 max-w-[200px] truncate">
+                                <p className="text-red-600 mt-0.5 max-w-[200px] truncate">
                                   {target.errorMessage}
                                 </p>
                               )}
@@ -1409,13 +1364,13 @@ function StatCard({
   return (
     <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow">
       <div className="flex items-center justify-between">
-        <div className="rounded-xl bg-[#e6e1d8]/60 p-2 text-lime-200 border border-lime-300/40">
+        <div className="rounded-xl bg-[#e6e1d8]/60 p-2 text-lime-700 border border-lime-500/40">
           {icon}
         </div>
         <p className="text-xl font-semibold text-[#14110c]">{value}</p>
       </div>
       <p className="text-sm text-[#14110c] mt-2">{label}</p>
-      {hint && <p className="text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="text-xs text-[#6b6b6b]">{hint}</p>}
     </div>
   );
 }
@@ -1435,11 +1390,11 @@ function StatusBadge({ status, small }: { status: string; small?: boolean }) {
     normalized === "active" ||
     normalized === "scheduled" ||
     normalized === "posted"
-      ? "bg-lime-300/20 text-lime-200 border-lime-300/40"
+      ? "bg-lime-300/20 text-lime-700 border-lime-500/40"
       : normalized === "failed" ||
           normalized === "canceled" ||
           normalized === "past_due"
-        ? "bg-red-300/10 text-red-200 border-red-300/30"
+        ? "bg-red-300/10 text-red-600 border-red-500/30"
         : "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]";
 
   return (

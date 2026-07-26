@@ -1,4 +1,5 @@
 "use client";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,12 +86,12 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-slate-300/40 bg-transparent text-[#14110c]/40",
+          "border-[#d9d4c9] bg-transparent text-[#14110c]/40",
         secondary:
-          "border-slate-300/40 bg-transparent text-[#14110c]/40",
+          "border-[#d9d4c9] bg-transparent text-[#14110c]/40",
         destructive:
-          "border-red-300/40 bg-transparent text-red-300/40",
-        outline: "border-lime-300/40 bg-transparent text-[#8a6d28]/40",
+          "border-red-500/40 bg-transparent text-red-600/40",
+        outline: "border-lime-500/40 bg-transparent text-[#8a6d28]/40",
       },
     },
     defaultVariants: {
@@ -101,7 +102,7 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+  VariantProps<typeof badgeVariants> { }
 
 
 function Badge({ className, variant, ...props }: BadgeProps) {
@@ -177,7 +178,7 @@ export default function AdminSubmissionsPage() {
   const [updating, setUpdating] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [detailsLoading, setDetailsLoading] = useState(false);
-  
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -224,7 +225,7 @@ export default function AdminSubmissionsPage() {
       const url = `/api/admin/submissions${queryString ? `?${queryString}` : ""}`;
 
       const res = await apiGet<any>(url);
-      
+
       // Handle both array response and object response
       if (Array.isArray(res)) {
         setSubmissions(res);
@@ -255,7 +256,7 @@ export default function AdminSubmissionsPage() {
       const res = await apiGet<any>(
         `/api/admin/submissions/${submissionId}`
       );
-      
+
       console.log("Submission details response:", res);
 
       // Handle both object response and wrapped response
@@ -294,7 +295,7 @@ export default function AdminSubmissionsPage() {
         const res = await apiGet<any>(
           `/api/admin/submissions/${submissionId}`
         );
-        
+
         if (res && typeof res === "object") {
           if (res.submission) {
             setSelectedSubmission(res.submission);
@@ -316,7 +317,7 @@ export default function AdminSubmissionsPage() {
       const res = await apiGet<any>(
         `/api/admin/submissions/${submissionId}`
       );
-      
+
       if (res && typeof res === "object") {
         if (res.submission) {
           setSelectedSubmission(res.submission);
@@ -360,13 +361,13 @@ export default function AdminSubmissionsPage() {
 
   async function handleBatchUpdate(status: SubmissionStatus, note?: string) {
     if (selectedIds.size === 0) return;
-    
+
     setUpdating(true);
     try {
       const promises = Array.from(selectedIds).map(id =>
         apiPatch(`/api/admin/submissions/${id}`, { status, adminNote: note })
       );
-      
+
       await Promise.all(promises);
       setSelectedIds(new Set());
       loadSubmissions();
@@ -410,8 +411,8 @@ export default function AdminSubmissionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#14110c]">Submissions Management</h1>
-          <p className="text-sm text-[#6b6b6b] mt-1">
+          <h1 className="text-2xl font-semibold text-[#14110c]">Submissions Management</h1>
+          <p className="text-sm text-[#6b6b6b]">
             Review and process user document submissions
           </p>
         </div>
@@ -443,7 +444,7 @@ export default function AdminSubmissionsPage() {
                 id="status-filter"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
+                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-[#faf8f3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
               >
                 <option value="all">All</option>
                 <option value="DRAFT">Draft</option>
@@ -464,7 +465,7 @@ export default function AdminSubmissionsPage() {
                 id="plan-filter"
                 value={planFilter}
                 onChange={(e) => setPlanFilter(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
+                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-[#faf8f3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
               >
                 <option value="all">All</option>
                 <option value="FULL_MANAGEMENT">Full Management</option>
@@ -483,7 +484,7 @@ export default function AdminSubmissionsPage() {
                   setSortBy(by as "date" | "user" | "status");
                   setSortOrder(order as "asc" | "desc");
                 }}
-                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
+                className="flex h-10 w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] ring-offset-[#faf8f3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b08d3e] focus-visible:ring-offset-2"
               >
                 <option value="date-desc">Date (Newest)</option>
                 <option value="date-asc">Date (Oldest)</option>
@@ -567,10 +568,10 @@ export default function AdminSubmissionsPage() {
         <Card className="border-red-900/50 bg-red-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <XCircle className="h-5 w-5 text-red-400 mt-0.5" />
+              <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
               <div>
-                <p className="font-medium text-red-200">Error</p>
-                <p className="text-sm text-red-300/80 mt-1">{error}</p>
+                <p className="font-medium text-red-600">Error</p>
+                <p className="text-sm text-red-600/80 mt-1">{error}</p>
               </div>
             </div>
           </CardContent>
@@ -581,7 +582,7 @@ export default function AdminSubmissionsPage() {
       {filteredSubmissions.length === 0 ? (
         <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardContent className="py-12 text-center">
-            <FileText className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+            <FileText className="h-12 w-12 text-[#6b6b6b] mx-auto mb-4" />
             <h3 className="text-lg font-medium text-[#14110c] mb-2">No submissions found</h3>
             <p className="text-sm text-[#6b6b6b]">
               {statusFilter !== "all"
@@ -619,7 +620,7 @@ export default function AdminSubmissionsPage() {
                       className="h-4 w-4 rounded border-[#d9d4c9] bg-[#faf8f3] text-[#b08d3e] focus:ring-[#b08d3e] mt-1"
                       aria-label={`Select submission ${submission.id.slice(0, 8)}`}
                     />
-                    
+
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <CardTitle className="text-base">
@@ -707,7 +708,7 @@ export default function AdminSubmissionsPage() {
                             note: "",
                           })}
                           disabled={updating}
-                          className="border-red-600 text-red-400 hover:bg-red-600/10"
+                          className="border-red-600 text-red-600 hover:bg-red-600/10"
                         >
                           Reject
                         </Button>
@@ -721,41 +722,19 @@ export default function AdminSubmissionsPage() {
 
           {/* Pagination Footer */}
           {filteredSubmissions.length > itemsPerPage && (
-            <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3] rounded-xl mt-6">
-              <div className="text-xs text-slate-500 font-medium">
-                Showing {filteredSubmissions.length} records
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage <= 1}
-                  className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-xs text-[#6b6b6b] px-2">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={currentPage >= totalPages}
-                  className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredSubmissions.length}
+              onPageChange={setCurrentPage}
+            />
           )}
         </>
       )}
 
       {/* Status Update Confirmation Dialog */}
-      <Dialog 
-        open={statusConfirm.open} 
+      <Dialog
+        open={statusConfirm.open}
         onOpenChange={(open) => setStatusConfirm(prev => ({ ...prev, open }))}
       >
         <DialogContent className="max-w-md bg-[#faf8f3] border-[#d9d4c9]">
@@ -784,16 +763,16 @@ export default function AdminSubmissionsPage() {
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               onClick={() => setStatusConfirm(prev => ({ ...prev, open: false }))}
               disabled={updating}
               className="text-[#6b6b6b] hover:text-[#14110c]"
             >
               Cancel
             </Button>
-            <Button 
-              className="bg-[#b08d3e] hover:bg-[#b08d3e] text-slate-950 font-bold px-6"
+            <Button
+              className="bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c] font-bold px-6"
               onClick={async () => {
                 if (statusConfirm.isBatch) {
                   await handleBatchUpdate(statusConfirm.targetStatus, statusConfirm.note);
@@ -908,25 +887,25 @@ function SubmissionDetailsDialog({
                     </div>
                     {getStatusBadge(submission.status)}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                     <div className="bg-[#faf8f3] rounded-lg p-3 border border-[#d9d4c9]/50">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">User Email</p>
+                      <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-semibold mb-1">User Email</p>
                       <p className="text-sm text-[#14110c] truncate">{submission.user.email}</p>
                     </div>
                     <div className="bg-[#faf8f3] rounded-lg p-3 border border-[#d9d4c9]/50">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Plan Category</p>
+                      <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-semibold mb-1">Plan Category</p>
                       <p className="text-sm text-[#14110c]">
                         {submission.planCategory === "VISUAL_ONLY" ? "Visual Only" : "Full Management"}
                       </p>
                     </div>
                     <div className="bg-[#faf8f3] rounded-lg p-3 border border-[#d9d4c9]/50">
-                      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Files Uploaded</p>
+                      <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-semibold mb-1">Files Uploaded</p>
                       <p className="text-sm text-[#14110c]">{submission.files.length} Files</p>
                     </div>
                     {(submission.quotaUnitsReserved !== undefined || submission.quotaUnitsConsumed !== undefined) && (
                       <div className="bg-[#faf8f3] rounded-lg p-3 border border-[#d9d4c9]/50">
-                        <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Quota Used</p>
+                        <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-semibold mb-1">Quota Used</p>
                         <p className="text-sm text-[#14110c]">
                           {submission.quotaUnitsConsumed ?? 0} / {submission.quotaUnitsReserved ?? 0}
                         </p>
@@ -947,7 +926,7 @@ function SubmissionDetailsDialog({
                     </div>
                     <div className="bg-[#ffffff] rounded-xl p-4 border border-[#d9d4c9]/60 leading-relaxed text-[#14110c]">
                       {submission.userNote || (
-                        <span className="text-slate-500 italic text-sm">No note provided by user.</span>
+                        <span className="text-[#6b6b6b] italic text-sm">No note provided by user.</span>
                       )}
                     </div>
                   </section>
@@ -984,7 +963,7 @@ function SubmissionDetailsDialog({
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-[#14110c] truncate">{file.fileName}</p>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-tighter">{formatFileSize(file.fileSize)}</p>
+                            <p className="text-[10px] text-[#6b6b6b] uppercase tracking-tighter">{formatFileSize(file.fileSize)}</p>
                           </div>
                           <Button
                             size="icon"
@@ -1003,12 +982,12 @@ function SubmissionDetailsDialog({
                   {submission.status === "ENHANCED_SENT" && (
                     <section>
                       <div className="flex items-center gap-2 mb-4">
-                        <div className="h-1 w-4 bg-blue-400 rounded-full" />
+                        <div className="h-1 w-4 bg-blue-600 rounded-full" />
                         <h3 className="text-sm font-bold text-[#14110c] uppercase tracking-wider">Enhanced Deliveries (Admin View)</h3>
                       </div>
                       <div className="bg-blue-600/5 rounded-2xl p-6 border border-blue-600/10">
-                        <EnhancedDeliveryViewer 
-                          submissionId={submission.id} 
+                        <EnhancedDeliveryViewer
+                          submissionId={submission.id}
                           triggerLabel="View Sent Deliveries"
                           isAdmin={true}
                         />
@@ -1027,15 +1006,15 @@ function SubmissionDetailsDialog({
                         <div key={event.id} className="relative">
                           {/* Dot */}
                           <div className={cn(
-                            "absolute -left-[21px] top-1.5 h-3 w-3 rounded-full border-2 border-slate-950 shadow-sm",
+                            "absolute -left-[21px] top-1.5 h-3 w-3 rounded-full border-2 border-[#14110c] shadow-sm",
                             idx === 0 ? "bg-[#b08d3e]" : "bg-[#e6e1d8]"
                           )} />
-                          
+
                           <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-bold text-[#14110c] uppercase">{event.status.replace('_', ' ')}</span>
-                              <span className="text-[10px] text-slate-500">•</span>
-                              <span className="text-[10px] text-slate-500">{formatDate(event.createdAt)}</span>
+                              <span className="text-[10px] text-[#6b6b6b]">•</span>
+                              <span className="text-[10px] text-[#6b6b6b]">{formatDate(event.createdAt)}</span>
                             </div>
                             {event.note && (
                               <p className="text-sm text-[#6b6b6b] mt-1 bg-[#ffffff]/30 rounded-lg p-2 border border-[#d9d4c9]/40">
@@ -1054,10 +1033,10 @@ function SubmissionDetailsDialog({
                   <div className="bg-[#ffffff] rounded-2xl border border-[#d9d4c9]/80 p-5 space-y-6 sticky top-0">
                     <div>
                       <h3 className="text-sm font-bold text-[#14110c] uppercase tracking-widest mb-4">Management</h3>
-                      
+
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="new-status" className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">Target Status</Label>
+                          <Label htmlFor="new-status" className="text-[#6b6b6b] text-[10px] uppercase tracking-wider font-bold">Target Status</Label>
                           <select
                             id="new-status"
                             value={newStatus}
@@ -1073,7 +1052,7 @@ function SubmissionDetailsDialog({
                                 });
                               }
                             }}
-                            className="flex h-11 w-full rounded-xl border border-[#d9d4c9] bg-[#faf8f3] px-4 py-2 text-sm text-[#14110c] ring-offset-slate-950 focus:outline-none focus:ring-2 focus:ring-[#b08d3e] transition-all mt-1.5"
+                            className="flex h-11 w-full rounded-xl border border-[#d9d4c9] bg-[#faf8f3] px-4 py-2 text-sm text-[#14110c] ring-offset-[#faf8f3] focus:outline-none focus:ring-2 focus:ring-[#b08d3e] transition-all mt-1.5"
                           >
                             <option value="DRAFT">Draft</option>
                             <option value="SUBMITTED">Submitted</option>
@@ -1087,7 +1066,7 @@ function SubmissionDetailsDialog({
                         </div>
 
                         <div>
-                          <Label htmlFor="admin-note" className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">Admin Feedback</Label>
+                          <Label htmlFor="admin-note" className="text-[#6b6b6b] text-[10px] uppercase tracking-wider font-bold">Admin Feedback</Label>
                           <Textarea
                             id="admin-note"
                             placeholder="Add notes for the user or internal team..."
@@ -1097,8 +1076,8 @@ function SubmissionDetailsDialog({
                           />
                         </div>
 
-                        <Button 
-                          className="w-full h-11 bg-[#b08d3e] hover:bg-[#b08d3e] text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-lime-400/10"
+                        <Button
+                          className="w-full h-11 bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c] font-bold rounded-xl transition-all shadow-lg shadow-lime-400/10"
                           onClick={() => {
                             if (submission) {
                               setStatusConfirm({
@@ -1108,7 +1087,7 @@ function SubmissionDetailsDialog({
                                 note: adminNote,
                               });
                             }
-                          }} 
+                          }}
                           disabled={updating}
                         >
                           {updating ? "Processing..." : "Update Status"}
@@ -1117,10 +1096,10 @@ function SubmissionDetailsDialog({
                     </div>
 
                     <div className="pt-6 border-t border-[#d9d4c9]">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         className="w-full h-11 border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c] rounded-xl"
-                        onClick={() => setEnhancedOpen(true)} 
+                        onClick={() => setEnhancedOpen(true)}
                         disabled={updating}
                       >
                         Send Enhanced Version

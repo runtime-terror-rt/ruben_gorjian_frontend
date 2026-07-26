@@ -352,9 +352,9 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
+          {/* <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
             Billing
-          </p>
+          </p> */}
           <h1 className="text-2xl font-semibold text-[#14110c]">
             Subscription & Invoices
           </h1>
@@ -399,10 +399,10 @@ export default function BillingPage() {
           {!plan ? (
             <div className="rounded-xl border border-dashed border-[#d9d4c9] bg-[#faf8f3] p-12 text-center">
               <div className="mx-auto w-12 h-12 rounded-full bg-[#ffffff] flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-slate-600" />
+                <Zap className="h-6 w-6 text-[#6b6b6b]" />
               </div>
               <p className="text-[#6b6b6b] font-medium">No active plan found</p>
-              <p className="mt-2 text-sm text-slate-500 max-w-xs mx-auto">
+              <p className="mt-2 text-sm text-[#6b6b6b] max-w-xs mx-auto">
                 Subscribe to a plan below to start scheduling and managing your social content.
               </p>
               <Button 
@@ -429,11 +429,11 @@ export default function BillingPage() {
                         : "—"}
                     </p>
                     <div className="flex flex-col">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-[#6b6b6b]">
                         per month {currentPlanDisplay?.interval === "year" ? "(billed yearly)" : ""}
                       </span>
                       {currentPlanDisplay?.interval === "year" && (
-                        <span className="text-[10px] text-slate-600 font-medium">
+                        <span className="text-[10px] text-[#6b6b6b] font-medium">
                           {formatCurrency(currentPlanDisplay.totalPrice, currentPlanDisplay.currency)} total / year
                         </span>
                       )}
@@ -467,7 +467,7 @@ export default function BillingPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[#d9d4c9]/50">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Status</p>
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Status</p>
                   <div className="flex items-center gap-1.5">
                     <div className={cn(
                       "w-2 h-2 rounded-full",
@@ -479,7 +479,7 @@ export default function BillingPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">
                     {plan.cancelAtPeriodEnd ? "Expires On" : "Next Payment"}
                   </p>
                   <p className="text-sm font-semibold text-[#14110c]">
@@ -487,13 +487,13 @@ export default function BillingPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Platforms</p>
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Platforms</p>
                   <p className="text-sm font-semibold text-[#14110c]">
                     {plan.platformLimit ?? 4} included
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Billing</p>
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Billing</p>
                   <p className="text-sm font-semibold text-[#14110c] capitalize">
                     {currentPlanDisplay?.interval === "year" ? "Yearly" : "Monthly"}
                   </p>
@@ -506,9 +506,9 @@ export default function BillingPage() {
                     <AlertTriangle className="h-4 w-4 text-amber-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-amber-200">Subscription Cancellation Pending</p>
-                    <p className="text-xs text-amber-400/80 mt-1 leading-relaxed">
-                      Your subscription will automatically end on <span className="font-bold text-amber-300">{currentPlanDisplay?.renewsAt}</span>. 
+                    <p className="text-sm font-bold text-amber-700">Subscription Cancellation Pending</p>
+                    <p className="text-xs text-amber-700/80 mt-1 leading-relaxed">
+                      Your subscription will automatically end on <span className="font-bold text-amber-700">{currentPlanDisplay?.renewsAt}</span>. 
                       You will continue to have full access to all features until this date.
                     </p>
                   </div>
@@ -522,7 +522,7 @@ export default function BillingPage() {
                       <Clock className="h-4 w-4 text-[#b08d3e]" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-lime-200">Scheduled Plan Change</p>
+                      <p className="text-sm font-bold text-lime-700">Scheduled Plan Change</p>
                       <p className="text-xs text-[#b08d3e]/80 mt-1 leading-relaxed">
                         Moving to <span className="font-bold text-[#8a6d28]">
                           {getPlanByLookupKey(plan.scheduledChange.targetPlanCode as PlanKey)?.name || plan.scheduledChange.targetPlanCode}
@@ -551,7 +551,7 @@ export default function BillingPage() {
                 <div className="flex justify-start pt-2">
                   <Button
                     variant="ghost"
-                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] hover:text-red-600 hover:bg-red-500/10 transition-colors"
                     onClick={() => setConfirmCancelSub(true)}
                   >
                     Cancel Subscription
@@ -699,7 +699,7 @@ export default function BillingPage() {
                     <p className="mt-5 text-4xl font-semibold leading-none text-[#14110c]">
                       {formatPlanPrice(displayPrice)}
                     </p>
-                    <p className="mt-2 text-xs text-slate-500">{billingNote}</p>
+                    <p className="mt-2 text-xs text-[#6b6b6b]">{billingNote}</p>
 
                     {isCurrent ? (
                       <Button
@@ -880,7 +880,7 @@ export default function BillingPage() {
                             invoice.status === "paid"
                               ? "bg-green-500/20 text-green-300"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-300"
+                                ? "bg-amber-500/20 text-amber-700"
                                 : "bg-[#e6e1d8]/50 text-[#14110c]"
                           }`}
                         >
@@ -910,7 +910,7 @@ export default function BillingPage() {
                             View
                           </a>
                         ) : (
-                          <span className="text-xs text-slate-500">—</span>
+                          <span className="text-xs text-[#6b6b6b]">—</span>
                         )}
                       </div>
                     </div>
@@ -948,7 +948,7 @@ export default function BillingPage() {
                             invoice.status === "paid"
                               ? "bg-green-500/20 text-green-300"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-300"
+                                ? "bg-amber-500/20 text-amber-700"
                                 : "bg-[#e6e1d8]/50 text-[#14110c]"
                           }`}
                         >
@@ -991,7 +991,7 @@ export default function BillingPage() {
           ) : (
             <div className="text-sm text-[#14110c] py-4">No invoices yet.</div>
           )}
-          {error && <p className="text-xs text-red-300 mt-4">{error}</p>}
+          {error && <p className="text-xs text-red-600 mt-4">{error}</p>}
         </CardContent>
       </Card>
 
@@ -1032,7 +1032,7 @@ export default function BillingPage() {
                 </span>
               </div>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#6b6b6b]">
               * Your current features will remain active until the change date.
               * You can cancel this scheduled change at any time before it
               takes effect.
@@ -1067,7 +1067,7 @@ export default function BillingPage() {
         <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-400" />
+              <AlertTriangle className="h-5 w-5 text-red-600" />
               Cancel Subscription
             </DialogTitle>
             <DialogDescription className="text-[#6b6b6b]">
@@ -1085,15 +1085,15 @@ export default function BillingPage() {
             </p>
             <ul className="mt-3 space-y-2">
               <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>Automated scheduling & calendar management</span>
               </li>
               <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>AI-powered content generation</span>
               </li>
               <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>Platform management & analytics</span>
               </li>
             </ul>

@@ -40,6 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -332,7 +333,7 @@ export default function AdminManagementPage() {
               <span className="text-sm font-semibold text-[#14110c]">
                 {admin.name || "N/A"}
               </span>
-              <span className="text-xs text-slate-500">{admin.email}</span>
+              <span className="text-xs text-[#6b6b6b]">{admin.email}</span>
             </div>
           </div>
         );
@@ -369,7 +370,7 @@ export default function AdminManagementPage() {
               "capitalize",
               status === "ACTIVE"
                 ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20"
-                : "bg-red-500/10 text-red-400 border-red-500/20",
+                : "bg-red-500/10 text-red-600 border-red-500/20",
             )}
             variant="outline"
           >
@@ -440,7 +441,7 @@ export default function AdminManagementPage() {
                   }
                   className={
                     admin.status === "ACTIVE"
-                      ? "text-amber-400"
+                      ? "text-amber-700"
                       : "text-[#b08d3e]"
                   }
                 >
@@ -459,7 +460,7 @@ export default function AdminManagementPage() {
                     setAdminToDelete(admin);
                     setIsDeleteDialogOpen(true);
                   }}
-                  className="text-red-400 focus:text-red-400"
+                  className="text-red-600 focus:text-red-600"
                 >
                   <Trash2 className="mr-2 h-4 w-4" /> Delete admin
                 </DropdownMenuItem>
@@ -481,13 +482,8 @@ export default function AdminManagementPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#14110c] flex items-center gap-3 tracking-tight">
-            <ShieldCheck className="h-8 w-8 text-[#b08d3e]" />
-            Admin Management
-          </h1>
-          <p className="text-sm text-[#6b6b6b] mt-1 font-medium">
-            Manage your team, roles, and fine-grained access permissions.
-          </p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Admin Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Manage your team, roles, and fine-grained access permissions.</p>
         </div>
         <Button
           onClick={() => {
@@ -495,7 +491,7 @@ export default function AdminManagementPage() {
             setEditingAdmin(null);
             setIsDialogOpen(true);
           }}
-          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-[1.05] active:scale-95 text-base"
+          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-[1.05] active:scale-95 text-base"
         >
           <UserPlus className="h-5 w-5" /> Add New Admin
         </Button>
@@ -503,7 +499,7 @@ export default function AdminManagementPage() {
 
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         <div className="relative flex-1 group">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 group-focus-within:text-[#b08d3e] transition-colors" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b6b6b] group-focus-within:text-[#b08d3e] transition-colors" />
           <Input
             placeholder="Search admins by name or email..."
             className="pl-10 h-12 bg-[#ffffff] border-[#d9d4c9] text-[#14110c] rounded-xl focus:ring-[#b08d3e]"
@@ -512,7 +508,7 @@ export default function AdminManagementPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-500 hidden sm:block" />
+          <Filter className="h-4 w-4 text-[#6b6b6b] hidden sm:block" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -549,7 +545,7 @@ export default function AdminManagementPage() {
         {isLoading ? (
           <div className="flex h-80 flex-col items-center justify-center gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-[#b08d3e]" />
-            <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+            <p className="text-[#6b6b6b] text-sm font-bold uppercase tracking-widest">
               Loading Personnel...
             </p>
           </div>
@@ -565,7 +561,7 @@ export default function AdminManagementPage() {
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
-                        className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5"
+                        className="text-[#6b6b6b] font-bold uppercase tracking-widest text-[10px] py-5"
                       >
                         {header.isPlaceholder
                           ? null
@@ -602,7 +598,7 @@ export default function AdminManagementPage() {
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="h-40 text-center text-slate-500 font-medium"
+                      className="h-40 text-center text-[#6b6b6b] font-medium"
                     >
                       No matching administrators found.
                     </TableCell>
@@ -613,71 +609,13 @@ export default function AdminManagementPage() {
 
             {/* ── Pagination Footer ── */}
             {data && data.totalPages > 0 && (
-              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 bg-[#faf8f3]">
-                
-                {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-                  Showing page{" "}
-                  <span className="text-[#14110c] font-black">{page}</span> of{" "}
-                  <span className="text-[#14110c] font-black">
-                    {data.totalPages}
-                  </span>{" "}
-                  ·{" "}
-                  <span className="text-[#14110c] font-black">
-                    {data.total}
-                  </span>{" "}
-                  total admins
-                </p>
-
-                {/* Right: Prev / Next */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={isLoading || page <= 1}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/60 text-[11px] font-black text-[#14110c] uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                  >
-                    <svg
-                      className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                    Previous
-                  </button>
-
-                  <div className="bg-[#e6e1d8]/50 px-4 py-1.5 rounded-lg border border-[#d9d4c9]/50">
-                    <span className="text-xs font-black text-[#b08d3e]">Page {page}</span>
-                  </div>
-
-                  <button
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={isLoading || page >= data.totalPages}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-[#14110c] uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                  >
-                    Next Page
-                    <svg
-                      className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={page}
+                totalPages={data.totalPages}
+                totalItems={data.total}
+                onPageChange={setPage}
+                isLoading={isLoading}
+              />
             )}
           </>
         )}
@@ -690,7 +628,7 @@ export default function AdminManagementPage() {
             <DialogTitle className="text-2xl font-black text-[#14110c] tracking-tight">
               {editingAdmin ? "Edit Administrator" : "Create New Admin"}
             </DialogTitle>
-            <DialogDescription className="text-slate-500 font-medium text-sm">
+            <DialogDescription className="text-[#6b6b6b] font-medium text-sm">
               {editingAdmin
                 ? "Update security roles and access permissions for this admin."
                 : "Create a new administrative user with specific access controls."}
@@ -699,7 +637,7 @@ export default function AdminManagementPage() {
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <div className="grid gap-6">
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">
                   Identity Details
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
@@ -750,7 +688,7 @@ export default function AdminManagementPage() {
                       />
                       <button
                         type="button"
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-[#14110c] transition-colors focus:outline-none"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6b6b] hover:text-[#14110c] transition-colors focus:outline-none"
                         onClick={() => setShowPasswordToggle(!showPasswordToggle)}
                       >
                         {showPasswordToggle ? (
@@ -765,7 +703,7 @@ export default function AdminManagementPage() {
               </div>
 
               <div className="space-y-4">
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">
                   Role & Authority
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
@@ -786,7 +724,7 @@ export default function AdminManagementPage() {
                           "h-6 w-6 transition-colors",
                           formData.role === role
                             ? "text-[#b08d3e]"
-                            : "text-slate-600 group-hover:text-[#6b6b6b]",
+                            : "text-[#6b6b6b] group-hover:text-[#6b6b6b]",
                         )}
                       />
                       <span
@@ -794,7 +732,7 @@ export default function AdminManagementPage() {
                           "text-xs font-black uppercase tracking-widest",
                           formData.role === role
                             ? "text-[#b08d3e]"
-                            : "text-slate-500",
+                            : "text-[#6b6b6b]",
                         )}
                       >
                         {role.replace("_", " ")}
@@ -806,7 +744,7 @@ export default function AdminManagementPage() {
 
               <div className="space-y-4 bg-[#ffffff] p-6 rounded-3xl border border-[#d9d4c9]/60">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">
                     Access Permissions
                   </h4>
                   <button
@@ -865,7 +803,7 @@ export default function AdminManagementPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 {createMutation.isPending || updateMutation.isPending ? (
@@ -900,7 +838,7 @@ export default function AdminManagementPage() {
                   <h3 className="text-lg font-bold text-[#14110c]">
                     {selectedAdmin.name}
                   </h3>
-                  <p className="text-sm text-slate-500 font-medium">
+                  <p className="text-sm text-[#6b6b6b] font-medium">
                     {selectedAdmin.email}
                   </p>
                 </div>
@@ -908,7 +846,7 @@ export default function AdminManagementPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b]">
                     Access Level
                   </p>
                   <Badge
@@ -919,7 +857,7 @@ export default function AdminManagementPage() {
                   </Badge>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b]">
                     Current Status
                   </p>
                   <Badge
@@ -928,7 +866,7 @@ export default function AdminManagementPage() {
                       "px-3 py-1",
                       selectedAdmin.status === "ACTIVE"
                         ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20"
-                        : "bg-red-500/10 text-red-400 border-red-500/20",
+                        : "bg-red-500/10 text-red-600 border-red-500/20",
                     )}
                   >
                     {selectedAdmin.status}
@@ -937,7 +875,7 @@ export default function AdminManagementPage() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] flex items-center gap-2">
                   <Shield className="h-3 w-3 text-[#b08d3e]" /> Active
                   Permissions
                 </p>
@@ -956,14 +894,14 @@ export default function AdminManagementPage() {
                   ))}
                   {(!selectedAdmin.permissions ||
                     selectedAdmin.permissions.length === 0) && (
-                    <p className="text-xs text-slate-600 italic">
+                    <p className="text-xs text-[#6b6b6b] italic">
                       No special permissions granted.
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#d9d4c9] flex justify-between text-[10px] text-slate-600 font-mono">
+              <div className="pt-4 border-t border-[#d9d4c9] flex justify-between text-[10px] text-[#6b6b6b] font-mono">
                 <span>
                   Created:{" "}
                   {format(
@@ -1000,7 +938,7 @@ export default function AdminManagementPage() {
             <DialogTitle className="text-xl font-black text-[#14110c] tracking-tight">
               Revoke Admin Access
             </DialogTitle>
-            <DialogDescription className="text-slate-500 font-medium">
+            <DialogDescription className="text-[#6b6b6b] font-medium">
               Are you sure you want to permanently delete the administrator
               account for{" "}
               <span className="text-[#14110c] font-black underline decoration-red-500/50 underline-offset-4">

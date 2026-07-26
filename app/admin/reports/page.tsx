@@ -36,8 +36,8 @@ function ReportsContent() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-[#14110c] mb-2">Business Analytics</h1>
-        <p className="text-[#6b6b6b]">Comprehensive overview of Talexia's performance and client activity.</p>
+        <h1 className="text-2xl font-semibold text-[#14110c]">Business Analytics</h1>
+        <p className="text-sm text-[#6b6b6b]">Comprehensive overview of Talexia's performance and client activity.</p>
       </div>
 
       {/* Top Level Stats */}
@@ -67,11 +67,11 @@ function ReportsContent() {
                 <p className="text-sm font-medium text-[#6b6b6b]">Active Clients</p>
                 <p className="text-2xl font-bold text-[#14110c] mt-1">{stats.activeClients}</p>
               </div>
-              <div className="p-3 rounded-xl bg-blue-400/10 text-blue-400 border border-blue-400/20">
+              <div className="p-3 rounded-xl bg-blue-600/10 text-blue-600 border border-blue-500/20">
                 <Users className="h-6 w-6" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-blue-400 font-medium">
+            <div className="mt-4 flex items-center text-xs text-blue-600 font-medium">
               <TrendingUp className="h-3 w-3 mr-1" />
               <span>+8 new this week</span>
             </div>
@@ -95,18 +95,18 @@ function ReportsContent() {
           </CardContent>
         </Card>
 
-        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-red-400/30">
+        <Card className="border-[#d9d4c9] bg-[#ffffff]/60 transition-all hover:border-red-500/40">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-[#6b6b6b]">Cancellations</p>
                 <p className="text-2xl font-bold text-[#14110c] mt-1">{stats.cancellations}</p>
               </div>
-              <div className="p-3 rounded-xl bg-red-400/10 text-red-400 border border-red-400/20">
+              <div className="p-3 rounded-xl bg-red-500/10 text-red-600 border border-red-500/30">
                 <AlertCircle className="h-6 w-6" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-red-400 font-medium">
+            <div className="mt-4 flex items-center text-xs text-red-600 font-medium">
               <span>-2% lower than average</span>
             </div>
           </CardContent>
@@ -133,7 +133,7 @@ function ReportsContent() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+            <div className="flex justify-between text-[10px] text-[#6b6b6b] font-bold uppercase tracking-wider">
               <span>Mon</span>
               <span>Tue</span>
               <span>Wed</span>
@@ -145,12 +145,12 @@ function ReportsContent() {
 
             <div className="grid grid-cols-2 gap-4 mt-6">
               <div className="p-4 rounded-xl bg-[#e6e1d8]/40 border border-[#d9d4c9]/50">
-                <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Scheduled</p>
+                <p className="text-xs text-[#6b6b6b] uppercase tracking-wider font-bold mb-1">Scheduled</p>
                 <p className="text-2xl font-bold text-[#14110c]">{stats.totalPosts}</p>
               </div>
               <div className="p-4 rounded-xl bg-[#e6e1d8]/40 border border-[#d9d4c9]/50">
-                <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Failed</p>
-                <p className="text-2xl font-bold text-red-400">{stats.failedPosts}</p>
+                <p className="text-xs text-[#6b6b6b] uppercase tracking-wider font-bold mb-1">Failed</p>
+                <p className="text-2xl font-bold text-red-600">{stats.failedPosts}</p>
               </div>
             </div>
           </CardContent>
@@ -214,14 +214,14 @@ function ReportsContent() {
         <CardContent>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-red-400/5 border border-red-400/10">
-                <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+              <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-red-500/5 border border-red-500/20">
+                <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-[#14110c]">Post Failed for Client #293</p>
                   <p className="text-xs text-[#6b6b6b] mt-1">
                     Instagram API returned: 'OAuth exception: Invalid token'. Client notified to reconnect.
                   </p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter mt-2">
+                  <p className="text-[10px] text-[#6b6b6b] font-bold uppercase tracking-tighter mt-2">
                     2 hours ago • Action required
                   </p>
                 </div>

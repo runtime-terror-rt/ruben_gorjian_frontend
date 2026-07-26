@@ -1,4 +1,5 @@
 "use client";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 import DeleteConfirmationModal from "@/app/dashboard/calendar/delete-confirmation-modal";
 import PostDetailsModal from "@/app/dashboard/calendar/post-details-modal";
@@ -630,19 +631,19 @@ export default function AdminPostsPage() {
     switch (status) {
       case "POSTED":
         return (
-          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+          <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30">
             Published
           </Badge>
         );
       case "SCHEDULED":
         return (
-          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+          <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30">
             Scheduled
           </Badge>
         );
       case "DRAFT":
         return (
-          <Badge className="bg-slate-500/20 text-[#6b6b6b] border-slate-500/30">
+          <Badge className="bg-[#e6e1d8]/40 text-[#6b6b6b] border-[#d9d4c9]/30">
             Draft
           </Badge>
         );
@@ -654,7 +655,7 @@ export default function AdminPostsPage() {
         );
       case "PUBLISHING":
         return (
-          <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 animate-pulse">
+          <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30 animate-pulse">
             Publishing
           </Badge>
         );
@@ -720,7 +721,7 @@ export default function AdminPostsPage() {
               {loading && (posts || []).length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="h-48 text-center">
-                    <div className="flex flex-col items-center gap-2 text-slate-500">
+                    <div className="flex flex-col items-center gap-2 text-[#6b6b6b]">
                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#b08d3e] border-t-transparent" />
                       Loading posts...
                     </div>
@@ -730,7 +731,7 @@ export default function AdminPostsPage() {
                 <TableRow>
                   <TableCell
                     colSpan={8}
-                    className="h-48 text-center text-slate-500"
+                    className="h-48 text-center text-[#6b6b6b]"
                   >
                     No posts found.
                   </TableCell>
@@ -771,7 +772,7 @@ export default function AdminPostsPage() {
                               unoptimized
                             />
                           ) : (
-                            <div className="h-full w-full flex items-center justify-center text-slate-600">
+                            <div className="h-full w-full flex items-center justify-center text-[#6b6b6b]">
                               <FileText className="h-5 w-5" />
                             </div>
                           )}
@@ -783,7 +784,7 @@ export default function AdminPostsPage() {
                             <Calendar className="h-3 w-3" /> Photo
                           </Badge>
                         ) : post.scheduleType === "VIDEO_SESSION" ? (
-                          <Badge className="bg-indigo-400/10 text-indigo-400 border-indigo-400/20 gap-1">
+                          <Badge className="bg-indigo-600/10 text-indigo-600 border-indigo-500/20 gap-1">
                             <Clock className="h-3 w-3" /> Video
                           </Badge>
                         ) : (
@@ -798,13 +799,13 @@ export default function AdminPostsPage() {
                             {post.session?.title ||
                               post.sessionTitle ||
                               post.caption || (
-                                <span className="text-slate-500 italic">
+                                <span className="text-[#6b6b6b] italic">
                                   No caption
                                 </span>
                               )}
                           </div>
                           {(post.session?.notes || post.sessionNotes) && (
-                            <span className="text-[10px] text-slate-500 line-clamp-1 italic">
+                            <span className="text-[10px] text-[#6b6b6b] line-clamp-1 italic">
                               Ref: {post.session?.notes || post.sessionNotes}
                             </span>
                           )}
@@ -822,7 +823,7 @@ export default function AdminPostsPage() {
                                 ? `User: ${extractUserIdFromPost(post)?.substring(0, 8)}...`
                                 : "Unknown User")}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-[#6b6b6b]">
                             {post.owner?.email ||
                               post.user?.email ||
                               post.author?.email ||
@@ -906,7 +907,7 @@ export default function AdminPostsPage() {
                             {post.scheduledFor 
                               ? fromUTC(post.scheduledFor, userTimezone).format("h:mm A")
                               : "—"}
-                            <span className="text-slate-500 ml-1">
+                            <span className="text-[#6b6b6b] ml-1">
                               {timezoneAbbr}
                             </span>
                           </div>
@@ -972,36 +973,13 @@ export default function AdminPostsPage() {
 
         {/* ── Pagination Footer ── */}
         {totalCount > 0 && (
-          <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3]">
-            <div className="text-xs text-slate-500 font-medium">
-              Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalCount)} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} records
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage <= 1}
-                className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-xs text-[#6b6b6b] px-2">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage >= totalPages}
-                className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <AdminPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalCount}
+            onPageChange={setCurrentPage}
+            isLoading={loading}
+          />
         )}
       </Card>
 

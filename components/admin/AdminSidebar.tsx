@@ -302,15 +302,15 @@ export function AdminSidebar({
               {/* Role badge */}
               {/* <div className={`mt-2 mx-1 flex items-center gap-2 px-3 py-2 rounded-xl ${
                 isSuperAdmin
-                  ? "bg-amber-400/10 border border-amber-400/20"
+                  ? "bg-amber-500/10 border border-amber-500/20"
                   : "bg-[#e6e1d8]/60 border border-[#d9d4c9]/50"
               }`}>
                 <div className={`h-2 w-2 rounded-full flex-shrink-0 ${
-                  isSuperAdmin ? "bg-amber-400" : "bg-[#b08d3e]"
+                  isSuperAdmin ? "bg-amber-500" : "bg-[#b08d3e]"
                 }`} />
                 <div className="min-w-0">
                   <p className={`text-[10px] font-black uppercase tracking-widest truncate ${
-                    isSuperAdmin ? "text-amber-300" : "text-[#8a6d28]"
+                    isSuperAdmin ? "text-amber-700" : "text-[#8a6d28]"
                   }`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </p>

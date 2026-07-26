@@ -66,7 +66,7 @@ export function VideoSessionUpsellModal({
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-indigo-500/20 rounded-2xl">
-              <Video className="h-6 w-6 text-indigo-400" />
+              <Video className="h-6 w-6 text-indigo-600" />
             </div>
             <DialogTitle className="text-2xl font-bold text-[#14110c]">
               {hasAddon ? "Add More Video Hours" : "Upgrade to Video"}

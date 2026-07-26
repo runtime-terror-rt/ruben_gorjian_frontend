@@ -134,7 +134,7 @@ function EnterpriseAcceptForm() {
             <h1 className="text-2xl font-black text-white tracking-tight mb-2">
               Activate Your Plan
             </h1>
-            <p className="text-slate-500 text-sm font-medium leading-relaxed">
+            <p className="text-[#6b6b6b] text-sm font-medium leading-relaxed">
               You've been invited to an exclusive enterprise plan. Set up your account to get started.
             </p>
           </div>
@@ -150,7 +150,7 @@ function EnterpriseAcceptForm() {
                   className="text-center py-12 space-y-4"
                 >
                   <Loader2 className="h-10 w-10 text-lime-400 animate-spin mx-auto" />
-                  <p className="text-slate-500 text-sm font-medium">Validating your invitation...</p>
+                  <p className="text-[#6b6b6b] text-sm font-medium">Validating your invitation...</p>
                 </motion.div>
               ) : !isValidToken ? (
                 <motion.div
@@ -163,7 +163,7 @@ function EnterpriseAcceptForm() {
                     <ShieldCheck className="h-8 w-8 text-red-400" />
                   </div>
                   <p className="text-white font-bold text-lg">Invalid Invite Link</p>
-                  <p className="text-slate-500 text-sm">
+                  <p className="text-[#6b6b6b] text-sm">
                     This invitation link is missing a token. Please use the link directly from your email.
                   </p>
                 </motion.div>
@@ -182,7 +182,7 @@ function EnterpriseAcceptForm() {
                   </div>
                   <div>
                     <p className="text-white font-black text-xl tracking-tight">Account Created!</p>
-                    <p className="text-slate-400 text-sm mt-1 font-medium">
+                    <p className="text-[#6b6b6b] text-sm mt-1 font-medium">
                       Your account has been created successfully. Please check your email to verify it.
                     </p>
                   </div>
@@ -213,7 +213,7 @@ function EnterpriseAcceptForm() {
                           <h3 className="text-white font-bold text-lg truncate tracking-tight">
                             {inviteDetails.planName || inviteDetails.name || "Enterprise Growth"}
                           </h3>
-                          <p className="text-slate-500 text-[10px] font-medium uppercase tracking-widest mt-0.5">
+                          <p className="text-[#6b6b6b] text-[10px] font-medium uppercase tracking-widest mt-0.5">
                             {inviteDetails.companyName || inviteDetails.company || "Your Company"}
                           </p>
                         </div>
@@ -221,7 +221,7 @@ function EnterpriseAcceptForm() {
                           <p className="text-white font-black text-xl tracking-tighter">
                             ${(inviteDetails.proposal?.amount || inviteDetails.amount || inviteDetails.price || 0).toLocaleString()}
                           </p>
-                          <p className="text-slate-600 text-[9px] font-bold uppercase tracking-widest">
+                          <p className="text-[#6b6b6b] text-[9px] font-bold uppercase tracking-widest">
                             / {inviteDetails.billingCycle?.toLowerCase() || "monthly"}
                           </p>
                         </div>
@@ -233,11 +233,11 @@ function EnterpriseAcceptForm() {
            
                   {/* Password field */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-black text-[#6b6b6b] uppercase tracking-widest ml-1">
                       Set Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b6b]" />
                       <input
                         type={showPassword ? "text" : "password"}
                         value={password}
@@ -245,12 +245,12 @@ function EnterpriseAcceptForm() {
                         placeholder="Minimum 8 characters"
                         required
                         minLength={8}
-                        className="w-full h-12 pl-11 pr-12 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white text-sm font-medium placeholder:text-slate-700 focus:outline-none focus:border-lime-400/50 focus:ring-1 focus:ring-lime-400/20 transition-all"
+                        className="w-full h-12 pl-11 pr-12 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white text-sm font-medium placeholder:text-[#14110c] focus:outline-none focus:border-lime-400/50 focus:ring-1 focus:ring-lime-400/20 transition-all"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6b6b6b] hover:text-[#6b6b6b] transition-colors"
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -275,7 +275,7 @@ function EnterpriseAcceptForm() {
                   <button
                     type="submit"
                     disabled={isLoading || !password}
-                    className="w-full h-13 py-3.5 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_8px_30px_rgba(163,230,53,0.25)] mt-2"
+                    className="w-full h-13 py-3.5 rounded-2xl font-black text-[13px] tracking-wider uppercase transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 bg-lime-400 hover:bg-lime-300 text-[#14110c] shadow-[0_8px_30px_rgba(163,230,53,0.25)] mt-2"
                   >
                     {isLoading ? (
                       <>
@@ -296,7 +296,7 @@ function EnterpriseAcceptForm() {
 
           {/* Footer */}
           <div className="px-10 pb-8 text-center">
-            <p className="text-[10px] text-slate-700 font-medium">
+            <p className="text-[10px] text-[#14110c] font-medium">
               Protected by Talexia Enterprise Security •{" "}
               <span className="text-lime-400/50">End-to-End Encrypted</span>
             </p>
@@ -305,7 +305,7 @@ function EnterpriseAcceptForm() {
 
         {/* Bottom branding */}
         <div className="text-center mt-6">
-          <p className="text-[11px] text-slate-700 font-medium">
+          <p className="text-[11px] text-[#14110c] font-medium">
             © 2026 Talexia. All rights reserved.
           </p>
         </div>

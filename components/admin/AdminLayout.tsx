@@ -33,7 +33,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     
     // Skip redirect if already on login page (prevents infinite loop)
     if (!isAdmin && !isOnLoginPage) {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
 
@@ -76,7 +76,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           router.replace(firstAccessibleRoute);
         } else if (!firstAccessibleRoute) {
           // If they have basically no permissions, force them out
-          router.replace("/admin/login");
+          router.replace("/login");
         }
       }
     }
@@ -140,10 +140,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   // Show loading state (but skip for login page)
   if ((sessionLoading || !isHydrated) && !isOnLoginPage) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="dashboard-theme flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-800 border-t-lime-400"></div>
-          <p className="text-sm text-slate-400">Loading admin dashboard...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#d9d4c9] border-t-[#b08d3e]"></div>
+          <p className="text-sm text-[#6b6b6b]">Loading admin dashboard...</p>
         </div>
       </div>
     );
@@ -160,7 +160,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="dashboard-theme min-h-screen">
       {/* Desktop Sidebar */}
       <AdminSidebar
         isOpen={true}
@@ -191,9 +191,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           !isSidebarCollapsed ? "lg:pl-64" : "lg:pl-20"
         )}
       >
-        <div>
-          {children}
-        </div>
+        <div className="px-3 py-4">{children}</div>
       </main>
     </div>
   );

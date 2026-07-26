@@ -216,9 +216,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-[#14110c] sm:text-2xl">
-            Overview
-          </h1>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Overview</h1>
           <p className="text-sm text-[#6b6b6b]">Dashboard summary</p>
         </div>
 
@@ -241,7 +239,7 @@ export default function DashboardPage() {
         {/* LEFT CARD - PLAN */}
         <div className="rounded-xl bg-[#ffffff] border border-[#d9d4c9] p-6 text-[#14110c]">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded">
+            <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
               {subscription?.status ?? "ACTIVE"} PLAN
             </span>
             <span className="text-xs text-[#6b6b6b]">
@@ -252,7 +250,7 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold mb-2">
             {subscription?.name ?? "N/A"}
           </h2>
-          <p className="text-xs text-slate-500 mb-6">
+          <p className="text-xs text-[#6b6b6b] mb-6">
             CODE: {subscription?.planCode ?? "N/A"}
           </p>
 
@@ -300,8 +298,8 @@ export default function DashboardPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background: `conic-gradient(
-          #ef4444 0% ${progress?.usedPercent || 0}%,
-          #22c55e ${progress?.usedPercent || 0}% 100%
+          #b08d3e 0% ${progress?.usedPercent || 0}%,
+          #e6e1d8 ${progress?.usedPercent || 0}% 100%
         )`,
               }}
             />
@@ -469,7 +467,7 @@ export default function DashboardPage() {
 
           <div className="space-y-3">
             {upcomingData.length === 0 ? (
-              <p className="text-xs text-slate-500 italic">No upcoming posts</p>
+              <p className="text-xs text-[#6b6b6b] italic">No upcoming posts</p>
             ) : (
               upcomingData.map((p: UpcomingPost) => (
                 <div key={p.postId} className="p-3 rounded-lg bg-[#ffffff]">
@@ -477,7 +475,7 @@ export default function DashboardPage() {
                     <p className="text-xs font-bold text-[#b08d3e]">
                       {p.targets?.map((t: any) => t.platform).join(' & ') || 'General Post'}
                     </p>
-                    <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded uppercase font-medium">
+                    <span className="text-[10px] bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded uppercase font-medium">
                       {p.status}
                     </span>
                   </div>
@@ -499,13 +497,13 @@ export default function DashboardPage() {
               <div className="flex items-center gap-4 mb-4">
                 <div className={cn(
                   "p-3 rounded-xl",
-                  nextSession.scheduleType === "PHOTO_SESSION" ? "bg-amber-400/10 text-amber-400" : "bg-indigo-400/10 text-indigo-400"
+                  nextSession.scheduleType === "PHOTO_SESSION" ? "bg-amber-500/10 text-amber-700" : "bg-indigo-600/10 text-indigo-600"
                 )}>
                   {nextSession.scheduleType === "PHOTO_SESSION" ? <Camera className="h-6 w-6" /> : <Video className="h-6 w-6" />}
                 </div>
                 <div>
                   <h4 className="text-[#14110c] font-bold">{nextSession.session?.title || nextSession.sessionTitle || "Untitled Session"}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-0.5">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] mt-0.5">
                     {nextSession.scheduleType.replace("_", " ")}
                   </p>
                 </div>
@@ -531,7 +529,7 @@ export default function DashboardPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <div className="p-3 bg-[#e6e1d8]/50 rounded-full mb-3">
-                <Calendar className="h-6 w-6 text-slate-600" />
+                <Calendar className="h-6 w-6 text-[#6b6b6b]" />
               </div>
               <p className="text-sm text-[#6b6b6b]">No upcoming sessions</p>
               <Link href="/dashboard/schedule-visit">
@@ -555,7 +553,7 @@ export default function DashboardPage() {
 
             <div className="text-right">
               <p className="text-xs text-[#6b6b6b]">Expiring Soon</p>
-              <p className="text-xl font-bold text-red-400">
+              <p className="text-xl font-bold text-red-600">
                 {overview?.socialAccounts.expiringSoon}
               </p>
             </div>
@@ -594,7 +592,7 @@ export default function DashboardPage() {
                     <AlertTriangle className="h-4 w-4 mt-1 text-yellow-400" />
                     <div>
                       <p className="text-sm text-[#14110c]">{a.message}</p>
-                      <span className="text-xs text-slate-500">{a.code}</span>
+                      <span className="text-xs text-[#6b6b6b]">{a.code}</span>
                     </div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
@@ -628,7 +626,7 @@ export default function DashboardPage() {
                     <p className="text-xs text-[#6b6b6b]">
                       {(a.description || "").replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, (match) => dayjs(match).format("MMM D, YYYY • h:mm A"))}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#6b6b6b]">
                       {new Date(a.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -648,7 +646,7 @@ export default function DashboardPage() {
                 >
                   <ChevronLeft className="h-3 w-3" />
                 </Button>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[#6b6b6b]">
                   Page {activityPage} of {activityTotalPages}
                 </span>
                 <Button
@@ -688,7 +686,7 @@ export default function DashboardPage() {
         >
           <Calendar className="h-4 w-4" /> Open calendar
         </Link>
-        <span className="text-slate-600">·</span>
+        <span className="text-[#6b6b6b]">·</span>
         <Link
           href="/dashboard/media"
           className="inline-flex items-center gap-1.5 text-[#b08d3e] hover:text-[#8a6d28]"
@@ -724,7 +722,7 @@ function MetricCard({ label, value, loading }: any) {
   return (
     <Card className="border-[#d9d4c9] bg-[#ffffff] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all rounded-2xl">
       <CardContent className="p-4 flex flex-col space-y-2">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
+        <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest truncate">
           {label}
         </p>
 

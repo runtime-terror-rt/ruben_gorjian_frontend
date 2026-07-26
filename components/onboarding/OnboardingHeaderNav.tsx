@@ -135,7 +135,7 @@ export function OnboardingHeaderNav({
               </span>
               <Badge
                 variant="outline"
-                className="border-lime-400/50 text-lime-300 bg-lime-400/10"
+                className="border-lime-400/50 text-lime-700 bg-lime-400/10"
               >
                 {planBadge}
               </Badge>
@@ -196,7 +196,7 @@ export function OnboardingHeaderNav({
                               <div
                                 key={section.id}
                                 className={`px-3 py-2 rounded-md text-sm ${isCurrent
-                                  ? "bg-lime-400/10 text-lime-300 font-medium"
+                                  ? "bg-lime-400/10 text-lime-700 font-medium"
                                   : isCompleted
                                     ? "text-slate-300"
                                     : "text-slate-500"

@@ -674,7 +674,7 @@ export default function PostModal({
             <label className="text-sm text-[#14110c]">
               Media{" "}
               {requiresMedia && (
-                <span className="text-amber-400/70">
+                <span className="text-amber-700/70">
                   (Optional for scheduling)
                 </span>
               )}
@@ -711,7 +711,7 @@ export default function PostModal({
                 </>
               )}
               {isEditing && assets.length === 0 && (
-                <div className="text-xs text-slate-500 italic py-2 text-center">
+                <div className="text-xs text-[#6b6b6b] italic py-2 text-center">
                   No media attached to this post
                 </div>
               )}
@@ -802,7 +802,7 @@ export default function PostModal({
                           <span className="truncate flex-1">
                             {asset.name}{" "}
                             {"isLocal" in asset && (
-                              <span className="text-[10px] text-amber-400 ml-1">
+                              <span className="text-[10px] text-amber-700 ml-1">
                                 (Pending)
                               </span>
                             )}
@@ -882,10 +882,10 @@ export default function PostModal({
           {/* Timezone info banner — helps user & developer verify correct TZ */}
           {datetime && userTimezone && (
             <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 flex items-center gap-2">
-              <span className="text-xs text-amber-400 font-semibold shrink-0">🕐 Schedule TZ:</span>
-              <span className="text-xs text-amber-300/80 flex-1 truncate">
+              <span className="text-xs text-amber-700 font-semibold shrink-0">🕐 Schedule TZ:</span>
+              <span className="text-xs text-amber-700/80 flex-1 truncate">
                 {userTimezone} ({timezoneAbbr}) — fires at{" "}
-                <span className="font-bold text-amber-300">
+                <span className="font-bold text-amber-700">
                   {(() => {
                     try {
                       const utcTime = dayjs.tz(datetime, userTimezone).utc();

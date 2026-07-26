@@ -52,7 +52,7 @@ export default function AdminLoginPage() {
   // Show loading while checking session
   if (sessionLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#faf8f3] to-indigo-950 text-[#14110c] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#14110c] via-[#faf8f3] to-[#14110c] text-[#14110c] flex items-center justify-center px-4">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
           <p className="text-sm text-[#6b6b6b]">Loading...</p>
@@ -62,11 +62,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#faf8f3] to-indigo-950 text-[#14110c] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#14110c] via-[#faf8f3] to-[#14110c] text-[#14110c] flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-6 rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/70 p-6 shadow-xl">
         <div className="text-center space-y-2">
-          <div className="mx-auto h-12 w-12 rounded-2xl bg-lime-300/20 border border-lime-300/40 flex items-center justify-center">
-            <ShieldCheck className="h-6 w-6 text-lime-200" />
+          <div className="mx-auto h-12 w-12 rounded-2xl bg-lime-300/20 border border-lime-500/40 flex items-center justify-center">
+            <ShieldCheck className="h-6 w-6 text-lime-700" />
           </div>
           <h1 className="text-xl font-semibold text-[#14110c]">Admin sign in</h1>
           <p className="text-sm text-[#6b6b6b]">Access the Talexia control center.</p>
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-[#14110c] transition-colors focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6b6b] hover:text-[#14110c] transition-colors focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -112,13 +112,13 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#b08d3e] px-4 py-2 text-sm font-semibold text-slate-950 shadow hover:bg-[#e6e1d8] disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#b08d3e] px-4 py-2 text-sm font-semibold text-[#14110c] shadow hover:bg-[#e6e1d8] disabled:opacity-60"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Sign in
           </button>
 
-          {error && <p className="text-xs text-red-300">{error}</p>}
+          {error && <p className="text-xs text-red-600">{error}</p>}
         </form>
       </div>
     </div>

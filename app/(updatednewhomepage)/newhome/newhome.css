@@ -103,6 +103,165 @@
   color: #fff !important;
 }
 
+/* ==================== NAV PROFILE ==================== */
+.talexia-wrapper .nav-profile-wrapper {
+  position: relative;
+}
+
+.talexia-wrapper .nav-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #e6e1d8;
+  border-radius: 2px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.talexia-wrapper .nav-profile-btn:hover {
+  border-color: #b08d3e;
+  background: rgba(176, 141, 62, 0.05);
+}
+
+.talexia-wrapper .nav-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e6e1d8;
+}
+
+.talexia-wrapper .nav-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #14110c;
+  color: #c9a44c;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.talexia-wrapper .nav-profile-name {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #14110c;
+  font-weight: 500;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.talexia-wrapper .nav-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 240px;
+  background: #fff;
+  border: 1px solid #e6e1d8;
+  border-radius: 4px;
+  box-shadow: 0 12px 40px rgba(20, 17, 12, 0.12);
+  z-index: 200;
+  overflow: hidden;
+  animation: navDropdownIn 0.18s ease;
+}
+
+@keyframes navDropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.talexia-wrapper .nav-dropdown-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid #f0ece3;
+}
+
+.talexia-wrapper .nav-dropdown-name {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #14110c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talexia-wrapper .nav-dropdown-email {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  color: #8a7560;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.talexia-wrapper .nav-dropdown-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  background: #fdf8ee;
+  border: 1px solid #e6d5a0;
+  color: #8a6d28;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+.talexia-wrapper .nav-dropdown-body {
+  padding: 8px;
+}
+
+.talexia-wrapper .nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #14110c;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-align: left;
+}
+
+.talexia-wrapper .nav-dropdown-item:hover {
+  background: #faf8f3;
+  color: #b08d3e;
+}
+
+.talexia-wrapper .nav-dropdown-logout {
+  color: #c0392b;
+}
+
+.talexia-wrapper .nav-dropdown-logout:hover {
+  background: #fff5f5;
+  color: #c0392b;
+}
+
 
 /* ==================== CONTAINERS ==================== */
 .talexia-wrapper .container {

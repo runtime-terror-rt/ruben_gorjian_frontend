@@ -663,7 +663,7 @@ export function SubmissionUploadDialog({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <Upload className={`h-8 w-8 mx-auto mb-2 ${isDragging ? "text-lime-400" : "text-slate-400"}`} />
+              <Upload className={`h-8 w-8 mx-auto mb-2 ${isDragging ? "text-lime-700" : "text-slate-400"}`} />
               <p className="text-sm text-slate-300 mb-1">
                 {isDragging ? "Drop files here" : "Click to upload or drag and drop"}
               </p>
@@ -732,7 +732,7 @@ export function SubmissionUploadDialog({
                         <CheckCircle className="h-3 w-3 text-green-400" />
                       )}
                       {fileWithProgress.status === "error" && (
-                        <AlertCircle className="h-3 w-3 text-red-400" />
+                        <AlertCircle className="h-3 w-3 text-red-600" />
                       )}
                       {fileWithProgress.retryCount > 0 && (
                         <span className="text-xs text-slate-500">
@@ -751,7 +751,7 @@ export function SubmissionUploadDialog({
                       />
                     )}
                     {fileWithProgress.error && (
-                      <p className="text-xs text-red-400 mt-1" role="alert">{fileWithProgress.error}</p>
+                      <p className="text-xs text-red-600 mt-1" role="alert">{fileWithProgress.error}</p>
                     )}
                   </div>
                 </div>
@@ -777,7 +777,7 @@ export function SubmissionUploadDialog({
           {/* Error Message */}
           {error && (
             <div className="rounded-lg bg-red-950/30 border border-red-900/50 p-3" role="alert">
-              <p className="text-sm text-red-200">{error}</p>
+              <p className="text-sm text-red-600">{error}</p>
               {quotaExceeded && onRequestTopup && (
                 <Button
                   type="button"

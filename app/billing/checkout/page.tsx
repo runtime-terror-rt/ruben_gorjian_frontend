@@ -323,7 +323,7 @@ function CheckoutContent() {
       <Button
         variant="ghost"
         size="sm"
-        className="mb-6 gap-2 text-slate-400 hover:text-white"
+        className="mb-6 gap-2 text-[#6b6b6b] hover:text-white"
         onClick={() => router.back()}
       >
         <ArrowLeft className="h-4 w-4" /> Back
@@ -335,7 +335,7 @@ function CheckoutContent() {
           <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-xl text-white">Complete your subscription</CardTitle>
-              <CardDescription className="text-slate-400">
+              <CardDescription className="text-[#6b6b6b]">
                 Customize your plan and review your order details.
               </CardDescription>
             </CardHeader>
@@ -344,7 +344,7 @@ function CheckoutContent() {
               <div className="flex flex-col gap-4 rounded-xl border border-lime-400/20 bg-lime-400/5 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-lime-400 p-2 text-slate-950">
+                    <div className="rounded-lg bg-lime-400 p-2 text-[#14110c]">
                       <ShieldCheck className="h-5 w-5" />
                     </div>
                     <div>
@@ -360,7 +360,7 @@ function CheckoutContent() {
                           </div>
                         )}
                       </div>
-                      <p className="text-xs text-slate-400 capitalize">{billingCycle} billing</p>
+                      <p className="text-xs text-[#6b6b6b] capitalize">{billingCycle} billing</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -369,7 +369,7 @@ function CheckoutContent() {
                     ) : (
                       <p className="text-lg font-bold text-white">
                         ${(calculation.planPrice / (calculation.isYearly ? 12 : 1)).toFixed(2)}
-                        <span className="text-xs font-normal text-slate-500">/mo</span>
+                        <span className="text-xs font-normal text-[#6b6b6b]">/mo</span>
                       </p>
                     )}
                   </div>
@@ -385,8 +385,8 @@ function CheckoutContent() {
                       className={cn(
                         "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all",
                         billingCycle === "monthly"
-                          ? "bg-lime-500 text-slate-950 shadow-sm"
-                          : "text-slate-400 hover:text-white"
+                          ? "bg-lime-500 text-[#14110c] shadow-sm"
+                          : "text-[#6b6b6b] hover:text-white"
                       )}
                     >
                       Monthly
@@ -396,14 +396,14 @@ function CheckoutContent() {
                       className={cn(
                         "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all flex items-center gap-1.5",
                         billingCycle === "yearly"
-                          ? "bg-lime-500 text-slate-950 shadow-sm"
-                          : "text-slate-400 hover:text-white"
+                          ? "bg-lime-500 text-[#14110c] shadow-sm"
+                          : "text-[#6b6b6b] hover:text-white"
                       )}
                     >
                       Yearly
                       <span className={cn(
                         "px-1 py-0.5 rounded-[4px] text-[8px] border",
-                        billingCycle === "yearly" ? "bg-slate-950 border-slate-800 text-lime-400" : "bg-lime-400 text-slate-950 border-transparent"
+                        billingCycle === "yearly" ? "bg-slate-950 border-slate-800 text-lime-400" : "bg-lime-400 text-[#14110c] border-transparent"
                       )}>
                         -20%
                       </span>
@@ -414,18 +414,18 @@ function CheckoutContent() {
 
               {/* Addons Section */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Optional Add-ons</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#6b6b6b]">Optional Add-ons</h3>
 
                 <div className="grid gap-4">
                   <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-5 space-y-4 transition hover:border-slate-700">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <Label className="text-white font-semibold text-base">Additional Platforms</Label>
-                        <p className="text-xs text-slate-500">Connect more social accounts to your plan (Max: {platformLimit})</p>
+                        <p className="text-xs text-[#6b6b6b]">Connect more social accounts to your plan (Max: {platformLimit})</p>
                       </div>
                       <div className="text-right">
                         <span className="text-sm font-bold text-lime-400">+${ADDON_PRICES.platform.toFixed(2)}</span>
-                        <span className="text-[10px] text-slate-500 block">per platform/mo</span>
+                        <span className="text-[10px] text-[#6b6b6b] block">per platform/mo</span>
                       </div>
                     </div>
 
@@ -454,7 +454,7 @@ function CheckoutContent() {
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Subtotal</span>
+                        <span className="text-xs font-medium text-[#6b6b6b] uppercase tracking-wider">Subtotal</span>
                         <p className="text-lg font-bold text-white">${(addonPlatformQty * ADDON_PRICES.platform).toFixed(2)}</p>
                       </div>
                     </div>
@@ -471,10 +471,10 @@ function CheckoutContent() {
 
               {/* Coupon Section */}
               <div className="space-y-4">
-                <Label className="text-sm font-semibold uppercase tracking-wider text-slate-500">Discount Coupon</Label>
+                <Label className="text-sm font-semibold uppercase tracking-wider text-[#6b6b6b]">Discount Coupon</Label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                    <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b6b6b]" />
                     <Input
                       placeholder="Enter code (e.g. SUMMER26)"
                       className="border-slate-800 bg-slate-950 pl-10 text-white focus:ring-lime-400"
@@ -520,7 +520,7 @@ function CheckoutContent() {
               checked={termsAccepted}
               onCheckedChange={(checked) => setTermsAccepted(!!checked)}
             />
-            <Label htmlFor="terms" className="text-xs leading-relaxed text-slate-400">
+            <Label htmlFor="terms" className="text-xs leading-relaxed text-[#6b6b6b]">
               I agree to the <a href="/terms-conditions" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
             </Label>
           </div>
@@ -547,7 +547,7 @@ function CheckoutContent() {
                         ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
                         : PLAN_NAMES[planCode as PlanKey]}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-medium">Qty 1, Billed {billingCycle}</span>
+                    <span className="text-[10px] text-[#6b6b6b] font-medium">Qty 1, Billed {billingCycle}</span>
                   </div>
                   <div className="text-right">
                     {isEnterprise && calculation.planPrice === 0 ? (
@@ -558,7 +558,7 @@ function CheckoutContent() {
                           ${calculation.planPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         {calculation.isFounder && (
-                          <span className="text-[9px] text-slate-500 line-through block">
+                          <span className="text-[9px] text-[#6b6b6b] line-through block">
                             ${(calculation.planPrice / 0.7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         )}
@@ -572,7 +572,7 @@ function CheckoutContent() {
                   <div className="flex justify-between items-start text-slate-300">
                     <div className="flex flex-col">
                       <span>Additional Platform</span>
-                      <span className="text-[10px] text-slate-500 font-medium">Qty {addonPlatformQty}, ${ADDON_PRICES.platform.toFixed(2)} each</span>
+                      <span className="text-[10px] text-[#6b6b6b] font-medium">Qty {addonPlatformQty}, ${ADDON_PRICES.platform.toFixed(2)} each</span>
                     </div>
                     <span className="text-white font-medium">${calculation.platformPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
@@ -596,7 +596,7 @@ function CheckoutContent() {
                         <Tag className="h-3 w-3" />
                         <span>Talexia Coupon {appliedCoupon?.code || couponCode}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-medium">
+                      <span className="text-[10px] text-[#6b6b6b] font-medium">
                         {appliedCoupon?.discountType === 'percentage' 
                           ? `${appliedCoupon.discountValue}% off` 
                           : `$${appliedCoupon?.discountValue} off`} 
@@ -608,7 +608,7 @@ function CheckoutContent() {
                 )}
 
                 {/* Tax */}
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-[#6b6b6b]">
                   <span>Sales tax (8.625%)</span>
                   <span className="text-white font-medium">${calculation.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
@@ -625,7 +625,7 @@ function CheckoutContent() {
                       <span className="text-lg text-slate-300">Calculated at Checkout</span>
                     ) : (
                       <>
-                        <span className="text-sm font-normal text-slate-400 mr-1">US</span>
+                        <span className="text-sm font-normal text-[#6b6b6b] mr-1">US</span>
                         ${calculation.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </>
                     )}
@@ -636,7 +636,7 @@ function CheckoutContent() {
 
             <CardContent className="pt-2 pb-6">
               <Button
-                className="w-full rounded-full bg-lime-500 py-7 text-base font-black text-slate-950 hover:bg-lime-400 shadow-[0_0_30px_rgba(132,204,22,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98]"
+                className="w-full rounded-full bg-lime-500 py-7 text-base font-black text-[#14110c] hover:bg-lime-400 shadow-[0_0_30px_rgba(132,204,22,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98]"
                 disabled={loading}
                 onClick={handleCheckout}
               >
@@ -659,7 +659,7 @@ function CheckoutContent() {
                   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3" />
                   <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5" />
                 </div>
-                <p className="text-[10px] text-slate-500 flex items-center gap-1.5 font-medium tracking-wide">
+                <p className="text-[10px] text-[#6b6b6b] flex items-center gap-1.5 font-medium tracking-wide">
                   <ShieldCheck className="h-4 w-4 text-lime-500" /> SECURE SSL ENCRYPTED CHECKOUT
                 </p>
               </div>
@@ -677,7 +677,7 @@ export default function CheckoutPage() {
       <Suspense fallback={
         <div className="flex h-screen flex-col items-center justify-center gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-lime-400" />
-          <p className="text-slate-400 animate-pulse font-medium">Securing your session...</p>
+          <p className="text-[#6b6b6b] animate-pulse font-medium">Securing your session...</p>
         </div>
       }>
         <CheckoutContent />

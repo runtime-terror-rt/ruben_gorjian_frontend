@@ -34,6 +34,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 // --- Types ---
 
@@ -92,7 +93,7 @@ export default function CouponUsagesPage() {
             <User className="h-3 w-3 text-[#6b6b6b]" />
             {row.original.userName || "Anonymous"}
           </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-[#6b6b6b]">
             <Mail className="h-3 w-3" />
             {row.original.userEmail}
           </div>
@@ -104,7 +105,7 @@ export default function CouponUsagesPage() {
       header: "Used At",
       cell: ({ row }) => (
         <div className="flex items-center gap-2 text-sm text-[#14110c]">
-          <Calendar className="h-4 w-4 text-slate-500" />
+          <Calendar className="h-4 w-4 text-[#6b6b6b]" />
           {format(new Date(row.original.usedAt), "MMM d, yyyy HH:mm:ss")}
         </div>
       ),
@@ -113,7 +114,7 @@ export default function CouponUsagesPage() {
       accessorKey: "id",
       header: "Usage ID",
       cell: ({ row }) => (
-        <code className="text-[10px] text-slate-500 font-mono bg-[#e6e1d8]/50 px-1.5 py-0.5 rounded border border-[#d9d4c9]/50">
+        <code className="text-[10px] text-[#6b6b6b] font-mono bg-[#e6e1d8]/50 px-1.5 py-0.5 rounded border border-[#d9d4c9]/50">
           {row.original.id}
         </code>
       ),
@@ -150,19 +151,14 @@ export default function CouponUsagesPage() {
         </Button>
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-[#14110c] flex items-center gap-2">
-              <History className="h-6 w-6 text-[#b08d3e]" />
-              Coupon Usages
-            </h1>
+            <h1 className="text-2xl font-semibold text-[#14110c]">Coupon Usages</h1>
             {data?.coupon && (
               <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20 px-3 py-1 font-mono text-base">
                 {data.coupon.code}
               </Badge>
             )}
           </div>
-          <p className="text-sm text-[#6b6b6b] mt-1">
-            Viewing redemption history for this discount code.
-          </p>
+          <p className="text-sm text-[#6b6b6b]">Viewing redemption history for this discount code.</p>
         </div>
       </div>
 
@@ -170,15 +166,15 @@ export default function CouponUsagesPage() {
       {data?.coupon && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Total Redemptions</p>
+            <p className="text-xs text-[#6b6b6b] uppercase tracking-wider font-semibold">Total Redemptions</p>
             <p className="text-2xl font-bold text-[#14110c]">{data.coupon.usedCount}</p>
           </div>
           <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Remaining Uses</p>
+            <p className="text-xs text-[#6b6b6b] uppercase tracking-wider font-semibold">Remaining Uses</p>
             <p className="text-2xl font-bold text-[#14110c]">{Math.max(0, data.coupon.maxUses - data.coupon.usedCount)}</p>
           </div>
           <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 space-y-1">
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Utilization</p>
+            <p className="text-xs text-[#6b6b6b] uppercase tracking-wider font-semibold">Utilization</p>
             <div className="flex items-center gap-3">
               <p className="text-2xl font-bold text-[#14110c]">{Math.round((data.coupon.usedCount / data.coupon.maxUses) * 100)}%</p>
               <div className="h-2 flex-1 bg-[#e6e1d8] rounded-full overflow-hidden">
@@ -196,10 +192,10 @@ export default function CouponUsagesPage() {
       <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
         {/* Table Filter */}
         <div className="p-4 border-b border-[#d9d4c9] bg-[#e6e1d8]/20 flex items-center gap-2">
-          <Search className="h-4 w-4 text-slate-500" />
+          <Search className="h-4 w-4 text-[#6b6b6b]" />
           <Input 
             placeholder="Filter by user email or name..."
-            className="h-9 bg-transparent border-none text-[#14110c] focus-visible:ring-0 placeholder:text-slate-600 max-w-sm"
+            className="h-9 bg-transparent border-none text-[#14110c] focus-visible:ring-0 placeholder:text-[#6b6b6b] max-w-sm"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -208,7 +204,7 @@ export default function CouponUsagesPage() {
         {isLoading ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
-            <p className="text-slate-500 text-sm">Loading usage history...</p>
+            <p className="text-[#6b6b6b] text-sm">Loading usage history...</p>
           </div>
         ) : (
           <>
@@ -237,7 +233,7 @@ export default function CouponUsagesPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={columns.length} className="h-32 text-center text-[#6b6b6b]">
                       No redemptions found.
                     </TableCell>
                   </TableRow>
@@ -247,31 +243,13 @@ export default function CouponUsagesPage() {
 
             {/* Pagination */}
             {data?.pagination && data.pagination.pages > 1 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t border-[#d9d4c9] bg-[#e6e1d8]/20">
-                <div className="text-xs text-slate-500">
-                  Showing page {data.pagination.page} of {data.pagination.pages} ({data.pagination.total} total)
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:text-[#14110c]"
-                    disabled={page === 1}
-                    onClick={() => setPage(p => p - 1)}
-                  >
-                    <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:text-[#14110c]"
-                    disabled={page === data.pagination.pages}
-                    onClick={() => setPage(p => p + 1)}
-                  >
-                    Next <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={page}
+                totalPages={data.pagination.pages}
+                totalItems={data.pagination.total}
+                onPageChange={setPage}
+                isLoading={isLoading}
+              />
             )}
           </>
         )}

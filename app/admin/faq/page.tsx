@@ -33,7 +33,8 @@ import {
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, Filter } from "lucide-react";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 type FaqPageType = "FAQ_PAGE" | "PRICING_PAGE";
 
@@ -255,11 +256,8 @@ export default function AdminFaqPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14110c] flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-[#b08d3e]" />
-            FAQ Management
-          </h1>
-          <p className="text-sm text-[#6b6b6b] mt-1">Create, edit, delete, and activate FAQs.</p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">FAQ Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Create, edit, delete, and activate FAQs.</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-[#ffffff] border border-[#d9d4c9] rounded-xl px-3 py-1">
@@ -279,7 +277,7 @@ export default function AdminFaqPage() {
           </div>
           <Button
             onClick={openCreate}
-            className="cursor-pointer bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+            className="cursor-pointer bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
           >
             <Plus className="h-5 w-5" /> Create FAQ
           </Button>
@@ -290,7 +288,7 @@ export default function AdminFaqPage() {
         {isLoading && !data ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
-            <p className="text-slate-500 text-sm">Loading FAQs...</p>
+            <p className="text-[#6b6b6b] text-sm">Loading FAQs...</p>
           </div>
         ) : (
           <>
@@ -310,7 +308,7 @@ export default function AdminFaqPage() {
                     <TableRow key={faq.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors">
                       <TableCell className="py-4">
                         <div className="text-[#14110c] font-medium leading-5">{faq.question}</div>
-                        <div className="text-slate-500 text-xs mt-1 line-clamp-2">{faq.answer}</div>
+                        <div className="text-[#6b6b6b] text-xs mt-1 line-clamp-2">{faq.answer}</div>
                       </TableCell>
                       <TableCell className="py-4">
                         <Badge
@@ -375,7 +373,7 @@ export default function AdminFaqPage() {
                                 setFaqToDelete(faq);
                                 setIsDeleteDialogOpen(true);
                               }}
-                              className="cursor-pointer text-red-400 focus:bg-[#e6e1d8] focus:text-red-400"
+                              className="cursor-pointer text-red-600 focus:bg-[#e6e1d8] focus:text-red-600"
                             >
                               <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
@@ -386,7 +384,7 @@ export default function AdminFaqPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={5} className="h-32 text-center text-[#6b6b6b]">
                       No FAQs found.
                     </TableCell>
                   </TableRow>
@@ -396,34 +394,13 @@ export default function AdminFaqPage() {
 
             {/* Pagination Footer */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t border-white/5 bg-[#faf8f3]">
-                <div className="text-xs text-slate-500 font-medium uppercase">
-                  Showing {totalRecords} total records
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => canGoPrev && setCurrentPage((p) => p - 1)}
-                    disabled={!canGoPrev || isFetching}
-                    className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-                  >
-                    <ChevronLeft className="h-4 w-4 text-[#6b6b6b]" />
-                  </Button>
-                  <div className="px-3 py-1 bg-[#b08d3e]/10 border border-[#b08d3e]/20 rounded-md text-[10px] font-bold text-[#b08d3e] uppercase">
-                    Page {currentPage} of {totalPages}{isFetching ? " • Loading..." : ""}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => canGoNext && setCurrentPage((p) => p + 1)}
-                    disabled={!canGoNext || isFetching}
-                    className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
-                  >
-                    <ChevronRight className="h-4 w-4 text-[#6b6b6b]" />
-                  </Button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalRecords}
+                isLoading={isFetching}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
             )}
           </>
         )}
@@ -497,7 +474,7 @@ export default function AdminFaqPage() {
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
-                    className="border-[#d9d4c9] data-[state=checked]:bg-[#b08d3e] data-[state=checked]:text-slate-950"
+                    className="border-[#d9d4c9] data-[state=checked]:bg-[#b08d3e] data-[state=checked]:text-[#14110c]"
                   />
                   <Label htmlFor="isActive" className="text-sm text-[#14110c] cursor-pointer flex-1">
                     Visible on site
@@ -518,7 +495,7 @@ export default function AdminFaqPage() {
               <Button
                 type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               >
                 {(createMutation.isPending || updateMutation.isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -540,7 +517,7 @@ export default function AdminFaqPage() {
           </DialogHeader>
           <div className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] px-4 py-3">
             <div className="text-sm text-[#14110c] font-medium">{faqToDelete?.question}</div>
-            <div className="text-xs text-slate-500 mt-1 line-clamp-2">{faqToDelete?.answer}</div>
+            <div className="text-xs text-[#6b6b6b] mt-1 line-clamp-2">{faqToDelete?.answer}</div>
           </div>
           <DialogFooter className="gap-4 pt-4">
             <Button

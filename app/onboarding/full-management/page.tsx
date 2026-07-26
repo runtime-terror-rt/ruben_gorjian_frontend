@@ -591,7 +591,7 @@ function FullManagementOnboardingInner() {
                     size="sm"
                     onClick={handleManualRefresh}
                     disabled={refreshing}
-                    className="text-slate-400 hover:text-white gap-2"
+                    className="text-[#6b6b6b] hover:text-white gap-2"
                   >
                     <RefreshCw
                       className={clsx(
@@ -720,7 +720,7 @@ function FullManagementOnboardingInner() {
                                       "text-[10px] block",
                                       isConnected
                                         ? "text-lime-400"
-                                        : "text-slate-400",
+                                        : "text-[#6b6b6b]",
                                     )}
                                   >
                                     {isConnected
@@ -750,7 +750,7 @@ function FullManagementOnboardingInner() {
                                             ),
                                         }))
                                       }
-                                      className="border-lime-400 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-900"
+                                      className="border-lime-400 data-[state=checked]:bg-lime-400 data-[state=checked]:text-[#14110c]"
                                     />
                                     <span className="text-xs text-slate-300 group-hover:text-white transition-colors">
                                       Manage
@@ -1124,7 +1124,7 @@ function FullManagementOnboardingInner() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="bg-lime-400 text-slate-900 hover:bg-lime-300 px-8 py-2 rounded-xl font-bold transition-all hover:scale-105 active:scale-95"
+                  className="bg-lime-400 text-[#14110c] hover:bg-lime-300 px-8 py-2 rounded-xl font-bold transition-all hover:scale-105 active:scale-95"
                 >
                   {submitting
                     ? "Saving..."

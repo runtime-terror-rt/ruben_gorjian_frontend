@@ -467,11 +467,11 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "SCHEDULED":
-        return <Badge variant="outline" className="text-blue-400">Scheduled</Badge>;
+        return <Badge variant="outline" className="text-blue-600">Scheduled</Badge>;
       case "POSTED":
         return <Badge variant="outline" className="text-green-400">Posted</Badge>;
       case "FAILED":
-        return <Badge variant="outline" className="text-red-400">Failed</Badge>;
+        return <Badge variant="outline" className="text-red-600">Failed</Badge>;
       case "PUBLISHING":
         return <Badge variant="outline" className="text-yellow-400">Publishing</Badge>;
       default:
@@ -504,7 +504,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
             {platformsQuery.isLoading ? (
               <p className="text-sm text-[#6b6b6b]">Loading platforms...</p>
             ) : platforms.length === 0 ? (
-              <p className="text-sm text-red-400">User has no connected platforms</p>
+              <p className="text-sm text-red-600">User has no connected platforms</p>
             ) : (
               <div className="space-y-2">
                 {platforms.map((platform) => {
@@ -532,7 +532,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                         {platform.displayName || platform.externalAccountId}
                       </span>
                       {platform.isExpired && (
-                        <Badge variant="outline" className="text-red-400">
+                        <Badge variant="outline" className="text-red-600">
                           Token Expired
                         </Badge>
                       )}
@@ -575,7 +575,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
               <p className="text-xs text-[#b08d3e]">{importFeedback}</p>
             )}
             {importError && (
-              <p className="text-xs text-red-400">{importError}</p>
+              <p className="text-xs text-red-600">{importError}</p>
             )}
 
             {importedRows.length > 0 && (
@@ -689,7 +689,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
             {userMediaQuery.isLoading ? (
               <p className="text-sm text-[#6b6b6b]">Loading user media...</p>
             ) : userMediaQuery.isError ? (
-              <p className="text-sm text-red-400">Error loading media: {userMediaQuery.error?.message || "Unknown error"}</p>
+              <p className="text-sm text-red-600">Error loading media: {userMediaQuery.error?.message || "Unknown error"}</p>
             ) : (
               <>
                 <MultiSelect
@@ -858,7 +858,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                   const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                   const utcTime = dayjs.tz(scheduledFor, browserTz).utc();
                   return (
-                    <p className="text-xs text-amber-400">
+                    <p className="text-xs text-amber-700">
                       🕐 Will fire at: <strong>{utcTime.format("MMM D, HH:mm [UTC]")}</strong>
                       {" "}(= local {dayjs.tz(scheduledFor, browserTz).format("h:mm A")})
                     </p>

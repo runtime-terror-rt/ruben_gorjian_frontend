@@ -530,7 +530,7 @@ export default function AdminUserDetailPage() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400">Failed to load user details</p>
+          <p className="text-red-600">Failed to load user details</p>
           <Button
             variant="outline"
             onClick={() => router.push("/admin/users")}
@@ -556,7 +556,7 @@ export default function AdminUserDetailPage() {
           <p className="text-sm text-[#6b6b6b]">{user?.email}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {user?.isFounder && (
-              <Badge className="bg-lime-300/20 text-lime-200 border-lime-300/40">
+              <Badge className="bg-lime-300/20 text-lime-700 border-lime-500/40">
                 Founder
               </Badge>
             )}
@@ -618,7 +618,7 @@ export default function AdminUserDetailPage() {
           </Button>
           <Button
             variant="outline"
-            className="border-red-400/60 text-red-200 hover:bg-red-500/10"
+            className="border-red-500/60 text-red-600 hover:bg-red-500/10"
             onClick={() => setConfirmAction({ type: "delete" })}
           >
             Delete
@@ -660,7 +660,7 @@ export default function AdminUserDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-300">
+              <div className="text-2xl font-bold text-red-600">
                 {usageSummary.failedPostsCount}
               </div>
             </CardContent>
@@ -675,7 +675,7 @@ export default function AdminUserDetailPage() {
               <div className="text-2xl font-bold text-[#14110c]">
                 {usageSummary.connectedPlatformsCount}
               </div>
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-[#6b6b6b]">
                 Limit: {usageSummary.platformLimit ?? "—"}
               </div>
             </CardContent>
@@ -742,21 +742,21 @@ export default function AdminUserDetailPage() {
                   </CardHeader>
                   <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Name</span>
+                      <span className="text-[#6b6b6b]">Name</span>
                       <span>{user.name ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Status</span>
+                      <span className="text-[#6b6b6b]">Status</span>
                       <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"} className="h-5">
                         {user.status}
                       </Badge>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Role</span>
+                      <span className="text-[#6b6b6b]">Role</span>
                       <Badge variant="outline" className="h-5">{user.role}</Badge>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Email Verified</span>
+                      <span className="text-[#6b6b6b]">Email Verified</span>
                       <span>{user.emailVerified ? (
                         <span className="flex items-center gap-1 text-[#b08d3e]">
                           Yes <span className="text-[10px] bg-[#b08d3e]/20 px-1 rounded">✔</span>
@@ -764,11 +764,11 @@ export default function AdminUserDetailPage() {
                       ) : "No"}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Created At</span>
+                      <span className="text-[#6b6b6b]">Created At</span>
                       <span>{formatDate(user.createdAt)}</span>
                     </div>
                     {user.blockedReason && (
-                      <div className="mt-4 rounded-md border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-200">
+                      <div className="mt-4 rounded-md border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-600">
                         <span className="font-semibold block mb-1">Block reason:</span>
                         {user.blockedReason}
                       </div>
@@ -822,19 +822,19 @@ export default function AdminUserDetailPage() {
                   </CardHeader>
                   <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Full Name</span>
+                      <span className="text-[#6b6b6b]">Full Name</span>
                       <span>{userQuery.data.profile?.fullName ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Business Name</span>
+                      <span className="text-[#6b6b6b]">Business Name</span>
                       <span>{userQuery.data.profile?.businessName ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Industry</span>
+                      <span className="text-[#6b6b6b]">Industry</span>
                       <span className="capitalize">{userQuery.data.profile?.industry?.toLowerCase().replace("_", " ") ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Website</span>
+                      <span className="text-[#6b6b6b]">Website</span>
                       {userQuery.data.profile?.website ? (
                         <a href={userQuery.data.profile.website} target="_blank" rel="noreferrer" className="text-[#b08d3e] hover:underline">
                           Visit Site ↗
@@ -842,11 +842,11 @@ export default function AdminUserDetailPage() {
                       ) : "—"}
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Timezone</span>
+                      <span className="text-[#6b6b6b]">Timezone</span>
                       <span>{userQuery.data.profile?.timezone ?? "—"}</span>
                     </div>
                     <div className="mt-4">
-                      <span className="text-slate-500 block mb-1">Bio</span>
+                      <span className="text-[#6b6b6b] block mb-1">Bio</span>
                       <p className="p-3 rounded bg-[#faf8f3] border border-white/5 italic text-[#6b6b6b]">
                         {userQuery.data.profile?.bio ?? "No bio provided."}
                       </p>
@@ -860,19 +860,19 @@ export default function AdminUserDetailPage() {
                   </CardHeader>
                   <CardContent className="space-y-3 text-sm text-[#14110c]">
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Target Audience</span>
+                      <span className="text-[#6b6b6b]">Target Audience</span>
                       <span>{userQuery.data.brandProfile?.audience ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">Tone of Voice</span>
+                      <span className="text-[#6b6b6b]">Tone of Voice</span>
                       <span className="capitalize">{userQuery.data.brandProfile?.tone?.toLowerCase() ?? "—"}</span>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
-                      <span className="text-slate-500">CTA Preferences</span>
+                      <span className="text-[#6b6b6b]">CTA Preferences</span>
                       <span>{userQuery.data.brandProfile?.ctaPreferences ?? "—"}</span>
                     </div>
                     <div className="mt-4">
-                      <span className="text-slate-500 block mb-2">Social Profiles</span>
+                      <span className="text-[#6b6b6b] block mb-2">Social Profiles</span>
                       <div className="flex flex-wrap gap-2">
                         {userQuery.data.brandProfile?.socials?.facebook && (
                           <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.facebook} target="_blank" rel="noreferrer">Facebook</a></Badge>
@@ -884,7 +884,7 @@ export default function AdminUserDetailPage() {
                           <Badge variant="secondary"><a href={userQuery.data.brandProfile.socials.tiktok} target="_blank" rel="noreferrer">TikTok</a></Badge>
                         )}
                         {(!userQuery.data.brandProfile?.socials || Object.keys(userQuery.data.brandProfile.socials).length === 0) && (
-                          <span className="text-slate-600">No social links</span>
+                          <span className="text-[#6b6b6b]">No social links</span>
                         )}
                       </div>
                     </div>
@@ -899,15 +899,15 @@ export default function AdminUserDetailPage() {
                   </CardHeader>
                   <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-sm text-[#14110c]">
                     <div className="space-y-1">
-                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Visual Style</span>
+                      <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Visual Style</span>
                       <span className="font-medium text-[#14110c]">{userQuery.data.brandProfile.fullManagementOnboardingData.visualStylePreference ?? "—"}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Frequency</span>
+                      <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Frequency</span>
                       <span className="font-medium text-[#14110c]">{userQuery.data.brandProfile.fullManagementOnboardingData.postingFrequencyPreference ?? "—"}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Platforms</span>
+                      <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Platforms</span>
                       <div className="flex flex-wrap gap-1">
                         {userQuery.data.brandProfile.fullManagementOnboardingData.platformsToManage?.map(p => (
                           <Badge key={p} variant="outline" className="text-[10px] h-4">{p}</Badge>
@@ -915,7 +915,7 @@ export default function AdminUserDetailPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Brand Personality</span>
+                      <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Brand Personality</span>
                       <div className="flex flex-wrap gap-1">
                         {userQuery.data.brandProfile.fullManagementOnboardingData.brandPersonality?.map(p => (
                           <Badge key={p} variant="secondary" className="text-[10px] h-4">{p}</Badge>
@@ -923,7 +923,7 @@ export default function AdminUserDetailPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-slate-500 block text-[10px] uppercase tracking-wider">Posting Access</span>
+                      <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Posting Access</span>
                       <Badge variant={userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted === "YES" ? "default" : "outline"} className="h-4 text-[10px]">
                         {userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted ?? "—"}
                       </Badge>
@@ -1077,11 +1077,11 @@ export default function AdminUserDetailPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">ID</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Scheduled For</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Platforms</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Caption Preview</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">ID</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Status</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Scheduled For</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Platforms</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Caption Preview</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1204,11 +1204,11 @@ export default function AdminUserDetailPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Invoice</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Amount</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Date</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Link</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Invoice</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Status</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Amount</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Date</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Link</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1248,7 +1248,7 @@ export default function AdminUserDetailPage() {
                                 View Invoice ↗
                               </a>
                             ) : (
-                              <span className="text-slate-500">—</span>
+                              <span className="text-[#6b6b6b]">—</span>
                             )}
                           </TableCell>
                         </TableRow>
@@ -1269,9 +1269,9 @@ export default function AdminUserDetailPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-[#d9d4c9] hover:bg-transparent">
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Action</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Actor</TableHead>
-                      <TableHead className="text-xs font-bold uppercase tracking-wider text-slate-500">Time</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Action</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Actor</TableHead>
+                      <TableHead className="text-xs font-bold uppercase tracking-wider text-[#6b6b6b]">Time</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

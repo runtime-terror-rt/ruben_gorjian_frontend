@@ -146,7 +146,7 @@ function HourDropZone({
               : "border-[#d9d4c9] hover:border-amber-600/50 hover:bg-amber-600/10",
           )}
         >
-          <p className="text-xs text-slate-500 text-center">
+          <p className="text-xs text-[#6b6b6b] text-center">
             {isPast ? "Past time" : "Click to add post"}
           </p>
         </div>
@@ -214,11 +214,11 @@ function WeekView({
                 <div
                   className={clsx(
                     "text-[14px] font-[600] flex items-center justify-center gap-[6px]",
-                    isToday && "text-amber-400",
+                    isToday && "text-amber-700",
                   )}
                 >
                   {isToday && (
-                    <div className="w-[6px] h-[6px] bg-amber-400 rounded-full" />
+                    <div className="w-[6px] h-[6px] bg-amber-500 rounded-full" />
                   )}
                   {day.day}
                 </div>
@@ -540,7 +540,7 @@ function DayView({
               <div key={hour} className="flex gap-3 items-start">
                 {/* Timestamp on left */}
                 <div className="w-16 flex-shrink-0 pt-3 text-right pr-2">
-                  <span className="text-xs font-black uppercase tracking-tighter text-slate-500">
+                  <span className="text-xs font-black uppercase tracking-tighter text-[#6b6b6b]">
                     {convertTimeFormat(hour)}
                   </span>
                 </div>
@@ -618,7 +618,7 @@ function ListView({
   return (
     <div className="flex flex-col h-full space-y-4">
       {sortedPosts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-4">
+        <div className="flex flex-col items-center justify-center h-64 text-[#6b6b6b] gap-4">
           <LayoutList className="h-12 w-12 opacity-20" />
           <p>No posts scheduled for this period.</p>
           <Button
@@ -690,7 +690,7 @@ function ListView({
                       className={clsx(
                         "w-8 h-8 p-0",
                         currentPage === i + 1 
-                          ? "bg-slate-200 text-[#14110c] hover:bg-slate-300"
+                          ? "bg-[#e6e1d8] text-[#14110c] hover:bg-[#d9d4c9]"
                           : "bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#6b6b6b] hover:text-[#14110c]"
                       )}
                     >
@@ -933,14 +933,14 @@ export default function EnhancedCalendar({
   return (
     <DndProvider backend={dndBackend}>
       {showDebug && (
-        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-amber-200 text-xs font-mono space-y-1 relative group">
+        <div className="mb-4 p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 text-amber-700 text-xs font-mono space-y-1 relative group">
           <div className="flex justify-between items-start">
-            <h4 className="font-bold text-amber-400 mb-2">Timezone Debugger</h4>
+            <h4 className="font-bold text-amber-700 mb-2">Timezone Debugger</h4>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowDebug(false)}
-              className="h-6 w-6 p-0 hover:bg-amber-500/20 text-amber-400"
+              className="h-6 w-6 p-0 hover:bg-amber-500/20 text-amber-700"
             >
               <X className="h-3 w-3" />
             </Button>
@@ -980,7 +980,7 @@ export default function EnhancedCalendar({
             </p>
           </div>
           <div className="mt-2 pt-2 border-t border-amber-500/20">
-            <p className="text-[10px] text-amber-400/70 font-sans italic">
+            <p className="text-[10px] text-amber-700/70 font-sans italic">
               Tip: If "Current Time (Locked)" doesn't match your wall clock,
               check your Business Settings.
             </p>
@@ -991,7 +991,7 @@ export default function EnhancedCalendar({
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#14110c]">
+            <h1 className="text-2xl font-semibold text-[#14110c]">
               Content Calendar
             </h1>
             <div className="flex items-center gap-1 sm:gap-2">
@@ -1081,7 +1081,7 @@ export default function EnhancedCalendar({
               variant="ghost"
               size="sm"
               onClick={() => setShowDebug(!showDebug)}
-              className="h-9 w-9 p-0 border border-[#d9d4c9] bg-[#ffffff] hover:bg-[#e6e1d8] text-[#6b6b6b] hover:text-amber-400"
+              className="h-9 w-9 p-0 border border-[#d9d4c9] bg-[#ffffff] hover:bg-[#e6e1d8] text-[#6b6b6b] hover:text-amber-700"
               title="Toggle Timezone Debugger"
             >
               <AlertCircle className="h-4 w-4" />
@@ -1112,7 +1112,7 @@ export default function EnhancedCalendar({
           </Card>
           <Card className="border-[#d9d4c9]/50 bg-[#ffffff]">
             <CardContent className="p-4">
-              <div className="text-xl sm:text-2xl font-bold text-amber-400">
+              <div className="text-xl sm:text-2xl font-bold text-amber-700">
                 {stats.scheduled}
               </div>
               <div className="text-xs sm:text-sm text-[#6b6b6b]">Scheduled</div>
@@ -1120,7 +1120,7 @@ export default function EnhancedCalendar({
           </Card>
           <Card className="border-[#d9d4c9]/50 bg-[#ffffff]">
             <CardContent className="p-4">
-              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
+              <div className="text-xl sm:text-2xl font-bold text-emerald-700">
                 {stats.posted}
               </div>
               <div className="text-xs sm:text-sm text-[#6b6b6b]">Published</div>

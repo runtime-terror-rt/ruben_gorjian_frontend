@@ -163,7 +163,7 @@ export default function PricingPage() {
       {loading ? (
         <div className="text-center py-20">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-lime-400 border-r-transparent"></div>
-          <p className="mt-4 text-slate-400">Loading plans...</p>
+          <p className="mt-4 text-[#6b6b6b]">Loading plans...</p>
         </div>
       ) : (
         <>
@@ -195,14 +195,14 @@ export default function PricingPage() {
                     <h3 className="text-xl font-semibold text-white mb-2">
                       {plan?.description}
                     </h3>
-                    <h3 className="text-md font-semibold text-slate-400 mb-2">
+                    <h3 className="text-md font-semibold text-[#6b6b6b] mb-2">
                       {plan.name}
                     </h3>
                     <div className="mb-4">
                       <span className="text-3xl font-bold text-lime-400">
                         {formatPrice(plan.priceStandardCents)}
                       </span>
-                      <span className="text-slate-400">/month</span>
+                      <span className="text-[#6b6b6b]">/month</span>
                     </div>
                     <ul className="space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-slate-300">
@@ -224,7 +224,7 @@ export default function PricingPage() {
                     <button
                       onClick={() => handleStartCheckout(plan.code)}
                       disabled={ctaLoading === plan.code}
-                      className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
+                      className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
                     >
                       {currentPlanCode === plan.code
                         ? "Current Plan"
@@ -259,14 +259,14 @@ export default function PricingPage() {
                     <h3 className="text-xl font-semibold text-white mb-2">
                       {plan?.description}
                     </h3>
-                    <h3 className="text-md font-semibold text-slate-400 mb-2">
+                    <h3 className="text-md font-semibold text-[#6b6b6b] mb-2">
                       {plan.name}
                     </h3>
                     <div className="mb-4">
                       <span className="text-3xl font-bold text-lime-400">
                         {formatPrice(plan.priceStandardCents)}
                       </span>
-                      <span className="text-slate-400">/month</span>
+                      <span className="text-[#6b6b6b]">/month</span>
                     </div>
                     <ul className="space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-slate-300">
@@ -285,7 +285,7 @@ export default function PricingPage() {
                     <button
                       onClick={() => handleStartCheckout(plan.code)}
                       disabled={ctaLoading === plan.code}
-                      className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
+                      className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
                     >
                       {currentPlanCode === plan.code
                         ? "Current Plan"
@@ -321,21 +321,21 @@ export default function PricingPage() {
                       }`}
                   >
                     {idx === 1 && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-slate-950 px-4 py-1 rounded-full text-sm font-semibold">
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-[#14110c] px-4 py-1 rounded-full text-sm font-semibold">
                         Most Popular
                       </div>
                     )}
                     <h3 className="text-xl font-semibold text-white mb-2">
                       {plan?.description}
                     </h3>
-                    <h3 className="text-md font-semibold text-slate-400 mb-2">
+                    <h3 className="text-md font-semibold text-[#6b6b6b] mb-2">
                       {plan.name}
                     </h3>
                     <div className="mb-4">
                       <span className="text-3xl font-bold text-lime-400">
                         {formatPrice(plan.priceStandardCents)}
                       </span>
-                      <span className="text-slate-400">/month</span>
+                      <span className="text-[#6b6b6b]">/month</span>
                     </div>
                     <ul className="space-y-3 mb-6">
                       <li className="flex items-start gap-2 text-slate-300">
@@ -366,7 +366,7 @@ export default function PricingPage() {
                       onClick={() => handleStartCheckout(plan.code)}
                       disabled={ctaLoading === plan.code}
                       className={`block w-full text-center font-semibold py-3 rounded-full transition-colors disabled:opacity-60 ${idx === 1
-                          ? "bg-lime-400 hover:bg-lime-300 text-slate-950"
+                          ? "bg-lime-400 hover:bg-lime-300 text-[#14110c]"
                           : "bg-slate-800 hover:bg-slate-700 text-white"
                         }`}
                     >
@@ -410,14 +410,14 @@ export default function PricingPage() {
                         <h4 className="text-lg font-semibold text-white mb-2">
                           {plan.description}
                         </h4>
-                        <p className="text-sm text-slate-400 mb-3">
+                        <p className="text-sm text-[#6b6b6b] mb-3">
                           {plan.name}
                         </p>
                         <div className="mb-4">
                           <span className="text-3xl font-bold text-lime-400">
                             {formatPrice(plan.priceStandardCents)}
                           </span>
-                          <span className="text-slate-400">/month</span>
+                          <span className="text-[#6b6b6b]">/month</span>
                         </div>
                         <ul className="space-y-3 mb-6 text-slate-300 text-sm">
                           <li className="flex items-start gap-2">
@@ -432,7 +432,7 @@ export default function PricingPage() {
                         <button
                           onClick={() => handleStartCheckout(plan.code)}
                           disabled={ctaLoading === plan.code}
-                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
+                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
                         >
                           {currentPlanCode === plan.code
                             ? "Current Plan"
@@ -461,14 +461,14 @@ export default function PricingPage() {
                         <h4 className="text-lg font-semibold text-white mb-2">
                           {plan.description}
                         </h4>
-                        <p className="text-sm text-slate-400 mb-3">
+                        <p className="text-sm text-[#6b6b6b] mb-3">
                           {plan.name}
                         </p>
                         <div className="mb-4">
                           <span className="text-3xl font-bold text-lime-400">
                             {formatPrice(plan.priceStandardCents)}
                           </span>
-                          <span className="text-slate-400">/month</span>
+                          <span className="text-[#6b6b6b]">/month</span>
                         </div>
                         <ul className="space-y-3 mb-6 text-slate-300 text-sm">
                           <li className="flex items-start gap-2">
@@ -483,7 +483,7 @@ export default function PricingPage() {
                         <button
                           onClick={() => handleStartCheckout(plan.code)}
                           disabled={ctaLoading === plan.code}
-                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
+                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
                         >
                           {currentPlanCode === plan.code
                             ? "Current Plan"
@@ -513,21 +513,21 @@ export default function PricingPage() {
                           }`}
                       >
                         {idx === 1 && (
-                          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-slate-950 px-4 py-1 rounded-full text-sm font-semibold">
+                          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-[#14110c] px-4 py-1 rounded-full text-sm font-semibold">
                             Most Popular
                           </div>
                         )}
                         <h4 className="text-lg font-semibold text-white mb-2">
                           {plan.description}
                         </h4>
-                        <p className="text-sm text-slate-400 mb-3">
+                        <p className="text-sm text-[#6b6b6b] mb-3">
                           {plan.name}
                         </p>
                         <div className="mb-4">
                           <span className="text-3xl font-bold text-lime-400">
                             {formatPrice(plan.priceStandardCents)}
                           </span>
-                          <span className="text-slate-400">/month</span>
+                          <span className="text-[#6b6b6b]">/month</span>
                         </div>
                         <ul className="space-y-3 mb-6 text-slate-300 text-sm">
                           <li className="flex items-start gap-2">
@@ -546,7 +546,7 @@ export default function PricingPage() {
                         <button
                           onClick={() => handleStartCheckout(plan.code)}
                           disabled={ctaLoading === plan.code}
-                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
+                          className="block w-full text-center bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold py-3 rounded-full transition-colors disabled:opacity-60"
                         >
                           {currentPlanCode === plan.code
                             ? "Current Plan"
@@ -574,7 +574,7 @@ export default function PricingPage() {
               </p>
               <Link
                 href="/signup"
-                className="inline-block bg-lime-400 hover:bg-lime-300 text-slate-950 font-semibold px-8 py-3 rounded-full transition-colors"
+                className="inline-block bg-lime-400 hover:bg-lime-300 text-[#14110c] font-semibold px-8 py-3 rounded-full transition-colors"
               >
                 Claim Founder Pricing
               </Link>

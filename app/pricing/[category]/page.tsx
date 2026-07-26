@@ -178,7 +178,7 @@ export default function PricingCategoryPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <p className="text-slate-400">Loading plans...</p>
+        <p className="text-[#6b6b6b]">Loading plans...</p>
       </div>
     );
   }
@@ -280,7 +280,7 @@ function PricingTable({
               <TableCell>
                 <button
                   onClick={() => onCheckout(plan.code)}
-                  className="rounded-full bg-lime-400 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-lime-300 transition"
+                  className="rounded-full bg-lime-400 px-4 py-2 text-sm font-semibold text-[#14110c] hover:bg-lime-300 transition"
                 >
                   Get Started
                 </button>

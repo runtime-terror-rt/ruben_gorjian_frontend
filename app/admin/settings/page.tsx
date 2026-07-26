@@ -316,32 +316,27 @@ export default function AdminSettingsPage() {
   return (
     <div className="p-6 space-y-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-black text-[#14110c] tracking-tight flex items-center gap-3">
-          <SettingsIcon className="h-8 w-8 text-[#b08d3e]" />
-          Settings
-        </h1>
-        <p className="text-[#6b6b6b] font-medium">
-          Manage your administrative profile and system-wide configurations.
-        </p>
+        <h1 className="text-2xl font-semibold text-[#14110c]">Settings</h1>
+        <p className="text-sm text-[#6b6b6b]">Manage your administrative profile and system-wide configurations.</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="bg-[#ffffff] border border-[#d9d4c9] p-1 h-12 rounded-2xl">
           <TabsTrigger
             value="profile"
-            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] font-bold transition-all"
           >
             <User className="h-4 w-4 mr-2" /> Profile
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] font-bold transition-all"
           >
             <Lock className="h-4 w-4 mr-2" /> Security
           </TabsTrigger>
           {/* <TabsTrigger
             value="system"
-            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950 font-bold transition-all"
+            className="rounded-xl px-8 data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] font-bold transition-all"
           >
             <SettingsIcon className="h-4 w-4 mr-2" /> System
           </TabsTrigger> */}
@@ -352,7 +347,7 @@ export default function AdminSettingsPage() {
           <Card className="bg-[#ffffff] border-[#d9d4c9] backdrop-blur-sm rounded-3xl overflow-hidden">
             <CardHeader className="border-b border-white/5 bg-white/5">
               <CardTitle className="text-[#14110c]">Admin Profile</CardTitle>
-              <CardDescription className="text-slate-500">
+              <CardDescription className="text-[#6b6b6b]">
                 Your public identity within the management dashboard.
               </CardDescription>
             </CardHeader>
@@ -371,12 +366,12 @@ export default function AdminSettingsPage() {
                         unoptimized
                       />
                     ) : (
-                      <User className="h-10 w-10 text-slate-700" />
+                      <User className="h-10 w-10 text-[#14110c]" />
                     )}
                   </div>
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#b08d3e] text-slate-950 flex items-center justify-center shadow-lg hover:bg-[#e6e1d8] transition-colors"
+                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#b08d3e] text-[#14110c] flex items-center justify-center shadow-lg hover:bg-[#e6e1d8] transition-colors"
                   >
                     <Camera className="h-4 w-4" />
                   </button>
@@ -392,7 +387,7 @@ export default function AdminSettingsPage() {
                   <h4 className="text-sm font-bold text-[#14110c] tracking-wide uppercase">
                     Profile Photo
                   </h4>
-                  <p className="text-xs text-slate-500 max-w-[200px]">
+                  <p className="text-xs text-[#6b6b6b] max-w-[200px]">
                     Allowed JPG, PNG or WEBP. Max size of 5MB.
                   </p>
                   <div className="flex gap-2">
@@ -400,7 +395,7 @@ export default function AdminSettingsPage() {
                       variant="ghost"
                       size="sm"
                       onClick={onRemoveAvatar}
-                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                      className="text-red-600 hover:text-red-600 hover:bg-red-500/10"
                     >
                       <Trash2 className="h-3 w-3 mr-2" /> Remove Photo
                     </Button>
@@ -413,7 +408,7 @@ export default function AdminSettingsPage() {
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Full Name
                   </Label>
                   <Input
@@ -428,17 +423,17 @@ export default function AdminSettingsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Email Address
                   </Label>
                   <Input
                     value={settingsQuery.data?.profile.email || ""}
                     disabled
-                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 text-slate-500 cursor-not-allowed italic"
+                    className="bg-[#faf8f3] border-[#d9d4c9] rounded-xl h-11 text-[#6b6b6b] cursor-not-allowed italic"
                   />
                 </div>
                 <div className="md:col-span-2 space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Bio / About Me
                   </Label>
                   <textarea
@@ -455,7 +450,7 @@ export default function AdminSettingsPage() {
                   <Button
                     type="submit"
                     disabled={updateProfileMutation.isPending}
-                    className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black px-10 h-11 rounded-xl transition-all shadow-[0_10px_20px_rgba(163,230,53,0.2)]"
+                    className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black px-10 h-11 rounded-xl transition-all shadow-[0_10px_20px_rgba(163,230,53,0.2)]"
                   >
                     {updateProfileMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -475,14 +470,14 @@ export default function AdminSettingsPage() {
           <Card className="bg-[#ffffff] border-[#d9d4c9] backdrop-blur-sm rounded-3xl overflow-hidden">
             <CardHeader className="border-b border-white/5 bg-white/5">
               <CardTitle className="text-[#14110c]">Security & Password</CardTitle>
-              <CardDescription className="text-slate-500">
+              <CardDescription className="text-[#6b6b6b]">
                 Update your password to keep your administrative account secure.
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-8">
               <form onSubmit={handlePasswordSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Current Password
                   </Label>
                   <div className="relative">
@@ -501,7 +496,7 @@ export default function AdminSettingsPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword({ ...showPassword, current: !showPassword.current })}
-                      className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
+                      className="absolute right-3 top-3 text-[#6b6b6b] hover:text-[#14110c]"
                     >
                       {showPassword.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -509,7 +504,7 @@ export default function AdminSettingsPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                    <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                       New Password
                     </Label>
                     <div className="relative">
@@ -528,14 +523,14 @@ export default function AdminSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
-                        className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
+                        className="absolute right-3 top-3 text-[#6b6b6b] hover:text-[#14110c]"
                       >
                         {showPassword.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                    <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                       Confirm New Password
                     </Label>
                     <div className="relative">
@@ -554,7 +549,7 @@ export default function AdminSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowPassword({ ...showPassword, confirm: !showPassword.confirm })}
-                        className="absolute right-3 top-3 text-slate-500 hover:text-[#14110c]"
+                        className="absolute right-3 top-3 text-[#6b6b6b] hover:text-[#14110c]"
                       >
                         {showPassword.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -573,7 +568,7 @@ export default function AdminSettingsPage() {
                   <Button
                     type="submit"
                     disabled={changePasswordMutation.isPending}
-                    className="bg-white hover:bg-slate-200 text-slate-950 font-black px-10 h-11 rounded-xl transition-all"
+                    className="bg-[#ffffff] hover:bg-[#e6e1d8] text-[#14110c] font-black px-10 h-11 rounded-xl transition-all"
                   >
                     {changePasswordMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -595,7 +590,7 @@ export default function AdminSettingsPage() {
               <CardTitle className="text-[#14110c] flex items-center gap-2">
                 System Global Routing
               </CardTitle>
-              <CardDescription className="text-slate-500">
+              <CardDescription className="text-[#6b6b6b]">
                 Configure core system behavior and posting channels.
               </CardDescription>
             </CardHeader>
@@ -616,7 +611,7 @@ export default function AdminSettingsPage() {
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="bg-blue-400/10 border-blue-400/20 text-[#14110c]"
+                  className="bg-blue-600/10 border-blue-500/20 text-[#14110c]"
                 >
                   Upload-Post:{" "}
                   {globalRoutingQuery.data?.modeCounts?.FORCE_UPLOAD_POST ??
@@ -626,7 +621,7 @@ export default function AdminSettingsPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Default Posting Channel
                   </Label>
                   <Select
@@ -644,7 +639,7 @@ export default function AdminSettingsPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-500 pl-1">
+                  <Label className="text-xs font-black uppercase tracking-widest text-[#6b6b6b] pl-1">
                     Apply To Scope
                   </Label>
                   <Select
@@ -664,7 +659,7 @@ export default function AdminSettingsPage() {
 
               {effectiveGlobalDefault.mode === "FORCE_UPLOAD_POST" && (
                 <div className="rounded-2xl border border-[#d9d4c9] bg-[#faf8f3] p-6 space-y-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b]">
                     Platform Toggles (Upload-Post Only)
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -720,7 +715,7 @@ export default function AdminSettingsPage() {
                     })
                   }
                   disabled={applyGlobalMutation.isPending}
-                  className="bg-slate-100 hover:bg-white text-slate-950 font-black px-10 h-11 rounded-xl transition-all"
+                  className="bg-[#faf8f3] hover:bg-[#ffffff] text-[#14110c] font-black px-10 h-11 rounded-xl transition-all"
                 >
                   {applyGlobalMutation.isPending
                     ? "Applying..."

@@ -336,7 +336,7 @@ export function EnhancedDeliveryComposer({
                       </p>
                     )}
                     {fileItem.status === "error" && (
-                      <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                      <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
                         <AlertCircle className="h-3 w-3" /> {fileItem.error}
                       </p>
                     )}
@@ -360,7 +360,7 @@ export function EnhancedDeliveryComposer({
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-900/50 bg-red-950/20 p-3 text-sm text-red-200">
+            <div className="rounded-lg border border-red-900/50 bg-red-950/20 p-3 text-sm text-red-600">
               {error}
             </div>
           )}

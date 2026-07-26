@@ -142,7 +142,7 @@ function BillingSuccessContent() {
             <div className="mt-4 flex flex-col items-center justify-center gap-2">
               <div className="flex items-center gap-2">
                 <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs text-slate-400">Processing...</span>
+                <span className="text-xs text-[#6b6b6b]">Processing...</span>
               </div>
               {!syncing && retriesRef.current >= 2 && (
                 <Button
@@ -159,7 +159,7 @@ function BillingSuccessContent() {
           {syncing && (
             <div className="mt-4 flex items-center justify-center gap-2">
               <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-[#6b6b6b]">
                 Syncing with Stripe...
               </span>
             </div>
@@ -208,14 +208,14 @@ function BillingSuccessContent() {
               return (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) ? (
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Go to Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/onboarding/brand-brief"
-                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Start Onboarding
                 </Link>
@@ -226,14 +226,14 @@ function BillingSuccessContent() {
             return session?.onboardingCompleted ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Go to Dashboard
               </Link>
             ) : (
               <Link
                 href="/onboarding"
-                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-slate-950 hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Start Onboarding
               </Link>
@@ -253,7 +253,7 @@ export default function BillingSuccessPage() {
           <div className="max-w-lg w-full rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center shadow-xl">
             <div className="flex items-center justify-center gap-2">
               <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-slate-400">Loading...</span>
+              <span className="text-sm text-[#6b6b6b]">Loading...</span>
             </div>
           </div>
         </div>

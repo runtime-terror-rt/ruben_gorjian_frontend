@@ -88,7 +88,7 @@ export function DialogContent({
       <div
         className={cn(
           "relative z-[100] flex flex-col overflow-hidden",
-          !fullScreen && "max-h-[90vh] w-full max-w-md rounded-2xl border border-[#d9d4c9]/50 bg-[#ffffff] shadow-2xl",
+          !fullScreen && "max-h-[90vh] w-full max-w-md rounded-2xl border border-[#d9d4c9]/50 bg-[#faf8f3] shadow-2xl",
           className
         )}
       >

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -318,7 +319,7 @@ export default function AdminUsersPage() {
         header: "Founder",
         cell: ({ row }) =>
           row.original.isFounder ? (
-            <Badge className="bg-lime-300/20 text-lime-200 border-lime-300/40">Yes</Badge>
+            <Badge className="bg-lime-300/20 text-lime-700 border-lime-500/40">Yes</Badge>
           ) : (
             <span className="text-xs text-[#6b6b6b]">No</span>
           ),
@@ -340,11 +341,11 @@ export default function AdminUsersPage() {
           const sub = row.original.subscriptions[0];
           return sub ? (
             <div className="flex flex-col gap-1">
-              <Badge variant="outline" className="text-[10px] w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-300">
+              <Badge variant="outline" className="text-[10px] w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-600">
                 {sub.planCode}
               </Badge>
               {sub.priceType && (
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">{sub.priceType}</span>
+                <span className="text-[10px] text-[#6b6b6b] uppercase tracking-wider">{sub.priceType}</span>
               )}
             </div>
           ) : (
@@ -453,14 +454,14 @@ export default function AdminUsersPage() {
                     <UserCheck className="mr-2 h-4 w-4" /> Unblock User
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })} className="text-amber-400">
+                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })} className="text-amber-700">
                     <UserX className="mr-2 h-4 w-4" /> Block/Suspend
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "delete", user })}
-                  className="text-red-400 focus:text-red-400"
+                  className="text-red-600 focus:text-red-600"
                 >
                   <Trash2 className="mr-2 h-4 w-4" /> Delete User
                 </DropdownMenuItem>
@@ -578,6 +579,7 @@ export default function AdminUsersPage() {
             placeholder="Search by name, email, or ID"
             value={filters.search}
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value, page: 1 }))}
+            className="h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm text-[#14110c] placeholder:text-[#6b6b6b]"
           />
         </div>
         {/* <div>
@@ -597,7 +599,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="status">Account Status</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="status" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#ffffff]/60 font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
+              <Button id="status" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.status === "" ? "All" : filters.status === "ACTIVE" ? "Active" : filters.status === "BLOCKED" ? "Blocked" : "Deleted"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -614,7 +616,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="plan">Subscription Plan</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="plan" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#ffffff]/60 font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
+              <Button id="plan" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.plan === "" ? "All Plans" : (plansQuery.data?.find(p => p.code === filters.plan)?.name || filters.plan)}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -633,7 +635,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="subscriptionStatus">Sub Status</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#ffffff]/60 font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
+              <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.subscriptionStatus === "" ? "All" : filters.subscriptionStatus}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -652,7 +654,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="sort">Sort By</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="sort" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#ffffff]/60 font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
+              <Button id="sort" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.sortBy === "createdAt" && filters.sortDir === "desc" ? "Newest First" : "Oldest First"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -666,7 +668,7 @@ export default function AdminUsersPage() {
       </div>
 
       {Object.keys(rowSelection).length > 0 && (
-        <div className="mb-4 rounded-lg border border-lime-300/40 bg-lime-300/10 p-3 text-sm text-lime-200">
+        <div className="mb-4 rounded-lg border border-lime-500/40 bg-lime-300/10 p-3 text-sm text-lime-700">
           {Object.keys(rowSelection).length} row(s) selected.
         </div>
       )}
@@ -677,7 +679,7 @@ export default function AdminUsersPage() {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#d9d4c9]">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5">
+                  <TableHead key={header.id} className="text-[#6b6b6b] font-bold uppercase tracking-widest text-[10px] py-5">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -695,7 +697,7 @@ export default function AdminUsersPage() {
               </TableRow>
             ) : usersQuery.isError ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-red-300">
+                <TableCell colSpan={columns.length} className="text-center text-red-600">
                   Unable to load users.
                 </TableCell>
               </TableRow>
@@ -721,49 +723,13 @@ export default function AdminUsersPage() {
       </div>
 
       {/* ── Pagination Footer ── */}
-      {totalPages > 0 && (
-        <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-[#d9d4c9] bg-[#faf8f3]">
-
-          {/* Left: results info */}
-          <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-            Showing page{" "}
-            <span className="text-[#14110c] font-black">{filters.page}</span>
-            {" "}of{" "}
-            <span className="text-[#14110c] font-black">{totalPages}</span>
-            {" "}·{" "}
-            <span className="text-[#14110c] font-black">{total}</span> total users
-          </p>
-
-          {/* Right: Prev / Next */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-              disabled={usersQuery.isLoading || filters.page <= 1}
-              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/60 text-[11px] font-black text-[#14110c] uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-            >
-              <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Previous
-            </button>
-
-            <div className="bg-[#e6e1d8]/50 px-4 py-1.5 rounded-lg border border-[#d9d4c9]/50">
-              <span className="text-xs font-black text-[#b08d3e]">Page {filters.page}</span>
-            </div>
-
-            <button
-              onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
-              disabled={usersQuery.isLoading || filters.page >= totalPages}
-              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-[#14110c] uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-            >
-              Next Page
-              <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
+      <AdminPagination
+        currentPage={filters.page}
+        totalPages={totalPages}
+        totalItems={total}
+        isLoading={usersQuery.isLoading}
+        onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
+      />
 
       {/* Create User Dialog */}
       <Dialog open={createState.open} onOpenChange={(open) => setCreateState((prev) => ({ ...prev, open }))}>
@@ -835,7 +801,7 @@ export default function AdminUsersPage() {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-[#14110c] transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6b6b] hover:text-[#14110c] transition-colors focus:outline-none"
                   onClick={() => setShowCreatePassword(!showCreatePassword)}
                 >
                   {showCreatePassword ? (
@@ -877,7 +843,7 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!createState.email || createUserMutation.isPending}
-              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
               {createUserMutation.isPending ? (
                 <span className="flex items-center gap-2">
@@ -945,7 +911,7 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!editState.user || updateUserMutation.isPending}
-              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
               {updateUserMutation.isPending ? (
                 <span className="flex items-center gap-2">
@@ -1013,7 +979,7 @@ export default function AdminUsersPage() {
               className={cn(
                 "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base",
                 confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-[#14110c]" :
-                  "bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
+                  "bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
               )}
             >
               Confirm Action

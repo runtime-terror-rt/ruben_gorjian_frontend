@@ -236,7 +236,7 @@ export default function AdminClientSessionsList({
                       <span className="text-xs font-bold">Photo</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 text-amber-400">
+                    <div className="flex items-center gap-2 text-amber-700">
                       <Video className="h-4 w-4" />
                       <span className="text-xs font-bold">Video</span>
                     </div>
@@ -289,7 +289,7 @@ export default function AdminClientSessionsList({
                           onClick={() => onEditSession(session)}
                           className="gap-2 focus:bg-[#e6e1d8] focus:text-[#14110c]"
                         >
-                          <Edit className="h-4 w-4 text-blue-400" /> Edit
+                          <Edit className="h-4 w-4 text-blue-600" /> Edit
                           Session
                         </DropdownMenuItem>
                       )}

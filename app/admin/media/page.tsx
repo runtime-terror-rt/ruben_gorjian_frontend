@@ -112,7 +112,7 @@ export default function AdminMediaPage() {
       <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm">
         <CardContent className="p-4 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b6b]" />
             <Input 
               placeholder="Search assets or users..." 
               className="pl-9 bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:border-[#b08d3e]"
@@ -155,7 +155,7 @@ export default function AdminMediaPage() {
             <div key={i} className="aspect-square rounded-xl bg-[#e6e1d8] animate-pulse" />
           ))
         ) : filteredAssets.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-slate-500">
+          <div className="col-span-full py-20 text-center text-[#6b6b6b]">
             <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-20" />
             <p>No media assets found matching your filters.</p>
           </div>

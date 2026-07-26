@@ -55,7 +55,7 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
 
       if (res.ok) {
         await refresh();
-        router.push("/admin/login");
+        router.push("/login");
       }
     } catch (error) {
       console.error("Logout error:", error);
@@ -171,8 +171,8 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b]">
-            <DropdownMenuLabel className="font-normal normal-case tracking-normal">
+          <DropdownMenuContent align="end" className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b] border-[#d9d4c9] shadow-lg rounded-xl">
+            <DropdownMenuLabel className="font-normal normal-case tracking-normal px-3 py-2">
               <div className="flex flex-col space-y-1">
                 <span className="text-sm font-semibold text-[#14110c] whitespace-nowrap">
                   {session?.name || "Admin User"}
@@ -182,22 +182,22 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
                 </span>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex items-center gap-2">
+            <DropdownMenuSeparator className="bg-[#d9d4c9]" />
+            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer hover:bg-[#e6e1d8] hover:text-[#14110c] focus:bg-[#e6e1d8] focus:text-[#14110c] px-3 py-2 rounded-lg">
               <Shield className="h-4 w-4" />
               <span>Role: {session?.role || "ADMIN"}</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-[#d9d4c9]" />
             <DropdownMenuItem
               onClick={handleViewSite}
-              className="flex items-center gap-2 lg:hidden"
+              className="flex items-center gap-2 lg:hidden cursor-pointer hover:bg-[#e6e1d8] hover:text-[#14110c] focus:bg-[#e6e1d8] focus:text-[#14110c] px-3 py-2 rounded-lg"
             >
               <ExternalLink className="h-4 w-4" />
               <span>View Site</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleLogout}
-              className="flex items-center gap-2 text-red-300 focus:text-red-200"
+              className="flex items-center gap-2 cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700 focus:bg-red-50 focus:text-red-700 px-3 py-2 rounded-lg mt-1"
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>

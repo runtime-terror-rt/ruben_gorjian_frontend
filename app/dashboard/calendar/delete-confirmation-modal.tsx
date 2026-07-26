@@ -49,7 +49,7 @@ export default function DeleteConfirmationModal({
         <div className="absolute top-4 right-4 z-10">
           <button 
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-[#e6e1d8] text-slate-500 hover:text-[#14110c] transition-colors"
+            className="p-2 rounded-full hover:bg-[#e6e1d8] text-[#6b6b6b] hover:text-[#14110c] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

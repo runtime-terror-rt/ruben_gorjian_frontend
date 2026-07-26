@@ -103,7 +103,7 @@ export default function SettingsPage() {
     session?.subscription?.planCode?.toUpperCase().startsWith("ENT");
   */
 
-  const hasFullManagement = false; 
+  const hasFullManagement = false;
   /* // Commented out old full management logic
   const hasFullManagementOld = !isEnterprise && (session?.fullManagementOnboardingCompleted || session?.subscription?.planCategory === "FULL_MANAGEMENT");
   */
@@ -126,7 +126,7 @@ export default function SettingsPage() {
         const err = await response.json();
         throw new Error(err.details || "Failed to generate PDF");
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -152,7 +152,7 @@ export default function SettingsPage() {
         const err = await response.json();
         throw new Error(err.details || "Failed to generate PDF");
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -199,9 +199,9 @@ export default function SettingsPage() {
 
   const handleChange =
     (field: keyof FormState) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      };
 
   const avatarSrc = avatarPreviewUrl
     ? avatarPreviewUrl
@@ -307,21 +307,21 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
+          {/* <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
             Settings
-          </p>
+          </p> */}
           <h1 className="text-2xl font-semibold text-[#14110c]">
-            {activeTab === "profile" 
-              ? "Account & Business" 
-              : activeTab === "brand-brief" 
-                ? "Brand Brief" 
+            {activeTab === "profile"
+              ? "Account & Business"
+              : activeTab === "brand-brief"
+                ? "Brand Brief"
                 : activeTab === "full-management"
                   ? "Full Management"
                   : "Security"}
           </h1>
           <p className="text-sm text-[#14110c]">
-            {activeTab === "profile" 
-              ? "Keep your profile and business info up to date." 
+            {activeTab === "profile"
+              ? "Keep your profile and business info up to date."
               : activeTab === "brand-brief"
                 ? "Review your submitted brand brief details."
                 : activeTab === "full-management"
@@ -331,8 +331,8 @@ export default function SettingsPage() {
         </div>
         {activeTab === "profile" && (
           <Button
-            variant="ghost"
-            className="rounded-full px-4 py-2 text-[#14110c]/60 hover:text-[#14110c]"
+            variant="outline"
+            className="rounded-full px-4 py-2 border-[#d9d4c9] bg-[#ffffff]/60 text-[#14110c] hover:bg-[#e6e1d8] transition-colors"
             onClick={() => {
               setForm(initialForm);
               setMessage(null);
@@ -405,7 +405,7 @@ export default function SettingsPage() {
           {loading ? (
             <p className="text-xs text-[#6b6b6b]">Loading settings...</p>
           ) : null}
-          {error ? <p className="text-xs text-red-300">{error}</p> : null}
+          {error ? <p className="text-xs text-red-600">{error}</p> : null}
 
           <form className="space-y-6" onSubmit={onSubmit}>
             <Card>
@@ -459,14 +459,14 @@ export default function SettingsPage() {
                         avatarUploading ||
                         (!settings?.profile.avatar.storageKey && !avatarPreviewUrl)
                       }
-                      className="rounded-full text-[#6b6b6b] hover:text-red-400 hover:bg-red-500/5 transition-colors"
+                      className="rounded-full text-[#6b6b6b] hover:text-red-600 hover:bg-red-500/5 transition-colors"
                     >
                       <Trash2 className="mr-2.5 h-4 w-4" />
                       {avatarRemoving ? "Removing..." : "Remove photo"}
                     </Button>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#6b6b6b]">
                   Allowed: JPG, PNG, WEBP. Max file size: 5MB.
                 </p>
 
@@ -490,7 +490,7 @@ export default function SettingsPage() {
                       readOnly
                       className="bg-[#faf8f3]"
                     />
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#6b6b6b]">
                       Email is managed by your login provider.
                     </p>
                   </div>
@@ -506,11 +506,11 @@ export default function SettingsPage() {
                     rows={3}
                     className={cn(
                       "flex w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] shadow-sm",
-                      "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300",
+                      "focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-500",
                     )}
                     placeholder="Tell us a bit about your business or role."
                   />
-                  <p className="text-xs text-slate-500">{form.bio.length}/300</p>
+                  <p className="text-xs text-[#6b6b6b]">{form.bio.length}/300</p>
                 </div>
               </CardContent>
             </Card>
@@ -560,7 +560,7 @@ export default function SettingsPage() {
                       id="timezone"
                       value={form.timezone}
                       onChange={(e) => setForm(prev => ({ ...prev, timezone: e.target.value }))}
-                      className="flex w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] shadow-sm focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-300"
+                      className="flex w-full rounded-md border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2 text-sm text-[#14110c] shadow-sm focus:outline-none focus:ring-2 focus:ring-lime-300 focus:border-lime-500"
                     >
                       <optgroup label="Asia">
                         <option value="Asia/Dhaka">Asia/Dhaka (Bangladesh — UTC+6)</option>
@@ -596,7 +596,7 @@ export default function SettingsPage() {
                         <option value="Africa/Lagos">Africa/Lagos (WAT — UTC+1)</option>
                       </optgroup>
                     </select>
-                    <p className="text-xs text-amber-400/80">
+                    <p className="text-xs text-amber-700/80">
                       ⚠️ This must be set correctly — all scheduled posts use this timezone.
                     </p>
                   </div>
@@ -635,10 +635,10 @@ export default function SettingsPage() {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-[#14110c]">Submission Overview</h2>
-                <Button 
-                  onClick={handleDownloadPdf} 
+                <Button
+                  onClick={handleDownloadPdf}
                   disabled={isDownloading}
-                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-bold rounded-full"
+                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-bold rounded-full"
                 >
                   {isDownloading ? (
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -683,7 +683,7 @@ export default function SettingsPage() {
                   { label: "Upcoming Promotions", value: brief.upcomingPromotions },
                   { label: "Hashtag Style", value: brief.hashtagStyle },
                 ]} />
-                
+
                 <DetailCard title="05. Shoot & Extras" items={[
                   { label: "Confirm Min Dishes", value: brief.confirmMinDishes },
                   { label: "Action Shots Possible", value: brief.actionShotsPossible },
@@ -701,7 +701,7 @@ export default function SettingsPage() {
                   <CardContent className="pt-4 space-y-4">
                     {[brief.captionSample1, brief.captionSample2, brief.captionSample3].map((cap, i) => (
                       <div key={i} className="p-3 rounded-lg bg-[#ffffff]/60 border border-[#d9d4c9]/50">
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Sample {i + 1}</p>
+                        <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest mb-1">Sample {i + 1}</p>
                         <p className="text-sm text-[#14110c] italic">"{cap || "N/A"}"</p>
                       </div>
                     ))}
@@ -730,10 +730,10 @@ export default function SettingsPage() {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-[#14110c]">Full Management Overview</h2>
-                <Button 
-                  onClick={handleDownloadFullManagementPdf} 
+                <Button
+                  onClick={handleDownloadFullManagementPdf}
                   disabled={isDownloading}
-                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-bold rounded-full"
+                  className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-bold rounded-full"
                 >
                   {isDownloading ? (
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
@@ -812,7 +812,7 @@ export default function SettingsPage() {
 
                 {showPwForm && (
                   <div className="space-y-3 pt-2 border-t border-[#d9d4c9]">
-                    {pwError && <p className="text-xs text-red-400">{pwError}</p>}
+                    {pwError && <p className="text-xs text-red-600">{pwError}</p>}
                     {pwMessage && <p className="text-xs text-[#b08d3e]">{pwMessage}</p>}
                     <div className="space-y-2">
                       <Label htmlFor="currentPw">Current password</Label>
@@ -929,7 +929,7 @@ function DetailCard({ title, items }: { title: string, items: { label: string, v
       <CardContent className="pt-4 space-y-3">
         {items.map((item, i) => (
           <div key={i}>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.label}</p>
+            <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">{item.label}</p>
             <p className="text-sm text-[#14110c] mt-0.5">{item.value || "—"}</p>
           </div>
         ))}

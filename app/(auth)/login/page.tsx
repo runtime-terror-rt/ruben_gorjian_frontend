@@ -15,7 +15,7 @@ function LoginPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { refresh } = useSessionContext();
-  const redirect = searchParams.get("redirect") || "/dashboard";
+  const redirect = searchParams.get("returnTo") || searchParams.get("redirect") || "/dashboard";
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();

@@ -223,7 +223,7 @@ function VerifyPageInner() {
           <div className="mt-6 space-y-3">
             <a
               href="/login"
-              className="inline-flex items-center justify-center rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-slate-950 shadow hover:bg-lime-300"
+              className="inline-flex items-center justify-center rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-[#14110c] shadow hover:bg-lime-300"
             >
               Back to login
             </a>

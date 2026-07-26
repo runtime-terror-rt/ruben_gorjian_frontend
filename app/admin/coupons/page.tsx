@@ -58,6 +58,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Select } from "@/components/ui/select";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 // --- Types ---
 
@@ -288,8 +289,8 @@ export default function AdminCouponsPage() {
             className={cn(
               "capitalize",
               status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20" : 
-              status === "INACTIVE" ? "bg-slate-500/10 text-[#6b6b6b] border-slate-400/20" : 
-              "bg-red-500/10 text-red-400 border-red-500/20"
+              status === "INACTIVE" ? "bg-[#e6e1d8]/30 text-[#6b6b6b] border-[#d9d4c9]/40" : 
+              "bg-red-500/10 text-red-600 border-red-500/20"
             )}
             variant="outline"
           >
@@ -333,7 +334,7 @@ export default function AdminCouponsPage() {
                   id: coupon.id, 
                   status: coupon.status === "ACTIVE" ? "INACTIVE" : "ACTIVE" 
                 })}
-                className={coupon.status === "ACTIVE" ? "text-amber-400" : "text-[#b08d3e]"}
+                className={coupon.status === "ACTIVE" ? "text-amber-700" : "text-[#b08d3e]"}
               >
                 {coupon.status === "ACTIVE" ? (
                   <><PowerOff className="mr-2 h-4 w-4" /> Deactivate</>
@@ -346,7 +347,7 @@ export default function AdminCouponsPage() {
                   setCouponToDelete(coupon);
                   setIsDeleteDialogOpen(true);
                 }}
-                className="text-red-400 focus:text-red-400"
+                className="text-red-600 focus:text-red-600"
               >
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
               </DropdownMenuItem>
@@ -368,13 +369,8 @@ export default function AdminCouponsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14110c] flex items-center gap-2">
-            <Tag className="h-6 w-6 text-[#b08d3e]" />
-            Coupon Management
-          </h1>
-          <p className="text-sm text-[#6b6b6b] mt-1">
-            Create and manage discount codes for your subscription plans.
-          </p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Coupon Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Create and manage discount codes for your subscription plans.</p>
         </div>
         <Button 
           onClick={() => {
@@ -382,7 +378,7 @@ export default function AdminCouponsPage() {
             setEditingCoupon(null);
             setIsCreateDialogOpen(true);
           }}
-          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
         >
           <Plus className="h-5 w-5" /> Create Coupon
         </Button>
@@ -393,7 +389,7 @@ export default function AdminCouponsPage() {
         {isLoading ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
-            <p className="text-slate-500 text-sm">Loading coupons...</p>
+            <p className="text-[#6b6b6b] text-sm">Loading coupons...</p>
           </div>
         ) : (
           <>
@@ -422,7 +418,7 @@ export default function AdminCouponsPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={columns.length} className="h-32 text-center text-[#6b6b6b]">
                       No coupons found.
                     </TableCell>
                   </TableRow>
@@ -432,43 +428,13 @@ export default function AdminCouponsPage() {
 
             {/* ── Pagination Footer ── */}
             {data?.pagination && data.pagination.pages > 1 && (
-              <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-[#d9d4c9] bg-[#e6e1d8]/20">
-                
-                {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-                  Showing page{" "}
-                  <span className="text-[#14110c] font-black">{data.pagination.page}</span>
-                  {" "}of{" "}
-                  <span className="text-[#14110c] font-black">{data.pagination.pages}</span>
-                  {" "}·{" "}
-                  <span className="text-[#14110c] font-black">{data.pagination.total}</span> total coupons
-                </p>
-
-                {/* Right: Prev / Next */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={isLoading || page <= 1}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/60 text-[11px] font-black text-[#14110c] uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-                    Previous
-                  </button>
-
-                  <div className="bg-[#e6e1d8]/50 px-4 py-1.5 rounded-lg border border-[#d9d4c9]/50">
-                    <span className="text-xs font-black text-[#b08d3e]">Page {data.pagination.page}</span>
-                  </div>
-
-                  <button
-                    onClick={() => setPage((p) => Math.min(data.pagination.pages, p + 1))}
-                    disabled={isLoading || page >= data.pagination.pages}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-[#14110c] uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                  >
-                    Next Page
-                    <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={data.pagination.page}
+                totalPages={data.pagination.pages}
+                totalItems={data.pagination.total}
+                isLoading={isLoading}
+                onPageChange={(p) => setPage(p)}
+              />
             )}
           </>
         )}
@@ -606,7 +572,7 @@ export default function AdminCouponsPage() {
                   ))}
                 </div>
                 {formData.applicablePlans.length === 0 && (
-                  <p className="text-[10px] text-amber-400">At least one plan must be selected.</p>
+                  <p className="text-[10px] text-amber-700">At least one plan must be selected.</p>
                 )}
               </div>
             </div>
@@ -622,7 +588,7 @@ export default function AdminCouponsPage() {
               </Button>
               <Button 
                 type="submit" 
-                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 {(createMutation.isPending || updateMutation.isPending) ? (

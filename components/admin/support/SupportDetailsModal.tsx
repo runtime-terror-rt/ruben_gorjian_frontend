@@ -128,13 +128,13 @@ export function SupportDetailsModal({
         );
       case "REPLIED":
         return (
-          <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/30 px-2 py-0.5 font-bold uppercase text-[9px] tracking-widest shadow-[0_0_10px_rgba(59,130,246,0.1)]">
+          <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/30 px-2 py-0.5 font-bold uppercase text-[9px] tracking-widest shadow-[0_0_10px_rgba(59,130,246,0.1)]">
             Replied
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-amber-400 text-black px-2 py-0.5 font-black uppercase text-[9px] tracking-[0.15em] border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse hover:animate-none transition-all">
+          <Badge className="bg-amber-500 text-black px-2 py-0.5 font-black uppercase text-[9px] tracking-[0.15em] border-amber-500 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse hover:animate-none transition-all">
             Pending
           </Badge>
         );
@@ -166,7 +166,7 @@ export function SupportDetailsModal({
         ) : error ? (
           <div className="py-20 text-center">
             <Info className="h-12 w-12 text-red-500/50 mx-auto mb-4" />
-            <p className="text-red-400 font-medium">Failed to load details</p>
+            <p className="text-red-600 font-medium">Failed to load details</p>
             <p className="text-sm text-slate-500">{(error as Error).message}</p>
           </div>
         ) : submission ? (

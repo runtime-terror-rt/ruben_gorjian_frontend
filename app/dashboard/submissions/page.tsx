@@ -72,10 +72,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-slate-300/40 bg-transparent text-[#14110c]/40",
-        secondary: "border-slate-300/40 bg-transparent text-[#14110c]/40",
-        destructive: "border-red-300/40 bg-transparent text-red-300/40",
-        outline: "border-lime-300/40 bg-transparent text-[#8a6d28]/40",
+        default: "border-[#d9d4c9]/40 bg-transparent text-[#14110c]/40",
+        secondary: "border-[#d9d4c9]/40 bg-transparent text-[#14110c]/40",
+        destructive: "border-red-500/40 bg-transparent text-red-600/40",
+        outline: "border-lime-500/40 bg-transparent text-[#8a6d28]/40",
       },
     },
     defaultVariants: {
@@ -310,10 +310,10 @@ export default function SubmissionsPage() {
         <Card className="border-red-900/50 bg-red-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <XCircle className="h-5 w-5 text-red-400 mt-0.5" />
+              <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
               <div>
-                <p className="font-medium text-red-200">Download Error</p>
-                <p className="text-sm text-red-300/80 mt-1">{actionError}</p>
+                <p className="font-medium text-red-600">Download Error</p>
+                <p className="text-sm text-red-600/80 mt-1">{actionError}</p>
               </div>
             </div>
           </CardContent>
@@ -322,7 +322,7 @@ export default function SubmissionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#14110c]">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             Document Submissions
           </h1>
           <p className="text-sm text-[#6b6b6b] mt-1">
@@ -350,7 +350,7 @@ export default function SubmissionsPage() {
                 <p className="text-xl font-semibold text-[#14110c]">
                   {quota.remaining} remaining
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-[#6b6b6b] mt-1">
                   Resets on {formatDate(quota.periodEnd)}
                 </p>
               </div>
@@ -400,7 +400,7 @@ export default function SubmissionsPage() {
       {submissions.length === 0 ? (
         <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardContent className="py-12 text-center">
-            <Upload className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+            <Upload className="h-12 w-12 text-[#6b6b6b] mx-auto mb-4" />
             <h3 className="text-lg font-medium text-[#14110c] mb-2">
               No submissions yet
             </h3>
@@ -453,10 +453,10 @@ export default function SubmissionsPage() {
                 {/* Admin Note */}
                 {submission.adminNote && (
                   <div className="rounded-lg bg-blue-950/30 border border-blue-900/50 p-3">
-                    <p className="text-xs font-medium text-blue-300 mb-1">
+                    <p className="text-xs font-medium text-blue-600 mb-1">
                       Admin Response:
                     </p>
-                    <p className="text-sm text-blue-200/80">
+                    <p className="text-sm text-blue-600/80">
                       {submission.adminNote}
                     </p>
                   </div>

@@ -120,15 +120,15 @@ export default function MediaLibraryPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#14110c] tracking-tight">Media Library</h1>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Media Library</h1>
           <p className="text-sm text-[#6b6b6b]">Review your uploaded images and videos, grouped by upload date.</p>
         </div>
         <div className="flex items-center gap-3">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit">
             <TabsList className="bg-[#ffffff] border border-[#d9d4c9] h-10 p-1 rounded-xl">
-              <TabsTrigger value="all" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950">All</TabsTrigger>
-              <TabsTrigger value="image" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950">Images</TabsTrigger>
-              <TabsTrigger value="video" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-slate-950">Videos</TabsTrigger>
+              <TabsTrigger value="all" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">All</TabsTrigger>
+              <TabsTrigger value="image" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">Images</TabsTrigger>
+              <TabsTrigger value="video" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">Videos</TabsTrigger>
             </TabsList>
           </Tabs>
           <Badge variant="outline" className="h-10 px-4 rounded-xl border-[#d9d4c9] bg-[#ffffff] text-[#6b6b6b] text-xs font-medium flex items-center">
@@ -197,7 +197,7 @@ export default function MediaLibraryPage() {
                         </span> 
                         <span className="uppercase text-[#6b6b6b]">{asset.mediaType}</span>
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-[#6b6b6b]">
                         {dayjs(asset.createdAt).format("h:mm A")}
                       </div>
                       <div className="flex gap-2">

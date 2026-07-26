@@ -512,7 +512,7 @@ export default function ScheduleVisitPage() {
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-4xl font-black text-[#14110c] tracking-tight">
+            <h1 className="text-2xl font-semibold text-[#14110c]">
               Session <span className="text-[#b08d3e]">Scheduling</span>
             </h1>
             {isAdmin && (
@@ -587,7 +587,7 @@ export default function ScheduleVisitPage() {
                   (day) => (
                     <div
                       key={day}
-                      className="text-center text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]"
+                      className="text-center text-[10px] font-black text-[#6b6b6b] uppercase tracking-[0.2em]"
                     >
                       {day}
                     </div>
@@ -627,7 +627,7 @@ export default function ScheduleVisitPage() {
                           "border-[#b08d3e]/50 text-[#b08d3e] font-bold",
                         isPast &&
                           isCurrentMonth &&
-                          "bg-[#ffffff]/20 text-slate-700 cursor-not-allowed",
+                          "bg-[#ffffff]/20 text-[#14110c] cursor-not-allowed",
                       )}
                     >
                       <span className="text-sm">{day.date()}</span>
@@ -641,7 +641,7 @@ export default function ScheduleVisitPage() {
                 })}
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-6 text-[10px] text-slate-500 border-t border-[#d9d4c9]/50 pt-6 uppercase font-bold tracking-widest">
+              <div className="mt-8 flex flex-wrap gap-6 text-[10px] text-[#6b6b6b] border-t border-[#d9d4c9]/50 pt-6 uppercase font-bold tracking-widest">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-[#e6e1d8]" />
                   <span>Available</span>
@@ -684,7 +684,7 @@ export default function ScheduleVisitPage() {
                     variant="ghost"
                     size="sm"
                     onClick={resetForm}
-                    className="text-slate-500 hover:text-[#14110c]"
+                    className="text-[#6b6b6b] hover:text-[#14110c]"
                   >
                     Cancel
                   </Button>
@@ -705,7 +705,7 @@ export default function ScheduleVisitPage() {
                         "flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
                         sessionType === "PHOTO_SESSION"
                           ? "bg-[#b08d3e]/10 border-[#b08d3e] text-[#14110c]"
-                          : "bg-[#e6e1d8]/50 border-transparent text-slate-500 hover:border-[#d9d4c9] hover:text-[#14110c]",
+                          : "bg-[#e6e1d8]/50 border-transparent text-[#6b6b6b] hover:border-[#d9d4c9] hover:text-[#14110c]",
                       )}
                     >
                       <Camera
@@ -713,7 +713,7 @@ export default function ScheduleVisitPage() {
                           "h-8 w-8",
                           sessionType === "PHOTO_SESSION"
                             ? "text-[#b08d3e]"
-                            : "text-slate-600",
+                            : "text-[#6b6b6b]",
                         )}
                       />
                       <span className="font-bold">Photoshoot</span>
@@ -734,10 +734,10 @@ export default function ScheduleVisitPage() {
                         "flex flex-col items-center justify-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300 relative",
                         sessionType === "VIDEO_SESSION"
                           ? "bg-[#b08d3e]/10 border-[#b08d3e] text-[#14110c]"
-                          : "bg-[#e6e1d8]/50 border-transparent text-slate-500 hover:border-[#d9d4c9] hover:text-[#14110c]",
+                          : "bg-[#e6e1d8]/50 border-transparent text-[#6b6b6b] hover:border-[#d9d4c9] hover:text-[#14110c]",
                         !hasVideoAddon &&
                           !isAdmin &&
-                          "opacity-50 hover:border-transparent hover:text-slate-500 cursor-not-allowed",
+                          "opacity-50 hover:border-transparent hover:text-[#6b6b6b] cursor-not-allowed",
                       )}
                     >
                       <Video
@@ -745,13 +745,13 @@ export default function ScheduleVisitPage() {
                           "h-8 w-8",
                           sessionType === "VIDEO_SESSION"
                             ? "text-[#b08d3e]"
-                            : "text-slate-600",
+                            : "text-[#6b6b6b]",
                         )}
                       />
                       <div className="flex flex-col items-center gap-1">
                         <span className="font-bold">Video Session</span>
                         {!hasVideoAddon && !isAdmin && (
-                          <span className="text-[9px] text-red-400/80 font-black uppercase tracking-widest">
+                          <span className="text-[9px] text-red-600/80 font-black uppercase tracking-widest">
                             Requires Addon
                           </span>
                         )}
@@ -785,7 +785,7 @@ export default function ScheduleVisitPage() {
                       </Label>
                       {!selectedDate ? (
                         <div className="p-4 bg-[#e6e1d8]/30 border border-dashed border-[#d9d4c9] rounded-xl text-center">
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-[#6b6b6b]">
                             Please select a date first
                           </p>
                         </div>
@@ -803,7 +803,7 @@ export default function ScheduleVisitPage() {
                                   ? "bg-[#b08d3e] border-[#b08d3e] text-[#14110c] shadow-[0_0_15px_rgba(163,230,53,0.3)]"
                                   : slot.available
                                     ? "bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] hover:border-[#b08d3e]/50 hover:bg-[#b08d3e]/5"
-                                    : "bg-[#ffffff]/20 border-transparent text-slate-600 cursor-not-allowed opacity-50",
+                                    : "bg-[#ffffff]/20 border-transparent text-[#6b6b6b] cursor-not-allowed opacity-50",
                               )}
                             >
                               {slot.label}
@@ -852,7 +852,7 @@ export default function ScheduleVisitPage() {
                         }}
                         className="bg-[#e6e1d8]/50 border-[#d9d4c9] text-[#14110c] h-12 rounded-xl focus:ring-[#b08d3e]/50 pr-12"
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500 uppercase">
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-[#6b6b6b] uppercase">
                         Min
                       </div>
                     </div>
@@ -905,7 +905,7 @@ export default function ScheduleVisitPage() {
                           </>
                         )}
                         {editingSession && assets.length === 0 && (
-                          <div className="text-xs text-slate-500 italic py-2 text-center">
+                          <div className="text-xs text-[#6b6b6b] italic py-2 text-center">
                             No media attached to this session
                           </div>
                         )}
@@ -1010,9 +1010,9 @@ export default function ScheduleVisitPage() {
                     "w-full h-14 text-lg font-black tracking-widest uppercase transition-all duration-500 rounded-2xl",
                     selectedDate && (!isDayBlocked() || editingSession)
                       ? editingSession
-                        ? "bg-indigo-500 hover:bg-indigo-400 text-[#14110c] shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
+                        ? "bg-indigo-500 hover:bg-indigo-600 text-[#14110c] shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
                         : "bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] shadow-[0_10px_30px_rgba(163,230,53,0.3)]"
-                      : "bg-[#e6e1d8] text-slate-500 cursor-not-allowed",
+                      : "bg-[#e6e1d8] text-[#6b6b6b] cursor-not-allowed",
                   )}
                 >
                   {submitting ? (
@@ -1042,7 +1042,7 @@ export default function ScheduleVisitPage() {
                   </p>
                 )}
 
-                <p className="text-[10px] text-center text-slate-500 uppercase tracking-[0.2em] font-bold">
+                <p className="text-[10px] text-center text-[#6b6b6b] uppercase tracking-[0.2em] font-bold">
                   All sessions are reviewed by our team
                 </p>
               </form>
@@ -1056,8 +1056,8 @@ export default function ScheduleVisitPage() {
         <CardHeader className="border-b border-[#d9d4c9] bg-[#e6e1d8]/20 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-400/10 rounded-lg">
-                <History className="h-5 w-5 text-indigo-400" />
+              <div className="p-2 bg-indigo-600/10 rounded-lg">
+                <History className="h-5 w-5 text-indigo-600" />
               </div>
               <CardTitle className="text-xl font-bold text-[#14110c]">
                 Your Bookings
@@ -1069,19 +1069,19 @@ export default function ScheduleVisitPage() {
           {loadingSessions ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
               <Loader2 className="h-8 w-8 text-[#b08d3e] animate-spin" />
-              <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
+              <p className="text-[#6b6b6b] text-sm font-bold uppercase tracking-widest">
                 Loading sessions...
               </p>
             </div>
           ) : userBookings.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
               <div className="p-4 bg-[#e6e1d8]/50 rounded-full mb-4">
-                <CalendarDays className="h-8 w-8 text-slate-600" />
+                <CalendarDays className="h-8 w-8 text-[#6b6b6b]" />
               </div>
               <p className="text-[#6b6b6b] font-medium">
                 No sessions scheduled yet.
               </p>
-              <p className="text-slate-600 text-sm mt-1">
+              <p className="text-[#6b6b6b] text-sm mt-1">
                 Book your first professional photoshoot today!
               </p>
             </div>
@@ -1102,8 +1102,8 @@ export default function ScheduleVisitPage() {
                       className={clsx(
                         "p-3 rounded-xl",
                         s.scheduleType === "PHOTO_SESSION"
-                          ? "bg-amber-400/10 text-amber-400"
-                          : "bg-indigo-400/10 text-indigo-400",
+                          ? "bg-amber-500/10 text-amber-700"
+                          : "bg-indigo-600/10 text-indigo-600",
                       )}
                     >
                       {s.scheduleType === "PHOTO_SESSION" ? (
@@ -1135,7 +1135,7 @@ export default function ScheduleVisitPage() {
                               ? "bg-green-500/10 text-green-500"
                               : s.status?.toUpperCase() === "PENDING"
                                 ? "bg-amber-500/10 text-amber-500 animate-pulse"
-                                : "bg-[#e6e1d8]/30 text-slate-500",
+                                : "bg-[#e6e1d8]/30 text-[#6b6b6b]",
                           )}
                         >
                           {s.status}
@@ -1233,7 +1233,7 @@ export default function ScheduleVisitPage() {
                               "h-7 px-2 text-[8px] font-black tracking-widest uppercase rounded-md transition-all",
                               s.status === status
                                 ? "bg-[#b08d3e] text-[#14110c]"
-                                : "text-slate-500 hover:text-[#14110c] hover:bg-[#e6e1d8]",
+                                : "text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8]",
                             )}
                           >
                             {status === "SCHEDULED"

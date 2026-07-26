@@ -71,7 +71,7 @@ export function SocialPlatformCard({
   return (
     <Card
       className={`border-slate-800 bg-slate-900/60 ${
-        account ? "border-lime-300/40" : ""
+        account ? "border-lime-500/40" : ""
       }`}
     >
       <CardHeader className="pb-4">
@@ -90,7 +90,7 @@ export function SocialPlatformCard({
           {account && (
             <Badge
               variant="secondary"
-              className="bg-lime-300/20 text-lime-200 border-lime-300/40"
+              className="bg-lime-300/20 text-lime-700 border-lime-500/40"
             >
               Connected
             </Badge>

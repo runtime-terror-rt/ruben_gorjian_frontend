@@ -154,7 +154,7 @@ export function DashboardHeader({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b]"
+            className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b] dashboard-theme"
           >
             <DropdownMenuLabel className="font-normal normal-case tracking-normal">
               <div className="flex flex-col space-y-1">
@@ -172,21 +172,21 @@ export function DashboardHeader({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => router.push("/dashboard/settings")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 cursor-pointer"
             >
               <User className="h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => router.push("/dashboard/billing")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 cursor-pointer"
             >
               <CreditCard className="h-4 w-4" />
               <span>Billing</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => router.push("/dashboard/settings")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 cursor-pointer"
             >
               <Settings className="h-4 w-4" />
               <span>Settings</span>
@@ -194,7 +194,7 @@ export function DashboardHeader({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
-              className="flex items-center gap-2 text-red-300 focus:text-red-200"
+              className="flex items-center gap-2 text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>

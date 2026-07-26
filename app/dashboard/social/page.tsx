@@ -154,12 +154,12 @@ function SocialPageInner() {
       const totalAllowed = plan.platformLimit;
       const connectedCount = accounts.length;
 
-      console.log("Connect attempt:", { 
-        platform, 
-        connectedCount, 
-        totalAllowed, 
+      console.log("Connect attempt:", {
+        platform,
+        connectedCount,
+        totalAllowed,
         plan,
-        willShowModal: connectedCount >= totalAllowed 
+        willShowModal: connectedCount >= totalAllowed
       });
 
       // strictly follow the 3-platform limit rule
@@ -168,7 +168,7 @@ function SocialPageInner() {
         setIsUpsellModalOpen(true);
         return;
       }
-      
+
       if (totalAllowed >= 3 && connectedCount >= totalAllowed) {
         toast({
           title: "Limit Reached",
@@ -235,11 +235,11 @@ function SocialPageInner() {
             : null) ||
           `HTTP ${response.status}: ${response.statusText}`;
 
-        console.error("BACKEND REJECTED CONNECTION:", { 
-          platform, 
-          errorMsg, 
+        console.error("BACKEND REJECTED CONNECTION:", {
+          platform,
+          errorMsg,
           httpStatus: response.status,
-          planDataInFrontend: plan 
+          planDataInFrontend: plan
         });
 
         // Falls back to upsell modal if backend says limit reached AND user truly has < 3 slots
@@ -250,8 +250,8 @@ function SocialPageInner() {
             setIsUpsellModalOpen(true);
             return;
           } else {
-             // If plan says they have slots, but backend rejects, it's a sync issue
-             // We show the error banner but NOT the modal
+            // If plan says they have slots, but backend rejects, it's a sync issue
+            // We show the error banner but NOT the modal
           }
         }
 
@@ -329,7 +329,7 @@ function SocialPageInner() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-xl font-semibold text-[#14110c] sm:text-2xl">Social Media</h1>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Social Media</h1>
           <p className="text-sm text-[#6b6b6b]">Loading your connected accounts...</p>
         </div>
       </div>
@@ -339,7 +339,7 @@ function SocialPageInner() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-[#14110c] sm:text-2xl">Social Media</h1>
+        <h1 className="text-2xl font-semibold text-[#14110c]">Social Media</h1>
         <p className="text-sm text-[#6b6b6b]">
           Connect your social media accounts to schedule and publish posts
         </p>
@@ -357,7 +357,7 @@ function SocialPageInner() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card
-          className={`border-[#d9d4c9] bg-[#ffffff]/60 ${facebookAccount ? "border-lime-300/40" : ""}`}
+          className={`transition-all duration-200 ${facebookAccount ? "border-[#b08d3e]/40 bg-white shadow-sm" : "border-[#d9d4c9] bg-[#ffffff]/60"}`}
         >
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
@@ -373,12 +373,9 @@ function SocialPageInner() {
                 </div>
               </div>
               {facebookAccount && (
-                <Badge
-                  variant="secondary"
-                  className="bg-lime-300/20 text-lime-200 border-lime-300/40"
-                >
-                  Connected
-                </Badge>
+                <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
+                  ● Connected
+                </span>
               )}
               {isUploadPostAccount(facebookAccount) && (
                 <Badge variant="outline">via Upload-Post</Badge>
@@ -389,7 +386,7 @@ function SocialPageInner() {
           <CardContent>
             {facebookAccount ? (
               <div className="space-y-4">
-                <div className="p-3 rounded-lg bg-[#e6e1d8]/50 border border-[#d9d4c9]">
+                <div className="p-3 rounded-lg bg-[#faf8f3] border border-[#d9d4c9]">
                   <p className="text-sm font-medium text-[#14110c]">
                     @
                     {facebookAccount.displayName ||
@@ -403,18 +400,20 @@ function SocialPageInner() {
                       : "just now"}
                   </p>
                 </div>
-              <div className="flex gap-2">
+                <div className="flex gap-2">
                   <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => disconnectAccount(facebookAccount.id)}
-                    className={`flex-1 ${primaryButtonClass}`}
+                    className="flex-1 !bg-[#d9d4c9] !border-[#b08d3e] hover:!bg-[#d9d4c9] hover:!border-[#b08d3e]"
                   >
                     <Unlink className="h-4 w-4 mr-2" />
                     Disconnect
                   </Button>
                   <Button
+                    variant="outline"
                     size="sm"
-                    className={iconPrimaryButtonClass}
+                    className="h-8 w-8 px-0"
                     title="View on Facebook"
                   >
                     <ExternalLink className="h-4 w-4" />
@@ -424,7 +423,7 @@ function SocialPageInner() {
             ) : (
               <div className="space-y-4">
                 {connectErrors.FACEBOOK && (
-                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-600">
                     {connectErrors.FACEBOOK}
                   </div>
                 )}
@@ -447,7 +446,7 @@ function SocialPageInner() {
         </Card>
 
         <Card
-          className={`border-[#d9d4c9] bg-[#ffffff]/60 ${instagramAccount ? "border-lime-300/40" : ""}`}
+          className={`transition-all duration-200 ${instagramAccount ? "border-[#b08d3e]/40 bg-white shadow-sm" : "border-[#d9d4c9] bg-[#ffffff]/60"}`}
         >
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
@@ -458,12 +457,9 @@ function SocialPageInner() {
                 <CardTitle className="text-[#14110c]">Instagram</CardTitle>
               </div>
               {instagramAccount && (
-                <Badge
-                  variant="secondary"
-                  className="bg-lime-300/20 text-lime-200 border-lime-300/40"
-                >
-                  Connected
-                </Badge>
+                <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
+                  ● Connected
+                </span>
               )}
               {isUploadPostAccount(instagramAccount) && (
                 <Badge variant="outline">via Upload-Post</Badge>
@@ -473,7 +469,7 @@ function SocialPageInner() {
           <CardContent>
             {instagramAccount ? (
               <div className="space-y-4">
-                <div className="p-3 rounded-lg bg-[#e6e1d8]/50 border border-[#d9d4c9]">
+                <div className="p-3 rounded-lg bg-[#faf8f3] border border-[#d9d4c9]">
                   <p className="text-sm font-medium text-[#14110c]">
                     @
                     {instagramAccount.displayName ||
@@ -491,16 +487,18 @@ function SocialPageInner() {
                 </div>
                 <div className="flex gap-2">
                   <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => disconnectAccount(instagramAccount.id)}
-                    className={`flex-1 ${primaryButtonClass}`}
+                    className="flex-1 !bg-[#d9d4c9] !border-[#b08d3e] hover:!bg-[#d9d4c9] hover:!border-[#b08d3e]"
                   >
                     <Unlink className="h-4 w-4 mr-2" />
                     Disconnect
                   </Button>
                   <Button
+                    variant="outline"
                     size="sm"
-                    className={iconPrimaryButtonClass}
+                    className="h-8 w-8 px-0"
                     title="View on Instagram"
                   >
                     <ExternalLink className="h-4 w-4" />
@@ -510,7 +508,7 @@ function SocialPageInner() {
             ) : (
               <div className="space-y-4">
                 {connectErrors.INSTAGRAM && (
-                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-600">
                     {connectErrors.INSTAGRAM}
                   </div>
                 )}
@@ -532,7 +530,7 @@ function SocialPageInner() {
         </Card>
 
         <Card
-          className={`border-[#d9d4c9] bg-[#ffffff]/60 ${tiktokAccount ? "border-lime-300/40" : ""}`}
+          className={`transition-all duration-200 ${tiktokAccount ? "border-[#b08d3e]/40 bg-white shadow-sm" : "border-[#d9d4c9] bg-[#ffffff]/60"}`}
         >
           <CardHeader className="pb-4">
             <div className="flex items-center space-x-3">
@@ -543,19 +541,16 @@ function SocialPageInner() {
                 <CardTitle className="text-[#14110c]">TikTok</CardTitle>
               </div>
               {tiktokAccount && (
-                <Badge
-                  variant="secondary"
-                  className="bg-lime-300/20 text-lime-200 border-lime-300/40"
-                >
-                  Connected
-                </Badge>
+                <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
+                  ● Connected
+                </span>
               )}
             </div>
           </CardHeader>
           <CardContent>
             {tiktokAccount ? (
               <div className="space-y-4">
-                <div className="p-3 rounded-lg bg-[#e6e1d8]/50 border border-[#d9d4c9]">
+                <div className="p-3 rounded-lg bg-[#faf8f3] border border-[#d9d4c9]">
                   <p className="text-sm font-medium text-[#14110c]">
                     @
                     {tiktokAccount.displayName ||
@@ -571,9 +566,10 @@ function SocialPageInner() {
                 </div>
                 <div className="flex gap-2">
                   <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => disconnectAccount(tiktokAccount.id)}
-                    className={`flex-1 ${primaryButtonClass}`}
+                    className="flex-1 !bg-[#d9d4c9] !border-[#b08d3e] hover:!bg-[#d9d4c9] hover:!border-[#b08d3e]"
                   >
                     <Unlink className="h-4 w-4 mr-2" />
                     Disconnect
@@ -583,7 +579,7 @@ function SocialPageInner() {
             ) : (
               <div className="space-y-4">
                 {connectErrors.TIKTOK && (
-                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-600">
                     {connectErrors.TIKTOK}
                   </div>
                 )}
@@ -632,9 +628,9 @@ function SocialPageInner() {
                     </div>
                   </div>
                   <Button
-                    size="sm"
+                    variant="outline"
+                    size="icon-sm"
                     onClick={() => disconnectAccount(facebookAccount.id)}
-                    className={iconPrimaryButtonClass}
                   >
                     <Unlink className="h-4 w-4" />
                   </Button>
@@ -660,9 +656,9 @@ function SocialPageInner() {
                     </div>
                   </div>
                   <Button
-                    size="sm"
+                    variant="outline"
+                    size="icon-sm"
                     onClick={() => disconnectAccount(instagramAccount.id)}
-                    className={iconPrimaryButtonClass}
                   >
                     <Unlink className="h-4 w-4" />
                   </Button>
@@ -670,7 +666,7 @@ function SocialPageInner() {
               )}
 
               {tiktokAccount && (
-                <div className="flex items-center justify-between p-3 border border-[#d9d4c9] rounded-lg bg-[#e6e1d8]/30">
+                <div className="flex items-center justify-between p-3 border border-[#b08d3e]/30 rounded-lg bg-white">
                   <div className="flex items-center space-x-3">
                     <div className="p-1.5 rounded-lg bg-black text-white border border-[#d9d4c9]">
                       <Tiktok className="h-4 w-4" />
@@ -686,9 +682,9 @@ function SocialPageInner() {
                     </div>
                   </div>
                   <Button
-                    size="sm"
+                    variant="outline"
+                    size="icon-sm"
                     onClick={() => disconnectAccount(tiktokAccount.id)}
-                    className={iconPrimaryButtonClass}
                   >
                     <Unlink className="h-4 w-4" />
                   </Button>
@@ -698,15 +694,15 @@ function SocialPageInner() {
           </CardContent>
         </Card>
       )}
-      
-      <PlatformUpsellModal 
-        isOpen={isUpsellModalOpen} 
-        onOpenChange={setIsUpsellModalOpen} 
+
+      <PlatformUpsellModal
+        isOpen={isUpsellModalOpen}
+        onOpenChange={setIsUpsellModalOpen}
         currentTotalAllowed={plan?.platformLimit || 0}
         onSuccess={async () => {
           // 1. Refresh plan info to get the new limit
           await fetchPlanInfo();
-          
+
           // 2. Automatically resume the connection process
           if (pendingConnectPlatform) {
             const platformToConnect = pendingConnectPlatform;
@@ -728,7 +724,7 @@ export default function SocialPage() {
       fallback={
         <div className="space-y-6">
           <div>
-            <h1 className="text-xl font-semibold text-[#14110c] sm:text-2xl">Social Media</h1>
+            <h1 className="text-2xl font-semibold text-[#14110c]">Social Media</h1>
             <p className="text-sm text-[#6b6b6b]">Loading your connected accounts...</p>
           </div>
         </div>

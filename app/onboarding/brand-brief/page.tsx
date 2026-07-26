@@ -271,7 +271,7 @@ export default function BrandBriefPage() {
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 text-lime-400 animate-spin" />
-            <p className="text-slate-400 text-sm">Loading your brief...</p>
+            <p className="text-[#6b6b6b] text-sm">Loading your brief...</p>
           </div>
         </div>
       </div>
@@ -293,7 +293,7 @@ export default function BrandBriefPage() {
             <aside className="md:col-span-1 bg-slate-900/60 border-r border-slate-800 px-6 py-8">
               <div className="space-y-3 sticky top-8">
                 <div className="mb-6">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Process</h3>
+                  <h3 className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest pl-1">Process</h3>
                 </div>
                 {sections.map((section) => {
                   const active = section.id === currentStep;
@@ -309,18 +309,18 @@ export default function BrandBriefPage() {
                         }`}
                     >
                       <div className={`mt-0.5 h-6 w-6 rounded-full border-2 flex items-center justify-center text-[10px] font-bold transition-colors ${active
-                        ? "border-lime-400 bg-lime-400 text-slate-950"
+                        ? "border-lime-400 bg-lime-400 text-[#14110c]"
                         : done
                           ? "border-lime-400/50 bg-lime-400/20 text-lime-400"
-                          : "border-slate-700 bg-slate-800 text-slate-500"
+                          : "border-slate-700 bg-slate-800 text-[#6b6b6b]"
                         }`}>
                         {done ? <Check className="h-3 w-3" /> : section.id}
                       </div>
                       <div>
-                        <div className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-lime-400" : "text-slate-500"}`}>
+                        <div className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-lime-400" : "text-[#6b6b6b]"}`}>
                           Section {section.id}
                         </div>
-                        <div className={`text-sm font-medium ${active ? "text-white" : "text-slate-400"}`}>
+                        <div className={`text-sm font-medium ${active ? "text-white" : "text-[#6b6b6b]"}`}>
                           {section.title}
                         </div>
                       </div>
@@ -358,7 +358,7 @@ export default function BrandBriefPage() {
                   variant="outline"
                   onClick={handleBack}
                   disabled={currentStep === 1 || submitting}
-                  className="rounded-full px-8 py-6 border-slate-800 hover:bg-slate-900 text-slate-400 hover:text-white transition-all disabled:opacity-0"
+                  className="rounded-full px-8 py-6 border-slate-800 hover:bg-slate-900 text-[#6b6b6b] hover:text-white transition-all disabled:opacity-0"
                 >
                   <ChevronLeft className="h-5 w-5 mr-2" />
                   Back
@@ -367,7 +367,7 @@ export default function BrandBriefPage() {
                 <Button
                   onClick={handleNext}
                   disabled={submitting}
-                  className="rounded-full px-10 py-6 bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold transition-all shadow-[0_0_20px_rgba(163,230,53,0.2)] hover:scale-105 active:scale-95"
+                  className="rounded-full px-10 py-6 bg-lime-400 hover:bg-lime-300 text-[#14110c] font-bold transition-all shadow-[0_0_20px_rgba(163,230,53,0.2)] hover:scale-105 active:scale-95"
                 >
                   {submitting ? (
                     <>

@@ -76,7 +76,7 @@ export function PlatformUpsellModal({
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-amber-500/20 rounded-2xl">
-              <Share2 className="h-6 w-6 text-amber-400" />
+              <Share2 className="h-6 w-6 text-amber-700" />
             </div>
             <DialogTitle className="text-2xl font-bold text-[#14110c]">
               Expand Your Reach
@@ -118,7 +118,7 @@ export function PlatformUpsellModal({
             <div className="flex justify-between items-end">
               <div className="space-y-1">
                 <span className="text-[#6b6b6b] text-xs font-bold uppercase tracking-widest">Instant Payment</span>
-                <div className="text-3xl font-black text-amber-400 tracking-tight">
+                <div className="text-3xl font-black text-amber-700 tracking-tight">
                   ${totalAmount}
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function PlatformUpsellModal({
           <Button
             onClick={handlePayNow}
             disabled={loading || maxAvailable === 0}
-            className="w-full h-14 bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-lg uppercase tracking-widest shadow-[0_0_20px_rgba(251,191,36,0.2)] transition-all active:scale-[0.98]"
+            className="w-full h-14 bg-amber-500 hover:bg-amber-500 text-slate-950 font-black text-lg uppercase tracking-widest shadow-[0_0_20px_rgba(251,191,36,0.2)] transition-all active:scale-[0.98]"
           >
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin" />

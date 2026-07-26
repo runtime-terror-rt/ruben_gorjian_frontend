@@ -251,7 +251,7 @@ export default function PostDetailsModal({
           </div>
           <button 
              onClick={onClose}
-             className="p-2 rounded-full hover:bg-[#e6e1d8] text-slate-500 hover:text-[#14110c] transition-all transform hover:rotate-90"
+             className="p-2 rounded-full hover:bg-[#e6e1d8] text-[#6b6b6b] hover:text-[#14110c] transition-all transform hover:rotate-90"
           >
             <X className="w-6 h-6" />
           </button>
@@ -269,9 +269,9 @@ export default function PostDetailsModal({
              </div>
           ) : !post ? (
              <div className="py-20 text-center">
-                <AlertCircle className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+                <AlertCircle className="w-16 h-16 text-[#14110c] mx-auto mb-4" />
                 <h4 className="text-xl text-[#14110c] font-medium">Data Sync Error</h4>
-                <p className="text-slate-500 text-sm mt-1">This post record could not be retrieved from the cluster.</p>
+                <p className="text-[#6b6b6b] text-sm mt-1">This post record could not be retrieved from the cluster.</p>
              </div>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -279,20 +279,20 @@ export default function PostDetailsModal({
               {/* Core Analytics / Status */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                  <div className="bg-[#e6e1d8]/40 border border-[#d9d4c9]/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Status</span>
+                    <span className="text-[10px] text-[#6b6b6b] font-bold uppercase tracking-wider">Status</span>
                     <StatusPill status={post.status} />
                  </div>
                  <div className="bg-[#e6e1d8]/40 border border-[#d9d4c9]/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Platforms</span>
+                    <span className="text-[10px] text-[#6b6b6b] font-bold uppercase tracking-wider">Platforms</span>
                     <span className="text-sm font-semibold text-[#14110c]">{post.targets.length} connected</span>
                  </div>
                  <div className="bg-[#e6e1d8]/40 border border-[#d9d4c9]/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Media</span>
+                    <span className="text-[10px] text-[#6b6b6b] font-bold uppercase tracking-wider">Media</span>
                     <span className="text-sm font-semibold text-[#14110c]">{allMediaUrls.length > 0 ? `${allMediaUrls.length} file(s)` : "Null"}</span>
                  </div>
                  {/* <div className="bg-[#e6e1d8]/40 border border-[#d9d4c9]/50 p-3 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">TZ</span>
-                    <span className="text-sm font-semibold text-amber-400">{timezoneAbbr}</span>
+                    <span className="text-[10px] text-[#6b6b6b] font-bold uppercase tracking-wider">TZ</span>
+                    <span className="text-sm font-semibold text-amber-700">{timezoneAbbr}</span>
                  </div> */}
               </div>
 
@@ -318,23 +318,23 @@ export default function PostDetailsModal({
                  {/* Left Column: Context */}
                  <div className="space-y-6">
                     <div className="space-y-3">
-                       <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-emerald-400" />
+                       <label className="text-xs font-bold text-[#6b6b6b] uppercase tracking-widest flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-emerald-700" />
                           Caption Strategy
                        </label>
                        <div className="p-4 bg-[#faf8f3] border border-[#d9d4c9] rounded-2xl shadow-inner min-h-[120px] relative overflow-hidden group">
                           <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <ExternalLink className="w-4 h-4 text-slate-600" />
+                             <ExternalLink className="w-4 h-4 text-[#6b6b6b]" />
                           </div>
-                          <p className="text-sm text-[#14110c] leading-relaxed whitespace-pre-wrap selection:bg-amber-400 selection:text-[#14110c]">
-                             {post.caption === '.' ? <span className="text-slate-500 italic">No primary caption provided.</span> : post.caption}
+                          <p className="text-sm text-[#14110c] leading-relaxed whitespace-pre-wrap selection:bg-amber-500 selection:text-[#14110c]">
+                             {post.caption === '.' ? <span className="text-[#6b6b6b] italic">No primary caption provided.</span> : post.caption}
                           </p>
                        </div>
                     </div>
 
                     {post.hashtags && Array.isArray(post.hashtags) && post.hashtags.length > 0 && (
                       <div className="space-y-3">
-                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                         <label className="text-xs font-bold text-[#6b6b6b] uppercase tracking-widest flex items-center gap-2">
                             <Hash className="w-4 h-4 text-sky-400" />
                             Target Hashtags
                          </label>
@@ -351,7 +351,7 @@ export default function PostDetailsModal({
 
                  {/* Right Column: Visual Preview */}
                  <div className="space-y-3">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-bold text-[#6b6b6b] uppercase tracking-widest flex items-center gap-2">
                        <ImageIcon className="w-4 h-4 text-pink-400" />
                        Media Asset
                     </label>
@@ -387,8 +387,8 @@ export default function PostDetailsModal({
                          </div>
                        ) : (
                          <div className="w-full h-full min-h-[200px] flex flex-col items-center justify-center gap-3 bg-[#ffffff]">
-                            <AlertCircle className="w-10 h-10 text-slate-800" />
-                            <span className="text-xs text-slate-600">Visual post component empty.</span>
+                            <AlertCircle className="w-10 h-10 text-[#14110c]" />
+                            <span className="text-xs text-[#6b6b6b]">Visual post component empty.</span>
                          </div>
                        )}
                     </div>
@@ -397,7 +397,7 @@ export default function PostDetailsModal({
 
               {/* Target Platforms Detail */}
               <div className="space-y-4">
-                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                 <label className="text-xs font-bold text-[#6b6b6b] uppercase tracking-widest">
                     Platform Distribution Pipeline
                  </label>
                  <div className="grid grid-cols-1 gap-3">
@@ -419,7 +419,7 @@ export default function PostDetailsModal({
                                   )}
                                </div>
                                {target.publishedAt && (
-                                 <p className="text-[10px] text-slate-500 mt-0.5">
+                                 <p className="text-[10px] text-[#6b6b6b] mt-0.5">
                                     Published {dayjs(target.publishedAt).tz(userTimezone).format('MMM D [at] HH:mm')}
                                  </p>
                                )}
@@ -470,7 +470,7 @@ export default function PostDetailsModal({
                {post?.status !== 'POSTED' && (
                  <Button
                    onClick={handleEdit}
-                   className="flex-1 bg-gradient-to-r from-lime-400 to-lime-500 text-slate-950 font-bold hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all"
+                   className="flex-1 bg-gradient-to-r from-lime-400 to-lime-500 text-[#14110c] font-bold hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all"
                  >
                    <Edit2 className="w-4 h-4 mr-2" />
                    Optimization
