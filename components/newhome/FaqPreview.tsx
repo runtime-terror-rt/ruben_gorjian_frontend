@@ -45,7 +45,7 @@ export default function FaqPreview() {
             </div>
           </div>
           <div className="faq-cta">
-            <Link href="/faq">See all frequently asked questions →</Link>
+            <Link href="/newhome/faq">See all frequently asked questions →</Link>
           </div>
         </div>
       </section>

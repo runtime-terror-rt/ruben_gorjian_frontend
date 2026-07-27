@@ -94,7 +94,7 @@ export function DashboardHeader({
 
       {/* Center: Dynamic Page Title */}
       <div className="flex-1 flex items-center px-4">
-        <h1 className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#8a6d28]">
+        <h1 className="text-base font-semibold text-[#14110c] tracking-tight">
           {currentPageTitle}
         </h1>
       </div>
@@ -154,7 +154,7 @@ export function DashboardHeader({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b] dashboard-theme"
+            className="w-fit min-w-[260px] max-w-[400px] bg-[#ffffff] text-[#6b6b6b] border-[#d9d4c9] shadow-lg rounded-xl"
           >
             <DropdownMenuLabel className="font-normal normal-case tracking-normal">
               <div className="flex flex-col space-y-1">

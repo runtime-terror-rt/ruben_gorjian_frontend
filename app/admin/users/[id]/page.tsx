@@ -556,33 +556,34 @@ export default function AdminUserDetailPage() {
           <p className="text-sm text-[#6b6b6b]">{user?.email}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {user?.isFounder && (
-              <Badge className="bg-lime-300/20 text-lime-700 border-lime-500/40">
+              <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 uppercase text-[10px] font-black tracking-[0.18em]">
                 Founder
               </Badge>
             )}
             <Badge
-              variant={
-                user?.status === "ACTIVE"
-                  ? "default"
-                  : user?.status === "BLOCKED"
-                    ? "destructive"
-                    : "secondary"
-              }
+              variant="outline"
+              className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
+                user?.status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" : 
+                user?.status === "BLOCKED" ? "bg-red-900/10 text-red-900 border-red-900/30" :
+                "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+              }`}
             >
               {user?.status}
             </Badge>
             {subscription && (
               <Badge
-                variant={
-                  subscription.status === "ACTIVE" ? "default" : "secondary"
-                }
+                variant="outline"
+                className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
+                  subscription.status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" :
+                  (subscription.status === "PAST_DUE" || subscription.status === "CANCELED") ? "bg-red-900/10 text-red-900 border-red-900/30" :
+                  "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                }`}
               >
                 {subscription.status}
               </Badge>
             )}
-            <Badge variant="outline">
-              Posting Channel:{" "}
-              {routingState.mode === "FORCE_UPLOAD_POST" ? "Upload-Post" : "Default"}
+            <Badge variant="outline" className="bg-[#faf8f3] text-[#14110c] border-[#d9d4c9] uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5">
+              Posting Channel: {routingState.mode === "FORCE_UPLOAD_POST" ? "Upload-Post" : "Default"}
             </Badge>
           </div>
         </div>
@@ -747,13 +748,13 @@ export default function AdminUserDetailPage() {
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-[#6b6b6b]">Status</span>
-                      <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"} className="h-5">
+                      <Badge variant="outline" className={`h-5 uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${user.status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" : "bg-red-900/10 text-red-900 border-red-900/30"}`}>
                         {user.status}
                       </Badge>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-[#6b6b6b]">Role</span>
-                      <Badge variant="outline" className="h-5">{user.role}</Badge>
+                      <Badge variant="outline" className="h-5 bg-[#faf8f3] text-[#14110c] border-[#d9d4c9] uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5">{user.role}</Badge>
                     </div>
                     <div className="flex justify-between border-b border-white/5 pb-2">
                       <span className="text-[#6b6b6b]">Email Verified</span>
@@ -910,7 +911,7 @@ export default function AdminUserDetailPage() {
                       <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Platforms</span>
                       <div className="flex flex-wrap gap-1">
                         {userQuery.data.brandProfile.fullManagementOnboardingData.platformsToManage?.map(p => (
-                          <Badge key={p} variant="outline" className="text-[10px] h-4">{p}</Badge>
+                          <Badge key={p} variant="outline" className="text-[10px] uppercase font-black tracking-[0.18em] border-[#d9d4c9] bg-[#faf8f3] text-[#14110c] h-5">{p}</Badge>
                         )) ?? "—"}
                       </div>
                     </div>
@@ -918,13 +919,13 @@ export default function AdminUserDetailPage() {
                       <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Brand Personality</span>
                       <div className="flex flex-wrap gap-1">
                         {userQuery.data.brandProfile.fullManagementOnboardingData.brandPersonality?.map(p => (
-                          <Badge key={p} variant="secondary" className="text-[10px] h-4">{p}</Badge>
+                          <Badge key={p} variant="outline" className="text-[10px] uppercase font-black tracking-[0.18em] border-[#d9d4c9] bg-[#e6e1d8]/50 text-[#14110c] h-5">{p}</Badge>
                         )) ?? "—"}
                       </div>
                     </div>
                     <div className="space-y-1">
                       <span className="text-[#6b6b6b] block text-[10px] uppercase tracking-wider">Posting Access</span>
-                      <Badge variant={userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted === "YES" ? "default" : "outline"} className="h-4 text-[10px]">
+                      <Badge variant="outline" className={`h-5 text-[10px] uppercase font-black tracking-[0.18em] px-2 py-0.5 ${userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted === "YES" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" : "bg-[#faf8f3] text-[#14110c] border-[#d9d4c9]"}`}>
                         {userQuery.data.brandProfile.fullManagementOnboardingData.postingAccessGranted ?? "—"}
                       </Badge>
                     </div>

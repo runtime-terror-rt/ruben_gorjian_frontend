@@ -95,25 +95,24 @@ interface SubmissionsResponse {
 
 function StatusBadge({ status }: { status: SubmissionStatus }) {
   const s = status.toUpperCase();
+  const displayStatus = status.replace(/_/g, " ");
   if (s === "RESOLVED") {
     return (
-      <Badge className="bg-[#b08d3e]/20 text-[#b08d3e] border-lime-500/20">
-        Resolved
+      <Badge variant="outline" className="bg-[#b08d3e] text-[#14110c] border-[#b08d3e] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em] shadow-sm">
+        {displayStatus}
       </Badge>
     );
   }
   if (s === "REPLIED") {
     return (
-      <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/20">
-        Replied
+      <Badge variant="outline" className="bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
+        {displayStatus}
       </Badge>
     );
   }
   return (
-    <Badge
-      className="bg-orange-500 text-[#14110c] border-none font-bold px-3 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
-    >
-      Pending
+    <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
+      {displayStatus}
     </Badge>
   );
 }

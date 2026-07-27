@@ -15,7 +15,8 @@ function LoginPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { refresh } = useSessionContext();
-  const redirect = searchParams.get("returnTo") || searchParams.get("redirect") || "/dashboard";
+ const redirect = searchParams.get("redirect") || "/dashboard";
+
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -93,7 +94,7 @@ function LoginPageInner() {
             />
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 ">
             <label
               htmlFor="password"
               className="text-[11px] font-semibold uppercase tracking-[2px] text-[#14110c]"
@@ -127,14 +128,14 @@ function LoginPageInner() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full inline-flex items-center justify-center rounded-sm bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3.5 text-[11px] font-semibold tracking-[2px] uppercase text-white transition-all disabled:cursor-not-allowed disabled:opacity-70 mt-2"
+            className="w-full inline-flex items-center justify-center rounded-sm bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3.5 text-[11px] font-semibold tracking-[2px] uppercase text-white transition-all disabled:cursor-not-allowed disabled:opacity-70 mt-6"
             style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
           >
             {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <div className="relative my-3">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-[#d9d4c9]" />

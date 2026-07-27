@@ -13,7 +13,7 @@ import {
   Trash2,
   XCircle,
   Eye,
-  
+
   CheckCircle2,
   Clock,
   Building2,
@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   flexRender,
   getCoreRowModel,
@@ -210,45 +210,51 @@ type BrandBriefListResponse = {
 
 function StatusBadge({ status }: { status: string }) {
   const s = status.toUpperCase();
+  const displayStatus = status.replace(/_/g, " ");
+
   switch (s) {
     case "PAYMENT_COMPLETED":
       return (
-        <Badge className="bg-[#b08d3e]/20 text-[#b08d3e] border-[#b08d3e]/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest animate-pulse shadow-[0_0_15px_rgba(163,230,53,0.1)]">
+        <Badge variant="outline" className="bg-[#b08d3e] text-[#14110c] border-[#b08d3e] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em] shadow-sm">
           <CheckCircle2 className="h-3 w-3" />
-          PAYMENT_COMPLETED
+          {displayStatus}
         </Badge>
       );
     case "PENDING":
       return (
-        <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-amber-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+        <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
           <Send className="h-3 w-3" />
-          PENDING
+          {displayStatus}
         </Badge>
       );
     case "VIEWED":
       return (
-        <Badge className="bg-cyan-500/10 text-[#b08d3e] border-cyan-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+        <Badge variant="outline" className="bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
           <Eye className="h-3 w-3" />
-          VIEWED
+          {displayStatus}
         </Badge>
       );
     case "SIGNED_UP":
       return (
-        <Badge className="bg-indigo-500/20 text-[#b08d3e] border-indigo-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+        <Badge variant="outline" className="bg-[#e6e1d8]/50 text-[#14110c] border-[#d9d4c9] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
           <User className="h-3 w-3" />
-          SIGNED_UP
+          {displayStatus}
         </Badge>
       );
     case "EXPIRED":
     case "CANCELED":
       return (
-        <Badge variant="destructive" className="bg-red-500/10 text-red-600 border-red-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+        <Badge variant="outline" className="bg-red-900/10 text-red-900 border-red-900/30 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
           <XCircle className="h-3 w-3" />
-          {s}
+          {displayStatus}
         </Badge>
       );
     default:
-      return <Badge variant="outline" className="px-3 py-1 uppercase text-[10px] font-black tracking-widest">{status}</Badge>;
+      return (
+        <Badge variant="outline" className="bg-[#e6e1d8]/50 text-[#14110c] border-[#d9d4c9] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
+          {displayStatus}
+        </Badge>
+      );
   }
 }
 
@@ -286,7 +292,7 @@ export default function EnterprisePlanPage() {
         const err = await response.json();
         throw new Error(err.details || "Failed to generate PDF");
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -382,13 +388,10 @@ export default function EnterprisePlanPage() {
 
   // Queries
   const invitesQuery = useQuery({
-    queryKey: ["admin-invites", search, statusFilter, page],
+    queryKey: ["admin-invites", search, statusFilter],
     queryFn: async () => {
       try {
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: pageSize.toString(),
-        });
+        const params = new URLSearchParams();
         if (search) params.append("search", search);
         if (statusFilter && statusFilter !== "ALL") {
           params.append("status", statusFilter);
@@ -402,6 +405,7 @@ export default function EnterprisePlanPage() {
         throw err;
       }
     },
+    placeholderData: keepPreviousData,
   });
 
   // Details Query
@@ -765,10 +769,18 @@ export default function EnterprisePlanPage() {
     },
   ];
 
+  const tableData = invitesQuery.data?.items ?? [];
   const table = useReactTable({
-    data: invitesQuery.data?.items ?? [],
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination: {
+        pageIndex: page - 1,
+        pageSize: pageSize,
+      }
+    }
   });
 
 
@@ -810,15 +822,15 @@ export default function EnterprisePlanPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <TabsList className="bg-[#ffffff] border border-[#d9d4c9] p-1 rounded-2xl h-14">
-            <TabsTrigger 
-              value="enterprise" 
+            <TabsTrigger
+              value="enterprise"
               className="rounded-xl px-6 h-full data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] font-black uppercase text-[10px] tracking-widest transition-all"
             >
               <ClipboardList className="h-4 w-4 mr-2" />
               Custom Plans
             </TabsTrigger>
-            <TabsTrigger 
-              value="brand-brief" 
+            <TabsTrigger
+              value="brand-brief"
               className="rounded-xl px-6 h-full data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] font-black uppercase text-[10px] tracking-widest transition-all"
             >
               <FileText className="h-4 w-4 mr-2" />
@@ -838,13 +850,13 @@ export default function EnterprisePlanPage() {
                 Sync Data
               </Button>
               <Button
-                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black h-11 px-6 rounded-xl shadow-[0_10px_20px_rgba(163,230,53,0.2)] transition-all active:scale-95"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(176,141,62,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 onClick={() => {
                   resetForm();
                   setIsCreateModalOpen(true);
                 }}
               >
-                <Plus className="h-5 w-5 mr-2 stroke-[3px]" />
+                <Plus className="h-5 w-5 stroke-[3px]" />
                 New Proposal
               </Button>
             </div>
@@ -936,71 +948,71 @@ export default function EnterprisePlanPage() {
                             <div className="space-y-1">
                               <p className="text-[#14110c] font-black text-xl tracking-tight">Sync Failure</p>
                               <p className="text-[#6b6b6b] text-sm max-w-xs mx-auto font-medium">
-                            {(invitesQuery.error as any)?.message || "The neural link to the backend was interrupted unexpectedly."}
-                          </p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-white hover:text-[#14110c] transition-all font-black px-6 uppercase text-[10px] tracking-widest"
-                          onClick={() => invitesQuery.refetch()}
-                        >
-                          <RefreshCw className="h-3 w-3 mr-2" />
-                          Reconnect
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (invitesQuery.data?.items ?? []).length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group cursor-pointer"
-                      onClick={() => router.push(`/admin/enterprise-plan/${row.original.id}`)}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="py-6 px-6 text-center first:text-left">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                {(invitesQuery.error as any)?.message || "The neural link to the backend was interrupted unexpectedly."}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-white hover:text-[#14110c] transition-all font-black px-6 uppercase text-[10px] tracking-widest"
+                              onClick={() => invitesQuery.refetch()}
+                            >
+                              <RefreshCw className="h-3 w-3 mr-2" />
+                              Reconnect
+                            </Button>
+                          </div>
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={columns.length} className="h-80 text-center">
-                      <div className="flex flex-col items-center justify-center gap-4">
-                        <div className="h-20 w-20 rounded-3xl bg-[#ffffff] flex items-center justify-center border border-[#d9d4c9] shadow-inner">
-                          <Building2 className="h-10 w-10 text-[#14110c]" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-[#14110c] font-black text-xl tracking-tight">Pipeline Empty</p>
-                          <p className="text-[#6b6b6b] text-sm max-w-xs mx-auto font-medium">Add your first high-value client to begin tracking their lifecycle.</p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all font-bold px-6"
-                          onClick={() => {
-                            setSearch("");
-                            setStatusFilter("ALL");
-                          }}
+                      </TableRow>
+                    ) : (invitesQuery.data?.items ?? []).length ? (
+                      table.getRowModel().rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group cursor-pointer"
+                          onClick={() => router.push(`/admin/enterprise-plan/${row.original.id}`)}
                         >
-                          Reset Filters
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id} className="py-6 px-6 text-center first:text-left">
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={columns.length} className="h-80 text-center">
+                          <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="h-20 w-20 rounded-3xl bg-[#ffffff] flex items-center justify-center border border-[#d9d4c9] shadow-inner">
+                              <Building2 className="h-10 w-10 text-[#14110c]" />
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-[#14110c] font-black text-xl tracking-tight">Pipeline Empty</p>
+                              <p className="text-[#6b6b6b] text-sm max-w-xs mx-auto font-medium">Add your first high-value client to begin tracking their lifecycle.</p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              className="mt-2 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] rounded-xl hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all font-bold px-6"
+                              onClick={() => {
+                                setSearch("");
+                                setStatusFilter("ALL");
+                              }}
+                            >
+                              Reset Filters
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
 
-          {/* Pagination Footer */}
-          <AdminPagination
-            currentPage={page}
-            totalPages={invitesQuery.data?.total ? Math.ceil(invitesQuery.data.total / pageSize) : 1}
-            totalItems={invitesQuery.data?.total ?? 0}
-            onPageChange={setPage}
-          />
-        </Card>
+              {/* Pagination Footer */}
+              <AdminPagination
+                currentPage={page}
+                totalPages={invitesQuery.data?.total ? Math.ceil(invitesQuery.data.total / pageSize) : 1}
+                totalItems={invitesQuery.data?.total ?? 0}
+                onPageChange={setPage}
+              />
+            </Card>
           </div>
         </TabsContent>
 
@@ -1068,7 +1080,7 @@ export default function EnterprisePlanPage() {
                 </TableBody>
               </Table>
             </div>
-            
+
             {/* BB Pagination Footer */}
             <AdminPagination
               currentPage={bbPage}
@@ -1398,14 +1410,14 @@ export default function EnterprisePlanPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateModalOpen(false)}
-                className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all"
+                className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8] h-12 px-6 rounded-xl font-black uppercase tracking-[0.18em] text-[10px] transition-all"
               >
                 Discard
               </Button>
               <Button
                 form="enterprise-proposal-form"
                 type="submit"
-                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(163,230,53,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black h-12 px-10 rounded-xl shadow-[0_10px_20px_rgba(176,141,62,0.2)] transition-all hover:scale-105 active:scale-95 uppercase tracking-[0.18em] text-[11px]"
                 disabled={createInviteMutation.isPending}
               >
                 {createInviteMutation.isPending ? (
@@ -1562,7 +1574,7 @@ export default function EnterprisePlanPage() {
                     <Button
                       variant="outline"
                       onClick={() => setIsDetailsModalOpen(false)}
-                      className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] h-11 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all"
+                      className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8] h-11 px-8 rounded-xl font-black uppercase tracking-[0.18em] text-[10px] transition-all"
                     >
                       Close Details
                     </Button>
@@ -1902,8 +1914,8 @@ export default function EnterprisePlanPage() {
               Update Authorization
             </div>
             <div className="flex items-center gap-3">
-              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)} className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] h-12 px-6 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-[#e6e1d8] hover:text-[#14110c] transition-all">Discard</Button>
-              <Button form="enterprise-update-form" type="submit" className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black h-12 px-10 rounded-xl shadow-[0_10px_30px_rgba(176,141,62,0.3)] transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]" disabled={updateMutation.isPending}>
+              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)} className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8] h-12 px-6 rounded-xl font-black uppercase tracking-[0.18em] text-[10px] transition-all">Discard</Button>
+              <Button form="enterprise-update-form" type="submit" className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black h-12 px-10 rounded-xl shadow-[0_10px_20px_rgba(176,141,62,0.2)] transition-all hover:scale-105 active:scale-95 uppercase tracking-[0.18em] text-[11px]" disabled={updateMutation.isPending}>
                 {updateMutation.isPending ? <Loader2 className="h-5 w-5 mr-3 animate-spin" /> : <ArrowRight className="h-4 w-4 mr-3 stroke-[3px]" />}
                 Confirm Updates
               </Button>
@@ -2058,9 +2070,9 @@ export default function EnterprisePlanPage() {
                   <div className="h-2 w-2 rounded-full bg-[#b08d3e]" />
                   Intel Verified • {formatDate(details.createdAt)}
                 </div>
-                <Button 
+                <Button
                   onClick={() => setIsBbDetailsOpen(false)}
-                  className="bg-[#ffffff] hover:bg-[#e6e1d8] text-[#14110c] font-black h-12 px-10 rounded-2xl border border-[#d9d4c9] uppercase tracking-widest text-[10px]"
+                  className="bg-[#b08d3e] border border-[#b08d3e] text-[#14110c] hover:bg-[#d9b45c] hover:border-[#d9b45c] hover:text-[#14110c] font-black h-12 px-10 rounded-xl uppercase tracking-[0.18em] text-[11px] transition-all"
                 >
                   Close Intel
                 </Button>

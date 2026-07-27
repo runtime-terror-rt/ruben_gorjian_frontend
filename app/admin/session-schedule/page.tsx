@@ -534,7 +534,7 @@ export default function SessionSchedulePage() {
                           className={cn(
                             "w-full text-left px-1.5 py-1 rounded text-[10px] font-semibold truncate transition-all hover:translate-x-0.5",
                             s.scheduleType === "PHOTO_SESSION"
-                              ? "bg-[#b08d3e]/10 text-[#b08d3e] hover:bg-[#b08d3e]/20"
+                              ? "bg-[#b08d3e]/10 text-[#8a6d28] hover:bg-[#b08d3e]/20"
                               : "bg-indigo-600/10 text-indigo-600 hover:bg-indigo-600/20",
                             (s.status.toUpperCase() === "COMPLETED" ||
                               s.status.toUpperCase() === "COMPLETE") &&

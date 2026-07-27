@@ -13,6 +13,7 @@ import {
   XCircle,
   Clock,
   ExternalLink,
+  Eye,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -875,17 +876,18 @@ export default function BillingPage() {
                         {formatCurrency(invoice.amount, invoice.currency)}
                       </div>
                       <div>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <Badge
+                          variant="outline"
+                          className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
                             invoice.status === "paid"
-                              ? "bg-green-500/20 text-green-300"
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-700"
-                                : "bg-[#e6e1d8]/50 text-[#14110c]"
+                                ? "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                                : "bg-red-900/10 text-red-900 border-red-900/30"
                           }`}
                         >
                           {invoice.status}
-                        </span>
+                        </Badge>
                       </div>
                       <div className="text-xs text-[#6b6b6b]">
                         {invoice.createdAt
@@ -905,9 +907,9 @@ export default function BillingPage() {
                             href={invoice.hostedInvoiceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-[#b08d3e] hover:text-[#8a6d28] hover:underline"
+                            className="inline-flex justify-end text-[#b08d3e] hover:text-[#8a6d28] transition-colors"
                           >
-                            View
+                            <Eye className="h-4 w-4" />
                           </a>
                         ) : (
                           <span className="text-xs text-[#6b6b6b]">—</span>
@@ -943,17 +945,18 @@ export default function BillingPage() {
                     <div className="flex items-center justify-between pt-2 border-t border-[#d9d4c9]">
                       <div>
                         <p className="text-xs text-[#6b6b6b] mb-1">Status</p>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <Badge
+                          variant="outline"
+                          className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
                             invoice.status === "paid"
-                              ? "bg-green-500/20 text-green-300"
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-700"
-                                : "bg-[#e6e1d8]/50 text-[#14110c]"
+                                ? "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                                : "bg-red-900/10 text-red-900 border-red-900/30"
                           }`}
                         >
                           {invoice.status}
-                        </span>
+                        </Badge>
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-[#6b6b6b] mb-1">Date</p>
@@ -978,8 +981,9 @@ export default function BillingPage() {
                           href={invoice.hostedInvoiceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-full rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/30 px-3 py-2 text-xs font-medium text-[#8a6d28] hover:bg-[#b08d3e]/20 transition"
+                          className="inline-flex items-center justify-center w-full gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/30 px-3 py-2 text-xs font-medium text-[#8a6d28] hover:bg-[#b08d3e]/20 transition"
                         >
+                          <Eye className="h-4 w-4" />
                           View Invoice
                         </a>
                       </div>

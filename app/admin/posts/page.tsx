@@ -15,6 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Table,
   TableBody,
   TableCell,
@@ -631,36 +636,36 @@ export default function AdminPostsPage() {
     switch (status) {
       case "POSTED":
         return (
-          <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30">
+          <Badge className="w-fit bg-[#14110c] text-white border-transparent font-medium hover:bg-[#14110c]/90">
             Published
           </Badge>
         );
       case "SCHEDULED":
         return (
-          <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30">
+          <Badge className="w-fit bg-[#b08d3e]/15 text-[#8a6d28] border-[#b08d3e]/30 font-medium">
             Scheduled
           </Badge>
         );
       case "DRAFT":
         return (
-          <Badge className="bg-[#e6e1d8]/40 text-[#6b6b6b] border-[#d9d4c9]/30">
+          <Badge className="w-fit bg-[#e6e1d8] text-[#6b6b6b] border-[#d9d4c9] font-medium">
             Draft
           </Badge>
         );
       case "FAILED":
         return (
-          <Badge className="bg-rose-500/20 text-rose-400 border-rose-500/30">
+          <Badge className="w-fit bg-rose-500/10 text-rose-700 border-rose-500/20 font-medium">
             Failed
           </Badge>
         );
       case "PUBLISHING":
         return (
-          <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30 animate-pulse">
+          <Badge className="w-fit bg-[#b08d3e] text-[#14110c] border-transparent font-medium animate-pulse">
             Publishing
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="w-fit font-medium text-[#6b6b6b] border-[#d9d4c9]">{status}</Badge>;
     }
   };
 
@@ -860,38 +865,41 @@ export default function AdminPostsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 items-start">
                           {getStatusBadge(post.status)}
                           {post.status === "FAILED" &&
                             (post.failureReason ||
                               post.targets?.some(
                                 (t: any) => t.errorMessage || t.failureReason,
                               )) && (
-                              <span
-                                className="text-[10px] text-rose-400 max-w-[150px] truncate"
-                                title={
-                                  post.failureReason ||
-                                  post.targets?.find(
-                                    (t: any) =>
-                                      t.errorMessage || t.failureReason,
-                                  )?.errorMessage ||
-                                  post.targets?.find(
-                                    (t: any) =>
-                                      t.errorMessage || t.failureReason,
-                                  )?.failureReason ||
-                                  "Failed"
-                                }
-                              >
-                                {post.failureReason ||
-                                  post.targets?.find(
-                                    (t: any) =>
-                                      t.errorMessage || t.failureReason,
-                                  )?.errorMessage ||
-                                  post.targets?.find(
-                                    (t: any) =>
-                                      t.errorMessage || t.failureReason,
-                                  )?.failureReason}
-                              </span>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <span className="text-[10px] text-rose-400 max-w-[150px] truncate cursor-pointer hover:underline underline-offset-2">
+                                    {post.failureReason ||
+                                      post.targets?.find(
+                                        (t: any) => t.errorMessage || t.failureReason,
+                                      )?.errorMessage ||
+                                      post.targets?.find(
+                                        (t: any) => t.errorMessage || t.failureReason,
+                                      )?.failureReason}
+                                  </span>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80 bg-[#ffffff] border border-[#d9d4c9] p-3 shadow-md rounded-lg" align="start">
+                                  <div className="flex flex-col gap-1.5">
+                                    <span className="text-sm font-semibold text-rose-600">Error Details</span>
+                                    <p className="text-xs text-[#6b6b6b] break-words whitespace-pre-wrap">
+                                      {post.failureReason ||
+                                        post.targets?.find(
+                                          (t: any) => t.errorMessage || t.failureReason,
+                                        )?.errorMessage ||
+                                        post.targets?.find(
+                                          (t: any) => t.errorMessage || t.failureReason,
+                                        )?.failureReason ||
+                                        "An unknown error occurred."}
+                                    </p>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
                             )}
                         </div>
                       </TableCell>
@@ -917,11 +925,12 @@ export default function AdminPostsPage() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
-                              className="h-8 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] flex items-center gap-1 px-3"
+                              className="h-8 w-8 p-0 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c] data-[state=open]:bg-[#e6e1d8] data-[state=open]:text-[#14110c]"
                             >
-                              Action <ChevronDown className="h-3 w-3" />
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Open menu</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent

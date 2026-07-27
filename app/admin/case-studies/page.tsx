@@ -230,7 +230,7 @@ function TagInput({
                 add(draft);
                 setDraft("");
               }}
-              
+
             >
               <Plus className="h-4 w-4 text-[#14110c]" size={30} />
             </button>
@@ -518,7 +518,7 @@ export default function AdminCaseStudiesPage() {
 
   const onInvalid = (errors: any) => {
     const firstError = Object.keys(errors)[0];
-    
+
     const messages: Record<string, string> = {
       title: "Oops! You forgot to give your case study a title.",
       location: "We need a location for this case study to proceed.",
@@ -658,11 +658,12 @@ export default function AdminCaseStudiesPage() {
                       </TableCell>
                       <TableCell>
                         <Badge
+                          variant="outline"
                           className={cn(
-                            "rounded-full",
+                            "rounded-full uppercase text-[10px] font-black tracking-[0.18em] px-3",
                             status === "ACTIVE"
-                              ? "bg-emerald-500/15 text-emerald-700 border border-emerald-500/30"
-                              : "bg-rose-500/10 text-rose-300 border border-rose-500/20",
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
+                              : "bg-red-900/10 text-red-900 border-red-900/30",
                           )}
                         >
                           {status}
@@ -1071,51 +1072,51 @@ export default function AdminCaseStudiesPage() {
                         </div>
                         {selectedImages.length > 0
                           ? selectedImages.map((file, i) => (
+                            <div
+                              key={`new-${i}`}
+                              className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] overflow-hidden relative group"
+                            >
+                              <FilePreview
+                                file={file}
+                                className="h-full w-full object-cover opacity-80"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(i)}
+                                className="absolute top-1 right-1 bg-rose-500/80 text-[#14110c] rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
+                                <span className="text-[10px] font-bold text-[#14110c] px-2 text-center truncate w-full">
+                                  {file.name}
+                                </span>
+                              </div>
+                            </div>
+                          ))
+                          : editing?.images &&
+                            Array.isArray(editing.images) &&
+                            editing.images.length > 0
+                            ? editing.images.map((img: any, i: number) => (
                               <div
-                                key={`new-${i}`}
+                                key={`existing-${i}`}
                                 className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] overflow-hidden relative group"
                               >
-                                <FilePreview
-                                  file={file}
+                                <img
+                                  src={getMediaUrl(img) || ""}
+                                  alt=""
                                   className="h-full w-full object-cover opacity-80"
                                 />
-                                <button
-                                  type="button"
-                                  onClick={() => removeImage(i)}
-                                  className="absolute top-1 right-1 bg-rose-500/80 text-[#14110c] rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-rose-500"
-                                >
-                                  <X className="h-3 w-3" />
-                                </button>
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity pointer-events-none">
-                                  <span className="text-[10px] font-bold text-[#14110c] px-2 text-center truncate w-full">
-                                    {file.name}
-                                  </span>
-                                </div>
                               </div>
                             ))
-                          : editing?.images &&
-                              Array.isArray(editing.images) &&
-                              editing.images.length > 0
-                            ? editing.images.map((img: any, i: number) => (
-                                <div
-                                  key={`existing-${i}`}
-                                  className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] overflow-hidden relative group"
-                                >
-                                  <img
-                                    src={getMediaUrl(img) || ""}
-                                    alt=""
-                                    className="h-full w-full object-cover opacity-80"
-                                  />
-                                </div>
-                              ))
                             : [1, 2, 3].map((i) => (
-                                <div
-                                  key={`placeholder-${i}`}
-                                  className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] flex items-center justify-center"
-                                >
-                                  <ImageIcon className="h-6 w-6 text-[#14110c]" />
-                                </div>
-                              ))}
+                              <div
+                                key={`placeholder-${i}`}
+                                className="aspect-square rounded-2xl bg-[#ffffff]/60 border border-[#d9d4c9] flex items-center justify-center"
+                              >
+                                <ImageIcon className="h-6 w-6 text-[#14110c]" />
+                              </div>
+                            ))}
                       </div>
                     </div>
                   </div>
@@ -1141,8 +1142,8 @@ export default function AdminCaseStudiesPage() {
                         <div className="flex-1 bg-[#e6e1d8]/40 border border-[#d9d4c9] rounded-xl px-4 flex items-center justify-between h-12 text-[#14110c] text-sm overflow-hidden">
                           {videoFiles && videoFiles.length > 0 ? (
                             <span className="truncate text-[#b08d3e] font-bold" title={videoFiles[0].name}>
-                              {videoFiles[0].name.length > 20 
-                                ? videoFiles[0].name.substring(0, 20) + "..." 
+                              {videoFiles[0].name.length > 20
+                                ? videoFiles[0].name.substring(0, 20) + "..."
                                 : videoFiles[0].name}
                             </span>
                           ) : editing?.videoUrl ||

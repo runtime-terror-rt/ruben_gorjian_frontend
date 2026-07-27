@@ -855,9 +855,9 @@ export default function AdminPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-[#14110c] to-[#14110c] ring-1 ring-white/10 shadow-lg">
-                <Activity className="h-5 w-5 text-[#b08d3e]" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#b08d3e] ring-2 ring-[#14110c] animate-pulse" />
+              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-[#b08d3e]/10 text-[#b08d3e] ring-1 ring-[#b08d3e]/20 shadow-sm">
+                <Activity className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#b08d3e] ring-2 ring-[#ffffff] animate-pulse" />
               </div>
               <div>
                 <h4 className="text-base font-black text-[#14110c] tracking-tight">Recent Platform Activity</h4>
@@ -1389,21 +1389,23 @@ function StatusBadge({ status, small }: { status: string; small?: boolean }) {
   const styles =
     normalized === "active" ||
     normalized === "scheduled" ||
-    normalized === "posted"
-      ? "bg-lime-300/20 text-lime-700 border-lime-500/40"
+    normalized === "posted" ||
+    normalized === "completed" ||
+    normalized === "payment_completed"
+      ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
       : normalized === "failed" ||
           normalized === "canceled" ||
           normalized === "past_due"
-        ? "bg-red-300/10 text-red-600 border-red-500/30"
+        ? "bg-red-900/10 text-red-900 border-red-900/30"
         : "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]";
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2 ${
-        small ? "py-0.5 text-[10px]" : "py-1 text-[11px]"
-      } font-semibold ${styles}`}
+      className={`inline-flex items-center rounded-full border px-3 ${
+        small ? "py-0.5 text-[9px]" : "py-1 text-[10px]"
+      } uppercase font-black tracking-[0.18em] ${styles}`}
     >
-      {status.toLowerCase().replace(/_/g, " ")}
+      {status.replace(/_/g, " ")}
     </span>
   );
 }

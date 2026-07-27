@@ -1,15 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { 
-  Clock, 
+import {
+  Clock,
   CheckCircle,
-  CreditCard, 
-  Search, 
-  RefreshCw, 
-  MoreHorizontal, 
-  Calendar, 
-  AlertCircle, 
+  CreditCard,
+  Search,
+  RefreshCw,
+  MoreHorizontal,
+  Calendar,
+  AlertCircle,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
@@ -17,10 +17,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  flexRender, 
-  getCoreRowModel, 
-  useReactTable, 
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
   getPaginationRowModel,
   ColumnDef,
   VisibilityState
@@ -32,13 +32,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   Table,
@@ -93,7 +93,7 @@ type AdminInvoice = {
   hostedInvoiceUrl: string | null;
 };
 
-type ConfirmAction = 
+type ConfirmAction =
   | { type: "cancel-schedule"; subscription: AdminSubscription }
   | { type: "cancel-immediate"; subscription: AdminSubscription }
   | { type: "resume"; subscription: AdminSubscription }
@@ -104,17 +104,18 @@ type ConfirmAction =
 
 function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPeriodEnd: boolean }) {
   const s = status.toUpperCase();
+  const displayStatus = status.replace(/_/g, " ");
   if (s === "ACTIVE") {
     if (cancelAtPeriodEnd) {
       return (
-        <Badge className="bg-amber-500 text-black border-amber-500 font-black px-3 py-1.5 flex items-center gap-1.5 shadow-[0_0_20px_rgba(251,191,36,0.35)] uppercase text-[11px] tracking-wide whitespace-nowrap">
-          <Clock className="h-4 w-4 flex-shrink-0" />
+        <Badge variant="outline" className="bg-[#b08d3e] text-[#14110c] border-[#b08d3e] font-black px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] tracking-[0.18em] shadow-sm whitespace-nowrap">
+          <Clock className="h-3 w-3 flex-shrink-0" />
           Scheduled to Cancel
         </Badge>
       );
     }
     return (
-      <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-lime-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+      <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
         <CheckCircle className="h-3 w-3" />
         Active
       </Badge>
@@ -122,7 +123,7 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
   }
   if (s === "CANCELED" || s === "CANCELLED") {
     return (
-      <Badge variant="destructive" className="bg-red-500/10 text-red-600 border-red-500/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+      <Badge variant="outline" className="bg-red-900/10 text-red-900 border-red-900/30 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
         <AlertCircle className="h-3 w-3" />
         Canceled
       </Badge>
@@ -130,13 +131,13 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
   }
   if (s === "INCOMPLETE") {
     return (
-      <Badge variant="secondary" className="bg-[#e6e1d8]/30 text-[#6b6b6b] border-[#d9d4c9]/20 px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-widest">
+      <Badge variant="outline" className="bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9] px-3 py-1 flex items-center gap-1.5 uppercase text-[10px] font-black tracking-[0.18em]">
         <RefreshCw className="h-3 w-3" />
         Incomplete
       </Badge>
     );
   }
-  return <Badge variant="outline" className="px-3 py-1 uppercase text-[10px] font-black tracking-widest">{status}</Badge>;
+  return <Badge variant="outline" className="bg-[#e6e1d8]/50 text-[#14110c] border-[#d9d4c9] px-3 py-1 uppercase text-[10px] font-black tracking-[0.18em]">{displayStatus}</Badge>;
 }
 
 function formatDate(dateStr: string | null) {
@@ -236,7 +237,7 @@ export default function AdminSubscriptionsPage() {
       header: "User",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="font-medium text-[#14110c]">{row.original.userEmail}</span>
+          <span className="font-medium text-black">{row.original.userEmail}</span>
           <span className="text-[10px] text-[#6b6b6b] font-mono">{row.original.userId}</span>
         </div>
       ),
@@ -246,7 +247,7 @@ export default function AdminSubscriptionsPage() {
       header: "Plan",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="text-[#14110c]">{row.original.planName}</span>
+          <span className="text-black">{row.original.planName}</span>
           <span className="text-[10px] text-[#6b6b6b]">{row.original.planCategory}</span>
         </div>
       ),
@@ -260,7 +261,7 @@ export default function AdminSubscriptionsPage() {
       accessorKey: "priceType",
       header: "Type",
       cell: ({ row }) => (
-        <Badge variant={row.original.priceType === "FOUNDER" ? "secondary" : "outline"} className="text-[10px] h-5 border-[#d9d4c9] bg-[#e6e1d8]/50 text-[#14110c]">
+        <Badge variant={row.original.priceType === "FOUNDER" ? "secondary" : "outline"} className="text-[10px] h-5 border-[#d9d4c9] bg-[#e6e1d8]/50 text-black">
           {row.original.priceType}
         </Badge>
       ),
@@ -292,38 +293,38 @@ export default function AdminSubscriptionsPage() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8]">
+              <Button variant="ghost" className="h-8 w-8 p-0 text-[#6b6b6b] hover:text-black hover:bg-[#e6e1d8]">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 bg-[#ffffff] border-[#d9d4c9]">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => setConfirmAction({ type: "refresh", subscription: sub })}
                 className="hover:bg-[#e6e1d8] cursor-pointer"
               >
                 <RefreshCw className="mr-2 h-4 w-4" /> Sync from Stripe
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => setInvoiceUserId(sub.userId)}
                 className="hover:bg-[#e6e1d8] cursor-pointer"
               >
                 <CreditCard className="mr-2 h-4 w-4" /> View Invoices
               </DropdownMenuItem>
-              
+
               <DropdownMenuSeparator className="bg-[#e6e1d8]" />
-              
+
               {sub.status === "ACTIVE" && !sub.cancelAtPeriodEnd && (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "cancel-schedule", subscription: sub })}
                   className="hover:bg-[#e6e1d8] cursor-pointer text-amber-700"
                 >
                   Schedule Cancel
                 </DropdownMenuItem>
               )}
-              
+
               {sub.cancelAtPeriodEnd && (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "resume", subscription: sub })}
                   className="hover:bg-[#b08d3e]/10 cursor-pointer text-[#b08d3e] font-medium"
                 >
@@ -332,7 +333,7 @@ export default function AdminSubscriptionsPage() {
               )}
 
               {sub.status !== "CANCELED" && (
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "cancel-immediate", subscription: sub })}
                   className="hover:bg-red-500/10 cursor-pointer text-red-600"
                 >
@@ -360,12 +361,12 @@ export default function AdminSubscriptionsPage() {
   const handleConfirmAction = () => {
     if (!confirmAction) return;
     const { type, subscription } = confirmAction;
-    
+
     if (type === "refresh") refreshMutation.mutate(subscription.userId);
     if (type === "cancel-schedule") cancelScheduleMutation.mutate(subscription.userId);
     if (type === "cancel-immediate") cancelImmediateMutation.mutate(subscription.userId);
     if (type === "resume") resumeMutation.mutate(subscription.userId);
-    
+
     setConfirmAction(null);
   };
 
@@ -373,14 +374,14 @@ export default function AdminSubscriptionsPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-[#14110c]">Subscriptions</h1>
+          <h1 className="text-2xl font-semibold text-black">Subscriptions</h1>
           <p className="text-sm text-[#6b6b6b]">Real-time management for Stripe billing and user plans.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8]"
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-[#d9d4c9] bg-[#ffffff] text-black hover:bg-[#e6e1d8]"
             onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] })}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${subscriptionsQuery.isFetching ? "animate-spin" : ""}`} />
@@ -395,8 +396,8 @@ export default function AdminSubscriptionsPage() {
           <label className="text-[10px] uppercase font-bold text-[#6b6b6b] tracking-widest pl-1">Search User</label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b6b]" />
-            <Input 
-              placeholder="Filter by email or user ID..." 
+            <Input
+              placeholder="Filter by email or user ID..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-[#faf8f3] shadow-sm border-[#d9d4c9] rounded-md focus-visible:ring-lime-500/50 h-11"
@@ -405,9 +406,9 @@ export default function AdminSubscriptionsPage() {
         </div>
         <div className="w-full lg:w-48 space-y-2">
           <label className="text-[10px] uppercase font-bold text-[#6b6b6b] tracking-widest pl-1">Status</label>
-          <Select 
+          <Select
             id="status-filter"
-            value={statusFilter} 
+            value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="bg-[#faf8f3] shadow-sm border-[#d9d4c9] rounded-md h-11"
           >
@@ -478,49 +479,47 @@ export default function AdminSubscriptionsPage() {
       <Dialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
         <DialogContent className="bg-[#ffffff] border-[#d9d4c9]">
           <DialogHeader>
-            <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
-              confirmAction?.type === 'cancel-immediate' ? 'bg-red-500/20' : 'bg-amber-500/20'
-            }`}>
-              <AlertCircle className={`h-6 w-6 ${
-                confirmAction?.type === 'cancel-immediate' ? 'text-red-600' : 'text-amber-700'
-              }`} />
+            <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center mb-4 ${confirmAction?.type === 'cancel-immediate' ? 'bg-red-500/20' : 'bg-amber-500/20'
+              }`}>
+              <AlertCircle className={`h-6 w-6 ${confirmAction?.type === 'cancel-immediate' ? 'text-red-600' : 'text-amber-700'
+                }`} />
             </div>
             <DialogTitle className="text-center text-xl">
-              {confirmAction?.type === 'cancel-immediate' ? 'Cancel Immediately?' : 
-               confirmAction?.type === 'cancel-schedule' ? 'Schedule Cancellation?' :
-               confirmAction?.type === 'resume' ? 'Resume Subscription?' : 'Sync Subscription?'}
+              {confirmAction?.type === 'cancel-immediate' ? 'Cancel Immediately?' :
+                confirmAction?.type === 'cancel-schedule' ? 'Schedule Cancellation?' :
+                  confirmAction?.type === 'resume' ? 'Resume Subscription?' : 'Sync Subscription?'}
             </DialogTitle>
             <DialogDescription className="text-center text-[#6b6b6b] mt-2">
-              {confirmAction?.type === 'cancel-immediate' ? 
+              {confirmAction?.type === 'cancel-immediate' ?
                 'This will terminate the subscription with Stripe right now. The user will lose access immediately.' :
-               confirmAction?.type === 'cancel-schedule' ? 
-                'The user will keep access until the end of the current billing cycle.' :
-               confirmAction?.type === 'resume' ?
-                'This will undo the scheduled cancellation and allow the subscription to renew normally.' :
-                'This will fetch the latest status and period dates directly from Stripe.'}
+                confirmAction?.type === 'cancel-schedule' ?
+                  'The user will keep access until the end of the current billing cycle.' :
+                  confirmAction?.type === 'resume' ?
+                    'This will undo the scheduled cancellation and allow the subscription to renew normally.' :
+                    'This will fetch the latest status and period dates directly from Stripe.'}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-4 sm:justify-center">
-            <Button 
-              variant="outline" 
-              onClick={() => setConfirmAction(null)} 
-              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-2 sm:order-1"
+            <Button
+              variant="outline"
+              onClick={() => setConfirmAction(null)}
+              className="border-[#d9d4c9] bg-[#ffffff] text-black hover:bg-[#e6e1d8] hover:text-black font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-2 sm:order-1"
             >
               Go Back
             </Button>
-            <Button 
+            <Button
               variant={confirmAction?.type === 'cancel-immediate' ? 'destructive' : 'default'}
               onClick={handleConfirmAction}
               className={cn(
                 "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base order-1 sm:order-2",
-                confirmAction?.type === 'cancel-immediate' ? 'bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none' : 
-                confirmAction?.type === 'resume' ? 'bg-[#b08d3e] hover:bg-lime-600 text-[#14110c] shadow-[0_15px_30px_rgba(34,197,94,0.3)]' :
-                'bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] shadow-[0_15px_30px_rgba(163,230,53,0.3)]'
+                confirmAction?.type === 'cancel-immediate' ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none' :
+                  confirmAction?.type === 'resume' ? 'bg-[#b08d3e] hover:bg-lime-600 text-black shadow-[0_15px_30px_rgba(34,197,94,0.3)]' :
+                    'bg-[#b08d3e] hover:bg-[#e6e1d8] text-black shadow-[0_15px_30px_rgba(163,230,53,0.3)]'
               )}
               disabled={
-                refreshMutation.isPending || 
-                cancelScheduleMutation.isPending || 
-                cancelImmediateMutation.isPending || 
+                refreshMutation.isPending ||
+                cancelScheduleMutation.isPending ||
+                cancelImmediateMutation.isPending ||
                 resumeMutation.isPending
               }
             >
@@ -542,7 +541,7 @@ export default function AdminSubscriptionsPage() {
               Billing history and hosted invoice links from Stripe.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex-1 overflow-auto mt-4 px-1">
             <Table>
               <TableHeader className="sticky top-0 bg-[#faf8f3]">
@@ -556,31 +555,30 @@ export default function AdminSubscriptionsPage() {
               </TableHeader>
               <TableBody>
                 {invoicesQuery.isLoading ? (
-                   Array.from({ length: 3 }).map((_, i) => (
+                  Array.from({ length: 3 }).map((_, i) => (
                     <TableRow key={i} className="animate-pulse border-[#d9d4c9]">
                       <TableCell colSpan={5} className="h-12 bg-[#ffffff]" />
                     </TableRow>
                   ))
                 ) : invoicesQuery.data?.items?.length ? (
                   invoicesQuery.data.items.map((inv) => (
-                    <TableRow key={inv.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors text-[#14110c]">
+                    <TableRow key={inv.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors text-black">
                       <TableCell className="font-mono text-[10px]">{inv.number ?? inv.id.slice(0, 8)}</TableCell>
-                      <TableCell className="font-bold text-[#14110c]">{formatAmount(inv.amount, inv.currency)}</TableCell>
+                      <TableCell className="font-bold text-black">{formatAmount(inv.amount, inv.currency)}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={`h-4 text-[9px] ${
-                          inv.status === 'paid' ? 'border-lime-500/50 text-[#b08d3e]' : ''
-                        }`}>
+                        <Badge variant="outline" className={`h-4 text-[9px] ${inv.status === 'paid' ? 'border-lime-500/50 text-[#b08d3e]' : ''
+                          }`}>
                           {inv.status.toUpperCase()}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs">{formatDate(inv.createdAt)}</TableCell>
                       <TableCell className="text-right">
                         {inv.hostedInvoiceUrl && (
-                          <a 
-                            href={inv.hostedInvoiceUrl} 
-                            target="_blank" 
+                          <a
+                            href={inv.hostedInvoiceUrl}
+                            target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] text-[#b08d3e] hover:text-[#14110c] transition-colors"
+                            className="inline-flex items-center gap-1 text-[10px] text-[#b08d3e] hover:text-black transition-colors"
                           >
                             View <ExternalLink className="h-3 w-3" />
                           </a>
@@ -591,22 +589,22 @@ export default function AdminSubscriptionsPage() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center text-[#6b6b6b]">
-                       No invoices found for this user.
+                      No invoices found for this user.
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
-          
+
           <div className="mt-6 pt-4 border-t border-white/5">
-             <Button 
-               variant="outline" 
-               className="w-full border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base" 
-               onClick={() => setInvoiceUserId(null)}
-             >
-               Close History
-             </Button>
+            <Button
+              variant="outline"
+              className="w-full border-[#d9d4c9] bg-[#ffffff] text-black hover:bg-[#e6e1d8] hover:text-black font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              onClick={() => setInvoiceUserId(null)}
+            >
+              Close History
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

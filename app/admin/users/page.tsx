@@ -319,7 +319,7 @@ export default function AdminUsersPage() {
         header: "Founder",
         cell: ({ row }) =>
           row.original.isFounder ? (
-            <Badge className="bg-lime-300/20 text-lime-700 border-lime-500/40">Yes</Badge>
+            <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 uppercase text-[10px] font-black tracking-[0.18em]">Yes</Badge>
           ) : (
             <span className="text-xs text-[#6b6b6b]">No</span>
           ),
@@ -329,9 +329,9 @@ export default function AdminUsersPage() {
         header: "Onboarding",
         cell: ({ row }) =>
           row.original.onboardingCompleted ? (
-            <Badge variant="outline" className="text-[#b08d3e] border-[#b08d3e]/30">Done</Badge>
+            <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 uppercase text-[10px] font-black tracking-[0.18em]">Done</Badge>
           ) : (
-            <Badge variant="outline" className="text-orange-400 border-orange-400/30">Pending</Badge>
+            <Badge variant="outline" className="bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9] uppercase text-[10px] font-black tracking-[0.18em]">Pending</Badge>
           ),
       },
       {
@@ -341,7 +341,7 @@ export default function AdminUsersPage() {
           const sub = row.original.subscriptions[0];
           return sub ? (
             <div className="flex flex-col gap-1">
-              <Badge variant="outline" className="text-[10px] w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-600">
+              <Badge variant="outline" className="text-[10px] uppercase font-black tracking-[0.18em] w-fit border-[#d9d4c9] bg-[#e6e1d8]/50 text-[#14110c]">
                 {sub.planCode}
               </Badge>
               {sub.priceType && (
@@ -363,7 +363,7 @@ export default function AdminUsersPage() {
           const s = sub.status.toUpperCase();
           if (s === "ACTIVE" && sub.cancelAtPeriodEnd) {
             return (
-              <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 font-black px-2 py-0.5 flex items-center gap-1 animate-pulse uppercase text-[10px] tracking-widest">
+              <Badge variant="outline" className="bg-[#b08d3e] text-[#14110c] border-[#b08d3e] font-black px-2 py-0.5 flex items-center gap-1 uppercase text-[10px] tracking-[0.18em] shadow-sm">
                 <Clock className="h-2.5 w-2.5" />
                 Scheduled Cancel
               </Badge>
@@ -372,14 +372,13 @@ export default function AdminUsersPage() {
 
           return (
             <Badge
-              variant={
-                s === "ACTIVE"
-                  ? "default"
-                  : s === "PAST_DUE" || s === "CANCELED"
-                    ? "destructive"
-                    : "secondary"
-              }
-              className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5"
+              variant="outline"
+              className={`text-[10px] uppercase font-black tracking-[0.18em] px-2 py-0.5 ${s === "ACTIVE"
+                ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
+                : s === "PAST_DUE" || s === "CANCELED"
+                  ? "bg-red-900/10 text-red-900 border-red-900/30"
+                  : "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                }`}
             >
               {s}
             </Badge>
@@ -419,8 +418,11 @@ export default function AdminUsersPage() {
           const status = row.original.status;
           return (
             <Badge
-              variant={status === "ACTIVE" ? "default" : status === "BLOCKED" ? "destructive" : "secondary"}
-              className="text-xs"
+              variant="outline"
+              className={`text-[10px] uppercase font-black tracking-[0.18em] px-2 py-0.5 ${status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" :
+                status === "BLOCKED" ? "bg-red-900/10 text-red-900 border-red-900/30" :
+                  "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                }`}
             >
               {status}
             </Badge>
@@ -579,7 +581,7 @@ export default function AdminUsersPage() {
             placeholder="Search by name, email, or ID"
             value={filters.search}
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value, page: 1 }))}
-            className="h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm text-[#14110c] placeholder:text-[#6b6b6b]"
+            className="h-10 bg-transparent border border-[#d9d4c9] shadow-sm text-[#14110c] placeholder:text-[#6b6b6b]"
           />
         </div>
         {/* <div>

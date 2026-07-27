@@ -20,6 +20,9 @@ import {
   ShieldCheck,
   MessageSquare,
   AlertCircle,
+  Briefcase,
+  CircleHelp,
+  Crown,
 } from "lucide-react";
 import { useSessionContext } from "@/context/SessionContext";
 
@@ -53,7 +56,7 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         label: "Client Workspace",
         href: "/admin/client-workspace",
-        icon: Users,
+        icon: Briefcase,
         permission: "POST_MANAGE",
       },
       {
@@ -71,7 +74,7 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         label: "Custom Plans",
         href: "/admin/enterprise-plan",
-        icon: ShieldCheck,
+        icon: Crown,
       },
       {
         label: "Coupons",
@@ -126,7 +129,7 @@ export const NAV_SECTIONS: NavSection[] = [
       {
         label: "FAQ",
         href: "/admin/faq",
-        icon: BookOpen,
+        icon: CircleHelp,
         permission: "FAQ",
       },
       {
