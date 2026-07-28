@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { useSessionContext } from "@/context/SessionContext";
 
 function LoginPageInner() {
   const [submitting, setSubmitting] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +16,11 @@ function LoginPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { refresh } = useSessionContext();
- const redirect = searchParams.get("redirect") || "/dashboard";
+  const redirect = searchParams.get("redirect") || "/dashboard";
 
-
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
@@ -27,6 +30,7 @@ function LoginPageInner() {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
+    let isSuccess = false;
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -45,6 +49,7 @@ function LoginPageInner() {
       const role = body?.role || body?.user?.role;
       const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
       const destination = (isAdmin && redirect === "/dashboard") ? "/admin" : redirect;
+      isSuccess = true;
       router.push(destination);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unable to login.";
@@ -53,7 +58,9 @@ function LoginPageInner() {
         setSuccess("Not seeing the email? Resend the verification link below.");
       }
     } finally {
-      setSubmitting(false);
+      if (!isSuccess) {
+        setSubmitting(false);
+      }
     }
   }
 
@@ -127,11 +134,11 @@ function LoginPageInner() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={!mounted || submitting}
             className="w-full inline-flex items-center justify-center rounded-sm bg-[#14110c] hover:bg-[#b08d3e] px-6 py-3.5 text-[11px] font-semibold tracking-[2px] uppercase text-white transition-all disabled:cursor-not-allowed disabled:opacity-70 mt-6"
             style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
           >
-            {submitting ? "Signing in..." : "Sign in"}
+            {!mounted ? "Loading..." : submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 

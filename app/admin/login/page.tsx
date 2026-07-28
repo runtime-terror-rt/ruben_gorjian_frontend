@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
   // Redirect if already logged in as admin
   useEffect(() => {
     if (sessionLoading) return;
-    
+
     const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
     if (isAdmin) {
       router.replace("/admin");
@@ -28,6 +28,7 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    let isSuccess = false;
     try {
       const res = await fetch("/api/auth/admin-login", {
         method: "POST",
@@ -40,12 +41,15 @@ export default function AdminLoginPage() {
         throw new Error(data?.error || "Login failed");
       }
       await refresh();
+      isSuccess = true;
       router.push("/admin");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Login failed";
       setError(message);
     } finally {
-      setLoading(false);
+      if (!isSuccess) {
+        setLoading(false);
+      }
     }
   };
 

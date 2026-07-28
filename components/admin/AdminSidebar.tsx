@@ -265,9 +265,14 @@ export function AdminSidebar({
                       const Icon = item.icon;
                       const active = isActive(item.href);
                       return (
-                        <button
+                        <Link
                           key={item.href}
-                          onClick={() => handleNavClick(item.href)}
+                          href={item.href}
+                          onClick={() => {
+                            if (isMobile && onClose) {
+                              onClose();
+                            }
+                          }}
                           className={cn(
                             "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                             active
@@ -282,7 +287,7 @@ export function AdminSidebar({
                               {item.badge}
                             </span>
                           )}
-                        </button>
+                        </Link>
                       );
                     })}
                   </div>
@@ -395,9 +400,9 @@ export function AdminSidebar({
                 const Icon = item.icon;
                 const active = isActive(item.href);
                 return (
-                  <button
+                  <Link
                     key={item.href}
-                    onClick={() => handleNavClick(item.href)}
+                    href={item.href}
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       active
@@ -418,7 +423,7 @@ export function AdminSidebar({
                         )}
                       </>
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </div>

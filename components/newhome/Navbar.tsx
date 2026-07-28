@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import './Navbar.css';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -47,7 +48,7 @@ function NavbarInner() {
     try {
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch {}
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   const getLoginUrl = () => {
@@ -74,18 +75,23 @@ function NavbarInner() {
   return (
     <>
       <nav className="nav">
-        <a href="/" className="nav-brand">Talexia</a>
+        <Link href="/" className="nav-brand">Talexia</Link>
         <div className="nav-links">
-          <a href="/#work">Work</a>
-          <a href="/#process">Process</a>
-          <a href="/plan">Plans</a>
-          <a href="/newhome/case-studies">Case Studies</a>
-          <a href="/#atelier">Atelier</a>
-          <a href="/newhome/faq">FAQ</a>
-          <a href="/newhome/contact">Contact</a>
+          <Link href="/#work">Work</Link>
+          <Link href="/#process">Process</Link>
+          <Link href="/plan">Plans</Link>
+          <Link href="/newhome/case-studies">Case Studies</Link>
+          <Link href="/#atelier">Atelier</Link>
+          <Link href="/newhome/faq">FAQ</Link>
+          <Link href="/newhome/contact">Contact</Link>
           {/* <a href="/brandbrief">Brand Brief</a> */}
 
-          {isAuthed ? (
+          {loading ? (
+            <div style={{ visibility: 'hidden', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+              <span className="nav-signin">Sign In</span>
+              <span className="nav-cta">Book a Call</span>
+            </div>
+          ) : isAuthed ? (
             <div className="nav-profile-wrapper" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen((prev) => !prev)}

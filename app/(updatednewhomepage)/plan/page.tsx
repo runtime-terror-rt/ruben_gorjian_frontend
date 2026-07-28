@@ -10,7 +10,7 @@ export default function PlanPage() {
     <div className="bg-[#faf8f3]">
       {/* ==================== PAGE HEADER ==================== */}
       <div className="page-header">
-        <div className="rule-ornament"></div>
+        <div className="rule-ornament center"></div>
         <div className="page-eyebrow">Plans</div>
         <h1 className="page-title">Two plans, <em>one standard.</em></h1>
         <p className="page-lede">
@@ -35,7 +35,7 @@ export default function PlanPage() {
       <section className="managed-plans" id="managed">
         <div className="container">
           <div className="plans-header">
-            <div className="rule-ornament"></div>
+            <div className="rule-ornament center"></div>
             <div className="section-eyebrow">Managed plans</div>
             <h2 className="section-title">Choose the <em>volume</em> that fits your brand.</h2>
             <p className="section-lede" style={{ margin: '20px auto 0' }}>
@@ -180,7 +180,7 @@ export default function PlanPage() {
       <section className="comparison">
         <div className="container">
           <div className="comparison-header">
-            <div className="rule-ornament"></div>
+            <div className="rule-ornament center"></div>
             <div className="section-eyebrow">Side by side</div>
             <h2 className="section-title">The <em>difference</em> at a glance.</h2>
           </div>
@@ -291,7 +291,7 @@ export default function PlanPage() {
       <section className="billing">
         <div className="billing-inner">
           <div className="billing-header">
-            <div className="rule-ornament"></div>
+            <div className="rule-ornament center"></div>
             <div className="section-eyebrow">Billing &amp; commitment</div>
             <h2 className="section-title">Straightforward <em>terms.</em></h2>
           </div>
@@ -325,7 +325,7 @@ export default function PlanPage() {
       <section className="faq-refs">
         <div className="container">
           <div className="faq-refs-header">
-            <div className="rule-ornament"></div>
+            <div className="rule-ornament center"></div>
             <div className="section-eyebrow">Common questions</div>
             <h2 className="section-title">Before you <em>subscribe.</em></h2>
             <p className="section-lede" style={{ margin: '20px auto 0' }}>
@@ -369,7 +369,7 @@ export default function PlanPage() {
       {/* ==================== CLOSING CTA ==================== */}
       <section className="closing-cta" id="consultation">
         <div className="container-narrow">
-          <div className="rule-ornament"></div>
+          <div className="rule-ornament center"></div>
           <h2 className="closing-title">Still <em>deciding?</em></h2>
           <p className="closing-sub">
             Book a fifteen-minute consultation. We'll review your current visuals, discuss your brand aesthetic, and recommend a starting point &mdash; no pressure, no obligation.

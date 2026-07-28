@@ -63,7 +63,7 @@ function NavbarInner() {
     try {
       await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     } catch {}
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   const getLoginUrl = () => {

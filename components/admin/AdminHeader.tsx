@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { useSessionContext } from "@/context/SessionContext";
 import { NAV_SECTIONS } from "./AdminSidebar";
 import { cn } from "@/lib/utils";
@@ -136,13 +137,13 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
         </button> */}
 
         {/* View Site Button */}
-        <button
-          onClick={handleViewSite}
+        <Link
+          href="/"
           className="hidden sm:flex items-center gap-2 rounded-lg border border-[#d9d4c9] px-3 py-2 text-sm text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] transition-colors"
         >
           <ExternalLink className="h-4 w-4" />
           <span className="hidden lg:inline">View Site</span>
-        </button>
+        </Link>
 
         {/* Profile Dropdown */}
         <DropdownMenu>
@@ -188,12 +189,14 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
               <span>Role: {session?.role || "ADMIN"}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-[#d9d4c9]" />
-            <DropdownMenuItem
-              onClick={handleViewSite}
-              className="flex items-center gap-2 lg:hidden cursor-pointer hover:bg-[#e6e1d8] hover:text-[#14110c] focus:bg-[#e6e1d8] focus:text-[#14110c] px-3 py-2 rounded-lg"
-            >
-              <ExternalLink className="h-4 w-4" />
-              <span>View Site</span>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/"
+                className="flex items-center gap-2 lg:hidden cursor-pointer hover:bg-[#e6e1d8] hover:text-[#14110c] focus:bg-[#e6e1d8] focus:text-[#14110c] px-3 py-2 rounded-lg w-full"
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>View Site</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleLogout}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { useSessionContext } from "@/context/SessionContext";
 import { NAV_SECTIONS } from "./DashboardSidebar";
 import { cn } from "@/lib/utils";
@@ -170,26 +171,23 @@ export function DashboardHeader({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => router.push("/dashboard/settings")}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <User className="h-4 w-4" />
-              <span>Profile</span>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer w-full">
+                <User className="h-4 w-4" />
+                <span>Profile</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push("/dashboard/billing")}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <CreditCard className="h-4 w-4" />
-              <span>Billing</span>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/billing" className="flex items-center gap-2 cursor-pointer w-full">
+                <CreditCard className="h-4 w-4" />
+                <span>Billing</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push("/dashboard/settings")}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <Settings className="h-4 w-4" />
-              <span>Settings</span>
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer w-full">
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

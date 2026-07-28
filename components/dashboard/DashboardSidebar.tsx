@@ -190,9 +190,18 @@ export function DashboardSidebar({
                       const Icon = item.icon;
                       const active = isActive(item.href);
                       return (
-                        <button
+                        <Link
                           key={item.href}
-                          onClick={() => handleNavClick(item.href)}
+                          href={item.href}
+                          onClick={(e) => {
+                            if (item.href.startsWith("http")) {
+                              e.preventDefault();
+                              window.open(item.href, "CalendlyPopup", "width=800,height=700,scrollbars=yes");
+                            }
+                            if (isMobile && onClose) {
+                              onClose();
+                            }
+                          }}
                           className={cn(
                             "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                             active
@@ -207,7 +216,7 @@ export function DashboardSidebar({
                               {item.badge}
                             </span>
                           )}
-                        </button>
+                        </Link>
                       );
                     })}
                   </div>
@@ -217,21 +226,27 @@ export function DashboardSidebar({
 
             {/* Footer */}
             <div className="border-t border-[#d9d4c9] p-4 space-y-2 flex-shrink-0">
-              <button
-                onClick={() => handleNavClick("/faq")}
+              <Link
+                href="/faq"
+                onClick={() => {
+                  if (isMobile && onClose) onClose();
+                }}
                 className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
               >
                 <HelpCircle className="h-4 w-4" />
                 <span>Help & Support</span>
-              </button>
+              </Link>
               {showUpgradePlan && (
-                <button
-                  onClick={() => handleNavClick("/dashboard/billing")}
+                <Link
+                  href="/dashboard/billing"
+                  onClick={() => {
+                    if (isMobile && onClose) onClose();
+                  }}
                   className="w-full flex items-center gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/20 px-3 py-2 text-sm text-[#8a6d28] hover:bg-[#b08d3e]/20"
                 >
                   <Zap className="h-4 w-4" />
                   <span>Upgrade Plan</span>
-                </button>
+                </Link>
               )}
             </div>
           </div>
@@ -311,9 +326,15 @@ export function DashboardSidebar({
                 const Icon = item.icon;
                 const active = isActive(item.href);
                 return (
-                  <button
+                  <Link
                     key={item.href}
-                    onClick={() => handleNavClick(item.href)}
+                    href={item.href}
+                    onClick={(e) => {
+                      if (item.href.startsWith("http")) {
+                        e.preventDefault();
+                        window.open(item.href, "CalendlyPopup", "width=800,height=700,scrollbars=yes");
+                      }
+                    }}
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       active
@@ -334,7 +355,7 @@ export function DashboardSidebar({
                         )}
                       </>
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -345,21 +366,21 @@ export function DashboardSidebar({
       {/* Footer */}
       {!isCollapsed && (
         <div className="border-t border-[#d9d4c9] p-4 space-y-2 flex-shrink-0">
-          <button
-            onClick={() => handleNavClick("/faq")}
+          <Link
+            href="/faq"
             className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
           >
             <HelpCircle className="h-4 w-4" />
             <span>Help & Support</span>
-          </button>
+          </Link>
           {showUpgradePlan && (
-            <button
-              onClick={() => handleNavClick("/dashboard/billing")}
+            <Link
+              href="/dashboard/billing"
               className="w-full flex items-center gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/20 px-3 py-2 text-sm text-[#8a6d28] hover:bg-[#b08d3e]/20"
             >
               <Zap className="h-4 w-4" />
               <span>Upgrade Plan</span>
-            </button>
+            </Link>
           )}
         </div>
       )}
@@ -367,21 +388,21 @@ export function DashboardSidebar({
       {/* Collapsed Footer Icons */}
       {isCollapsed && (
         <div className="border-t border-[#d9d4c9] p-2 space-y-2">
-          <button
-            onClick={() => handleNavClick("/faq")}
-            className="w-full rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c]"
+          <Link
+            href="/faq"
+            className="block w-full rounded-lg p-2 text-[#6b6b6b] hover:bg-[#e6e1d8] hover:text-[#14110c] text-center"
             title="Help & Support"
           >
             <HelpCircle className="h-5 w-5 mx-auto" />
-          </button>
+          </Link>
           {showUpgradePlan && (
-            <button
-              onClick={() => handleNavClick("/dashboard/billing")}
-              className="w-full rounded-lg p-2 text-[#8a6d28] hover:bg-[#b08d3e]/20"
+            <Link
+              href="/dashboard/billing"
+              className="block w-full rounded-lg p-2 text-[#8a6d28] hover:bg-[#b08d3e]/20 text-center"
               title="Upgrade Plan"
             >
               <Zap className="h-5 w-5 mx-auto" />
-            </button>
+            </Link>
           )}
         </div>
       )}
