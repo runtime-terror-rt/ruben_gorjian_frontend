@@ -80,10 +80,10 @@ function NavbarInner() {
           <Link href="/#work">Work</Link>
           <Link href="/#process">Process</Link>
           <Link href="/plan">Plans</Link>
-          <Link href="/newhome/case-studies">Case Studies</Link>
+          <Link href="/case-studies">Case Studies</Link>
           <Link href="/#atelier">Atelier</Link>
-          <Link href="/newhome/faq">FAQ</Link>
-          <Link href="/newhome/contact">Contact</Link>
+          <Link href="/faq">FAQ</Link>
+          <Link href="/contact">Contact</Link>
           {/* <a href="/brandbrief">Brand Brief</a> */}
 
           {loading ? (

@@ -334,34 +334,34 @@ export default function PlanPage() {
           </div>
 
           <div className="faq-refs-grid">
-            <Link href="/newhome/faq#onboarding" className="faq-ref">
+            <Link href="/faq#onboarding" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Do I have to send you images every month?</div>
               <div className="faq-ref-arrow">See onboarding &amp; catalog &rarr;</div>
             </Link>
-            <Link href="/newhome/faq#scope" className="faq-ref">
+            <Link href="/faq#scope" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Do you post Stories or Reels?</div>
               <div className="faq-ref-arrow">See scope &amp; limits &rarr;</div>
             </Link>
-            <Link href="/newhome/faq#content" className="faq-ref">
+            <Link href="/faq#content" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> Can I approve every post before it goes live?</div>
               <div className="faq-ref-arrow">See content &amp; approvals &rarr;</div>
             </Link>
-            <Link href="/newhome/faq#content" className="faq-ref">
+            <Link href="/faq#content" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> What if a published post has an error?</div>
               <div className="faq-ref-arrow">See content &amp; approvals &rarr;</div>
             </Link>
-            <Link href="/newhome/faq#publishing" className="faq-ref">
+            <Link href="/faq#publishing" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> How do you access my social accounts?</div>
               <div className="faq-ref-arrow">See publishing &amp; platforms &rarr;</div>
             </Link>
-            <Link href="/newhome/faq#billing" className="faq-ref">
+            <Link href="/faq#billing" className="faq-ref">
               <div className="faq-ref-q"><span className="qmark">Q.</span> What if I need to cancel?</div>
               <div className="faq-ref-arrow">See billing &amp; cancellation &rarr;</div>
             </Link>
           </div>
 
           <div className="faq-cta">
-            <Link href="/newhome/faq">See all frequently asked questions &rarr;</Link>
+            <Link href="/faq">See all frequently asked questions &rarr;</Link>
           </div>
         </div>
       </section>

@@ -18,7 +18,7 @@ import Navbar from "@/components/newhome/Navbar";
 import Footer from "@/components/newhome/Footer";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import "./case-studies.css";
-import "../newhome.css";
+import "../newhome/newhome.css";
 
 type CaseStudy = {
   id: string;

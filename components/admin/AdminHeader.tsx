@@ -76,7 +76,7 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[#d9d4c9] bg-[#faf8f3]/95 backdrop-blur px-4 lg:px-6 transition-all duration-300",
+        "sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[#d9d4c9] bg-[#ffffff]/95 backdrop-blur px-4 lg:px-6 transition-all duration-300",
         !isCollapsed ? "lg:pl-64" : "lg:pl-20"
       )}
     >

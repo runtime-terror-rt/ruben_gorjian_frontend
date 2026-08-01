@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { 
-  User, 
-  Mail, 
-  Hash, 
-  Calendar as CalendarIcon, 
-  Send, 
-  Camera, 
-  Video, 
-  Clock, 
+import {
+  User,
+  Mail,
+  Hash,
+  Calendar as CalendarIcon,
+  Send,
+  Camera,
+  Video,
+  Clock,
   ChevronLeft,
   Search,
   CheckCircle2,
@@ -77,7 +77,7 @@ export default function AdminClientWorkspace() {
               Select a client to manage their schedule, post on their behalf, and handle session bookings.
             </p>
           </div>
-          <Button 
+          <Button
             onClick={() => setIsSelectorOpen(true)}
             className="w-full bg-[#b08d3e] hover:bg-[#b08d3e] text-slate-950 font-black h-12 rounded-2xl transition-all hover:scale-[1.02]"
           >
@@ -86,7 +86,7 @@ export default function AdminClientWorkspace() {
           </Button>
         </div>
 
-        <ClientSelectionModal 
+        <ClientSelectionModal
           isOpen={isSelectorOpen}
           onClose={() => setIsSelectorOpen(false)}
           onSelect={(client) => {
@@ -101,10 +101,10 @@ export default function AdminClientWorkspace() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Client Header Info */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-[#ffffff] border border-[#d9d4c9] rounded-[2rem] backdrop-blur-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-[#ffffff] border border-[#d9d4c9] rounded-2xl  backdrop-blur-md">
         <div className="flex items-center gap-5">
-          <div className="h-16 w-16 bg-gradient-to-br from-lime-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-lime-400/10">
-            <User className="h-8 w-8 text-slate-950" />
+          <div className="h-16 w-16 bg-[#f6f1e6] border border-[#d9d4c9] rounded-2xl flex items-center justify-center shadow-sm">
+            <User className="h-8 w-8 text-[#b08d3e]" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-3">
@@ -127,20 +127,20 @@ export default function AdminClientWorkspace() {
             </div>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
             onClick={() => setIsSelectorOpen(true)}
-            className="border-[#d9d4c9] bg-[#faf8f3] hover:bg-[#e6e1d8] text-[#14110c] rounded-xl"
+            className="border-[#d9d4c9] bg-[#e6e1d8] hover:bg-[#d9d4c9] text-[#14110c] rounded-xl font-medium shadow-sm transition-colors"
           >
             <Search className="h-4 w-4 mr-2" />
             Switch Client
           </Button>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="outline"
             onClick={() => setSelectedClient(null)}
-            className="text-slate-500 hover:text-[#14110c]"
+            className="border-[#d9d4c9] bg-[#f6f1e6] hover:bg-[#e6e1d8] text-[#14110c] rounded-xl font-medium shadow-sm transition-colors"
           >
             Close Workspace
           </Button>
@@ -149,12 +149,12 @@ export default function AdminClientWorkspace() {
 
       {/* Main Workspace Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-[#faf8f3] border border-[#d9d4c9] p-1.5 rounded-2xl">
-          <TabsTrigger value="calendar" className="rounded-xl px-6 data-[state=active]:bg-[#e6e1d8] data-[state=active]:text-[#14110c] transition-all">
+        <TabsList className="bg-[#f6f1e6] border border-[#d9d4c9] p-1.5 rounded-2xl h-auto">
+          <TabsTrigger value="calendar" className="rounded-xl px-6 py-2.5 text-[13.5px] font-semibold text-[#6b6b6b] data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] transition-all">
             <CalendarIcon className="h-4 w-4 mr-2" />
             Schedule
           </TabsTrigger>
-          <TabsTrigger value="sessions" className="rounded-xl px-6 data-[state=active]:bg-[#e6e1d8] data-[state=active]:text-[#14110c] transition-all">
+          <TabsTrigger value="sessions" className="rounded-xl px-6 py-2.5 text-[13.5px] font-semibold text-[#6b6b6b] data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] transition-all">
             <Camera className="h-4 w-4 mr-2" />
             Book Session
           </TabsTrigger>
@@ -178,7 +178,7 @@ export default function AdminClientWorkspace() {
                   {editingSession ? "Update the details for this session." : "Schedule a photoshoot or video session for this client."}
                 </p>
               </div>
-              <AdminSessionComposer 
+              <AdminSessionComposer
                 userId={selectedClient.id}
                 userName={selectedClient.fullName || selectedClient.name}
                 userEmail={selectedClient.email}
@@ -187,15 +187,15 @@ export default function AdminClientWorkspace() {
                 onCancelEdit={() => setEditingSession(null)}
               />
             </div>
-            
+
             <div className="w-full">
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-[#14110c] mb-2">Session History</h3>
                 <p className="text-sm text-[#6b6b6b]">View and manage existing sessions for this client.</p>
               </div>
-              <AdminClientSessionsList 
-                key={sessionRefreshKey} 
-                userId={selectedClient.id} 
+              <AdminClientSessionsList
+                key={sessionRefreshKey}
+                userId={selectedClient.id}
                 onEditSession={handleEditSession}
               />
             </div>
@@ -203,7 +203,7 @@ export default function AdminClientWorkspace() {
         </TabsContent>
       </Tabs>
 
-      <ClientSelectionModal 
+      <ClientSelectionModal
         isOpen={isSelectorOpen}
         onClose={() => setIsSelectorOpen(false)}
         onSelect={(client) => {
