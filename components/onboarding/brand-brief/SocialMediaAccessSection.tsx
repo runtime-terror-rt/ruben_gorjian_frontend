@@ -19,7 +19,7 @@ export function SocialMediaAccessSection({ data, updateData }: SocialMediaAccess
         <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 space-y-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-full bg-lime-400/10 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-lime-400" />
+              <ShieldCheck className="w-5 h-5 text-lime-700" />
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white">Separate Secure Form</h3>
@@ -30,8 +30,8 @@ export function SocialMediaAccessSection({ data, updateData }: SocialMediaAccess
           </div>
 
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-blue-400/10 flex items-center justify-center shrink-0">
-              <Mail className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center shrink-0">
+              <Mail className="w-5 h-5 text-blue-600" />
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-white">Check Your Email</h3>
@@ -55,7 +55,7 @@ export function SocialMediaAccessSection({ data, updateData }: SocialMediaAccess
         </div>
 
         <div className="p-4 rounded-xl border border-lime-400/20 bg-lime-400/5">
-          <p className="text-xs text-lime-400/80 italic text-center">
+          <p className="text-xs text-lime-700/80 italic text-center">
             You don't need to do anything in this section now. Please click "Next" to continue.
           </p>
         </div>

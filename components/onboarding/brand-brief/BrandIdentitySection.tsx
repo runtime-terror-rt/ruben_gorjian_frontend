@@ -87,7 +87,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
         <div className="space-y-2">
           <Label htmlFor="restaurantName" className="text-sm font-semibold text-slate-300">
-            Restaurant / Brand Name <span className="text-lime-400">*</span>
+            Restaurant / Brand Name <span className="text-lime-700">*</span>
           </Label>
           <Input
             id="restaurantName"
@@ -100,7 +100,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
         <div className="space-y-2">
           <Label htmlFor="location" className="text-sm font-semibold text-slate-300">
-            Location (City, State) <span className="text-lime-400">*</span>
+            Location (City, State) <span className="text-lime-700">*</span>
           </Label>
           <Input
             id="location"
@@ -114,7 +114,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
         {/* Business Type */}
         <div className="space-y-3">
           <Label className="text-sm font-semibold text-slate-300">
-            Business Type <span className="text-lime-400">*</span>
+            Business Type <span className="text-lime-700">*</span>
           </Label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {businessTypes.map(({ value, label }) => {
@@ -190,7 +190,7 @@ export function BrandIdentitySection({ data, updateData, session }: BrandIdentit
 
         <div className="space-y-2">
           <Label htmlFor="cuisineType" className="text-sm font-semibold text-slate-300">
-            Cuisine Type <span className="text-lime-400">*</span>
+            Cuisine Type <span className="text-lime-700">*</span>
           </Label>
           <Input
             id="cuisineType"

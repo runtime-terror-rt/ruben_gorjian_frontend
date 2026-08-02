@@ -50,7 +50,7 @@ export function AuthorizationSection({ data, updateData, session }: Authorizatio
           <ul className="space-y-3">
             {AUTHORIZATION_BULLETS.map((bullet, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-slate-400 leading-relaxed">
-                <CheckCircle2 className="h-4 w-4 text-lime-400 mt-1 flex-shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-lime-700 mt-1 flex-shrink-0" />
                 <span>{bullet}</span>
               </li>
             ))}
@@ -63,7 +63,7 @@ export function AuthorizationSection({ data, updateData, session }: Authorizatio
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="clientName" className="text-sm font-semibold text-slate-300">
-              Client Name <span className="text-lime-400">*</span>
+              Client Name <span className="text-lime-700">*</span>
             </Label>
             <Input
               id="clientName"

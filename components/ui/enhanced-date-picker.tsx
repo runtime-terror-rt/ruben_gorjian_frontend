@@ -107,8 +107,8 @@ export function EnhancedDatePicker({
   return (
     <div className={clsx("space-y-2", className)}>
       <div className="flex items-center gap-2">
-        <label className="text-sm text-slate-300">Date & Time</label>
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+        <label className="text-sm text-[#14110c]">Date & Time</label>
+        <div className="flex items-center gap-2 text-xs text-[#6b6b6b]">
           <Clock className="h-3 w-3" color="currentColor" />
           <span>{timezoneAbbr}</span>
         </div>
@@ -122,7 +122,7 @@ export function EnhancedDatePicker({
           size="sm"
           onClick={() => setShowQuickSelect(!showQuickSelect)}
           disabled={disabled}
-          className="text-xs border-slate-700 hover:bg-slate-800"
+          className="text-xs border-[#d9d4c9] hover:bg-[#faf8f3]"
         >
           <CalendarIcon className="h-3 w-3 mr-1" />
           Quick Select
@@ -133,7 +133,7 @@ export function EnhancedDatePicker({
           size="sm"
           onClick={() => setShowTimePresets(!showTimePresets)}
           disabled={disabled}
-          className="text-xs border-slate-700 hover:bg-slate-800"
+          className="text-xs border-[#d9d4c9] hover:bg-[#faf8f3]"
         >
           <Clock className="h-3 w-3 mr-1" />
           Time Presets
@@ -142,7 +142,7 @@ export function EnhancedDatePicker({
 
       {/* Quick Select Dropdown */}
       {showQuickSelect && (
-        <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-2 space-y-1">
+        <div className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-2 space-y-1">
           {quickSelectOptions.map((option) => (
             <button
               key={option.label}
@@ -152,8 +152,8 @@ export function EnhancedDatePicker({
               className={clsx(
                 "w-full text-left px-2 py-1.5 rounded text-xs transition-colors",
                 option.disabled
-                  ? "text-slate-600 cursor-not-allowed"
-                  : "text-slate-200 hover:bg-slate-800"
+                  ? "text-[#6b6b6b] cursor-not-allowed"
+                  : "text-[#14110c] hover:bg-white"
               )}
             >
               {option.label} ({option.date.format("MMM D, YYYY")})
@@ -164,15 +164,15 @@ export function EnhancedDatePicker({
 
       {/* Time Presets Dropdown */}
       {showTimePresets && (
-        <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-2">
-          <div className="text-xs text-slate-400 mb-2 px-2">Select time:</div>
+        <div className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-2">
+          <div className="text-xs text-[#6b6b6b] mb-2 px-2">Select time:</div>
           <div className="grid grid-cols-3 gap-1">
             {TIME_PRESETS.map((preset) => (
               <button
                 key={preset.label}
                 type="button"
                 onClick={() => handleTimePreset(preset.hour, preset.minute)}
-                className="px-2 py-1.5 rounded text-xs text-slate-200 hover:bg-slate-800 transition-colors"
+                className="px-2 py-1.5 rounded text-xs text-[#14110c] hover:bg-white transition-colors"
               >
                 {preset.label}
               </button>
@@ -186,7 +186,7 @@ export function EnhancedDatePicker({
         <input
           type="datetime-local"
           className={clsx(
-            "w-full rounded-lg border border-slate-700 p-2 text-sm text-slate-400 focus:border-lime-400 focus:outline-none dark:bg-slate-900 dark:text-white [color-scheme:dark] [&_::-webkit-calendar-picker-indicator]:opacity-80 [&_::-webkit-calendar-picker-indicator]:cursor-pointer [&_::-webkit-calendar-picker-indicator]:filter-invert",
+            "w-full rounded-lg border border-[#d9d4c9] p-2 text-sm text-[#14110c] bg-white focus:border-[#b08d3e] focus:outline-none focus:ring-2 focus:ring-[#b08d3e] [&_::-webkit-calendar-picker-indicator]:opacity-80 [&_::-webkit-calendar-picker-indicator]:cursor-pointer",
             isPastDate && "border-amber-500/50",
             disabled && "opacity-50 cursor-not-allowed",
             className
@@ -207,7 +207,7 @@ export function EnhancedDatePicker({
 
       {/* Selected Date Display */}
       {value && (
-        <div className="text-xs text-slate-400">
+        <div className="text-xs text-[#6b6b6b]">
           {dayjs.tz(value, timezone).format("dddd, MMMM D, YYYY [at] h:mm A")} (
           {timezoneAbbr})
         </div>

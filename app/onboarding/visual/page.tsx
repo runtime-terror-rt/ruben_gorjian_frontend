@@ -471,7 +471,7 @@ function VisualOnboardingInner() {
                     size="sm"
                     onClick={handleManualRefresh}
                     disabled={refreshing}
-                    className="text-slate-400 hover:text-white gap-2"
+                    className="text-[#6b6b6b] hover:text-white gap-2"
                   >
                     <RefreshCw
                       className={clsx(
@@ -625,7 +625,7 @@ function VisualOnboardingInner() {
                                     "text-[10px] block",
                                     isConnected
                                       ? "text-lime-400"
-                                      : "text-slate-400",
+                                      : "text-[#6b6b6b]",
                                   )}
                                 >
                                   {isConnected
@@ -804,7 +804,7 @@ function VisualOnboardingInner() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold px-8 rounded-xl"
+                  className="bg-lime-400 text-[#14110c] hover:bg-lime-300 font-bold px-8 rounded-xl"
                 >
                   {submitting
                     ? "Saving..."

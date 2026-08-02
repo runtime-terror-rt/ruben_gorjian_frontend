@@ -13,7 +13,7 @@ function CalendarContent({ userId }: { userId: string }) {
     <CalendarProvider targetUserId={userId}>
       <div className="mb-4">
         <Link href="/admin">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-[#6b6b6b] hover:text-[#14110c]">
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back to Admin Dashboard
           </Button>
@@ -33,7 +33,7 @@ export default function AdminUserCalendarPage() {
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-screen">
-            <div className="text-slate-400">Loading client calendar...</div>
+            <div className="text-[#6b6b6b]">Loading client calendar...</div>
           </div>
         }
       >

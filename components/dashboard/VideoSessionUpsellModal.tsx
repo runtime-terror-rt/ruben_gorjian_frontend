@@ -62,17 +62,17 @@ export function VideoSessionUpsellModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[450px] bg-slate-900 border-slate-800">
+      <DialogContent className="sm:max-w-[450px] bg-[#ffffff] border-[#d9d4c9]">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-indigo-500/20 rounded-2xl">
-              <Video className="h-6 w-6 text-indigo-400" />
+              <Video className="h-6 w-6 text-indigo-600" />
             </div>
-            <DialogTitle className="text-2xl font-bold text-white">
+            <DialogTitle className="text-2xl font-bold text-[#14110c]">
               {hasAddon ? "Add More Video Hours" : "Upgrade to Video"}
             </DialogTitle>
           </div>
-          <DialogDescription className="text-slate-400 text-lg leading-relaxed">
+          <DialogDescription className="text-[#6b6b6b] text-lg leading-relaxed">
             {hasAddon 
               ? "You've used all your video session hours. Add more to keep creating amazing content."
               : "Your current plan doesn't include video sessions. Add them now to bring your products to life."}
@@ -81,7 +81,7 @@ export function VideoSessionUpsellModal({
 
         <div className="space-y-6 py-6">
           <div className="space-y-3">
-            <Label htmlFor="hours" className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+            <Label htmlFor="hours" className="text-[#14110c] font-bold uppercase tracking-widest text-[10px]">
               Number of Hours
             </Label>
             <div className="flex items-center gap-4">
@@ -92,22 +92,22 @@ export function VideoSessionUpsellModal({
                 max={24}
                 value={hours}
                 onChange={(e) => setHours(Math.max(1, parseInt(e.target.value) || 1))}
-                className="bg-slate-800 border-slate-700 text-white h-12 text-lg font-bold focus:ring-lime-400"
+                className="bg-[#e6e1d8] border-[#d9d4c9] text-[#14110c] h-12 text-lg font-bold focus:ring-[#b08d3e]"
               />
-              <div className="text-slate-400 font-medium">hours</div>
+              <div className="text-[#6b6b6b] font-medium">hours</div>
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700 space-y-4">
+          <div className="p-6 rounded-2xl bg-[#e6e1d8]/50 border border-[#d9d4c9] space-y-4">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-slate-400">Unit Price</span>
-              <span className="text-white font-bold">${UNIT_PRICE} / hour</span>
+              <span className="text-[#6b6b6b]">Unit Price</span>
+              <span className="text-[#14110c] font-bold">${UNIT_PRICE} / hour</span>
             </div>
-            <div className="h-px bg-slate-700" />
+            <div className="h-px bg-[#e6e1d8]" />
             <div className="flex justify-between items-end">
               <div className="space-y-1">
-                <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Amount</span>
-                <div className="text-3xl font-black text-lime-400 tracking-tight">
+                <span className="text-[#6b6b6b] text-xs font-bold uppercase tracking-widest">Total Amount</span>
+                <div className="text-3xl font-black text-[#b08d3e] tracking-tight">
                   ${totalAmount.toLocaleString()}
                 </div>
               </div>
@@ -122,7 +122,7 @@ export function VideoSessionUpsellModal({
           <Button
             onClick={handlePayNow}
             disabled={loading}
-            className="w-full h-14 bg-lime-400 hover:bg-lime-500 text-slate-900 font-black text-lg uppercase tracking-widest shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all active:scale-[0.98]"
+            className="w-full h-14 bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c] font-black text-lg uppercase tracking-widest shadow-[0_0_20px_rgba(163,230,53,0.3)] transition-all active:scale-[0.98]"
           >
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin" />
@@ -136,7 +136,7 @@ export function VideoSessionUpsellModal({
           <Button 
             variant="ghost" 
             onClick={() => onOpenChange(false)}
-            className="text-slate-500 hover:text-white hover:bg-transparent"
+            className="text-slate-500 hover:text-[#14110c] hover:bg-transparent"
           >
             Maybe Later
           </Button>

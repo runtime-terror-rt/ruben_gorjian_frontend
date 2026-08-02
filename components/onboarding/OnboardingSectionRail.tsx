@@ -53,9 +53,9 @@ export function OnboardingSectionRail({
                   className={cn(
                     "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold",
                     isCurrent
-                      ? "border-lime-400 bg-lime-400/10 text-lime-300"
+                      ? "border-lime-400 bg-lime-400/10 text-lime-700"
                       : isCompleted
-                        ? "border-lime-300/50 bg-lime-300/20 text-lime-200"
+                        ? "border-lime-500/50 bg-lime-300/20 text-lime-700"
                         : "border-slate-700 bg-slate-800 text-slate-400"
                   )}
                 >
@@ -64,7 +64,7 @@ export function OnboardingSectionRail({
                 <div className="flex-1 min-w-0">
                   <div className="font-medium">{section.title}</div>
                   {isCurrent && (
-                    <div className="mt-1 text-xs text-lime-400">Current step</div>
+                    <div className="mt-1 text-xs text-lime-700">Current step</div>
                   )}
                 </div>
               </div>

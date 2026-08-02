@@ -216,10 +216,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-white sm:text-2xl">
-            Overview
-          </h1>
-          <p className="text-sm text-slate-400">Dashboard summary</p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Overview</h1>
+          <p className="text-sm text-[#6b6b6b]">Dashboard summary</p>
         </div>
 
         <Button
@@ -227,6 +225,7 @@ export default function DashboardPage() {
           size="sm"
           onClick={refetchAll}
           disabled={overviewQ.isFetching}
+          className="dashboard-primary-btn"
         >
           <RefreshCw
             className={`mr-2 h-4 w-4 ${overviewQ.isFetching ? "animate-spin" : ""}`}
@@ -238,12 +237,12 @@ export default function DashboardPage() {
       {/* TOP GRID (Main UI like screenshot) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT CARD - PLAN */}
-        <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white">
+        <div className="rounded-xl bg-[#ffffff] border border-[#d9d4c9] p-6 text-[#14110c]">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs bg-green-500/10 text-green-400 px-2 py-1 rounded">
+            <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
               {subscription?.status ?? "ACTIVE"} PLAN
             </span>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-[#6b6b6b]">
               {subscription?.billingCycle ?? "MONTHLY"}
             </span>
           </div>
@@ -251,13 +250,13 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold mb-2">
             {subscription?.name ?? "N/A"}
           </h2>
-          <p className="text-xs text-slate-500 mb-6">
+          <p className="text-xs text-[#6b6b6b] mb-6">
             CODE: {subscription?.planCode ?? "N/A"}
           </p>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-slate-400 text-xs">SUBSCRIPTION PERIOD</p>
+              <p className="text-[#6b6b6b] text-xs">SUBSCRIPTION PERIOD</p>
               <p className="font-semibold">
                 {subscription?.currentPeriodStart ? dayjs.utc(subscription.currentPeriodStart).format("M/D/YYYY") : "N/A"}{" "}
                 -{" "}
@@ -266,7 +265,7 @@ export default function DashboardPage() {
             </div>
 
             <div>
-              <p className="text-slate-400 text-xs">PAYMENT</p>
+              <p className="text-[#6b6b6b] text-xs">PAYMENT</p>
               <p className="font-semibold">{subscription?.billingCycle ?? "MONTHLY"}</p>
             </div>
           </div>
@@ -289,7 +288,7 @@ export default function DashboardPage() {
         </div>
 
         {/* RIGHT CARD - PIE CHART */}
-        <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-6 text-white flex flex-col items-center justify-center">
+        <div className="rounded-xl bg-[#ffffff] border border-[#d9d4c9] p-6 text-[#14110c] flex flex-col items-center justify-center">
           <h3 className="text-lg font-semibold mb-4">Subscription Progress</h3>
 
           {/* DONUT WRAPPER */}
@@ -299,25 +298,25 @@ export default function DashboardPage() {
               className="absolute inset-0 rounded-full"
               style={{
                 background: `conic-gradient(
-          #ef4444 0% ${progress?.usedPercent || 0}%,
-          #22c55e ${progress?.usedPercent || 0}% 100%
+          #b08d3e 0% ${progress?.usedPercent || 0}%,
+          #e6e1d8 ${progress?.usedPercent || 0}% 100%
         )`,
               }}
             />
 
             {/* INNER CUT (THIS MAKES IT CENTER-FILLED DONUT LOOK) */}
-            <div className="absolute inset-[14px] rounded-full bg-[#0B0F19] flex items-center justify-center">
+            <div className="absolute inset-[14px] rounded-full bg-[#ffffff] flex items-center justify-center">
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">
+                <p className="text-3xl font-bold text-[#14110c]">
                   {progress?.usedPercent ?? 0}%
                 </p>
-                <p className="text-xs text-slate-400">Used</p>
+                <p className="text-xs text-[#6b6b6b]">Used</p>
               </div>
             </div>
           </div>
 
           {/* LABELS */}
-          <div className="flex justify-between w-full mt-5 text-sm text-slate-400">
+          <div className="flex justify-between w-full mt-5 text-sm text-[#6b6b6b]">
             <span>Used: {progress?.usedPercent}%</span>
             <span>Remaining: {progress?.remainingPercent}%</span>
           </div>
@@ -328,38 +327,38 @@ export default function DashboardPage() {
       {/* <Section title="Usage Metrics">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-2xl p-5 bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 border border-indigo-500/20">
-            <p className="text-xs text-slate-400">Posts</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xs text-[#6b6b6b]">Posts</p>
+            <p className="text-2xl font-bold text-[#14110c]">
               {overview?.usage.postsUsed} / {overview?.usage.postsRemaining}
             </p>
           </div>
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-pink-500/10 to-pink-500/5 border border-pink-500/20">
-            <p className="text-xs text-slate-400">Visuals</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xs text-[#6b6b6b]">Visuals</p>
+            <p className="text-2xl font-bold text-[#14110c]">
               {overview?.usage.visualsUsed} /{" "}
               {overview?.usage.visualsRemaining ?? "∞"}
             </p>
           </div>
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
-            <p className="text-xs text-slate-400">Platforms</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xs text-[#6b6b6b]">Platforms</p>
+            <p className="text-2xl font-bold text-[#14110c]">
               {overview?.usage.platformsUsed} /{" "}
               {overview?.usage.platformsRemaining}
             </p>
           </div>
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
-            <p className="text-xs text-slate-400">Bonus Visuals</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-xs text-[#6b6b6b]">Bonus Visuals</p>
+            <p className="text-2xl font-bold text-[#14110c]">
               {overview?.usage.visualsBonus}
             </p>
           </div>
 
           <div className="rounded-2xl p-5 bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20">
-            <p className="text-xs text-slate-400">Period</p>
-            <p className="text-sm font-semibold text-white">
+            <p className="text-xs text-[#6b6b6b]">Period</p>
+            <p className="text-sm font-semibold text-[#14110c]">
               {new Date(overview?.usage.periodStart || "").toLocaleDateString()}{" "}
               → {new Date(overview?.usage.periodEnd || "").toLocaleDateString()}
             </p>
@@ -444,17 +443,17 @@ export default function DashboardPage() {
       {/* ================= PIPELINE + UPCOMING + SESSION ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* PIPELINE */}
-        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
-          <h2 className="text-white font-semibold mb-4">Post Pipeline</h2>
+        <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-5">
+          <h2 className="text-[#14110c] font-semibold mb-4">Post Pipeline</h2>
 
           <div className="space-y-2">
             {Object.entries(pipelineData).map(([key, val]: [string, any]) => (
               <div
                 key={key}
-                className="flex justify-between items-center p-2 rounded bg-slate-900/40"
+                className="flex justify-between items-center p-2 rounded bg-[#ffffff]"
               >
-                <span className="text-xs text-slate-400">{key}</span>
-                <span className="text-white font-semibold">
+                <span className="text-xs text-[#6b6b6b]">{key}</span>
+                <span className="text-[#14110c] font-semibold">
                   {val as number}
                 </span>
               </div>
@@ -463,24 +462,24 @@ export default function DashboardPage() {
         </div>
 
         {/* UPCOMING POSTS */}
-        <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
-          <h2 className="text-white font-semibold mb-4">Upcoming Posts</h2>
+        <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-5">
+          <h2 className="text-[#14110c] font-semibold mb-4">Upcoming Posts</h2>
 
           <div className="space-y-3">
             {upcomingData.length === 0 ? (
-              <p className="text-xs text-slate-500 italic">No upcoming posts</p>
+              <p className="text-xs text-[#6b6b6b] italic">No upcoming posts</p>
             ) : (
               upcomingData.map((p: UpcomingPost) => (
-                <div key={p.postId} className="p-3 rounded-lg bg-slate-900/40">
+                <div key={p.postId} className="p-3 rounded-lg bg-[#ffffff]">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs font-bold text-lime-400">
+                    <p className="text-xs font-bold text-[#b08d3e]">
                       {p.targets?.map((t: any) => t.platform).join(' & ') || 'General Post'}
                     </p>
-                    <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded uppercase font-medium">
+                    <span className="text-[10px] bg-blue-500/10 text-blue-600 px-1.5 py-0.5 rounded uppercase font-medium">
                       {p.status}
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-[#6b6b6b]">
                     {p.scheduledFor ? dayjs.utc(p.scheduledFor).format("MMM D, YYYY • h:mm A") : 'No date set'}
                   </p>
                 </div>
@@ -490,51 +489,51 @@ export default function DashboardPage() {
         </div>
 
         {/* UPCOMING SESSION (ONLY ONE) */}
-        {/* <div className="rounded-xl border border-slate-800 bg-[#0B0F19] p-5">
-          <h2 className="text-white font-semibold mb-4">Upcoming Session</h2>
+        {/* <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-5">
+          <h2 className="text-[#14110c] font-semibold mb-4">Upcoming Session</h2>
           
           {nextSession ? (
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-lime-400/10 to-transparent border border-lime-400/20">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#b08d3e]/10 to-transparent border border-[#b08d3e]/20">
               <div className="flex items-center gap-4 mb-4">
                 <div className={cn(
                   "p-3 rounded-xl",
-                  nextSession.scheduleType === "PHOTO_SESSION" ? "bg-amber-400/10 text-amber-400" : "bg-indigo-400/10 text-indigo-400"
+                  nextSession.scheduleType === "PHOTO_SESSION" ? "bg-amber-500/10 text-amber-700" : "bg-indigo-600/10 text-indigo-600"
                 )}>
                   {nextSession.scheduleType === "PHOTO_SESSION" ? <Camera className="h-6 w-6" /> : <Video className="h-6 w-6" />}
                 </div>
                 <div>
-                  <h4 className="text-white font-bold">{nextSession.session?.title || nextSession.sessionTitle || "Untitled Session"}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-0.5">
+                  <h4 className="text-[#14110c] font-bold">{nextSession.session?.title || nextSession.sessionTitle || "Untitled Session"}</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] mt-0.5">
                     {nextSession.scheduleType.replace("_", " ")}
                   </p>
                 </div>
               </div>
               
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-slate-300">
-                  <Calendar className="h-4 w-4 text-lime-400" />
+                <div className="flex items-center gap-2 text-sm text-[#14110c]">
+                  <Calendar className="h-4 w-4 text-[#b08d3e]" />
                   <span>{dayjs(nextSession.scheduledAt).format("MMM D, YYYY")}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-300">
-                  <Clock className="h-4 w-4 text-lime-400" />
+                <div className="flex items-center gap-2 text-sm text-[#14110c]">
+                  <Clock className="h-4 w-4 text-[#b08d3e]" />
                   <span>{dayjs(nextSession.scheduledAt).format("h:mm A")}</span>
                 </div>
               </div>
 
               <Link href="/dashboard/schedule-visit">
-                <Button variant="ghost" className="w-full mt-4 h-9 text-xs font-bold uppercase tracking-widest text-lime-400 hover:text-lime-300 hover:bg-lime-400/10 rounded-xl">
+                <Button variant="ghost" className="w-full mt-4 h-9 text-xs font-bold uppercase tracking-widest text-[#b08d3e] hover:text-[#8a6d28] hover:bg-[#b08d3e]/10 rounded-xl">
                   Manage Sessions
                 </Button>
               </Link>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="p-3 bg-slate-800/50 rounded-full mb-3">
-                <Calendar className="h-6 w-6 text-slate-600" />
+              <div className="p-3 bg-[#e6e1d8]/50 rounded-full mb-3">
+                <Calendar className="h-6 w-6 text-[#6b6b6b]" />
               </div>
-              <p className="text-sm text-slate-400">No upcoming sessions</p>
+              <p className="text-sm text-[#6b6b6b]">No upcoming sessions</p>
               <Link href="/dashboard/schedule-visit">
-                <Button variant="link" className="text-lime-400 text-xs mt-1">Book now</Button>
+                <Button variant="link" className="text-[#b08d3e] text-xs mt-1">Book now</Button>
               </Link>
             </div>
           )}
@@ -544,17 +543,17 @@ export default function DashboardPage() {
       {/* Social Accounts - NEW UI */}
       {/* <Section title="Social Accounts">
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl p-5 bg-slate-900/40 border border-slate-800 flex justify-between items-center">
+          <div className="rounded-2xl p-5 bg-[#ffffff] border border-[#d9d4c9] flex justify-between items-center">
             <div>
-              <p className="text-xs text-slate-400">Total Connected</p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-xs text-[#6b6b6b]">Total Connected</p>
+              <p className="text-2xl font-bold text-[#14110c]">
                 {overview?.socialAccounts.connectedTotal}
               </p>
             </div>
 
             <div className="text-right">
-              <p className="text-xs text-slate-400">Expiring Soon</p>
-              <p className="text-xl font-bold text-red-400">
+              <p className="text-xs text-[#6b6b6b]">Expiring Soon</p>
+              <p className="text-xl font-bold text-red-600">
                 {overview?.socialAccounts.expiringSoon}
               </p>
             </div>
@@ -566,10 +565,10 @@ export default function DashboardPage() {
                 ([platform, count]) => (
                   <div
                     key={platform}
-                    className="px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-sm text-white flex items-center gap-2"
+                    className="px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-sm text-[#14110c] flex items-center gap-2"
                   >
                     <span className="capitalize">{platform}</span>
-                    <span className="text-xs text-slate-400">•</span>
+                    <span className="text-xs text-[#6b6b6b]">•</span>
                     <span className="font-bold">{count}</span>
                   </div>
                 ),
@@ -581,19 +580,19 @@ export default function DashboardPage() {
       <Section title={`System Alerts (${alertsData.length})`}>
         <div className="min-h-[120px]">
           {alertsData.length === 0 ? (
-            <p className="text-sm text-slate-400">No data available</p>
+            <p className="text-sm text-[#6b6b6b]">No data available</p>
           ) : (
             <div className="space-y-3">
               {alertsData.map((a: any, i: number) => (
                 <div
                   key={i}
-                  className="flex items-start justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-[#d9d4c9] bg-[#ffffff] p-3 hover:bg-[#e6e1d8]/40 transition"
                 >
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 mt-1 text-yellow-400" />
                     <div>
-                      <p className="text-sm text-slate-200">{a.message}</p>
-                      <span className="text-xs text-slate-500">{a.code}</span>
+                      <p className="text-sm text-[#14110c]">{a.message}</p>
+                      <span className="text-xs text-[#6b6b6b]">{a.code}</span>
                     </div>
                   </div>
                   <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
@@ -609,7 +608,7 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       <Section title="Recent Activity">
         {activityData.length === 0 ? (
-          <p className="text-sm text-slate-400">No data available</p>
+          <p className="text-sm text-[#6b6b6b]">No data available</p>
         ) : (
           <>
             <div className={cn(
@@ -619,15 +618,15 @@ export default function DashboardPage() {
               {activityData.map((a: RecentActivity) => (
                 <div
                   key={a.id}
-                  className="flex gap-3 rounded-lg border border-slate-800 bg-slate-900 p-3 hover:bg-slate-800/40 transition"
+                  className="flex gap-3 rounded-lg border border-[#d9d4c9] bg-[#ffffff] p-3 hover:bg-[#e6e1d8]/40 transition"
                 >
-                  <div className="mt-1 h-2 w-2 rounded-full bg-lime-400" />
+                  <div className="mt-1 h-2 w-2 rounded-full bg-[#b08d3e]" />
                   <div>
-                    <p className="text-sm text-white">{a.title}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-sm text-[#14110c]">{a.title}</p>
+                    <p className="text-xs text-[#6b6b6b]">
                       {(a.description || "").replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, (match) => dayjs(match).format("MMM D, YYYY • h:mm A"))}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#6b6b6b]">
                       {new Date(a.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -643,11 +642,11 @@ export default function DashboardPage() {
                   size="sm"
                   disabled={activityPage <= 1 || activityQ.isFetching}
                   onClick={() => setActivityPage(p => Math.max(1, p - 1))}
-                  className="h-8 border-slate-800 text-xs"
+                  className="dashboard-outline-btn h-8 text-xs"
                 >
                   <ChevronLeft className="h-3 w-3" />
                 </Button>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[#6b6b6b]">
                   Page {activityPage} of {activityTotalPages}
                 </span>
                 <Button
@@ -655,7 +654,7 @@ export default function DashboardPage() {
                   size="sm"
                   disabled={activityPage >= activityTotalPages || activityQ.isFetching}
                   onClick={() => setActivityPage(p => Math.min(activityTotalPages, p + 1))}
-                  className="h-8 border-slate-800 text-xs"
+                  className="dashboard-outline-btn h-8 text-xs"
                 >
                   <ChevronRight className="h-3 w-3" />
                 </Button>
@@ -680,17 +679,17 @@ export default function DashboardPage() {
       </div> */}
 
       {/* Links */}
-      <div className="flex flex-wrap gap-2 text-sm text-slate-400">
+      <div className="flex flex-wrap gap-2 text-sm text-[#6b6b6b]">
         <Link
           href="/dashboard/calendar"
-          className="inline-flex items-center gap-1.5 text-lime-400 hover:text-lime-300"
+          className="inline-flex items-center gap-1.5 text-[#b08d3e] hover:text-[#8a6d28]"
         >
           <Calendar className="h-4 w-4" /> Open calendar
         </Link>
-        <span className="text-slate-600">·</span>
+        <span className="text-[#6b6b6b]">·</span>
         <Link
           href="/dashboard/media"
-          className="inline-flex items-center gap-1.5 text-lime-400 hover:text-lime-300"
+          className="inline-flex items-center gap-1.5 text-[#b08d3e] hover:text-[#8a6d28]"
         >
           <FileText className="h-4 w-4" /> Media library
         </Link>
@@ -709,9 +708,9 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-lime-400" />
+    <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] p-4 sm:p-5 shadow-sm">
+      <h2 className="text-lg font-semibold text-[#14110c] mb-4 flex items-center gap-2">
+        <span className="h-2 w-2 rounded-full bg-[#b08d3e]" />
         {title}
       </h2>
       {children}
@@ -721,16 +720,16 @@ function Section({
 
 function MetricCard({ label, value, loading }: any) {
   return (
-    <Card className="border-slate-800 bg-slate-900/50 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all rounded-2xl">
+    <Card className="border-[#d9d4c9] bg-[#ffffff] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all rounded-2xl">
       <CardContent className="p-4 flex flex-col space-y-2">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">
+        <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest truncate">
           {label}
         </p>
 
         {loading ? (
-          <div className="h-5 w-1/2 animate-pulse rounded bg-slate-800/80" />
+          <div className="h-5 w-1/2 animate-pulse rounded bg-[#e6e1d8]/80" />
         ) : (
-          <p className="text-sm font-black text-slate-100 truncate">
+          <p className="text-sm font-black text-[#14110c] truncate">
             {value ?? 0}
           </p>
         )}
@@ -741,17 +740,17 @@ function MetricCard({ label, value, loading }: any) {
 
 function FeatureBox({ label, value }: any) {
   return (
-    <div className="bg-slate-800/40 rounded-lg p-3">
-      <p className="text-[10px] text-slate-400">{label}</p>
-      <p className="text-sm font-semibold text-white">{value ?? 0}</p>
+    <div className="bg-[#e6e1d8]/40 rounded-lg p-3">
+      <p className="text-[10px] text-[#6b6b6b]">{label}</p>
+      <p className="text-sm font-semibold text-[#14110c]">{value ?? 0}</p>
     </div>
   );
 }
 function MiniStat({ label, value }: any) {
   return (
-    <div className="rounded-xl bg-[#0B0F19] border border-slate-800 p-4">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-lg font-bold text-white mt-1">{value ?? 0}</p>
+    <div className="rounded-xl bg-[#ffffff] border border-[#d9d4c9] p-4">
+      <p className="text-xs text-[#6b6b6b]">{label}</p>
+      <p className="text-lg font-bold text-[#14110c] mt-1">{value ?? 0}</p>
     </div>
   );
 }

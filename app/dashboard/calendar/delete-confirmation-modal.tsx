@@ -45,11 +45,11 @@ export default function DeleteConfirmationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[440px] bg-slate-900 border-slate-800 p-0 overflow-hidden rounded-3xl shadow-2xl">
+      <DialogContent className="sm:max-w-[440px] bg-[#ffffff] border-[#d9d4c9] p-0 overflow-hidden rounded-3xl shadow-2xl">
         <div className="absolute top-4 right-4 z-10">
           <button 
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-slate-800 text-slate-500 hover:text-white transition-colors"
+            className="p-2 rounded-full hover:bg-[#e6e1d8] text-[#6b6b6b] hover:text-[#14110c] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -63,10 +63,10 @@ export default function DeleteConfirmationModal({
           </div>
           
           <DialogHeader className="space-y-2">
-            <DialogTitle className="text-2xl font-bold text-white tracking-tight">
+            <DialogTitle className="text-2xl font-bold text-[#14110c] tracking-tight">
               {title}
             </DialogTitle>
-            <DialogDescription className="text-slate-400 text-base leading-relaxed">
+            <DialogDescription className="text-[#6b6b6b] text-base leading-relaxed">
               {description}
             </DialogDescription>
           </DialogHeader>
@@ -84,7 +84,7 @@ export default function DeleteConfirmationModal({
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black h-14 rounded-2xl order-2 sm:order-1 transition-all hover:scale-105 active:scale-95"
+              className="flex-1 border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black h-14 rounded-2xl order-2 sm:order-1 transition-all hover:scale-105 active:scale-95"
             >
               Cancel
             </Button>
@@ -92,7 +92,7 @@ export default function DeleteConfirmationModal({
               variant="destructive"
               onClick={handleConfirm}
               disabled={isDeleting}
-              className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] order-1 sm:order-2 transition-all hover:scale-105 active:scale-95 border-none"
+              className="flex-1 bg-rose-600 hover:bg-rose-500 text-[#14110c] font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] order-1 sm:order-2 transition-all hover:scale-105 active:scale-95 border-none"
             >
               {isDeleting ? (
                 <div className="flex items-center gap-2">

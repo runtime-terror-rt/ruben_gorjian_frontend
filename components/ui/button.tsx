@@ -5,33 +5,33 @@ import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-purple-500/50 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-[#b08d3e]/40 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default:
-          "relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 hover:opacity-95 active:scale-[0.98] after:absolute after:inset-0 after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full after:pointer-events-none",
+          "relative overflow-hidden border-[#14110c] bg-[#14110c] text-[#faf8f3] shadow-md shadow-black/10 hover:border-[#b08d3e] hover:bg-[#b08d3e] hover:text-[#14110c] active:scale-[0.98]",
 
         shiny:
-          "relative overflow-hidden bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 text-white shadow-lg shadow-purple-500/40 hover:shadow-pink-500/50 active:scale-[0.98] after:absolute after:inset-0 after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:-translate-x-full after:pointer-events-none",
+          "relative overflow-hidden border-[#b08d3e] bg-[#b08d3e] text-[#14110c] shadow-lg shadow-[#b08d3e]/20 hover:bg-[#d9b45c] hover:border-[#d9b45c] active:scale-[0.98]",
 
         outline:
-          "border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:border-primary/30 dark:border-white/10 dark:text-white/80 dark:hover:bg-white/5",
+          "border-[#d9d4c9] bg-transparent text-[#14110c] hover:bg-[#e6e1d8] hover:border-[#b08d3e]",
 
         secondary:
-          "bg-primary/5 text-primary hover:bg-primary/10 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700",
+          "bg-[#e6e1d8] text-[#14110c] hover:bg-[#d9d4c9]",
 
         glass:
-          "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20",
+          "border border-white/40 bg-white/70 backdrop-blur-md text-[#14110c] hover:bg-white",
 
         ghost:
-          "hover:bg-primary/5 hover:text-primary",
+          "hover:bg-[#e6e1d8] hover:text-[#14110c]",
 
         destructive:
           "bg-red-500/10 text-red-500 hover:bg-red-500/20",
 
         link:
-          "text-indigo-600 hover:underline underline-offset-4",
+          "text-[#8a6d28] hover:text-[#b08d3e] hover:underline underline-offset-4",
       },
 
       size: {

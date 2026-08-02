@@ -40,7 +40,7 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               }`}
             />
             {isInvalidUrl(data.websiteUrl) && (
-              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+              <p className="text-[10px] text-red-600 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
                 <AlertCircle className="h-3 w-3" />
                 Please enter a valid URL
               </p>
@@ -49,7 +49,7 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
 
           <div className="space-y-2">
             <Label htmlFor="instagramHandle" className="text-sm font-semibold text-slate-300">
-              Instagram Handle <span className="text-lime-400">*</span>
+              Instagram Handle <span className="text-lime-700">*</span>
             </Label>
             <Input
               id="instagramHandle"
@@ -74,7 +74,7 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               }`}
             />
             {isInvalidUrl(data.facebookPageUrl) && (
-              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+              <p className="text-[10px] text-red-600 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
                 <AlertCircle className="h-3 w-3" />
                 Please enter a valid URL
               </p>
@@ -111,7 +111,7 @@ export function OnlinePresenceSection({ data, updateData }: OnlinePresenceSectio
               }`}
             />
             {isInvalidUrl(data.onlineOrderingUrl) && (
-              <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+              <p className="text-[10px] text-red-600 flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
                 <AlertCircle className="h-3 w-3" />
                 Please enter a valid URL
               </p>

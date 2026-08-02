@@ -4,7 +4,7 @@ import Script from 'next/script';
 import Navbar from '@/components/newhome/Navbar';
 import Footer from '@/components/newhome/Footer';
 import Link from 'next/link';
-import '../newhome.css';
+import '../newhome/newhome.css';
 import './contact.css';
 
 // Declare turnstile for TypeScript
@@ -93,7 +93,7 @@ export default function ContactClient() {
             <div className="contact-detail">
               <div className="contact-detail-label">Prefer to explore first?</div>
               <div className="contact-detail-value">
-                <Link href="/plan">View managed plans</Link> &nbsp;·&nbsp; <Link href="/newhome/faq">Read the FAQ</Link>
+                <Link href="/plan">View managed plans</Link> &nbsp;·&nbsp; <Link href="/faq">Read the FAQ</Link>
               </div>
             </div>
 

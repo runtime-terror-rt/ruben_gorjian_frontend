@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -303,24 +304,24 @@ export default function AdminUsersPage() {
         header: "User",
         cell: ({ row }) => (
           <div className="cursor-pointer" onClick={() => router.push(`/admin/users/${row.original.id}`)}>
-            <div className="font-medium text-white">{row.original.name || "—"}</div>
-            <div className="text-xs text-slate-400">{row.original.email}</div>
+            <div className="font-medium text-[#14110c]">{row.original.name || "—"}</div>
+            <div className="text-xs text-[#6b6b6b]">{row.original.email}</div>
           </div>
         ),
       },
       {
         accessorKey: "createdAt",
         header: "Registered",
-        cell: ({ row }) => <div className="text-xs text-slate-300">{formatDate(row.original.createdAt)}</div>,
+        cell: ({ row }) => <div className="text-xs text-[#14110c]">{formatDate(row.original.createdAt)}</div>,
       },
       {
         accessorKey: "isFounder",
         header: "Founder",
         cell: ({ row }) =>
           row.original.isFounder ? (
-            <Badge className="bg-lime-300/20 text-lime-200 border-lime-300/40">Yes</Badge>
+            <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 uppercase text-[10px] font-black tracking-[0.18em]">Yes</Badge>
           ) : (
-            <span className="text-xs text-slate-400">No</span>
+            <span className="text-xs text-[#6b6b6b]">No</span>
           ),
       },
       {
@@ -328,9 +329,9 @@ export default function AdminUsersPage() {
         header: "Onboarding",
         cell: ({ row }) =>
           row.original.onboardingCompleted ? (
-            <Badge variant="outline" className="text-lime-400 border-lime-400/30">Done</Badge>
+            <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30 uppercase text-[10px] font-black tracking-[0.18em]">Done</Badge>
           ) : (
-            <Badge variant="outline" className="text-orange-400 border-orange-400/30">Pending</Badge>
+            <Badge variant="outline" className="bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9] uppercase text-[10px] font-black tracking-[0.18em]">Pending</Badge>
           ),
       },
       {
@@ -340,15 +341,15 @@ export default function AdminUsersPage() {
           const sub = row.original.subscriptions[0];
           return sub ? (
             <div className="flex flex-col gap-1">
-              <Badge variant="outline" className="text-[10px] w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-300">
+              <Badge variant="outline" className="text-[10px] uppercase font-black tracking-[0.18em] w-fit border-[#d9d4c9] bg-[#e6e1d8]/50 text-[#14110c]">
                 {sub.planCode}
               </Badge>
               {sub.priceType && (
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">{sub.priceType}</span>
+                <span className="text-[10px] text-[#6b6b6b] uppercase tracking-wider">{sub.priceType}</span>
               )}
             </div>
           ) : (
-            <span className="text-xs text-slate-400">—</span>
+            <span className="text-xs text-[#6b6b6b]">—</span>
           );
         },
       },
@@ -357,12 +358,12 @@ export default function AdminUsersPage() {
         header: "Subscription Status",
         cell: ({ row }) => {
           const sub = row.original.subscriptions[0];
-          if (!sub) return <span className="text-xs text-slate-400">—</span>;
+          if (!sub) return <span className="text-xs text-[#6b6b6b]">—</span>;
 
           const s = sub.status.toUpperCase();
           if (s === "ACTIVE" && sub.cancelAtPeriodEnd) {
             return (
-              <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20 font-black px-2 py-0.5 flex items-center gap-1 animate-pulse uppercase text-[10px] tracking-widest">
+              <Badge variant="outline" className="bg-[#b08d3e] text-[#14110c] border-[#b08d3e] font-black px-2 py-0.5 flex items-center gap-1 uppercase text-[10px] tracking-[0.18em] shadow-sm">
                 <Clock className="h-2.5 w-2.5" />
                 Scheduled Cancel
               </Badge>
@@ -371,14 +372,13 @@ export default function AdminUsersPage() {
 
           return (
             <Badge
-              variant={
-                s === "ACTIVE"
-                  ? "default"
-                  : s === "PAST_DUE" || s === "CANCELED"
-                    ? "destructive"
-                    : "secondary"
-              }
-              className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5"
+              variant="outline"
+              className={`text-[10px] uppercase font-black tracking-[0.18em] px-2 py-0.5 ${s === "ACTIVE"
+                ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
+                : s === "PAST_DUE" || s === "CANCELED"
+                  ? "bg-red-900/10 text-red-900 border-red-900/30"
+                  : "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                }`}
             >
               {s}
             </Badge>
@@ -391,7 +391,7 @@ export default function AdminUsersPage() {
         cell: ({ row }) => {
           const sub = row.original.subscriptions[0];
           return (
-            <div className="text-xs text-slate-300">
+            <div className="text-xs text-[#14110c]">
               {sub?.currentPeriodEnd ? formatDate(sub.currentPeriodEnd) : "—"}
             </div>
           );
@@ -401,14 +401,14 @@ export default function AdminUsersPage() {
         accessorKey: "connectedPlatformsCount",
         header: "Platforms",
         cell: ({ row }) => (
-          <div className="text-xs text-slate-300">{row.original.connectedPlatformsCount}</div>
+          <div className="text-xs text-[#14110c]">{row.original.connectedPlatformsCount}</div>
         ),
       },
       {
         accessorKey: "scheduledPostsCount",
         header: "Scheduled",
         cell: ({ row }) => (
-          <div className="text-xs text-slate-300">{row.original.scheduledPostsCount}</div>
+          <div className="text-xs text-[#14110c]">{row.original.scheduledPostsCount}</div>
         ),
       },
       {
@@ -418,8 +418,11 @@ export default function AdminUsersPage() {
           const status = row.original.status;
           return (
             <Badge
-              variant={status === "ACTIVE" ? "default" : status === "BLOCKED" ? "destructive" : "secondary"}
-              className="text-xs"
+              variant="outline"
+              className={`text-[10px] uppercase font-black tracking-[0.18em] px-2 py-0.5 ${status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30" :
+                status === "BLOCKED" ? "bg-red-900/10 text-red-900 border-red-900/30" :
+                  "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                }`}
             >
               {status}
             </Badge>
@@ -436,7 +439,7 @@ export default function AdminUsersPage() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
                   <span className="sr-only">Open menu</span>
-                  <span className="text-slate-200">⋯</span>
+                  <span className="text-[#14110c]">⋯</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -449,18 +452,18 @@ export default function AdminUsersPage() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {user.status === "BLOCKED" ? (
-                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "unblock", user })} className="text-lime-400">
+                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "unblock", user })} className="text-[#b08d3e]">
                     <UserCheck className="mr-2 h-4 w-4" /> Unblock User
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })} className="text-amber-400">
+                  <DropdownMenuItem onClick={() => setConfirmAction({ type: "block", user })} className="text-amber-700">
                     <UserX className="mr-2 h-4 w-4" /> Block/Suspend
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setConfirmAction({ type: "delete", user })}
-                  className="text-red-400 focus:text-red-400"
+                  className="text-red-600 focus:text-red-600"
                 >
                   <Trash2 className="mr-2 h-4 w-4" /> Delete User
                 </DropdownMenuItem>
@@ -540,8 +543,8 @@ export default function AdminUsersPage() {
     <div className="p-6">
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">User Management</h1>
-          <p className="text-sm text-slate-400">Review and manage user accounts safely.</p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">User Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Review and manage user accounts safely.</p>
         </div>
         <div className="flex gap-2">
           <DropdownMenu>
@@ -570,7 +573,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div className="mb-4 grid gap-4 rounded-lg border border-slate-800 bg-slate-900/40 p-4 lg:grid-cols-6">
+      <div className="mb-4 grid gap-4 rounded-lg border border-[#d9d4c9] bg-[#ffffff] p-4 lg:grid-cols-6">
         <div className="lg:col-span-2">
           <Label htmlFor="search">Search</Label>
           <Input
@@ -578,6 +581,7 @@ export default function AdminUsersPage() {
             placeholder="Search by name, email, or ID"
             value={filters.search}
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value, page: 1 }))}
+            className="h-10 bg-transparent border border-[#d9d4c9] shadow-sm text-[#14110c] placeholder:text-[#6b6b6b]"
           />
         </div>
         {/* <div>
@@ -597,7 +601,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="status">Account Status</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="status" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+              <Button id="status" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.status === "" ? "All" : filters.status === "ACTIVE" ? "Active" : filters.status === "BLOCKED" ? "Blocked" : "Deleted"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -614,7 +618,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="plan">Subscription Plan</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="plan" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+              <Button id="plan" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.plan === "" ? "All Plans" : (plansQuery.data?.find(p => p.code === filters.plan)?.name || filters.plan)}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -633,7 +637,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="subscriptionStatus">Sub Status</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+              <Button id="subscriptionStatus" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.subscriptionStatus === "" ? "All" : filters.subscriptionStatus}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -652,7 +656,7 @@ export default function AdminUsersPage() {
           <Label htmlFor="sort">Sort By</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button id="sort" variant="outline" className="w-full justify-between h-10 border-slate-800 bg-slate-900/60 font-normal hover:bg-slate-800 text-slate-300 px-3 transition-colors">
+              <Button id="sort" variant="outline" className="w-full justify-between h-10 border-[#d9d4c9] bg-[#faf8f3] shadow-sm font-normal hover:bg-[#e6e1d8] text-[#14110c] px-3 transition-colors">
                 {filters.sortBy === "createdAt" && filters.sortDir === "desc" ? "Newest First" : "Oldest First"}
                 <ChevronDown className="h-4 w-4 ml-2 opacity-50" />
               </Button>
@@ -666,18 +670,18 @@ export default function AdminUsersPage() {
       </div>
 
       {Object.keys(rowSelection).length > 0 && (
-        <div className="mb-4 rounded-lg border border-lime-300/40 bg-lime-300/10 p-3 text-sm text-lime-200">
+        <div className="mb-4 rounded-lg border border-lime-500/40 bg-lime-300/10 p-3 text-sm text-lime-700">
           {Object.keys(rowSelection).length} row(s) selected.
         </div>
       )}
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/30 overflow-hidden backdrop-blur-sm">
+      <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/30 overflow-hidden backdrop-blur-sm">
         <Table>
-          <TableHeader className="bg-slate-800/30">
+          <TableHeader className="bg-[#e6e1d8]/30">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent border-slate-800">
+              <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#d9d4c9]">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-slate-500 font-bold uppercase tracking-widest text-[10px] py-5">
+                  <TableHead key={header.id} className="text-[#6b6b6b] font-bold uppercase tracking-widest text-[10px] py-5">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -689,28 +693,28 @@ export default function AdminUsersPage() {
           <TableBody>
             {usersQuery.isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-slate-400">
+                <TableCell colSpan={columns.length} className="text-center text-[#6b6b6b]">
                   Loading users...
                 </TableCell>
               </TableRow>
             ) : usersQuery.isError ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-red-300">
+                <TableCell colSpan={columns.length} className="text-center text-red-600">
                   Unable to load users.
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center text-slate-400">
+                <TableCell colSpan={columns.length} className="text-center text-[#6b6b6b]">
                   No users found.
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className="border-slate-800 hover:bg-slate-800/20 transition-all group">
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/20 transition-all group">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
-                      className="py-5 font-medium group-hover:text-white transition-colors"
+                      className="py-5 font-medium group-hover:text-[#14110c] transition-colors"
                       key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
@@ -721,49 +725,13 @@ export default function AdminUsersPage() {
       </div>
 
       {/* ── Pagination Footer ── */}
-      {totalPages > 0 && (
-        <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-950/20">
-
-          {/* Left: results info */}
-          <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-            Showing page{" "}
-            <span className="text-slate-300 font-black">{filters.page}</span>
-            {" "}of{" "}
-            <span className="text-slate-300 font-black">{totalPages}</span>
-            {" "}·{" "}
-            <span className="text-slate-300 font-black">{total}</span> total users
-          </p>
-
-          {/* Right: Prev / Next */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setFilters((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
-              disabled={usersQuery.isLoading || filters.page <= 1}
-              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-            >
-              <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Previous
-            </button>
-
-            <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
-              <span className="text-xs font-black text-lime-400">Page {filters.page}</span>
-            </div>
-
-            <button
-              onClick={() => setFilters((prev) => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
-              disabled={usersQuery.isLoading || filters.page >= totalPages}
-              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-            >
-              Next Page
-              <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
+      <AdminPagination
+        currentPage={filters.page}
+        totalPages={totalPages}
+        totalItems={total}
+        isLoading={usersQuery.isLoading}
+        onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
+      />
 
       {/* Create User Dialog */}
       <Dialog open={createState.open} onOpenChange={(open) => setCreateState((prev) => ({ ...prev, open }))}>
@@ -835,7 +803,7 @@ export default function AdminUsersPage() {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#6b6b6b] hover:text-[#14110c] transition-colors focus:outline-none"
                   onClick={() => setShowCreatePassword(!showCreatePassword)}
                 >
                   {showCreatePassword ? (
@@ -846,7 +814,7 @@ export default function AdminUsersPage() {
                 </button>
               </div>
             </div>
-            <label className="flex items-center gap-2 text-sm text-slate-200">
+            <label className="flex items-center gap-2 text-sm text-[#14110c]">
               <Checkbox
                 checked={createState.sendVerification}
                 onCheckedChange={(value) =>
@@ -861,7 +829,7 @@ export default function AdminUsersPage() {
               type="button"
               variant="outline"
               onClick={() => setCreateState((prev) => ({ ...prev, open: false }))}
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Cancel
             </Button>
@@ -877,7 +845,7 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!createState.email || createUserMutation.isPending}
-              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
               {createUserMutation.isPending ? (
                 <span className="flex items-center gap-2">
@@ -931,7 +899,7 @@ export default function AdminUsersPage() {
               type="button"
               variant="outline"
               onClick={() => setEditState((prev) => ({ ...prev, open: false }))}
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Cancel
             </Button>
@@ -945,7 +913,7 @@ export default function AdminUsersPage() {
                 })
               }
               disabled={!editState.user || updateUserMutation.isPending}
-              className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+              className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
             >
               {updateUserMutation.isPending ? (
                 <span className="flex items-center gap-2">
@@ -989,7 +957,7 @@ export default function AdminUsersPage() {
             </div>
           )}
           {confirmAction?.type === "cancel" && (
-            <label className="flex items-center gap-2 text-sm text-slate-200">
+            <label className="flex items-center gap-2 text-sm text-[#14110c]">
               <Checkbox
                 checked={cancelAtPeriodEnd}
                 onCheckedChange={(value) => setCancelAtPeriodEnd(Boolean(value))}
@@ -1001,7 +969,7 @@ export default function AdminUsersPage() {
             <Button
               variant="outline"
               onClick={() => setConfirmAction(null)}
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Back
             </Button>
@@ -1012,8 +980,8 @@ export default function AdminUsersPage() {
               }
               className={cn(
                 "font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base",
-                confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-white" :
-                  "bg-lime-400 hover:bg-lime-300 text-slate-950 shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
+                confirmAction?.type === "delete" ? "bg-rose-600 hover:bg-rose-500 shadow-[0_15px_30px_rgba(225,29,72,0.3)] border-none text-[#14110c]" :
+                  "bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] shadow-[0_15px_30px_rgba(163,230,53,0.3)]"
               )}
             >
               Confirm Action

@@ -142,7 +142,7 @@ export function EnhancedDeliveryViewer({ submissionId, triggerLabel = "View Enha
           </DialogHeader>
 
           {loading && <p className="text-sm text-slate-400">Loading enhanced delivery...</p>}
-          {error && <p className="text-sm text-red-300">{error}</p>}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           {!loading && deliveries.length === 0 && (
             <Card className="border-slate-800 bg-slate-900/60">

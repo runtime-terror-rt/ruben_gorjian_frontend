@@ -136,10 +136,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // Show loading state while checking permissions or hydrating
   if (!isHydrated || sessionLoading || !isAuthorized) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="dashboard-theme flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-800 border-t-lime-400"></div>
-          <p className="text-sm text-slate-400">Loading dashboard...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#d9d4c9] border-t-[#b08d3e]"></div>
+          <p className="text-sm text-[#6b6b6b]">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -151,7 +151,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   // }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="dashboard-theme min-h-screen">
       {/* Desktop Sidebar */}
       <DashboardSidebar
         isOpen={true}

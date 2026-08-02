@@ -145,7 +145,7 @@ export default function PricingPage() {
               </p>
               <Link
                 href="/signup"
-                className="inline-block bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold px-8 py-4 rounded-full transition-all transform hover:scale-105 shadow-lg mb-3"
+                className="inline-block bg-lime-400 hover:bg-lime-300 text-[#14110c] font-bold px-8 py-4 rounded-full transition-all transform hover:scale-105 shadow-lg mb-3"
               >
                 👉 Claim Founder Pricing
               </Link>
@@ -264,7 +264,7 @@ function PlanGroupsDisplay({
                     }`}
                   >
                     {plan.isPopular && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-slate-950 px-4 py-1 rounded-full text-sm font-semibold">
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-lime-400 text-[#14110c] px-4 py-1 rounded-full text-sm font-semibold">
                         Most Popular
                       </div>
                     )}
@@ -285,7 +285,7 @@ function PlanGroupsDisplay({
                           <span className="text-3xl font-bold text-lime-400">
                             ${plan.price}
                           </span>
-                          <span className="text-slate-400">/month</span>
+                          <span className="text-[#6b6b6b]">/month</span>
                         </>
                       )}
                     </div>
@@ -305,7 +305,7 @@ function PlanGroupsDisplay({
 
                     {/* Additional Info */}
                     {plan.additionalInfo && (
-                      <p className="text-sm text-slate-400 mb-4">
+                      <p className="text-sm text-[#6b6b6b] mb-4">
                         {plan.additionalInfo}
                       </p>
                     )}
@@ -318,7 +318,7 @@ function PlanGroupsDisplay({
                       disabled={isLoading}
                       className={`w-full font-semibold py-3 rounded-full transition-all disabled:opacity-60 ${
                         plan.isPopular
-                          ? "bg-lime-400 hover:bg-lime-300 text-slate-950"
+                          ? "bg-lime-400 hover:bg-lime-300 text-[#14110c]"
                           : "bg-slate-800 hover:bg-slate-700 text-white"
                       }`}
                     >

@@ -3,7 +3,7 @@ import './faq.css';
 import Navbar from '@/components/newhome/Navbar';
 import Footer from '@/components/newhome/Footer';
 import Link from 'next/link';
-import '../newhome.css';
+import '../newhome/newhome.css';
 
 export const metadata = {
   title: 'Frequently Asked Questions — Talexia',

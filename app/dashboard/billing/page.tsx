@@ -13,6 +13,7 @@ import {
   XCircle,
   Clock,
   ExternalLink,
+  Eye,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,15 +33,15 @@ import { apiGet, apiPost } from "@/lib/api";
 import { PLAN_KEYS, type PlanKey } from "@/lib/pricing-comparison";
 import { getPlanByLookupKey } from "@/lib/pricing-catalog";
 import { cn } from "@/lib/utils";
+import "@/app/(updatednewhomepage)/plan/plan.css";
 
 const PLAN_SUBTITLES: Record<PlanKey, string> = {
-  "FMP-20": "Complete done-for-you posting",
-  "FMP-35": "More content. Broader reach.",
-  "FM-70": "Your dedicated digital marketing team",
+  "ESSENTIALS": "A polished, consistent presence for a single-store brand.",
+  "SIGNATURE": "A weekly rhythm for brands ready to show up consistently.",
 };
 
 const PLAN_BADGES: Partial<Record<PlanKey, string>> = {
-  "FMP-35": "Most Popular",
+  "SIGNATURE": "Most Popular",
 };
 
 const PLANS_COLLAPSED_STORAGE_KEY = "talexia-billing-plans-collapsed";
@@ -338,8 +339,8 @@ export default function BillingPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-          <p className="text-slate-400">Loading billing information...</p>
+        <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff]/60 p-6">
+          <p className="text-[#6b6b6b]">Loading billing information...</p>
         </div>
       </div>
     );
@@ -352,13 +353,13 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-slate-400">
+          {/* <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
             Billing
-          </p>
-          <h1 className="text-2xl font-semibold text-white">
+          </p> */}
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             Subscription & Invoices
           </h1>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-[#14110c]">
             {/* Review your current plan and manage billing details. */}
           </p>
         </div>
@@ -370,12 +371,12 @@ export default function BillingPage() {
       )}
 
       {successMessage && (
-        <div className="rounded-lg border border-lime-500/50 bg-lime-500/10 px-3 py-2 text-sm text-lime-100 flex items-center justify-between">
+        <div className="rounded-lg border border-lime-500/50 bg-[#b08d3e]/10 px-3 py-2 text-sm text-lime-100 flex items-center justify-between">
           <span>{successMessage}</span>
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 w-6 p-0 hover:bg-lime-500/20"
+            className="h-6 w-6 p-0 hover:bg-[#b08d3e]/20"
             onClick={() => setSuccessMessage(null)}
           >
             <XCircle className="h-4 w-4" />
@@ -383,31 +384,31 @@ export default function BillingPage() {
         </div>
       )}
 
-      <Card className="border-slate-800 bg-slate-900/40">
-        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-800 pb-4">
+      <Card className="border-[#d9d4c9] bg-[#ffffff]">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-[#d9d4c9] pb-4">
           <div>
-            <CardTitle className="text-lg font-semibold text-white">Current Subscription</CardTitle>
-            <p className="text-xs text-slate-400 mt-1">
+            <CardTitle className="text-lg font-semibold text-[#14110c]">Current Subscription</CardTitle>
+            <p className="text-xs text-[#6b6b6b] mt-1">
               Manage your active plan and subscription settings.
             </p>
           </div>
-          <div className="rounded-full bg-lime-400/10 p-2">
-            <CreditCard className="h-5 w-5 text-lime-400" />
+          <div className="rounded-full bg-[#b08d3e]/10 p-2">
+            <CreditCard className="h-5 w-5 text-[#b08d3e]" />
           </div>
         </CardHeader>
         <CardContent className="pt-6">
           {!plan ? (
-            <div className="rounded-xl border border-dashed border-slate-800 bg-slate-950/40 p-12 text-center">
-              <div className="mx-auto w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-slate-600" />
+            <div className="rounded-xl border border-dashed border-[#d9d4c9] bg-[#faf8f3] p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-[#ffffff] flex items-center justify-center mb-4">
+                <Zap className="h-6 w-6 text-[#6b6b6b]" />
               </div>
-              <p className="text-slate-400 font-medium">No active plan found</p>
-              <p className="mt-2 text-sm text-slate-500 max-w-xs mx-auto">
+              <p className="text-[#6b6b6b] font-medium">No active plan found</p>
+              <p className="mt-2 text-sm text-[#6b6b6b] max-w-xs mx-auto">
                 Subscribe to a plan below to start scheduling and managing your social content.
               </p>
               <Button 
                 variant="outline" 
-                className="mt-6 rounded-full border-slate-700 text-slate-300"
+                className="mt-6 rounded-full border-[#d9d4c9] text-[#14110c]"
                 onClick={() => {
                   document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" });
                 }}
@@ -419,26 +420,26 @@ export default function BillingPage() {
             <div className="space-y-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-xl font-bold text-[#14110c]">
                     {currentPlanDisplay?.name ?? "—"}
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="text-2xl font-bold text-lime-400">
+                    <p className="text-2xl font-bold text-[#b08d3e]">
                       {currentPlanDisplay && currentPlanDisplay.price >= 0
                         ? formatCurrency(currentPlanDisplay.price, currentPlanDisplay.currency)
                         : "—"}
                     </p>
                     <div className="flex flex-col">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-[#6b6b6b]">
                         per month {currentPlanDisplay?.interval === "year" ? "(billed yearly)" : ""}
                       </span>
                       {currentPlanDisplay?.interval === "year" && (
-                        <span className="text-[10px] text-slate-600 font-medium">
+                        <span className="text-[10px] text-[#6b6b6b] font-medium">
                           {formatCurrency(currentPlanDisplay.totalPrice, currentPlanDisplay.currency)} total / year
                         </span>
                       )}
                     </div>
-                    <Badge variant="outline" className="ml-2 border-lime-400/30 text-lime-400 bg-lime-400/5">
+                    <Badge variant="outline" className="ml-2 border-[#b08d3e]/30 text-[#b08d3e] bg-[#b08d3e]/5">
                       {currentPlanDisplay?.priceType ?? "Standard"}
                     </Badge>
                   </div>
@@ -446,7 +447,7 @@ export default function BillingPage() {
 
                 <div className="flex items-center gap-3">
                   <Button
-                    className="rounded-full bg-lime-500 hover:bg-lime-400 text-black px-6 font-bold"
+                    className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-black px-6 font-bold"
                     disabled={portalLoading}
                     onClick={async () => {
                       setPortalLoading(true);
@@ -465,36 +466,36 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-800/50">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[#d9d4c9]/50">
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Status</p>
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Status</p>
                   <div className="flex items-center gap-1.5">
                     <div className={cn(
                       "w-2 h-2 rounded-full",
                       plan.status === "ACTIVE" ? "bg-green-500" : "bg-amber-500"
                     )} />
-                    <span className="text-sm font-semibold text-slate-200 capitalize">
+                    <span className="text-sm font-semibold text-[#14110c] capitalize">
                       {plan.status.toLowerCase()}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">
                     {plan.cancelAtPeriodEnd ? "Expires On" : "Next Payment"}
                   </p>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-[#14110c]">
                     {currentPlanDisplay?.renewsAt ?? "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Platforms</p>
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Platforms</p>
+                  <p className="text-sm font-semibold text-[#14110c]">
                     {plan.platformLimit ?? 4} included
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">Billing</p>
-                  <p className="text-sm font-semibold text-slate-200 capitalize">
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Billing</p>
+                  <p className="text-sm font-semibold text-[#14110c] capitalize">
                     {currentPlanDisplay?.interval === "year" ? "Yearly" : "Monthly"}
                   </p>
                 </div>
@@ -506,9 +507,9 @@ export default function BillingPage() {
                     <AlertTriangle className="h-4 w-4 text-amber-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-amber-200">Subscription Cancellation Pending</p>
-                    <p className="text-xs text-amber-400/80 mt-1 leading-relaxed">
-                      Your subscription will automatically end on <span className="font-bold text-amber-300">{currentPlanDisplay?.renewsAt}</span>. 
+                    <p className="text-sm font-bold text-amber-700">Subscription Cancellation Pending</p>
+                    <p className="text-xs text-amber-700/80 mt-1 leading-relaxed">
+                      Your subscription will automatically end on <span className="font-bold text-amber-700">{currentPlanDisplay?.renewsAt}</span>. 
                       You will continue to have full access to all features until this date.
                     </p>
                   </div>
@@ -516,17 +517,17 @@ export default function BillingPage() {
               )}
 
               {plan.scheduledChange && (
-                <div className="rounded-xl border border-lime-500/30 bg-lime-500/5 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="rounded-xl border border-lime-500/30 bg-[#b08d3e]/5 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-lime-500/10 p-1.5 mt-0.5">
-                      <Clock className="h-4 w-4 text-lime-400" />
+                    <div className="rounded-full bg-[#b08d3e]/10 p-1.5 mt-0.5">
+                      <Clock className="h-4 w-4 text-[#b08d3e]" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-lime-200">Scheduled Plan Change</p>
-                      <p className="text-xs text-lime-400/80 mt-1 leading-relaxed">
-                        Moving to <span className="font-bold text-lime-300">
+                      <p className="text-sm font-bold text-lime-700">Scheduled Plan Change</p>
+                      <p className="text-xs text-[#b08d3e]/80 mt-1 leading-relaxed">
+                        Moving to <span className="font-bold text-[#8a6d28]">
                           {getPlanByLookupKey(plan.scheduledChange.targetPlanCode as PlanKey)?.name || plan.scheduledChange.targetPlanCode}
-                        </span> ({plan.scheduledChange.targetBillingCycle}) effective <span className="font-bold text-lime-300">
+                        </span> ({plan.scheduledChange.targetBillingCycle}) effective <span className="font-bold text-[#8a6d28]">
                           {new Date(plan.scheduledChange.effectiveAt).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -539,7 +540,7 @@ export default function BillingPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-full border-lime-500/30 text-lime-400 hover:bg-lime-500/20 bg-transparent h-8 px-4 text-xs font-bold uppercase tracking-wider"
+                    className="rounded-full border-lime-500/30 text-[#b08d3e] hover:bg-[#b08d3e]/20 bg-transparent h-8 px-4 text-xs font-bold uppercase tracking-wider"
                     onClick={() => setConfirmCancelSchedule(true)}
                   >
                     Cancel Change
@@ -551,7 +552,7 @@ export default function BillingPage() {
                 <div className="flex justify-start pt-2">
                   <Button
                     variant="ghost"
-                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] hover:text-red-600 hover:bg-red-500/10 transition-colors"
                     onClick={() => setConfirmCancelSub(true)}
                   >
                     Cancel Subscription
@@ -568,21 +569,21 @@ export default function BillingPage() {
         <CardHeader className="flex items-center justify-between">
           <div>
             <CardTitle>Plans</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Choose or change your plan. Your current plan is highlighted; you
               cannot resubscribe to it. */}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-lime-300" />
-            <div className="flex p-1 bg-slate-950 rounded-full border border-slate-800 mr-2">
+            <Zap className="h-5 w-5 text-[#8a6d28]" />
+            <div className="flex p-1 bg-[#faf8f3] rounded-full border border-[#d9d4c9] mr-2">
               <button
                 onClick={() => setBillingCycle("monthly")}
                 className={cn(
                   "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition",
                   billingCycle === "monthly"
-                    ? "bg-lime-500 text-slate-900"
-                    : "text-slate-400 hover:text-slate-200",
+                    ? "bg-[#b08d3e] text-[#14110c]"
+                    : "text-[#6b6b6b] hover:text-[#14110c]",
                 )}
               >
                 Monthly
@@ -592,8 +593,8 @@ export default function BillingPage() {
                 className={cn(
                   "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full transition",
                   billingCycle === "yearly"
-                    ? "bg-lime-500 text-slate-900"
-                    : "text-slate-400 hover:text-slate-200",
+                    ? "bg-[#b08d3e] text-[#14110c]"
+                    : "text-[#6b6b6b] hover:text-[#14110c]",
                 )}
               >
                 Yearly
@@ -622,151 +623,174 @@ export default function BillingPage() {
             </div>
           )}
           {plansExpanded && (
-            <div className="grid gap-4 max-w-7xl mx-auto sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-              {allPlans
-                .filter((p) => p.category === "FULL_MANAGEMENT") // Only show main management plans
-                .map((catalogPlan) => {
-                  const planKey = catalogPlan.code as PlanKey;
-                  const isCurrent = plan?.code === planKey;
-                  
-                  // Use the cents from the API response
-                  const priceCents = catalogPlan.priceStandardCents;
-                  
-                  // If the price in cents is very high (e.g. > 100000), it's already a yearly price
-                  const isAlreadyYearlyPrice = priceCents > 100000;
-                  
-                  let displayPrice: number;
-                  let totalYearlyPrice: number;
+            <div className="talexia-wrapper">
+            <div className={`plans-cards ${billingCycle === 'yearly' ? 'plans-annual' : ''}`} style={{ marginTop: 0 }}>
+              {/* ESSENTIALS */}
+              <div className={cn("plan-card", plan?.code === "ESSENTIALS" && "border-[#b08d3e]/50 bg-[#b08d3e]/5")}>
+                <div className="min-h-[28px] mb-2">
+                  {plan?.code === "ESSENTIALS" && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
+                      <Check className="h-3 w-3" />
+                      Current plan
+                    </span>
+                  )}
+                </div>
+                <div className="plan-name">Essentials</div>
+                <div className="plan-tagline">A polished, consistent presence for a single-store brand.</div>
+                <div className="plan-price">
+                  <span className="cur">$</span>
+                  <span className="amt">{billingCycle === 'yearly' ? '4,288' : '397'}</span>
+                  <span className="per per-monthly">/ month</span>
+                  <span className="per per-annual">/ year</span>
+                </div>
+                <div className="plan-annual-saving">
+                  <strong>Save $476</strong> a year &mdash; that&rsquo;s $357/mo, one month effectively free.
+                </div>
+                <div className="plan-volume">12 feed posts monthly &middot; 2 platforms</div>
+                <div className="plan-divider"></div>
+                <p className="plan-desc">
+                  Twelve editorial-grade visuals produced monthly, captioned in your brand voice, and published to two of your connected platforms on a weekly rhythm. Brand voice locked from day one.
+                </p>
 
-                  if (billingCycle === "yearly") {
-                    if (isAlreadyYearlyPrice) {
-                      // It's already the discounted yearly price
-                      // $9110.40 / 12 = $759.20
-                      displayPrice = Math.round(priceCents / 1200);
-                      totalYearlyPrice = priceCents / 100;
-                    } else {
-                      // Apply 20% discount to the monthly price
-                      const monthlyPrice = priceCents / 100;
-                      const discountedMonthly = Math.round(monthlyPrice * 0.8);
-                      displayPrice = discountedMonthly;
-                      totalYearlyPrice = discountedMonthly * 12;
-                    }
-                  } else {
-                    // Monthly view
-                    if (isAlreadyYearlyPrice) {
-                      // Calculate original monthly price from discounted yearly price
-                      // $9110.40 / 0.8 / 12 = $949
-                      displayPrice = Math.round((priceCents / 0.8) / 1200);
-                      totalYearlyPrice = priceCents / 100;
-                    } else {
-                      displayPrice = priceCents / 100;
-                      totalYearlyPrice = Math.round(displayPrice * 12 * 0.8);
-                    }
-                  }
+                <div className="plan-section-label">What's included</div>
+                <ul className="plan-feat">
+                  <li>12 luxury-enhanced visuals produced monthly</li>
+                  <li>Produced from your existing website or catalog photography</li>
+                  <li>Professional captions written in your brand voice</li>
+                  <li>Hashtag research per fine jewelry conventions</li>
+                  <li>Publishing to 2 platforms (choose: Instagram, Facebook, or LinkedIn)</li>
+                  <li>Monthly content calendar</li>
+                  <li>48-hour factual error correction window</li>
+                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                </ul>
 
-                  const billingNote = billingCycle === "yearly"
-                    ? `Billed annually (${formatPlanPrice(totalYearlyPrice)}/year)`
-                    : "Per month";
+                <div className="plan-fee plan-monthly-fee">
+                  <strong>No onboarding fee.</strong> First month is $397. Billed monthly thereafter.
+                </div>
+                <p style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: '12px', lineHeight: 1.5, color: '#8a857a', margin: '12px 0 0' }}>
+                  Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.
+                </p>
 
-                  return (
-                    <article
-                      key={planKey}
-                    className={cn(
-                      "rounded-2xl border p-5 shadow-sm transition",
-                      isCurrent
-                        ? "border-lime-400/50 bg-lime-400/10"
-                        : "border-slate-800 bg-slate-900/60 hover:border-slate-700",
-                    )}
-                  >
-                    <div className="min-h-[52px]">
-                      {isCurrent ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-lime-400/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-lime-300">
-                          <Check className="h-3 w-3" />
-                          Current plan
-                        </span>
-                      ) : PLAN_BADGES[planKey] ? (
-                        <span className="inline-flex rounded-full bg-slate-700 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">
-                          {PLAN_BADGES[planKey]}
-                        </span>
-                      ) : null}
-                    </div>
-                    <h2 className="mt-3 text-lg font-semibold text-white">
-                      {catalogPlan?.name ?? planKey}
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-400">
-                      {PLAN_SUBTITLES[planKey]}
-                    </p>
-                    <p className="mt-5 text-4xl font-semibold leading-none text-white">
-                      {formatPlanPrice(displayPrice)}
-                    </p>
-                    <p className="mt-2 text-xs text-slate-500">{billingNote}</p>
+                <div className="plan-cta">
+                  {plan?.code === "ESSENTIALS" ? (
+                    <button
+                      className="btn btn-outline w-full"
+                      disabled={portalLoading}
+                      onClick={async () => {
+                        setPortalLoading(true);
+                        setPortalError(null);
+                        try {
+                          const url = await getCustomerPortalUrl();
+                          if (url) window.location.href = url;
+                          else setPortalError("Unable to open billing portal.");
+                        } finally {
+                          setPortalLoading(false);
+                        }
+                      }}
+                    >
+                      {portalLoading ? "Loading..." : "Manage Subscription"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-outline w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout("ESSENTIALS")}
+                    >
+                      {checkoutLoading === "ESSENTIALS"
+                        ? "Loading..."
+                        : billingCycle === 'yearly' ? 'Subscribe annually — $4,288/yr' : 'Subscribe to Essentials'}
+                    </button>
+                  )}
+                  <div className="plan-annual-terms">
+                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                  </div>
+                </div>
+              </div>
 
-                    {isCurrent ? (
-                      <Button
-                        className="mt-5 w-full rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
-                        disabled={portalLoading}
-                        onClick={async () => {
-                          setPortalLoading(true);
-                          setPortalError(null);
-                          try {
-                            const url = await getCustomerPortalUrl();
-                            if (url) window.location.href = url;
-                            else
-                              setPortalError("Unable to open billing portal.");
-                          } finally {
-                            setPortalLoading(false);
-                          }
-                        }}
-                      >
-                        {portalLoading ? "Loading..." : "Manage Subscription"}
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="mt-5 w-full rounded-full bg-lime-500 text-black hover:bg-lime-400 font-bold"
-                        disabled={checkoutLoading !== null}
-                        onClick={() => startCheckout(planKey)}
-                      >
-                        {checkoutLoading === planKey
-                          ? "Loading..."
-                          : (getPlanByLookupKey(planKey)?.ctaLabel ?? "Choose Plan")}
-                      </Button>
-                    )}
+              {/* SIGNATURE */}
+              <div className={cn("plan-card feature", plan?.code === "SIGNATURE" && "border-[#b08d3e]/50 bg-[#b08d3e]/5")}>
+                <div className="min-h-[28px] mb-2 flex items-center justify-between">
+                  <div className="plan-badge" style={{ position: 'relative', top: 0, left: 0, transform: 'none', display: 'inline-block' }}>Most popular</div>
+                  {plan?.code === "SIGNATURE" && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
+                      <Check className="h-3 w-3" />
+                      Current plan
+                    </span>
+                  )}
+                </div>
+                <div className="plan-name">Signature</div>
+                <div className="plan-tagline">A weekly rhythm for brands ready to show up consistently.</div>
+                <div className="plan-price">
+                  <span className="cur">$</span>
+                  <span className="amt">{billingCycle === 'yearly' ? '6,448' : '597'}</span>
+                  <span className="per per-monthly">/ month</span>
+                  <span className="per per-annual">/ year</span>
+                </div>
+                <div className="plan-annual-saving">
+                  <strong>Save $716</strong> a year &mdash; that&rsquo;s $537/mo, one month effectively free.
+                </div>
+                <div className="plan-volume">24 feed posts monthly &middot; 3 platforms</div>
+                <div className="plan-divider"></div>
+                <p className="plan-desc">
+                  Twenty-four editorial visuals monthly, published across all three platforms, planned around the fine jewelry editorial calendar and completely off your plate.
+                </p>
 
-                    {/* Features from catalog as fallback */}
-                    {getPlanByLookupKey(planKey)?.features && (
-                      <ul className="mt-5 space-y-2 text-left">
-                        {getPlanByLookupKey(planKey)?.features.map((feature, idx) => {
-                          const label = typeof feature === "string" ? feature : feature.label;
-                          const tooltip = typeof feature === "string" ? null : feature.tooltip;
-                          return (
-                            <li
-                              key={label + String(idx)}
-                              {...(tooltip
-                                ? {
-                                    "data-tooltip-id": `pricing-tooltip-billing-${planKey}`,
-                                    "data-tooltip-content": tooltip,
-                                  }
-                                : {})}
-                              className="flex items-start gap-2 text-sm text-slate-300"
-                            >
-                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#4a5dff]" />
-                              <span>{label}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                    <Tooltip
-                      id={`pricing-tooltip-billing-${planKey}`}
-                      className="!bg-slate-900 max-w-xs !text-slate-200 !border !border-slate-800 !rounded-xl !p-3 !text-xs !shadow-2xl !opacity-100 z-50"
-                      noArrow={false}
-                    />
-                  </article>
+                <div className="plan-section-label">What's included</div>
+                <ul className="plan-feat">
+                  <li>24 luxury-enhanced visuals produced monthly</li>
+                  <li>Full image preparation &mdash; send us anything, even phone photos</li>
+                  <li>Professional captions &amp; hashtag research</li>
+                  <li>Publishing to 3 platforms (Instagram, Facebook, LinkedIn)</li>
+                  <li>Monthly content plan preview</li>
+                  <li>Seasonal editorial planning (engagement season, holidays)</li>
+                  <li>Micro-animation on select visuals</li>
+                  <li>48-hour factual error correction window</li>
+                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                </ul>
 
+                <div className="plan-fee plan-monthly-fee">
+                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $694 ($597 + $97). Billed $597 monthly thereafter.
+                </div>
+                <div className="plan-fee plan-annual-fee">
+                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $6,545 ($6,448 annual + $97).
+                </div>
 
-                );
-              })}
+                <div className="plan-cta">
+                  {plan?.code === "SIGNATURE" ? (
+                    <button
+                      className="btn btn-dark w-full"
+                      disabled={portalLoading}
+                      onClick={async () => {
+                        setPortalLoading(true);
+                        setPortalError(null);
+                        try {
+                          const url = await getCustomerPortalUrl();
+                          if (url) window.location.href = url;
+                          else setPortalError("Unable to open billing portal.");
+                        } finally {
+                          setPortalLoading(false);
+                        }
+                      }}
+                    >
+                      {portalLoading ? "Loading..." : "Manage Subscription"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-dark w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout("SIGNATURE")}
+                    >
+                      {checkoutLoading === "SIGNATURE"
+                        ? "Loading..."
+                        : billingCycle === 'yearly' ? 'Subscribe annually — $6,448/yr' : 'Subscribe to Signature'}
+                    </button>
+                  )}
+                  <div className="plan-annual-terms">
+                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
           )}
         </CardContent>
@@ -776,7 +800,7 @@ export default function BillingPage() {
         <Card>
           <CardHeader>
             <CardTitle>Plan Limits</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Your plan includes these features */}
             </p>
           </CardHeader>
@@ -809,7 +833,7 @@ export default function BillingPage() {
         <Card>
           <CardHeader>
             <CardTitle>Usage This Month</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Track your monthly usage */}
             </p>
           </CardHeader>
@@ -844,11 +868,11 @@ export default function BillingPage() {
         <CardHeader className="flex items-center justify-between">
           <div>
             <CardTitle>Invoices</CardTitle>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               {/* Most recent invoices */}
             </p>
           </div>
-          <Receipt className="h-5 w-5 text-lime-300" />
+          <Receipt className="h-5 w-5 text-[#8a6d28]" />
         </CardHeader>
         <CardContent>
           {invoices.length > 0 ? (
@@ -856,7 +880,7 @@ export default function BillingPage() {
               {/* Desktop Table View - hidden on mobile */}
               <div className="hidden md:block overflow-x-auto">
                 <div className="min-w-full">
-                  <div className="grid grid-cols-5 gap-4 text-xs uppercase tracking-wide text-slate-400 pb-2 border-b border-slate-800">
+                  <div className="grid grid-cols-5 gap-4 text-xs uppercase tracking-wide text-[#6b6b6b] pb-2 border-b border-[#d9d4c9]">
                     <div>Invoice #</div>
                     <div>Amount</div>
                     <div>Status</div>
@@ -866,28 +890,29 @@ export default function BillingPage() {
                   {invoices.map((invoice) => (
                     <div
                       key={invoice.id}
-                      className="grid grid-cols-5 gap-4 items-center py-3 border-b border-slate-800/50 last:border-0 text-sm"
+                      className="grid grid-cols-5 gap-4 items-center py-3 border-b border-[#d9d4c9]/50 last:border-0 text-sm"
                     >
-                      <div className="font-mono text-xs text-slate-300 truncate">
+                      <div className="font-mono text-xs text-[#14110c] truncate">
                         {invoice.number || invoice.id.slice(-8)}
                       </div>
-                      <div className="font-semibold text-white">
+                      <div className="font-semibold text-[#14110c]">
                         {formatCurrency(invoice.amount, invoice.currency)}
                       </div>
                       <div>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <Badge
+                          variant="outline"
+                          className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
                             invoice.status === "paid"
-                              ? "bg-green-500/20 text-green-300"
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-300"
-                                : "bg-slate-700/50 text-slate-300"
+                                ? "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                                : "bg-red-900/10 text-red-900 border-red-900/30"
                           }`}
                         >
                           {invoice.status}
-                        </span>
+                        </Badge>
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-[#6b6b6b]">
                         {invoice.createdAt
                           ? new Date(invoice.createdAt).toLocaleDateString(
                               "en-US",
@@ -905,12 +930,12 @@ export default function BillingPage() {
                             href={invoice.hostedInvoiceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-lime-400 hover:text-lime-300 hover:underline"
+                            className="inline-flex justify-end text-[#b08d3e] hover:text-[#8a6d28] transition-colors"
                           >
-                            View
+                            <Eye className="h-4 w-4" />
                           </a>
                         ) : (
-                          <span className="text-xs text-slate-500">—</span>
+                          <span className="text-xs text-[#6b6b6b]">—</span>
                         )}
                       </div>
                     </div>
@@ -923,41 +948,42 @@ export default function BillingPage() {
                 {invoices.map((invoice) => (
                   <div
                     key={invoice.id}
-                    className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 space-y-3"
+                    className="rounded-xl border border-[#d9d4c9] bg-[#faf8f3] p-4 space-y-3"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Invoice #</p>
-                        <p className="text-sm font-mono text-white">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Invoice #</p>
+                        <p className="text-sm font-mono text-[#14110c]">
                           {invoice.number || invoice.id.slice(-8)}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-slate-400 mb-1">Amount</p>
-                        <p className="text-sm font-semibold text-white">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Amount</p>
+                        <p className="text-sm font-semibold text-[#14110c]">
                           {formatCurrency(invoice.amount, invoice.currency)}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between pt-2 border-t border-[#d9d4c9]">
                       <div>
-                        <p className="text-xs text-slate-400 mb-1">Status</p>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        <p className="text-xs text-[#6b6b6b] mb-1">Status</p>
+                        <Badge
+                          variant="outline"
+                          className={`uppercase text-[10px] font-black tracking-[0.18em] px-2 py-0.5 ${
                             invoice.status === "paid"
-                              ? "bg-green-500/20 text-green-300"
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
                               : invoice.status === "open"
-                                ? "bg-amber-500/20 text-amber-300"
-                                : "bg-slate-700/50 text-slate-300"
+                                ? "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]"
+                                : "bg-red-900/10 text-red-900 border-red-900/30"
                           }`}
                         >
                           {invoice.status}
-                        </span>
+                        </Badge>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-slate-400 mb-1">Date</p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-xs text-[#6b6b6b] mb-1">Date</p>
+                        <p className="text-xs text-[#14110c]">
                           {invoice.createdAt
                             ? new Date(invoice.createdAt).toLocaleDateString(
                                 "en-US",
@@ -978,8 +1004,9 @@ export default function BillingPage() {
                           href={invoice.hostedInvoiceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-full rounded-lg bg-lime-400/10 border border-lime-400/30 px-3 py-2 text-xs font-medium text-lime-300 hover:bg-lime-400/20 transition"
+                          className="inline-flex items-center justify-center w-full gap-2 rounded-lg bg-[#b08d3e]/10 border border-[#b08d3e]/30 px-3 py-2 text-xs font-medium text-[#8a6d28] hover:bg-[#b08d3e]/20 transition"
                         >
+                          <Eye className="h-4 w-4" />
                           View Invoice
                         </a>
                       </div>
@@ -989,9 +1016,9 @@ export default function BillingPage() {
               </div>
             </>
           ) : (
-            <div className="text-sm text-slate-300 py-4">No invoices yet.</div>
+            <div className="text-sm text-[#14110c] py-4">No invoices yet.</div>
           )}
-          {error && <p className="text-xs text-red-300 mt-4">{error}</p>}
+          {error && <p className="text-xs text-red-600 mt-4">{error}</p>}
         </CardContent>
       </Card>
 
@@ -1000,15 +1027,15 @@ export default function BillingPage() {
         open={schedulingPlan !== null}
         onOpenChange={() => setSchedulingPlan(null)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-lime-400" />
+              <Calendar className="h-5 w-5 text-[#b08d3e]" />
               Schedule Plan Change
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               You are about to schedule a plan change to{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {schedulingPlan ? getPlanByLookupKey(schedulingPlan)?.name : ""}
               </span>
               . This change will take effect at the end of your current billing
@@ -1016,9 +1043,9 @@ export default function BillingPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-4">
-            <div className="rounded-lg bg-slate-950/50 p-4 border border-slate-800">
+            <div className="rounded-lg bg-[#faf8f3] p-4 border border-[#d9d4c9]">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-slate-400">New Plan:</span>
+                <span className="text-[#6b6b6b]">New Plan:</span>
                 <span className="font-semibold">
                   {schedulingPlan
                     ? getPlanByLookupKey(schedulingPlan)?.name
@@ -1026,13 +1053,13 @@ export default function BillingPage() {
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Effective Date:</span>
-                <span className="font-semibold text-lime-400">
+                <span className="text-[#6b6b6b]">Effective Date:</span>
+                <span className="font-semibold text-[#b08d3e]">
                   {currentPlanDisplay?.renewsAt}
                 </span>
               </div>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#6b6b6b]">
               * Your current features will remain active until the change date.
               * You can cancel this scheduled change at any time before it
               takes effect.
@@ -1041,14 +1068,14 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setSchedulingPlan(null)}
               disabled={actionLoading}
             >
               Cancel
             </Button>
             <Button
-              className="rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
+              className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
               onClick={() =>
                 schedulingPlan && schedulePlanChange(schedulingPlan, billingCycle)
               }
@@ -1064,36 +1091,36 @@ export default function BillingPage() {
         open={confirmCancelSub}
         onOpenChange={() => setConfirmCancelSub(false)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-400" />
+              <AlertTriangle className="h-5 w-5 text-red-600" />
               Cancel Subscription
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               Are you sure you want to cancel your subscription? You will
               maintain access to all features until{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {currentPlanDisplay?.renewsAt}
               </span>
               , after which your subscription will end.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#14110c]">
               Once canceled, you will lose access to:
             </p>
             <ul className="mt-3 space-y-2">
-              <li className="flex items-start gap-2 text-xs text-slate-400">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>Automated scheduling & calendar management</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-slate-400">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>AI-powered content generation</span>
               </li>
-              <li className="flex items-start gap-2 text-xs text-slate-400">
-                <XCircle className="h-4 w-4 shrink-0 text-red-400" />
+              <li className="flex items-start gap-2 text-xs text-[#6b6b6b]">
+                <XCircle className="h-4 w-4 shrink-0 text-red-600" />
                 <span>Platform management & analytics</span>
               </li>
             </ul>
@@ -1101,7 +1128,7 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setConfirmCancelSub(false)}
               disabled={actionLoading}
             >
@@ -1123,16 +1150,16 @@ export default function BillingPage() {
         open={confirmCancelSchedule}
         onOpenChange={() => setConfirmCancelSchedule(false)}
       >
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-lime-400" />
+              <Clock className="h-5 w-5 text-[#b08d3e]" />
               Cancel Scheduled Change
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               Are you sure you want to cancel the scheduled plan change? Your
               current plan will remain active and will renew normally on{" "}
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#14110c]">
                 {currentPlanDisplay?.renewsAt}
               </span>
               .
@@ -1141,14 +1168,14 @@ export default function BillingPage() {
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button
               variant="outline"
-              className="rounded-full border-slate-700"
+              className="rounded-full border-[#d9d4c9]"
               onClick={() => setConfirmCancelSchedule(false)}
               disabled={actionLoading}
             >
               No, Keep Scheduled Change
             </Button>
             <Button
-              className="rounded-full bg-lime-500 hover:bg-lime-400 text-slate-900"
+              className="rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
               onClick={cancelScheduledChange}
               disabled={actionLoading}
             >
@@ -1163,9 +1190,9 @@ export default function BillingPage() {
 
 function PlanDetail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-sm font-semibold text-white">{value}</p>
+    <div className="rounded-xl border border-[#d9d4c9] bg-[#faf8f3] p-3">
+      <p className="text-xs text-[#6b6b6b]">{label}</p>
+      <p className="text-sm font-semibold text-[#14110c]">{value}</p>
     </div>
   );
 }

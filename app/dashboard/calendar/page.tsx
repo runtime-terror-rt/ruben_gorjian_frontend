@@ -15,7 +15,7 @@ export default function CalendarPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-screen">
-          <div className="text-slate-400">Loading calendar...</div>
+          <div className="text-[#6b6b6b]">Loading calendar...</div>
         </div>
       }
     >

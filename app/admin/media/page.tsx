@@ -89,8 +89,8 @@ export default function AdminMediaPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Media Library</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-2xl font-semibold text-[#14110c]">Media Library</h1>
+          <p className="text-sm text-[#6b6b6b]">
             View and manage all media assets uploaded by users.
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function AdminMediaPage() {
             size="sm" 
             onClick={fetchAssets} 
             disabled={loading}
-            className="border-slate-700 hover:bg-slate-800 text-slate-300"
+            className="border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c]"
           >
             <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -109,13 +109,13 @@ export default function AdminMediaPage() {
       </div>
 
       {/* Filters */}
-      <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+      <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm">
         <CardContent className="p-4 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b6b6b]" />
             <Input 
               placeholder="Search assets or users..." 
-              className="pl-9 bg-slate-950 border-slate-700 text-slate-200 focus:border-lime-400"
+              className="pl-9 bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:border-[#b08d3e]"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -125,7 +125,7 @@ export default function AdminMediaPage() {
               variant={typeFilter === "ALL" ? "secondary" : "ghost"} 
               size="sm"
               onClick={() => setTypeFilter("ALL")}
-              className={typeFilter === "ALL" ? "bg-lime-400 text-slate-900 hover:bg-lime-300" : "text-slate-400 hover:text-white"}
+              className={typeFilter === "ALL" ? "bg-[#b08d3e] text-[#14110c] hover:bg-[#e6e1d8]" : "text-[#6b6b6b] hover:text-[#14110c]"}
             >
               All
             </Button>
@@ -133,7 +133,7 @@ export default function AdminMediaPage() {
               variant={typeFilter === "IMAGE" ? "secondary" : "ghost"} 
               size="sm"
               onClick={() => setTypeFilter("IMAGE")}
-              className={typeFilter === "IMAGE" ? "bg-lime-400 text-slate-900 hover:bg-lime-300" : "text-slate-400 hover:text-white"}
+              className={typeFilter === "IMAGE" ? "bg-[#b08d3e] text-[#14110c] hover:bg-[#e6e1d8]" : "text-[#6b6b6b] hover:text-[#14110c]"}
             >
               Images
             </Button>
@@ -141,7 +141,7 @@ export default function AdminMediaPage() {
               variant={typeFilter === "VIDEO" ? "secondary" : "ghost"} 
               size="sm"
               onClick={() => setTypeFilter("VIDEO")}
-              className={typeFilter === "VIDEO" ? "bg-lime-400 text-slate-900 hover:bg-lime-300" : "text-slate-400 hover:text-white"}
+              className={typeFilter === "VIDEO" ? "bg-[#b08d3e] text-[#14110c] hover:bg-[#e6e1d8]" : "text-[#6b6b6b] hover:text-[#14110c]"}
             >
               Videos
             </Button>
@@ -152,10 +152,10 @@ export default function AdminMediaPage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {loading && assets.length === 0 ? (
           Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="aspect-square rounded-xl bg-slate-800 animate-pulse" />
+            <div key={i} className="aspect-square rounded-xl bg-[#e6e1d8] animate-pulse" />
           ))
         ) : filteredAssets.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-slate-500">
+          <div className="col-span-full py-20 text-center text-[#6b6b6b]">
             <ImageIcon className="h-12 w-12 mx-auto mb-4 opacity-20" />
             <p>No media assets found matching your filters.</p>
           </div>
@@ -163,7 +163,7 @@ export default function AdminMediaPage() {
           filteredAssets.map((asset) => {
             const url = buildStorageUrl(STORAGE_BASE_URL, asset.storageKey) || "";
             return (
-              <div key={asset.id} className="group relative aspect-square rounded-xl overflow-hidden bg-slate-800 border border-slate-700 hover:border-lime-400/50 transition-all">
+              <div key={asset.id} className="group relative aspect-square rounded-xl overflow-hidden bg-[#e6e1d8] border border-[#d9d4c9] hover:border-[#b08d3e]/50 transition-all">
                 {asset.type === "IMAGE" && url ? (
                   <Image 
                     src={url} 
@@ -174,17 +174,17 @@ export default function AdminMediaPage() {
                     unoptimized
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center bg-slate-900 text-slate-400">
+                  <div className="h-full w-full flex items-center justify-center bg-[#ffffff] text-[#6b6b6b]">
                     <FileVideo className="h-10 w-10 opacity-50" />
                   </div>
                 )}
                 
                 {/* Meta Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
-                  <div className="text-[10px] text-white font-medium truncate mb-1">
+                  <div className="text-[10px] text-[#14110c] font-medium truncate mb-1">
                     {asset.originalName || "Unnamed asset"}
                   </div>
-                  <div className="text-[9px] text-slate-400 truncate">
+                  <div className="text-[9px] text-[#6b6b6b] truncate">
                     By {asset.user?.name || "Unknown"}
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function AdminMediaPage() {
                       href={url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-900 text-slate-300 hover:text-white backdrop-blur-sm"
+                      className="p-1.5 rounded-lg bg-[#ffffff]/80 hover:bg-[#ffffff] text-[#14110c] hover:text-[#14110c] backdrop-blur-sm"
                       title="Open in new tab"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
@@ -204,7 +204,7 @@ export default function AdminMediaPage() {
                   )}
                   <button 
                     onClick={() => handleDeleteAsset(asset.id)}
-                    className="p-1.5 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-white backdrop-blur-sm"
+                    className="p-1.5 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-[#14110c] backdrop-blur-sm"
                     title="Delete asset"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -213,14 +213,14 @@ export default function AdminMediaPage() {
 
                 {/* Type Indicator */}
                 {asset.type === "VIDEO" && (
-                   <div className="absolute top-2 left-2 p-1 rounded bg-black/50 text-white backdrop-blur-sm">
+                   <div className="absolute top-2 left-2 p-1 rounded bg-black/50 text-[#14110c] backdrop-blur-sm">
                      <FileVideo className="h-3 w-3" />
                    </div>
                 )}
 
                 {/* Deleted Indicator */}
                 {asset.deletedAt && (
-                  <div className="absolute top-2 left-2 p-1 rounded bg-rose-500 text-white backdrop-blur-sm flex items-center gap-1 mt-6">
+                  <div className="absolute top-2 left-2 p-1 rounded bg-rose-500 text-[#14110c] backdrop-blur-sm flex items-center gap-1 mt-6">
                     <Trash2 className="h-2 w-2" />
                     <span className="text-[8px] font-bold">DELETED</span>
                   </div>

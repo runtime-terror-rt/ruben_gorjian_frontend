@@ -33,7 +33,8 @@ import {
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, Filter } from "lucide-react";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 type FaqPageType = "FAQ_PAGE" | "PRICING_PAGE";
 
@@ -255,22 +256,19 @@ export default function AdminFaqPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-lime-400" />
-            FAQ Management
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">Create, edit, delete, and activate FAQs.</p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">FAQ Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Create, edit, delete, and activate FAQs.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1">
-            <Filter className="h-4 w-4 text-slate-400" />
+          <div className="flex items-center gap-2 bg-[#ffffff] border border-[#d9d4c9] rounded-xl px-3 py-1">
+            <Filter className="h-4 w-4 text-[#6b6b6b]" />
             <Select
               value={filterPageType}
               onChange={(e) => {
                 setFilterPageType(e.target.value as FaqPageType | "ALL");
                 setCurrentPage(1);
               }}
-              className="w-[160px] bg-transparent border-none text-slate-300 focus:ring-0 cursor-pointer"
+              className="w-[160px] bg-transparent border-none text-[#14110c] focus:ring-0 cursor-pointer"
             >
               <option value="ALL">All Pages</option>
               <option value="FAQ_PAGE">FAQ Page</option>
@@ -279,43 +277,43 @@ export default function AdminFaqPage() {
           </div>
           <Button
             onClick={openCreate}
-            className="cursor-pointer bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+            className="cursor-pointer bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
           >
             <Plus className="h-5 w-5" /> Create FAQ
           </Button>
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
         {isLoading && !data ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-lime-400" />
-            <p className="text-slate-500 text-sm">Loading FAQs...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
+            <p className="text-[#6b6b6b] text-sm">Loading FAQs...</p>
           </div>
         ) : (
           <>
             <Table>
-              <TableHeader className="bg-slate-800/50">
-                <TableRow className="hover:bg-transparent border-slate-800">
-                  <TableHead className="text-slate-400 font-semibold py-4">Question</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-32">Page Type</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-32">Status</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-48">Updated</TableHead>
-                  <TableHead className="text-slate-400 font-semibold py-4 w-20 text-right">Actions</TableHead>
+              <TableHeader className="bg-[#e6e1d8]/50">
+                <TableRow className="hover:bg-transparent border-[#d9d4c9]">
+                  <TableHead className="text-[#6b6b6b] font-semibold py-4">Question</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold py-4 w-32">Page Type</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold py-4 w-32">Status</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold py-4 w-48">Updated</TableHead>
+                  <TableHead className="text-[#6b6b6b] font-semibold py-4 w-20 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {faqs.length ? (
                   faqs.map((faq) => (
-                    <TableRow key={faq.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
+                    <TableRow key={faq.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors">
                       <TableCell className="py-4">
-                        <div className="text-white font-medium leading-5">{faq.question}</div>
-                        <div className="text-slate-500 text-xs mt-1 line-clamp-2">{faq.answer}</div>
+                        <div className="text-[#14110c] font-medium leading-5">{faq.question}</div>
+                        <div className="text-[#6b6b6b] text-xs mt-1 line-clamp-2">{faq.answer}</div>
                       </TableCell>
                       <TableCell className="py-4">
                         <Badge
                           variant="outline"
-                          className="border-slate-700 bg-slate-800/40 text-slate-300 font-bold text-[10px]"
+                          className="border-[#d9d4c9] bg-[#e6e1d8]/40 text-[#14110c] font-bold text-[10px]"
                         >
                           {faq.pageType === "FAQ_PAGE" ? "FAQ" : "PRICING"}
                         </Badge>
@@ -325,29 +323,29 @@ export default function AdminFaqPage() {
                           variant="outline"
                           className={
                             faq.isActive
-                              ? "border-lime-400/30 bg-lime-400/10 text-lime-300"
-                              : "border-slate-700 bg-slate-800/40 text-slate-300"
+                              ? "border-[#b08d3e]/30 bg-[#b08d3e]/10 text-[#8a6d28]"
+                              : "border-[#d9d4c9] bg-[#e6e1d8]/40 text-[#14110c]"
                           }
                         >
                           {faq.isActive ? "ACTIVE" : "INACTIVE"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="py-4 text-slate-400 text-sm">{formatDateTime(faq.updatedAt)}</TableCell>
+                      <TableCell className="py-4 text-[#6b6b6b] text-sm">{formatDateTime(faq.updatedAt)}</TableCell>
                       <TableCell className="py-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="cursor-pointer h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                              className="cursor-pointer h-8 w-8 text-[#6b6b6b] hover:text-[#14110c] hover:bg-[#e6e1d8]"
                             >
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-slate-200">
+                          <DropdownMenuContent align="end" className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
                             <DropdownMenuItem
                               onClick={() => openEdit(faq)}
-                              className="cursor-pointer focus:bg-slate-800"
+                              className="cursor-pointer focus:bg-[#e6e1d8]"
                             >
                               <Pencil className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
@@ -358,7 +356,7 @@ export default function AdminFaqPage() {
                                   status: faq.isActive ? "INACTIVE" : "ACTIVE",
                                 })
                               }
-                              className="cursor-pointer focus:bg-slate-800"
+                              className="cursor-pointer focus:bg-[#e6e1d8]"
                             >
                               {faq.isActive ? (
                                 <>
@@ -375,7 +373,7 @@ export default function AdminFaqPage() {
                                 setFaqToDelete(faq);
                                 setIsDeleteDialogOpen(true);
                               }}
-                              className="cursor-pointer text-red-400 focus:bg-slate-800 focus:text-red-400"
+                              className="cursor-pointer text-red-600 focus:bg-[#e6e1d8] focus:text-red-600"
                             >
                               <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
@@ -386,7 +384,7 @@ export default function AdminFaqPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={5} className="h-32 text-center text-[#6b6b6b]">
                       No FAQs found.
                     </TableCell>
                   </TableRow>
@@ -396,34 +394,13 @@ export default function AdminFaqPage() {
 
             {/* Pagination Footer */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t border-white/5 bg-slate-950/20">
-                <div className="text-xs text-slate-500 font-medium uppercase">
-                  Showing {totalRecords} total records
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => canGoPrev && setCurrentPage((p) => p - 1)}
-                    disabled={!canGoPrev || isFetching}
-                    className="bg-slate-900 border-slate-800 h-8 px-2"
-                  >
-                    <ChevronLeft className="h-4 w-4 text-slate-400" />
-                  </Button>
-                  <div className="px-3 py-1 bg-lime-400/10 border border-lime-400/20 rounded-md text-[10px] font-bold text-lime-400 uppercase">
-                    Page {currentPage} of {totalPages}{isFetching ? " • Loading..." : ""}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => canGoNext && setCurrentPage((p) => p + 1)}
-                    disabled={!canGoNext || isFetching}
-                    className="bg-slate-900 border-slate-800 h-8 px-2"
-                  >
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
-                  </Button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalRecords}
+                isLoading={isFetching}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
             )}
           </>
         )}
@@ -439,21 +416,21 @@ export default function AdminFaqPage() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-[650px] bg-slate-900 border-slate-800 text-slate-200">
+        <DialogContent className="sm:max-w-[650px] bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
           <DialogHeader>
-            <DialogTitle className="text-xl text-white">{editingFaq ? "Edit FAQ" : "Create FAQ"}</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-xl text-[#14110c]">{editingFaq ? "Edit FAQ" : "Create FAQ"}</DialogTitle>
+            <DialogDescription className="text-[#6b6b6b]">
               {editingFaq ? "Update the FAQ details." : "Add a new FAQ entry."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={onSubmit} className="space-y-5 py-2">
             <div className="space-y-2">
-              <Label htmlFor="question" className="text-slate-300">
+              <Label htmlFor="question" className="text-[#14110c]">
                 Question
               </Label>
               <Input
                 id="question"
-                className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                 value={formData.question}
                 onChange={(e) => setFormData((p) => ({ ...p, question: e.target.value }))}
                 required
@@ -461,12 +438,12 @@ export default function AdminFaqPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="answer" className="text-slate-300">
+              <Label htmlFor="answer" className="text-[#14110c]">
                 Answer
               </Label>
               <Textarea
                 id="answer"
-                className="min-h-32 bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                className="min-h-32 bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                 value={formData.answer}
                 onChange={(e) => setFormData((p) => ({ ...p, answer: e.target.value }))}
                 required
@@ -475,14 +452,14 @@ export default function AdminFaqPage() {
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="pageType" className="text-slate-300 font-medium">
+                <Label htmlFor="pageType" className="text-[#14110c] font-medium">
                   Page Type
                 </Label>
                 <Select
                   id="pageType"
                   value={formData.pageType}
                   onChange={(e) => setFormData((p) => ({ ...p, pageType: e.target.value as FaqPageType }))}
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500 cursor-pointer h-11"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500 cursor-pointer h-11"
                   required
                 >
                   <option value="FAQ_PAGE">FAQ Page</option>
@@ -491,15 +468,15 @@ export default function AdminFaqPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300 font-medium">Status</Label>
-                <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950 px-4 h-11 w-full transition-all hover:border-slate-700">
+                <Label className="text-[#14110c] font-medium">Status</Label>
+                <div className="flex items-center gap-3 rounded-xl border border-[#d9d4c9] bg-[#faf8f3] px-4 h-11 w-full transition-all hover:border-[#d9d4c9]">
                   <Checkbox
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => setFormData((p) => ({ ...p, isActive: Boolean(checked) }))}
-                    className="border-slate-700 data-[state=checked]:bg-lime-400 data-[state=checked]:text-slate-950"
+                    className="border-[#d9d4c9] data-[state=checked]:bg-[#b08d3e] data-[state=checked]:text-[#14110c]"
                   />
-                  <Label htmlFor="isActive" className="text-sm text-slate-300 cursor-pointer flex-1">
+                  <Label htmlFor="isActive" className="text-sm text-[#14110c] cursor-pointer flex-1">
                     Visible on site
                   </Label>
                 </div>
@@ -510,7 +487,7 @@ export default function AdminFaqPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+                className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
                 onClick={() => setIsDialogOpen(false)}
               >
                 Cancel
@@ -518,7 +495,7 @@ export default function AdminFaqPage() {
               <Button
                 type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
               >
                 {(createMutation.isPending || updateMutation.isPending) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -531,22 +508,22 @@ export default function AdminFaqPage() {
       </Dialog>
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[450px] bg-slate-900 border-slate-800 text-slate-200">
+        <DialogContent className="sm:max-w-[450px] bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
           <DialogHeader>
-            <DialogTitle className="text-xl text-white">Delete FAQ</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-xl text-[#14110c]">Delete FAQ</DialogTitle>
+            <DialogDescription className="text-[#6b6b6b]">
               This action cannot be undone. Delete this FAQ?
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-lg border border-slate-800 bg-slate-950 px-4 py-3">
-            <div className="text-sm text-white font-medium">{faqToDelete?.question}</div>
-            <div className="text-xs text-slate-500 mt-1 line-clamp-2">{faqToDelete?.answer}</div>
+          <div className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] px-4 py-3">
+            <div className="text-sm text-[#14110c] font-medium">{faqToDelete?.question}</div>
+            <div className="text-xs text-[#6b6b6b] mt-1 line-clamp-2">{faqToDelete?.answer}</div>
           </div>
           <DialogFooter className="gap-4 pt-4">
             <Button
               type="button"
               variant="outline"
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
               Cancel
@@ -556,7 +533,7 @@ export default function AdminFaqPage() {
               variant="destructive"
               disabled={!faqToDelete || deleteMutation.isPending}
               onClick={() => faqToDelete && deleteMutation.mutate(faqToDelete.id)}
-              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
+              className="bg-rose-600 hover:bg-rose-500 text-[#14110c] font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
             >
               {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Delete FAQ

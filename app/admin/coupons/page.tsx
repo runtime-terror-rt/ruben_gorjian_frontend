@@ -58,6 +58,7 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Select } from "@/components/ui/select";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 // --- Types ---
 
@@ -231,7 +232,7 @@ export default function AdminCouponsPage() {
       header: "Coupon Code",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="font-mono text-sm bg-slate-800 text-lime-400 border-lime-400/20 px-2 py-1">
+          <Badge variant="outline" className="font-mono text-sm bg-[#e6e1d8] text-[#b08d3e] border-[#b08d3e]/20 px-2 py-1">
             {row.original.code}
           </Badge>
         </div>
@@ -243,11 +244,11 @@ export default function AdminCouponsPage() {
       cell: ({ row }) => {
         const c = row.original;
         return (
-          <div className="flex items-center gap-1 font-medium text-white">
+          <div className="flex items-center gap-1 font-medium text-[#14110c]">
             {c.discountType === "percentage" ? (
-              <><Percent className="h-3 w-3 text-slate-400" /> {c.discountValue}%</>
+              <><Percent className="h-3 w-3 text-[#6b6b6b]" /> {c.discountValue}%</>
             ) : (
-              <><DollarSign className="h-3 w-3 text-slate-400" /> ${c.discountValue}</>
+              <><DollarSign className="h-3 w-3 text-[#6b6b6b]" /> ${c.discountValue}</>
             )}
           </div>
         );
@@ -261,15 +262,15 @@ export default function AdminCouponsPage() {
         const percent = (c.usedCount / c.maxUses) * 100;
         return (
           <div className="space-y-1 w-32">
-            <div className="flex justify-between text-[10px] text-slate-400">
+            <div className="flex justify-between text-[10px] text-[#6b6b6b]">
               <span>{c.usedCount} / {c.maxUses}</span>
               <span>{Math.round(percent)}%</span>
             </div>
-            <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-[#e6e1d8] rounded-full overflow-hidden">
               <div 
                 className={cn(
                   "h-full rounded-full transition-all",
-                  percent > 90 ? "bg-red-500" : percent > 70 ? "bg-amber-500" : "bg-lime-500"
+                  percent > 90 ? "bg-red-500" : percent > 70 ? "bg-amber-500" : "bg-[#b08d3e]"
                 )}
                 style={{ width: `${Math.min(100, percent)}%` }}
               />
@@ -287,9 +288,9 @@ export default function AdminCouponsPage() {
           <Badge 
             className={cn(
               "capitalize",
-              status === "ACTIVE" ? "bg-lime-500/10 text-lime-400 border-lime-400/20" : 
-              status === "INACTIVE" ? "bg-slate-500/10 text-slate-400 border-slate-400/20" : 
-              "bg-red-500/10 text-red-400 border-red-500/20"
+              status === "ACTIVE" ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20" : 
+              status === "INACTIVE" ? "bg-[#e6e1d8]/30 text-[#6b6b6b] border-[#d9d4c9]/40" : 
+              "bg-red-500/10 text-red-600 border-red-500/20"
             )}
             variant="outline"
           >
@@ -302,7 +303,7 @@ export default function AdminCouponsPage() {
       accessorKey: "expiresAt",
       header: "Expires",
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5 text-xs text-slate-400">
+        <div className="flex items-center gap-1.5 text-xs text-[#6b6b6b]">
           <Calendar className="h-3 w-3" />
           {format(new Date(row.original.expiresAt), "MMM d, yyyy")}
         </div>
@@ -316,11 +317,11 @@ export default function AdminCouponsPage() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+              <Button variant="ghost" className="h-8 w-8 p-0 text-[#6b6b6b] hover:text-[#14110c]">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-slate-800 text-slate-200">
+            <DropdownMenuContent align="end" className="w-48 bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => router.push(`/admin/coupons/${coupon.id}/usages`)}>
                 <Eye className="mr-2 h-4 w-4" /> View Usages
@@ -333,7 +334,7 @@ export default function AdminCouponsPage() {
                   id: coupon.id, 
                   status: coupon.status === "ACTIVE" ? "INACTIVE" : "ACTIVE" 
                 })}
-                className={coupon.status === "ACTIVE" ? "text-amber-400" : "text-lime-400"}
+                className={coupon.status === "ACTIVE" ? "text-amber-700" : "text-[#b08d3e]"}
               >
                 {coupon.status === "ACTIVE" ? (
                   <><PowerOff className="mr-2 h-4 w-4" /> Deactivate</>
@@ -346,7 +347,7 @@ export default function AdminCouponsPage() {
                   setCouponToDelete(coupon);
                   setIsDeleteDialogOpen(true);
                 }}
-                className="text-red-400 focus:text-red-400"
+                className="text-red-600 focus:text-red-600"
               >
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
               </DropdownMenuItem>
@@ -368,13 +369,8 @@ export default function AdminCouponsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Tag className="h-6 w-6 text-lime-400" />
-            Coupon Management
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Create and manage discount codes for your subscription plans.
-          </p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Coupon Management</h1>
+          <p className="text-sm text-[#6b6b6b]">Create and manage discount codes for your subscription plans.</p>
         </div>
         <Button 
           onClick={() => {
@@ -382,27 +378,27 @@ export default function AdminCouponsPage() {
             setEditingCoupon(null);
             setIsCreateDialogOpen(true);
           }}
-          className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+          className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
         >
           <Plus className="h-5 w-5" /> Create Coupon
         </Button>
       </div>
 
       {/* Coupons Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+      <div className="rounded-xl border border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
         {isLoading ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-lime-400" />
-            <p className="text-slate-500 text-sm">Loading coupons...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
+            <p className="text-[#6b6b6b] text-sm">Loading coupons...</p>
           </div>
         ) : (
           <>
             <Table>
-              <TableHeader className="bg-slate-800/50">
+              <TableHeader className="bg-[#e6e1d8]/50">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-slate-800">
+                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-[#d9d4c9]">
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id} className="text-slate-400 font-semibold py-4">
+                      <TableHead key={header.id} className="text-[#6b6b6b] font-semibold py-4">
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
@@ -412,7 +408,7 @@ export default function AdminCouponsPage() {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="border-slate-800 hover:bg-slate-800/30 transition-colors">
+                    <TableRow key={row.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors">
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="py-4">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -422,7 +418,7 @@ export default function AdminCouponsPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={columns.length} className="h-32 text-center text-[#6b6b6b]">
                       No coupons found.
                     </TableCell>
                   </TableRow>
@@ -432,43 +428,13 @@ export default function AdminCouponsPage() {
 
             {/* ── Pagination Footer ── */}
             {data?.pagination && data.pagination.pages > 1 && (
-              <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pb-6 border-t border-slate-800 bg-slate-800/20">
-                
-                {/* Left: results info */}
-                <p className="text-[11px] font-semibold text-slate-500 tracking-wide uppercase">
-                  Showing page{" "}
-                  <span className="text-slate-300 font-black">{data.pagination.page}</span>
-                  {" "}of{" "}
-                  <span className="text-slate-300 font-black">{data.pagination.pages}</span>
-                  {" "}·{" "}
-                  <span className="text-slate-300 font-black">{data.pagination.total}</span> total coupons
-                </p>
-
-                {/* Right: Prev / Next */}
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={isLoading || page <= 1}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-                    Previous
-                  </button>
-
-                  <div className="bg-slate-800/50 px-4 py-1.5 rounded-lg border border-slate-700/50">
-                    <span className="text-xs font-black text-lime-400">Page {data.pagination.page}</span>
-                  </div>
-
-                  <button
-                    onClick={() => setPage((p) => Math.min(data.pagination.pages, p + 1))}
-                    disabled={isLoading || page >= data.pagination.pages}
-                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                  >
-                    Next Page
-                    <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                </div>
-              </div>
+              <AdminPagination
+                currentPage={data.pagination.page}
+                totalPages={data.pagination.pages}
+                totalItems={data.pagination.total}
+                isLoading={isLoading}
+                onPageChange={(p) => setPage(p)}
+              />
             )}
           </>
         )}
@@ -476,12 +442,12 @@ export default function AdminCouponsPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-slate-900 border-slate-800 text-slate-200">
+        <DialogContent className="sm:max-w-[500px] bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
           <DialogHeader>
-            <DialogTitle className="text-xl text-white">
+            <DialogTitle className="text-xl text-[#14110c]">
               {editingCoupon ? "Edit Coupon" : "Create New Coupon"}
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-[#6b6b6b]">
               {editingCoupon 
                 ? "Update the coupon details below." 
                 : "Fill in the details to create a new discount code."}
@@ -490,11 +456,11 @@ export default function AdminCouponsPage() {
           <form onSubmit={handleSubmit} className="space-y-5 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2 col-span-2">
-                <Label htmlFor="code" className="text-slate-300">Coupon Code</Label>
+                <Label htmlFor="code" className="text-[#14110c]">Coupon Code</Label>
                 <Input 
                   id="code"
                   placeholder="e.g. SUMMER26"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500 uppercase"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500 uppercase"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   required
@@ -502,7 +468,7 @@ export default function AdminCouponsPage() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="type" className="text-slate-300">Discount Type</Label>
+                <Label htmlFor="type" className="text-[#14110c]">Discount Type</Label>
                 <Select 
                   id="type"
                   value={formData.discountType} 
@@ -514,11 +480,11 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="value" className="text-slate-300">Value</Label>
+                <Label htmlFor="value" className="text-[#14110c]">Value</Label>
                 <Input 
                   id="value"
                   type="number"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                   value={formData.discountValue === 0 ? "" : formData.discountValue}
                   onChange={(e) => setFormData({ ...formData, discountValue: e.target.value === "" ? 0 : Number(e.target.value) })}
                   required
@@ -526,11 +492,11 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="maxUses" className="text-slate-300">Max Uses (Total)</Label>
+                <Label htmlFor="maxUses" className="text-[#14110c]">Max Uses (Total)</Label>
                 <Input 
                   id="maxUses"
                   type="number"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                   value={formData.maxUses === 0 ? "" : formData.maxUses}
                   onChange={(e) => setFormData({ ...formData, maxUses: e.target.value === "" ? 0 : Number(e.target.value) })}
                   required
@@ -538,11 +504,11 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="maxPerClient" className="text-slate-300">Max Per Client</Label>
+                <Label htmlFor="maxPerClient" className="text-[#14110c]">Max Per Client</Label>
                 <Input 
                   id="maxPerClient"
                   type="number"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                   value={formData.maxUsesPerClient === 0 ? "" : formData.maxUsesPerClient}
                   onChange={(e) => setFormData({ ...formData, maxUsesPerClient: e.target.value === "" ? 0 : Number(e.target.value) })}
                   required
@@ -550,11 +516,11 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-2 col-span-2">
-                <Label htmlFor="expiry" className="text-slate-300">Expiry Date</Label>
+                <Label htmlFor="expiry" className="text-[#14110c]">Expiry Date</Label>
                 <Input 
                   id="expiry"
                   type="datetime-local"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                   // Helper: Convert ISO string to YYYY-MM-DDTHH:MM for datetime-local input
                   value={formData.expiresAt ? new Date(formData.expiresAt).toLocaleString('sv-SE').replace(' ', 'T').slice(0, 16) : ""}
                   onChange={(e) => {
@@ -569,11 +535,11 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-2 col-span-2">
-                <Label htmlFor="desc" className="text-slate-300">Description</Label>
+                <Label htmlFor="desc" className="text-[#14110c]">Description</Label>
                 <Input 
                   id="desc"
                   placeholder="e.g. Summer sale - 10% off"
-                  className="bg-slate-950 border-slate-800 text-white focus:ring-lime-500"
+                  className="bg-[#faf8f3] border-[#d9d4c9] text-[#14110c] focus:ring-lime-500"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   required
@@ -581,7 +547,7 @@ export default function AdminCouponsPage() {
               </div>
 
               <div className="space-y-3 col-span-2 pt-2">
-                <Label className="text-slate-300">Applicable Plans</Label>
+                <Label className="text-[#14110c]">Applicable Plans</Label>
                 <div className="flex flex-wrap gap-4 mt-1">
                   {["FM-70", "FMP-35", "FMP-20"].map((plan) => (
                     <div key={plan} className="flex items-center space-x-2">
@@ -594,11 +560,11 @@ export default function AdminCouponsPage() {
                             : formData.applicablePlans.filter(p => p !== plan);
                           setFormData({ ...formData, applicablePlans: newPlans });
                         }}
-                        className="border-slate-700 data-[state=checked]:bg-lime-500"
+                        className="border-[#d9d4c9] data-[state=checked]:bg-[#b08d3e]"
                       />
                       <label 
                         htmlFor={`plan-${plan}`}
-                        className="text-sm font-medium leading-none text-slate-300 cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="text-sm font-medium leading-none text-[#14110c] cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {plan}
                       </label>
@@ -606,7 +572,7 @@ export default function AdminCouponsPage() {
                   ))}
                 </div>
                 {formData.applicablePlans.length === 0 && (
-                  <p className="text-[10px] text-amber-400">At least one plan must be selected.</p>
+                  <p className="text-[10px] text-amber-700">At least one plan must be selected.</p>
                 )}
               </div>
             </div>
@@ -616,13 +582,13 @@ export default function AdminCouponsPage() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setIsCreateDialogOpen(false)}
-                className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+                className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-lime-400 hover:bg-lime-300 text-slate-950 font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
+                className="bg-[#b08d3e] hover:bg-[#e6e1d8] text-[#14110c] font-black gap-2 px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(163,230,53,0.3)] transition-all hover:scale-105 active:scale-95 text-base"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 {(createMutation.isPending || updateMutation.isPending) ? (
@@ -641,18 +607,18 @@ export default function AdminCouponsPage() {
 
       {/* Delete Confirmation */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200">
+        <DialogContent className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c]">
           <DialogHeader>
-            <DialogTitle className="text-white">Delete Coupon</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Are you sure you want to delete coupon <span className="text-white font-bold">{couponToDelete?.code}</span>? This action cannot be undone.
+            <DialogTitle className="text-[#14110c]">Delete Coupon</DialogTitle>
+            <DialogDescription className="text-[#6b6b6b]">
+              Are you sure you want to delete coupon <span className="text-[#14110c] font-bold">{couponToDelete?.code}</span>? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-4 pt-4">
             <Button 
               variant="outline" 
               onClick={() => setIsDeleteDialogOpen(false)}
-              className="border-slate-800 bg-slate-900/50 text-slate-300 hover:bg-slate-800 hover:text-white font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
+              className="border-[#d9d4c9] bg-[#ffffff] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c] font-black px-8 py-6 rounded-2xl transition-all hover:scale-105 active:scale-95 text-base"
             >
               Cancel
             </Button>
@@ -660,7 +626,7 @@ export default function AdminCouponsPage() {
               variant="destructive" 
               onClick={() => couponToDelete && deleteMutation.mutate(couponToDelete.id)}
               disabled={deleteMutation.isPending}
-              className="bg-rose-600 hover:bg-rose-500 text-white font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
+              className="bg-rose-600 hover:bg-rose-500 text-[#14110c] font-black px-8 py-6 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] transition-all hover:scale-105 active:scale-95 text-base border-none"
             >
               {deleteMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Delete Coupon

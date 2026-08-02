@@ -42,7 +42,7 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
 
         <div className="space-y-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Your Top 5 Signature Dishes <span className="text-lime-400">*</span>
+            Your Top 5 Signature Dishes <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">List your most iconic, most ordered, or most visually impressive items. These get priority in every shoot.</span>
           </Label>
           <div className="grid grid-cols-1 gap-3">
@@ -62,7 +62,7 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
 
         <div className="space-y-2 pt-4">
           <Label htmlFor="signatureDishDetails" className="text-sm font-semibold text-slate-300">
-            What makes your signature dishes special? <span className="text-lime-400">*</span>
+            What makes your signature dishes special? <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">For each hero item above — describe the ingredients, technique, or story that makes it memorable. This goes directly into captions.</span>
           </Label>
           <Textarea
@@ -103,7 +103,7 @@ export function ProductsCollectionsSection({ data, updateData }: ProductsCollect
 
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Hashtag Style <span className="text-lime-400">*</span>
+            Hashtag Style <span className="text-lime-700">*</span>
           </Label>
           <div className="grid grid-cols-1 gap-3">
             {hashtagStyles.map((opt) => {

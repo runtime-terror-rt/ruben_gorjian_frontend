@@ -91,7 +91,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
 
         <div className="space-y-2">
           <Label htmlFor="foodDescription" className="text-sm font-semibold text-slate-300">
-            How would you describe your food in your own words? <span className="text-lime-400">*</span>
+            How would you describe your food in your own words? <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">
               Write like you&apos;re telling a friend about your restaurant. Not marketing language — YOUR words.
             </span>
@@ -107,7 +107,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
 
         <div className="space-y-2">
           <Label htmlFor="uniqueSellingPoint" className="text-sm font-semibold text-slate-300">
-            What makes your restaurant different from every other place on the block? <span className="text-lime-400">*</span>
+            What makes your restaurant different from every other place on the block? <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">
               Could be a secret recipe, family history, technique, atmosphere, or loyal community. Be specific.
             </span>
@@ -123,7 +123,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
 
         <div className="space-y-2">
           <Label htmlFor="customerReviews" className="text-sm font-semibold text-slate-300">
-            What do your regulars say about you? <span className="text-lime-400">*</span>
+            What do your regulars say about you? <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">
               Paste real Google/Yelp review quotes, or write what you hear customers say most often.
             </span>
@@ -173,7 +173,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
         {/* 3 Sample Captions */}
         <div className="space-y-4">
           <Label className="text-sm font-semibold text-slate-300">
-            3 Sample Captions — MANDATORY <span className="text-lime-400">*</span>
+            3 Sample Captions — MANDATORY <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">
               Paste 3 captions from your existing Instagram or any account whose tone you want to match.
               If you have none, write 3 sentences about your restaurant the way you&apos;d say them out loud.
@@ -200,7 +200,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
         {/* Tone & Voice */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Tone &amp; Voice <span className="text-lime-400">*</span>
+            Tone &amp; Voice <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">Select all that apply:</span>
           </Label>
           <div className="grid grid-cols-1 gap-3">
@@ -304,7 +304,7 @@ export function BrandVoiceSection({ data, updateData }: BrandVoiceSectionProps) 
         {/* Caption Targeting — checkbox-grid options */}
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Caption Targeting <span className="text-lime-400">*</span>
+            Caption Targeting <span className="text-lime-700">*</span>
           </Label>
           <div className="grid grid-cols-1 gap-3">
             {captionTargetingOptions.map((opt) => {

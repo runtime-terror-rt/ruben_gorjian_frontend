@@ -38,7 +38,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
 
         <div className="space-y-3">
           <Label className="text-sm font-semibold text-slate-300">
-            Minimum 5-7 hero dishes must be ready and styled at the start of your shoot. <span className="text-lime-400">*</span>
+            Minimum 5-7 hero dishes must be ready and styled at the start of your shoot. <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">Confirmed?</span>
           </Label>
           <div className="flex flex-wrap gap-4">
@@ -74,7 +74,7 @@ export function ShootPreparationSection({ data, updateData }: ShootPreparationSe
 
         <div className="space-y-3 pt-4">
           <Label className="text-sm font-semibold text-slate-300">
-            Will action shots be possible? <span className="text-lime-400">*</span>
+            Will action shots be possible? <span className="text-lime-700">*</span>
             <span className="block text-xs font-normal text-slate-500 mt-1">e.g. pouring, drizzling, chef interaction.</span>
           </Label>
           <div className="flex flex-wrap gap-4">

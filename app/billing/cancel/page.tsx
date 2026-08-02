@@ -9,7 +9,7 @@ export default function BillingCancelPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <a
             href="#pricing"
-            className="inline-flex items-center justify-center rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-slate-950 shadow hover:bg-lime-300"
+            className="inline-flex items-center justify-center rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-[#14110c] shadow hover:bg-lime-300"
           >
             Back to Pricing
           </a>

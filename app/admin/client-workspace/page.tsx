@@ -7,12 +7,8 @@ export default function AdminClientWorkspacePage() {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-white tracking-tight">
-          Client <span className="text-lime-400">Workspace</span>
-        </h1>
-        <p className="text-slate-400 mt-1 font-medium">
-          Focused management for individual clients.
-        </p>
+        <h1 className="text-2xl font-semibold text-[#14110c]">Client Workspace</h1>
+        <p className="text-sm text-[#6b6b6b]">Focused management for individual clients.</p>
       </div>
 
       <AdminClientWorkspace />

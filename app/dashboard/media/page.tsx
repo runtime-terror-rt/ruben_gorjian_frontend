@@ -120,18 +120,18 @@ export default function MediaLibraryPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Media Library</h1>
-          <p className="text-sm text-slate-400">Review your uploaded images and videos, grouped by upload date.</p>
+          <h1 className="text-2xl font-semibold text-[#14110c]">Media Library</h1>
+          <p className="text-sm text-[#6b6b6b]">Review your uploaded images and videos, grouped by upload date.</p>
         </div>
         <div className="flex items-center gap-3">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit">
-            <TabsList className="bg-slate-900 border border-slate-800 h-10 p-1 rounded-xl">
-              <TabsTrigger value="all" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">All</TabsTrigger>
-              <TabsTrigger value="image" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">Images</TabsTrigger>
-              <TabsTrigger value="video" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-lime-400 data-[state=active]:text-slate-950">Videos</TabsTrigger>
+            <TabsList className="bg-[#ffffff] border border-[#d9d4c9] h-10 p-1 rounded-xl">
+              <TabsTrigger value="all" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">All</TabsTrigger>
+              <TabsTrigger value="image" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">Images</TabsTrigger>
+              <TabsTrigger value="video" className="rounded-lg px-4 text-xs font-semibold data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c]">Videos</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Badge variant="outline" className="h-10 px-4 rounded-xl border-slate-800 bg-slate-900/50 text-slate-400 text-xs font-medium flex items-center">
+          <Badge variant="outline" className="h-10 px-4 rounded-xl border-[#d9d4c9] bg-[#ffffff] text-[#6b6b6b] text-xs font-medium flex items-center">
             Total {totalItems}
           </Badge>
         </div>
@@ -149,19 +149,19 @@ export default function MediaLibraryPage() {
       )}>
         {assets.length === 0 && !loading ? (
           <Card>
-            <CardContent className="p-12 text-center text-slate-400">
-              <p className="text-lg font-medium text-white mb-1">No media found</p>
+            <CardContent className="p-12 text-center text-[#6b6b6b]">
+              <p className="text-lg font-medium text-[#14110c] mb-1">No media found</p>
               <p className="text-sm">Add media from the Calendar post modal to see them here.</p>
             </CardContent>
           </Card>
         ) : (
           grouped.map(({ day, items }) => (
-          <Card key={day} className="border-slate-800 bg-slate-900/60">
+          <Card key={day} className="border-[#d9d4c9] bg-[#ffffff]/60">
             <CardHeader className="flex items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm text-white">
+              <CardTitle className="text-sm text-[#14110c]">
                 {dayjs(day).format("MMMM D, YYYY")}
               </CardTitle>
-              <Badge variant="secondary" className="text-xs text-lime-300">
+              <Badge variant="secondary" className="text-xs text-[#8a6d28]">
                 {items.length} file{items.length === 1 ? "" : "s"}
               </Badge>
             </CardHeader>
@@ -172,9 +172,9 @@ export default function MediaLibraryPage() {
                   return (
                     <div
                       key={asset.id}
-                      className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 space-y-2"
+                      className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-3 space-y-2"
                     >
-                      <div className="aspect-video w-full overflow-hidden rounded-md bg-slate-900 flex items-center justify-center">
+                      <div className="aspect-video w-full overflow-hidden rounded-md bg-[#ffffff] flex items-center justify-center">
                         {asset.mediaType?.toLowerCase() === "image" ? (
                           <Image
                             src={url}
@@ -191,13 +191,13 @@ export default function MediaLibraryPage() {
                           />
                         )}
                       </div>
-                      <div className="flex items-center justify-between text-xs text-slate-300">
+                      <div className="flex items-center justify-between text-xs text-[#14110c]">
                          <span className="truncate" title={asset.fileName || asset.storageKey}>
                           {asset.fileName || asset.storageKey.split("/").pop()}
                         </span> 
-                        <span className="uppercase text-slate-400">{asset.mediaType}</span>
+                        <span className="uppercase text-[#6b6b6b]">{asset.mediaType}</span>
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-[#6b6b6b]">
                         {dayjs(asset.createdAt).format("h:mm A")}
                       </div>
                       <div className="flex gap-2">
@@ -214,7 +214,7 @@ export default function MediaLibraryPage() {
                           disabled={downloadingId === asset.id}
                           variant="ghost"
                           size="sm"
-                          className="text-xs text-slate-200"
+                          className="text-xs text-[#14110c]"
                         >
                           <Download className="mr-2 h-3.5 w-3.5" />
                           {downloadingId === asset.id ? "..." : "Download"}
@@ -238,11 +238,11 @@ export default function MediaLibraryPage() {
             size="sm"
             disabled={page <= 1 || loading}
             onClick={() => setPage(p => Math.max(1, p - 1))}
-            className="border-slate-800 text-slate-300 hover:bg-slate-800"
+            className="border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8]"
           >
            <ChevronLeft className="mr-2 h-3.5 w-3.5" />
           </Button>
-          <div className="text-sm text-slate-400 font-medium">
+          <div className="text-sm text-[#6b6b6b] font-medium">
             Page {page} of {totalPages}
           </div>
           <Button
@@ -250,7 +250,7 @@ export default function MediaLibraryPage() {
             size="sm"
             disabled={page >= totalPages || loading}
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            className="border-slate-800 text-slate-300 hover:bg-slate-800"
+            className="border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8]"
           >
            <ChevronRight className="ml-2 h-3.5 w-3.5" />
           </Button>

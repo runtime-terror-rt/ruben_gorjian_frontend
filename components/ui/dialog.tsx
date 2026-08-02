@@ -88,7 +88,7 @@ export function DialogContent({
       <div
         className={cn(
           "relative z-[100] flex flex-col overflow-hidden",
-          !fullScreen && "max-h-[90vh] w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-900 shadow-2xl",
+          !fullScreen && "max-h-[90vh] w-full max-w-md rounded-2xl border border-[#d9d4c9]/50 bg-[#faf8f3] shadow-2xl",
           className
         )}
       >
@@ -120,7 +120,7 @@ export function DialogTitle({ children, className }: {
   className?: string;
 }) {
   return (
-    <h2 className={cn("text-lg font-semibold text-white", className)}>
+    <h2 className={cn("text-lg font-semibold text-[#14110c]", className)}>
       {children}
     </h2>
   );
@@ -131,7 +131,7 @@ export function DialogDescription({ children, className }: {
   className?: string;
 }) {
   return (
-    <p className={cn("text-sm text-slate-400", className)}>
+    <p className={cn("text-sm text-[#6b6b6b]", className)}>
       {children}
     </p>
   );
@@ -158,7 +158,7 @@ export function DialogClose({ children, className }: {
       type="button"
       onClick={() => ctx.setOpen(false)}
       className={cn(
-        "absolute right-4 top-4 z-10 rounded-sm text-slate-400 hover:text-white",
+        "absolute right-4 top-4 z-10 rounded-sm text-[#6b6b6b] hover:text-[#14110c]",
         className
       )}
     >

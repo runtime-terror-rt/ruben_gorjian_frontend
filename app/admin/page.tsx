@@ -1,4 +1,5 @@
 "use client";
+import { AdminPagination } from "@/components/admin/AdminPagination";
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import {
@@ -46,7 +47,7 @@ const Pie = dynamic(() => import("recharts").then(mod => mod.Pie), { ssr: false 
 const Cell = dynamic(() => import("recharts").then(mod => mod.Cell), { ssr: false });
 const Sector = dynamic(() => import("recharts").then(mod => mod.Sector), { ssr: false });
 
-const PLAN_COLORS = ["#a3e635", "#818cf8", "#fbbf24", "#f87171", "#2dd4bf"];
+const PLAN_COLORS = ["#b08d3e", "#14110c", "#6b6b6b", "#d9d4c9", "#8a6d28"];
 const RADIAN = Math.PI / 180;
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
@@ -478,34 +479,34 @@ export default function AdminPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             Dashboard
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#6b6b6b]">
             Overview of users, subscriptions, and scheduled posts.
           </p>
         </div>
         <button
           onClick={loadData}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800/70"
+          className="inline-flex items-center gap-2 rounded-lg border border-[#d9d4c9] px-4 py-2 text-sm font-semibold text-[#14110c] hover:bg-[#e6e1d8]/70"
         >
           <RefreshCcw className="h-4 w-4" />
           Refresh
         </button>
         </div>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow space-y-3">
+      <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow space-y-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <p className="text-xs uppercase tracking-wide text-slate-400">
+            <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
               Provider health
             </p>
-            <p className="text-sm text-white">Upload-Post connection status</p>
+            <p className="text-sm text-[#14110c]">Upload-Post connection status</p>
           </div>
           <button
             onClick={loadUploadPostHealth}
             disabled={uploadPostLoading}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:bg-slate-800/70 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#d9d4c9] px-3 py-2 text-xs font-semibold text-[#14110c] hover:bg-[#e6e1d8]/70 disabled:opacity-60"
           >
             <RefreshCcw
               className={`h-3.5 w-3.5 ${uploadPostLoading ? "animate-spin" : ""}`}
@@ -515,169 +516,169 @@ export default function AdminPage() {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {uploadPostLoading ? (
-            <span className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#d9d4c9] bg-[#e6e1d8] px-3 py-1 text-xs font-semibold text-[#14110c]">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
               Checking
             </span>
           ) : uploadPostError ? (
-            <span className="inline-flex items-center gap-2 rounded-full border border-red-300/30 bg-red-300/10 px-3 py-1 text-xs font-semibold text-red-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-300/10 px-3 py-1 text-xs font-semibold text-red-600">
               <AlertCircle className="h-3.5 w-3.5" />
               {uploadPostError}
             </span>
           ) : uploadPostHealth?.ok ? (
-            <span className="inline-flex items-center gap-2 rounded-full border border-lime-300/40 bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-lime-500/40 bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-700">
               <CheckCircle2 className="h-3.5 w-3.5" />
               Healthy
             </span>
           ) : (
-            <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-200">
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-700">
               <AlertCircle className="h-3.5 w-3.5" />
               Not configured
             </span>
           )}
           {uploadPostHealth?.authMode && (
-            <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-[11px] font-semibold text-slate-200">
+            <span className="rounded-full border border-[#d9d4c9] bg-[#e6e1d8] px-3 py-1 text-[11px] font-semibold text-[#14110c]">
               {uploadPostHealth.authMode}
             </span>
           )}
           {uploadPostHealth?.remote?.email && (
-            <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-[11px] font-semibold text-slate-200">
+            <span className="rounded-full border border-[#d9d4c9] bg-[#e6e1d8] px-3 py-1 text-[11px] font-semibold text-[#14110c]">
               {uploadPostHealth.remote.email}
             </span>
           )}
           {uploadPostHealth?.remote?.plan && (
-            <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-[11px] font-semibold text-slate-200">
+            <span className="rounded-full border border-[#d9d4c9] bg-[#e6e1d8] px-3 py-1 text-[11px] font-semibold text-[#14110c]">
               Plan: {uploadPostHealth.remote.plan}
             </span>
           )}
         </div>
         {uploadPostHealth?.remote?.message && (
-          <p className="text-xs text-slate-400">{uploadPostHealth.remote.message}</p>
+          <p className="text-xs text-[#6b6b6b]">{uploadPostHealth.remote.message}</p>
         )}
       </div>
 
       {/* --- Premium Overview Cards --- */}
       <div className="grid gap-6 md:grid-cols-3">
         {/* Users Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-slate-800/80 bg-slate-900/50 p-6 backdrop-blur-xl transition-all hover:border-lime-400/30">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-lime-400/5 blur-2xl transition-all group-hover:bg-lime-400/10" />
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-[#b08d3e]/30">
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#b08d3e]/5 blur-2xl transition-all group-hover:bg-[#b08d3e]/10" />
           <div className="flex items-start justify-between">
-            <div className="rounded-2xl bg-lime-400/10 p-3 text-lime-400">
+            <div className="rounded-2xl bg-[#b08d3e]/10 p-3 text-[#b08d3e]">
               <Users className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Platform Users</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Platform Users</p>
             <div className="mt-1 flex items-baseline gap-2">
-              <h2 className="text-4xl font-black text-white tracking-tighter">{overviewStats?.users?.total ?? "—"}</h2>
-              <span className="text-xs font-bold text-lime-400">+{overviewStats?.users?.newThisMonth ?? 0} this month</span>
+              <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.users?.total ?? "—"}</h2>
+              <span className="text-xs font-bold text-[#b08d3e]">+{overviewStats?.users?.newThisMonth ?? 0} this month</span>
             </div>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-slate-800/50">
+          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Accounts</p>
-              <p className="text-sm font-black text-slate-100">{overviewStats?.users?.active ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Active Accounts</p>
+              <p className="text-sm font-black text-[#14110c]">{overviewStats?.users?.active ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Verified</p>
-              <p className="text-sm font-black text-slate-100">{overviewStats?.users?.emailVerified ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Verified</p>
+              <p className="text-sm font-black text-[#14110c]">{overviewStats?.users?.emailVerified ?? 0}</p>
             </div>
           </div>
         </div>
 
         {/* Subscription Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-slate-800/80 bg-slate-900/50 p-6 backdrop-blur-xl transition-all hover:border-indigo-400/30">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-indigo-400/5 blur-2xl transition-all group-hover:bg-indigo-400/10" />
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-indigo-500/30">
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-indigo-600/5 blur-2xl transition-all group-hover:bg-indigo-600/10" />
           <div className="flex items-start justify-between">
-            <div className="rounded-2xl bg-indigo-400/10 p-3 text-indigo-400">
+            <div className="rounded-2xl bg-indigo-600/10 p-3 text-indigo-600">
               <Crown className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Active Subscriptions</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Active Subscriptions</p>
             <div className="mt-1 flex items-baseline gap-2">
-              <h2 className="text-4xl font-black text-white tracking-tighter">{overviewStats?.subscriptions?.active ?? "—"}</h2>
-              <span className="text-xs font-bold text-indigo-400">Total: {overviewStats?.subscriptions?.total ?? 0}</span>
+              <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.subscriptions?.active ?? "—"}</h2>
+              <span className="text-xs font-bold text-indigo-600">Total: {overviewStats?.subscriptions?.total ?? 0}</span>
             </div>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-slate-800/50">
+          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Monthly Plans</p>
-              <p className="text-sm font-black text-slate-100">{overviewStats?.subscriptions?.monthly ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Monthly Plans</p>
+              <p className="text-sm font-black text-[#14110c]">{overviewStats?.subscriptions?.monthly ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Yearly Plans</p>
-              <p className="text-sm font-black text-slate-100">{overviewStats?.subscriptions?.yearly ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Yearly Plans</p>
+              <p className="text-sm font-black text-[#14110c]">{overviewStats?.subscriptions?.yearly ?? 0}</p>
             </div>
           </div>
         </div>
 
         {/* Schedule Statistics */}
-        <div className="group relative overflow-hidden rounded-[2rem] border border-slate-800/80 bg-slate-900/50 p-6 backdrop-blur-xl transition-all hover:border-amber-400/30">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-amber-400/5 blur-2xl transition-all group-hover:bg-amber-400/10" />
+        <div className="group relative overflow-hidden rounded-2xl border border-[#d9d4c9]/80 bg-[#ffffff] p-6 backdrop-blur-xl transition-all hover:border-amber-500/30">
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-amber-500/5 blur-2xl transition-all group-hover:bg-amber-500/10" />
           <div className="flex items-start justify-between">
-            <div className="rounded-2xl bg-amber-400/10 p-3 text-amber-400">
+            <div className="rounded-2xl bg-amber-500/10 p-3 text-amber-700">
               <CalendarDays className="h-6 w-6" />
             </div>
-            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+            {statsLoading && <Loader2 className="h-4 w-4 animate-spin text-[#6b6b6b]" />}
           </div>
           <div className="mt-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Post Capacity</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b]">Post Capacity</p>
             <div className="mt-1 flex items-baseline gap-2">
-              <h2 className="text-4xl font-black text-white tracking-tighter">{overviewStats?.schedules?.total ?? "—"}</h2>
-              <span className="text-xs font-bold text-amber-400">Pending: {overviewStats?.schedules?.pending ?? 0}</span>
+              <h2 className="text-4xl font-black text-[#14110c] tracking-tighter">{overviewStats?.schedules?.total ?? "—"}</h2>
+              <span className="text-xs font-bold text-amber-700">Pending: {overviewStats?.schedules?.pending ?? 0}</span>
             </div>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-slate-800/50">
+          <div className="mt-6 grid grid-cols-2 gap-4 pt-6 border-t border-[#d9d4c9]/50">
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Successfully Posted</p>
-              <p className="text-sm font-black text-slate-100">{overviewStats?.schedules?.posted ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Successfully Posted</p>
+              <p className="text-sm font-black text-[#14110c]">{overviewStats?.schedules?.posted ?? 0}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Execution Failed</p>
-              <p className="text-sm font-black text-red-400">{overviewStats?.schedules?.failed ?? 0}</p>
+              <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">Execution Failed</p>
+              <p className="text-sm font-black text-red-600">{overviewStats?.schedules?.failed ?? 0}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* --- Revenue & Trend Dashboard --- */}
-      <div className="space-y-6 pt-6 border-t border-slate-800/50">
+      <div className="space-y-6 pt-6 border-t border-[#d9d4c9]/50">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-xl font-black text-white flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-lime-400" />
+            <h3 className="text-xl font-black text-[#14110c] flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[#b08d3e]" />
               Financial Revenue Overview
             </h3>
-            <p className="text-sm text-slate-500 font-medium tracking-tight">Real-time revenue trends and plan performance.</p>
+            <p className="text-sm text-[#6b6b6b] font-medium tracking-tight">Real-time revenue trends and plan performance.</p>
           </div>
           
-          <div className="flex items-center gap-2 bg-slate-900/50 p-1 rounded-2xl border border-white/5 backdrop-blur-md">
-            <div className="flex items-center px-3 border-r border-slate-800">
-              <Calendar className="h-4 w-4 text-slate-500 mr-2" />
+          <div className="flex items-center gap-2 bg-[#ffffff] p-1 rounded-2xl border border-white/5 backdrop-blur-md">
+            <div className="flex items-center px-3 border-r border-[#d9d4c9]">
+              <Calendar className="h-4 w-4 text-[#6b6b6b] mr-2" />
               <select 
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                className="bg-transparent text-sm font-bold text-white outline-none cursor-pointer"
+                className="bg-transparent text-sm font-bold text-[#14110c] outline-none cursor-pointer"
               >
-                {YEARS.map(y => <option key={y} value={y} className="bg-slate-900">{y}</option>)}
+                {YEARS.map(y => <option key={y} value={y} className="bg-[#ffffff]">{y}</option>)}
               </select>
             </div>
             <div className="flex items-center px-3">
-              <Filter className="h-4 w-4 text-slate-500 mr-2" />
+              <Filter className="h-4 w-4 text-[#6b6b6b] mr-2" />
               <select 
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="bg-transparent text-sm font-bold text-white outline-none cursor-pointer"
+                className="bg-transparent text-sm font-bold text-[#14110c] outline-none cursor-pointer"
               >
-                {MONTHS.map(m => <option key={m} value={m} className="bg-slate-900">{m}</option>)}
+                {MONTHS.map(m => <option key={m} value={m} className="bg-[#ffffff]">{m}</option>)}
               </select>
             </div>
             {revLoading && (
               <div className="px-2">
-                <Loader2 className="h-4 w-4 animate-spin text-lime-400" />
+                <Loader2 className="h-4 w-4 animate-spin text-[#b08d3e]" />
               </div>
             )}
           </div>
@@ -685,21 +686,21 @@ export default function AdminPage() {
 
         <div className="grid gap-8 lg:grid-cols-5">
           {/* Main Trend Line Chart */}
-          <div className="lg:col-span-3 relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-slate-900/40 p-8 shadow-2xl backdrop-blur-sm">
-            <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-lime-400/5 blur-[120px]" />
+          <div className="lg:col-span-3 relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+            <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#b08d3e]/5 blur-[120px]" />
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-lime-400/10 text-lime-400 ring-1 ring-lime-400/20">
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-[#b08d3e]/10 text-[#b08d3e] ring-1 ring-[#b08d3e]/20">
                   <BarChart3 className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-white uppercase tracking-widest">Revenue Growth Trend</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Cumulative Monthly Performance</p>
+                  <h4 className="text-sm font-black text-[#14110c] uppercase tracking-widest">Revenue Growth Trend</h4>
+                  <p className="text-[11px] text-[#6b6b6b] font-bold uppercase tracking-tight">Cumulative Monthly Performance</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Total Period Revenue</p>
-                <p className="text-2xl font-black text-lime-400 tracking-tighter">
+                <p className="text-[10px] font-black text-[#6b6b6b] uppercase tracking-widest">Total Period Revenue</p>
+                <p className="text-2xl font-black text-[#b08d3e] tracking-tighter">
                   {formatCurrency(revenueData?.summary?.totalRevenueCents ?? 0)}
                 </p>
               </div>
@@ -710,14 +711,14 @@ export default function AdminPage() {
                 <LineChart data={revenueData?.trend || []}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a3e635" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#a3e635" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#b08d3e" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#b08d3e" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#d9d4c9" vertical={false} />
                   <XAxis 
                     dataKey="month" 
-                    stroke="#475569" 
+                    stroke="#6b6b6b" 
                     fontSize={10} 
                     fontWeight="bold" 
                     tickLine={false} 
@@ -725,7 +726,7 @@ export default function AdminPage() {
                     tickFormatter={(val) => val.slice(0, 3)}
                   />
                   <YAxis 
-                    stroke="#475569" 
+                    stroke="#6b6b6b" 
                     fontSize={10} 
                     fontWeight="bold" 
                     tickLine={false} 
@@ -733,17 +734,17 @@ export default function AdminPage() {
                     tickFormatter={(val) => `$${val/1000}k`}
                   />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '12px' }}
-                    itemStyle={{ fontWeight: 'bold' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d9d4c9', borderRadius: '12px', fontSize: '12px', color: '#14110c' }}
+                    itemStyle={{ fontWeight: 'bold', color: '#14110c' }}
                     formatter={(value: any) => [formatCurrency(value), "Revenue"]}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="revenueCents" 
-                    stroke="#a3e635" 
+                    stroke="#b08d3e" 
                     strokeWidth={4} 
-                    dot={{ fill: '#a3e635', strokeWidth: 2, r: 4 }} 
-                    activeDot={{ r: 8, stroke: '#0f172a', strokeWidth: 4 }}
+                    dot={{ fill: '#b08d3e', strokeWidth: 2, r: 4 }} 
+                    activeDot={{ r: 8, stroke: '#14110c', strokeWidth: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -751,15 +752,15 @@ export default function AdminPage() {
           </div>
 
           {/* Plan Distribution Pie Chart - Increased Width (lg:col-span-2) */}
-          <div className="lg:col-span-2 relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-slate-900/40 p-8 shadow-2xl backdrop-blur-sm">
-             <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-400/5 blur-[120px]" />
+          <div className="lg:col-span-2 relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+             <div className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-600/5 blur-[120px]" />
              <div className="flex items-center gap-3 mb-8">
-                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-400/10 text-indigo-400 ring-1 ring-indigo-400/20">
+                <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-600/10 text-indigo-600 ring-1 ring-indigo-400/20">
                   <PieChart className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-white uppercase tracking-widest">Plan Performance</h4>
-                  <p className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">Revenue Share by Plan</p>
+                  <h4 className="text-sm font-black text-[#14110c] uppercase tracking-widest">Plan Performance</h4>
+                  <p className="text-[11px] text-[#6b6b6b] font-bold uppercase tracking-tight">Revenue Share by Plan</p>
                 </div>
               </div>
 
@@ -785,8 +786,8 @@ export default function AdminPage() {
                       ))}
                     </Pie>
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '12px' }}
-                      itemStyle={{ fontWeight: 'black' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d9d4c9', borderRadius: '12px', fontSize: '12px', color: '#14110c' }}
+                      itemStyle={{ fontWeight: 'black', color: '#14110c' }}
                       formatter={(value: any) => formatCurrency(value)}
                     />
                   </PieChartComp>
@@ -795,18 +796,18 @@ export default function AdminPage() {
 
               <div className="mt-6 space-y-2 min-h-[180px]">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Detailed breakdown</p>
-                  <div className="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-white/5">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b]">Detailed breakdown</p>
+                  <div className="flex items-center gap-1 bg-[#faf8f3] p-1 rounded-xl border border-white/5">
                     <Button 
                       variant="outline"
                       size="icon"
                       onClick={() => setPlanBreakdownPage(p => Math.max(1, p - 1))}
                       disabled={planBreakdownPage === 1}
-                      className="h-8 w-8 rounded-xl bg-slate-900 border-slate-800 text-white hover:bg-slate-800 hover:text-lime-400 disabled:opacity-20 transition-all active:scale-95"
+                      className="h-8 w-8 rounded-xl bg-[#ffffff] border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#b08d3e] disabled:opacity-20 transition-all active:scale-95"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
-                    <span className="text-[10px] font-black text-slate-500 font-mono px-2 min-w-[40px] text-center">
+                    <span className="text-[10px] font-black text-[#6b6b6b] font-mono px-2 min-w-[40px] text-center">
                       {planBreakdownPage} / {Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize) || 1}
                     </span>
                     <Button 
@@ -814,7 +815,7 @@ export default function AdminPage() {
                       size="icon"
                       onClick={() => setPlanBreakdownPage(p => Math.min(Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize), p + 1))}
                       disabled={planBreakdownPage >= Math.ceil((revenueData?.plans?.length || 0) / planBreakdownPageSize)}
-                      className="h-8 w-8 rounded-xl bg-slate-900 border-slate-800 text-white hover:bg-slate-800 hover:text-lime-400 disabled:opacity-20 transition-all active:scale-95"
+                      className="h-8 w-8 rounded-xl bg-[#ffffff] border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#b08d3e] disabled:opacity-20 transition-all active:scale-95"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -825,21 +826,21 @@ export default function AdminPage() {
                   .map((plan: any, index: number) => {
                     const originalIndex = (revenueData?.plans || []).findIndex((p: any) => p.planCode === plan.planCode);
                     return (
-                      <div key={plan.planCode} className="flex items-center justify-between p-2 rounded-xl transition-colors hover:bg-slate-800/40">
+                      <div key={plan.planCode} className="flex items-center justify-between p-2 rounded-xl transition-colors hover:bg-[#e6e1d8]/40">
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-2 rounded-full border border-white/20" style={{ backgroundColor: PLAN_COLORS[originalIndex % PLAN_COLORS.length] }} />
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter truncate max-w-[150px]">{plan.planName}</span>
-                            <span className="text-[9px] text-slate-500 font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
+                            <span className="text-[10px] font-bold text-[#14110c] uppercase tracking-tighter truncate max-w-[150px]">{plan.planName}</span>
+                            <span className="text-[9px] text-[#6b6b6b] font-bold uppercase">{plan.subscriptions} Active Subscribers</span>
                           </div>
                         </div>
-                        <span className="text-xs font-black text-white">{formatCurrency(plan.revenueCents)}</span>
+                        <span className="text-xs font-black text-[#14110c]">{formatCurrency(plan.revenueCents)}</span>
                       </div>
                     );
                   })}
                 {(revenueData?.plans?.length || 0) === 0 && (
                   <div className="h-32 flex items-center justify-center">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">No plan data available</p>
+                    <p className="text-[10px] font-black text-[#6b6b6b] uppercase tracking-widest italic">No plan data available</p>
                   </div>
                 )}
               </div>
@@ -847,20 +848,20 @@ export default function AdminPage() {
         </div>
 
         {/* --- Recent Activity Feed --- */}
-        <div className="relative isolate overflow-hidden rounded-[2.5rem] border border-white/5 bg-slate-900/40 p-8 shadow-2xl backdrop-blur-sm">
-          <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-lime-400/5 blur-[120px]" />
-          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-400/5 blur-[100px]" />
+        <div className="relative isolate overflow-hidden rounded-3xl border border-white/5 bg-[#ffffff] p-8 shadow-2xl backdrop-blur-sm">
+          <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-[#b08d3e]/5 blur-[120px]" />
+          <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-indigo-600/5 blur-[100px]" />
 
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 ring-1 ring-white/10 shadow-lg">
-                <Activity className="h-5 w-5 text-white" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-lime-400 ring-2 ring-slate-900 animate-pulse" />
+              <div className="relative h-12 w-12 flex items-center justify-center rounded-2xl bg-[#b08d3e]/10 text-[#b08d3e] ring-1 ring-[#b08d3e]/20 shadow-sm">
+                <Activity className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#b08d3e] ring-2 ring-[#ffffff] animate-pulse" />
               </div>
               <div>
-                <h4 className="text-base font-black text-white tracking-tight">Recent Platform Activity</h4>
-                <p className="text-[11px] text-slate-500 font-semibold">
+                <h4 className="text-base font-black text-[#14110c] tracking-tight">Recent Platform Activity</h4>
+                <p className="text-[11px] text-[#6b6b6b] font-semibold">
                   {activityData?.total
                     ? `${activityData.total} total events · Page ${activityPage} of ${activityData.totalPages ?? 1}`
                     : "Live event feed"}
@@ -872,7 +873,7 @@ export default function AdminPage() {
               onClick={() => loadActivityData(activityPage)}
               disabled={activityLoading}
               title="Refresh activity"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/50 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:border-lime-400/40 hover:text-lime-400 hover:bg-lime-400/5 transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#d9d4c9] bg-[#e6e1d8]/50 text-[11px] font-black text-[#6b6b6b] uppercase tracking-widest hover:border-[#b08d3e]/40 hover:text-[#b08d3e] hover:bg-[#b08d3e]/5 transition-all disabled:opacity-50"
             >
               <RefreshCcw className={`h-3.5 w-3.5 ${activityLoading ? "animate-spin" : ""}`} />
               Refresh
@@ -883,12 +884,12 @@ export default function AdminPage() {
           {activityLoading && !activityData && (
             <div className="grid gap-3 sm:grid-cols-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex items-start gap-3 p-4 rounded-2xl border border-white/5 bg-slate-950/20 animate-pulse">
-                  <div className="h-9 w-9 rounded-xl bg-slate-800 flex-shrink-0" />
+                <div key={i} className="flex items-start gap-3 p-4 rounded-2xl border border-white/5 bg-[#faf8f3] animate-pulse">
+                  <div className="h-9 w-9 rounded-xl bg-[#e6e1d8] flex-shrink-0" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-2.5 w-24 bg-slate-800 rounded-full" />
-                    <div className="h-3.5 w-3/4 bg-slate-800 rounded-full" />
-                    <div className="h-2.5 w-36 bg-slate-800 rounded-full" />
+                    <div className="h-2.5 w-24 bg-[#e6e1d8] rounded-full" />
+                    <div className="h-3.5 w-3/4 bg-[#e6e1d8] rounded-full" />
+                    <div className="h-2.5 w-36 bg-[#e6e1d8] rounded-full" />
                   </div>
                 </div>
               ))}
@@ -898,8 +899,8 @@ export default function AdminPage() {
           {/* Activity Items Grid */}
           {(!activityLoading || activityData) && (
             <div
-              className="grid gap-3 sm:grid-cols-2 max-h-[680px] overflow-y-auto"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#1e293b transparent" }}
+              className="grid gap-3 sm:grid-cols-2 max-h-[680px] overflow-y-auto overflow-x-hidden"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "#d9d4c9 transparent" }}
             >
               {(activityData?.items ?? []).map((item: any) => {
                 const isUser    = item.type === "USER_CREATED";
@@ -909,17 +910,17 @@ export default function AdminPage() {
                 return (
                   <div
                     key={item.id}
-                    className={`flex items-start gap-3 p-4 rounded-2xl border transition-all duration-200 hover:scale-[1.01]
+                    className={`flex items-start gap-3 p-4 rounded-2xl border transition-all duration-200
                       ${isUser
-                        ? "border-lime-400/10 bg-lime-400/[0.03] hover:bg-lime-400/[0.06] hover:border-lime-400/20"
-                        : "border-indigo-400/10 bg-indigo-400/[0.03] hover:bg-indigo-400/[0.07] hover:border-indigo-400/20"
+                        ? "border-[#b08d3e]/10 bg-[#b08d3e]/[0.03] hover:bg-[#b08d3e]/[0.06] hover:border-[#b08d3e]/20"
+                        : "border-indigo-500/10 bg-indigo-600/[0.03] hover:bg-indigo-600/[0.07] hover:border-indigo-500/20"
                       }`}
                   >
                     {/* Icon */}
                     <div className={`flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-xl ring-1
                       ${isUser
-                        ? "bg-lime-400/10 text-lime-400 ring-lime-400/20"
-                        : "bg-indigo-400/10 text-indigo-400 ring-indigo-400/20"
+                        ? "bg-[#b08d3e]/10 text-[#b08d3e] ring-[#b08d3e]/20"
+                        : "bg-indigo-600/10 text-indigo-600 ring-indigo-400/20"
                       }`}
                     >
                       {isUser
@@ -935,8 +936,8 @@ export default function AdminPage() {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest
                             ${isUser
-                              ? "bg-lime-400/10 text-lime-400 border border-lime-400/20"
-                              : "bg-indigo-400/10 text-indigo-400 border border-indigo-400/20"
+                              ? "bg-[#b08d3e]/10 text-[#b08d3e] border border-[#b08d3e]/20"
+                              : "bg-indigo-600/10 text-indigo-600 border border-indigo-500/20"
                             }`}
                           >
                             {isUser ? "New User" : "Subscription"}
@@ -944,36 +945,36 @@ export default function AdminPage() {
                           {billing && (
                             <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest
                               ${billing === "YEARLY"
-                                ? "bg-amber-400/10 text-amber-300 border border-amber-400/20"
-                                : "bg-slate-700/60 text-slate-400 border border-slate-600/50"
+                                ? "bg-amber-500/10 text-amber-700 border border-amber-500/20"
+                                : "bg-[#e6e1d8]/60 text-[#6b6b6b] border border-[#d9d4c9]/50"
                               }`}
                             >
                               {billing === "YEARLY" ? "⚡ Yearly" : "Monthly"}
                             </span>
                           )}
                         </div>
-                        <span className="text-[10px] text-slate-600 font-semibold whitespace-nowrap">
+                        <span className="text-[10px] text-[#6b6b6b] font-semibold whitespace-nowrap">
                           {formatTimeAgo(item.createdAt)}
                         </span>
                       </div>
 
                       {/* Message */}
-                      <p className="text-[13px] text-slate-200 font-medium leading-snug mb-2">
+                      <p className="text-[13px] text-[#14110c] font-medium leading-snug mb-2">
                         {item.message}
                       </p>
 
                       {/* Footer chips */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-900/80 border border-white/5">
-                          <Users className="h-2.5 w-2.5 text-slate-500" />
-                          <span className="text-[10px] text-slate-400 font-semibold truncate max-w-[160px]">
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#ffffff]/80 border border-white/5">
+                          <Users className="h-2.5 w-2.5 text-[#6b6b6b]" />
+                          <span className="text-[10px] text-[#6b6b6b] font-semibold truncate max-w-[160px]">
                             {item.user?.name ?? item.user?.email}
                           </span>
                         </div>
                         {planCode && (
                           <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-                            <Zap className="h-2.5 w-2.5 text-indigo-400" />
-                            <span className="text-[10px] text-indigo-300 font-black">{planCode}</span>
+                            <Zap className="h-2.5 w-2.5 text-indigo-600" />
+                            <span className="text-[10px] text-indigo-600 font-black">{planCode}</span>
                           </div>
                         )}
                       </div>
@@ -984,10 +985,10 @@ export default function AdminPage() {
 
               {/* Empty state */}
               {(activityData?.items ?? []).length === 0 && !activityLoading && (
-                <div className="sm:col-span-2 text-center py-16 rounded-3xl border border-dashed border-slate-800">
-                  <Activity className="h-10 w-10 text-slate-700 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-slate-500">No activity recorded yet.</p>
-                  <p className="text-xs text-slate-600 mt-1">Events will appear here as users join and subscribe.</p>
+                <div className="sm:col-span-2 text-center py-16 rounded-3xl border border-dashed border-[#d9d4c9]">
+                  <Activity className="h-10 w-10 text-[#14110c] mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-[#6b6b6b]">No activity recorded yet.</p>
+                  <p className="text-xs text-[#6b6b6b] mt-1">Events will appear here as users join and subscribe.</p>
                 </div>
               )}
             </div>
@@ -995,65 +996,19 @@ export default function AdminPage() {
 
           {/* ── Pagination Footer ── */}
           {activityData && activityData.totalPages > 1 && (
-            <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-
-              {/* Left: results info */}
-              <p className="text-[11px] font-semibold text-slate-500 tracking-wide">
-                Showing page{" "}
-                <span className="text-slate-300 font-black">{activityPage}</span>
-                {" "}of{" "}
-                <span className="text-slate-300 font-black">{activityData.totalPages}</span>
-                {" "}·{" "}
-                <span className="text-slate-300 font-black">{activityData.total}</span> total events
-              </p>
-
-              {/* Center: page number pills */}
-              <div className="flex items-center gap-3">
-                {Array.from({ length: activityData.totalPages }, (_, i) => i + 1).map((pg) => (
-                  <button
-                    key={pg}
-                    onClick={() => setActivityPage(pg)}
-                    disabled={activityLoading}
-                    className={`h-8 w-8 rounded-lg text-[11px] font-black transition-all duration-200 ${
-                      pg === activityPage
-                        ? "bg-gradient-to-br from-lime-400 to-emerald-500 text-slate-900 shadow-lg shadow-lime-400/20 scale-110"
-                        : "bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-lime-400/40 hover:text-lime-300 hover:bg-slate-700/60"
-                    } disabled:cursor-not-allowed`}
-                  >
-                    {pg}
-                  </button>
-                ))}
-              </div>
-
-              {/* Right: Prev / Next */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActivityPage(p => Math.max(1, p - 1))}
-                  disabled={activityLoading || activityPage <= 1}
-                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800/60 text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all duration-200 hover:border-indigo-400/50 hover:bg-indigo-500/10 hover:text-indigo-300 disabled:opacity-25 disabled:cursor-not-allowed"
-                >
-                  <svg className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Previous
-                </button>
-                <button
-                  onClick={() => setActivityPage(p => p + 1)}
-                  disabled={activityLoading || !activityData?.hasNextPage}
-                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-transparent bg-gradient-to-r from-lime-500/80 to-emerald-600/80 text-[11px] font-black text-white uppercase tracking-widest shadow-md shadow-lime-400/10 transition-all duration-200 hover:from-lime-400 hover:to-emerald-500 hover:shadow-lime-400/25 disabled:opacity-25 disabled:cursor-not-allowed disabled:shadow-none"
-                >
-                  Next Page
-                  <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            <AdminPagination
+              currentPage={activityPage}
+              totalPages={activityData.totalPages}
+              totalItems={activityData.total}
+              onPageChange={setActivityPage}
+              isLoading={activityLoading}
+              className="mt-6 pt-5 border-t border-[#d9d4c9]/50 flex flex-col sm:flex-row items-center justify-between gap-4"
+            />
           )}
         </div>
       </div>
 
-      {/* <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-2 shadow flex flex-wrap gap-2">
+      {/* <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-2 shadow flex flex-wrap gap-2">
           {[
             { key: "users", label: "Users" },
             { key: "subscriptions", label: "Subscriptions" },
@@ -1064,14 +1019,14 @@ export default function AdminPage() {
               onClick={() => setActiveTab(tab.key as Tab)}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
                 activeTab === tab.key
-                  ? "bg-lime-400 text-slate-950 shadow"
-                  : "text-slate-100 hover:bg-slate-800/70"
+                  ? "bg-[#b08d3e] text-[#14110c] shadow"
+                  : "text-[#14110c] hover:bg-[#e6e1d8]/70"
               }`}
             >
               {tab.label}
             </button>
           ))}
-          <div className="ml-auto flex items-center gap-2 text-xs text-slate-400 px-3">
+          <div className="ml-auto flex items-center gap-2 text-xs text-[#6b6b6b] px-3">
             {loading && (
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -1079,7 +1034,7 @@ export default function AdminPage() {
               </span>
             )}
             {error && (
-              <span className="inline-flex items-center gap-1 text-red-300">
+              <span className="inline-flex items-center gap-1 text-red-600">
                 <AlertCircle className="h-3 w-3" />
                 {error}
               </span>
@@ -1088,13 +1043,13 @@ export default function AdminPage() {
         </div> */}
 
         {/* {activeTab === "users" && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow space-y-4">
+          <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
                   User management
                 </p>
-                <p className="text-sm text-white">
+                <p className="text-sm text-[#14110c]">
                   Promote admins, mark founders, and inspect onboarding status.
                 </p>
               </div>
@@ -1102,7 +1057,7 @@ export default function AdminPage() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                  <tr className="text-left text-xs uppercase tracking-wide text-[#6b6b6b]">
                     <th className="px-3 py-2">User</th>
                     <th className="px-3 py-2">Role</th>
                     <th className="px-3 py-2">Founder</th>
@@ -1110,19 +1065,19 @@ export default function AdminPage() {
                     <th className="px-3 py-2">Platforms</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-[#d9d4c9]">
                   {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-slate-800/40">
+                    <tr key={user.id} className="hover:bg-[#e6e1d8]/40">
                       <td className="px-3 py-3">
-                        <div className="font-semibold text-white flex items-center gap-2">
+                        <div className="font-semibold text-[#14110c] flex items-center gap-2">
                           {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : user.email}
                           {user.emailVerified ? (
-                            <CheckCircle2 className="h-4 w-4 text-lime-300" />
+                            <CheckCircle2 className="h-4 w-4 text-[#8a6d28]" />
                           ) : (
-                            <AlertCircle className="h-4 w-4 text-amber-300" />
+                            <AlertCircle className="h-4 w-4 text-amber-700" />
                           )}
                         </div>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-[#6b6b6b]">
                           Joined {formatDate(user.signupDate)} •{" "}
                           {user.onboardingCompleted
                             ? "Onboarding done"
@@ -1137,7 +1092,7 @@ export default function AdminPage() {
                               role: e.target.value as "USER" | "ADMIN",
                             })
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-900/80 px-2 py-2 text-sm text-white"
+                          className="w-full rounded-lg border border-[#d9d4c9] bg-[#ffffff]/80 px-2 py-2 text-sm text-[#14110c]"
                           disabled={savingUserId === user.id}
                         >
                           <option value="USER">User</option>
@@ -1152,8 +1107,8 @@ export default function AdminPage() {
                           disabled={savingUserId === user.id}
                           className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold border transition ${
                             user.isFounder
-                              ? "border-lime-300 text-lime-200 bg-lime-300/10"
-                              : "border-slate-700 text-slate-200 hover:bg-slate-800/60"
+                              ? "border-lime-500 text-lime-700 bg-lime-300/10"
+                              : "border-[#d9d4c9] text-[#14110c] hover:bg-[#e6e1d8]/60"
                           }`}
                         >
                           <Crown className="h-4 w-4" />
@@ -1162,7 +1117,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-3 py-3">
                         {user.subscriptions.length === 0 ? (
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-[#6b6b6b]">
                             No subscription
                           </p>
                         ) : (
@@ -1170,13 +1125,13 @@ export default function AdminPage() {
                             {user.subscriptions.map((sub) => (
                               <div
                                 key={sub.id}
-                                className="rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2"
+                                className="rounded-lg border border-[#d9d4c9] bg-[#ffffff] px-3 py-2"
                               >
-                                <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                                <div className="flex items-center gap-2 text-sm font-semibold text-[#14110c]">
                                   {sub.planCode}
                                   <StatusBadge status={sub.status} />
                                 </div>
-                                <p className="text-xs text-slate-400">
+                                <p className="text-xs text-[#6b6b6b]">
                                   {sub.priceType} • renews{" "}
                                   {formatDate(sub.currentPeriodEnd)}
                                   {sub.cancelAtPeriodEnd
@@ -1191,12 +1146,12 @@ export default function AdminPage() {
                       <td className="px-3 py-3">
                         <div className="flex flex-wrap gap-2">
                           {user.socialPlatforms.length === 0 ? (
-                            <span className="text-xs text-slate-400">None</span>
+                            <span className="text-xs text-[#6b6b6b]">None</span>
                           ) : (
                             user.socialPlatforms.map((platform) => (
                               <span
                                 key={platform}
-                                className="rounded-full bg-slate-800/70 px-3 py-1 text-xs font-semibold text-slate-100 border border-slate-700"
+                                className="rounded-full bg-[#e6e1d8]/70 px-3 py-1 text-xs font-semibold text-[#14110c] border border-[#d9d4c9]"
                               >
                                 {platform.toLowerCase()}
                               </span>
@@ -1205,7 +1160,7 @@ export default function AdminPage() {
                         </div>
                         <div className="mt-3 flex gap-2">
                           <Link href={`/admin/users/${user.id}/calendar`}>
-                            <Button variant="outline" size="sm" className="h-8 border-slate-700 text-xs text-slate-300 hover:bg-slate-800">
+                            <Button variant="outline" size="sm" className="h-8 border-[#d9d4c9] text-xs text-[#14110c] hover:bg-[#e6e1d8]">
                               <CalendarDays className="h-4 w-4 mr-2" />
                               View Calendar
                             </Button>
@@ -1213,7 +1168,7 @@ export default function AdminPage() {
                           <button
                             onClick={() => resetPassword(user.id)}
                             disabled={resettingUserId === user.id}
-                            className="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-100 hover:bg-slate-800/70"
+                            className="inline-flex items-center gap-2 rounded-full border border-[#d9d4c9] px-3 py-2 text-xs font-semibold text-[#14110c] hover:bg-[#e6e1d8]/70"
                           >
                             <Shield className="h-4 w-4" />
                             {resettingUserId === user.id
@@ -1231,13 +1186,13 @@ export default function AdminPage() {
         )} */}
 
         {activeTab === "subscriptions" && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow space-y-4">
+          <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
                   Subscriptions
                 </p>
-                <p className="text-sm text-white">
+                <p className="text-sm text-[#14110c]">
                   Plan mix, price type, and platform limits per account.
                 </p>
               </div>
@@ -1246,32 +1201,32 @@ export default function AdminPage() {
               {subscriptions.map((sub) => (
                 <div
                   key={sub.id}
-                  className="rounded-xl border border-slate-800 bg-slate-900/70 p-4 flex flex-col gap-2"
+                  className="rounded-xl border border-[#d9d4c9] bg-[#ffffff]/70 p-4 flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-white">
+                      <p className="text-sm font-semibold text-[#14110c]">
                         {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : sub.userEmail}
                       </p>
-                      <p className="text-xs text-slate-400">{sub.userId}</p>
+                      <p className="text-xs text-[#6b6b6b]">{sub.userId}</p>
                     </div>
                     {sub.userIsFounder && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-200 border border-lime-300/40">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/20 px-3 py-1 text-xs font-semibold text-lime-700 border border-lime-500/40">
                         <Crown className="h-3 w-3" />
                         Founder
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-[#14110c]">
                     {sub.planName} ({sub.planCode})
                     <StatusBadge status={sub.status} />
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#6b6b6b]">
                     {sub.planCategory.replace(/_/g, " ")} •{" "}
                     {sub.priceType.toLowerCase()} pricing
                     {sub.cancelAtPeriodEnd ? " • cancel at period end" : ""}
                   </p>
-                  <div className="grid grid-cols-3 gap-2 text-xs text-slate-300">
+                  <div className="grid grid-cols-3 gap-2 text-xs text-[#14110c]">
                     <Metric
                       label="Platform limit"
                       value={sub.platformLimit ?? 0}
@@ -1282,14 +1237,14 @@ export default function AdminPage() {
                       value={sub.baseVisualQuota ?? 0}
                     />
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#6b6b6b]">
                     Started {formatDate(sub.createdAt)} • renews{" "}
                     {formatDate(sub.currentPeriodEnd)}
                   </p>
                 </div>
               ))}
               {subscriptions.length === 0 && (
-                <div className="text-sm text-slate-400 rounded-xl border border-dashed border-slate-800 p-6 text-center">
+                <div className="text-sm text-[#6b6b6b] rounded-xl border border-dashed border-[#d9d4c9] p-6 text-center">
                   No subscriptions found.
                 </div>
               )}
@@ -1298,13 +1253,13 @@ export default function AdminPage() {
         )}
 
         {activeTab === "calendars" && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow space-y-4">
+          <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+                <p className="text-xs uppercase tracking-wide text-[#6b6b6b]">
                   Calendars
                 </p>
-                <p className="text-sm text-white">
+                <p className="text-sm text-[#14110c]">
                   See scheduled posts per user and which platforms are targeted.
                 </p>
               </div>
@@ -1313,25 +1268,25 @@ export default function AdminPage() {
               {calendars.map((calendar) => (
                 <div
                   key={calendar.userId}
-                  className="rounded-xl border border-slate-800 bg-slate-900/70 p-4"
+                  className="rounded-xl border border-[#d9d4c9] bg-[#ffffff]/70 p-4"
                 >
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <div>
-                      <p className="text-sm font-semibold text-white">
+                      <p className="text-sm font-semibold text-[#14110c]">
                         {session?.role === "VA_ADMIN" ? "••••••••@••••.•••" : calendar.userEmail}
                       </p>
-                      <p className="text-xs text-slate-400">{calendar.userId}</p>
+                      <p className="text-xs text-[#6b6b6b]">{calendar.userId}</p>
                     </div>
                   </div>
                   <div className="grid gap-2">
                     {calendar.posts.map((post) => (
                       <div
                         key={post.id}
-                        className="rounded-lg border border-slate-800 bg-slate-950/50 p-3"
+                        className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] p-3"
                       >
                         <div className="flex items-center justify-between gap-2 mb-2">
                           <StatusBadge status={post.status} small />
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-[#6b6b6b]">
                             Created {formatDate(post.createdAt)}
                           </p>
                         </div>
@@ -1339,13 +1294,13 @@ export default function AdminPage() {
                           {post.targets.map((target) => (
                             <div
                               key={target.id}
-                              className="rounded bg-slate-800/80 px-2 py-1 text-[10px] border border-slate-700"
+                              className="rounded bg-[#e6e1d8]/80 px-2 py-1 text-[10px] border border-[#d9d4c9]"
                             >
-                              <div className="flex items-center gap-1.5 font-semibold text-slate-200">
+                              <div className="flex items-center gap-1.5 font-semibold text-[#14110c]">
                                 {target.platform}
                                 <StatusBadge status={target.status} small />
                               </div>
-                              <p className="text-slate-500 mt-0.5">
+                              <p className="text-[#6b6b6b] mt-0.5">
                                 {target.status === "POSTED"
                                   ? `Published ${formatDate(target.publishedAt)}`
                                   : target.scheduledFor
@@ -1353,20 +1308,20 @@ export default function AdminPage() {
                                   : "Draft"}
                               </p>
                               {target.errorMessage && (
-                                <p className="text-red-400 mt-0.5 max-w-[200px] truncate">
+                                <p className="text-red-600 mt-0.5 max-w-[200px] truncate">
                                   {target.errorMessage}
                                 </p>
                               )}
                             </div>
                           ))}
                           {post.targets.length === 0 && (
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-[#6b6b6b]">
                               No targets
                             </span>
                           )}
                           <div className="flex items-center gap-3">
                             <Link href={`/admin/users/${calendar.userId}/calendar`}>
-                              <Button variant="outline" size="sm" className="h-8 border-lime-400/30 text-xs text-lime-400 hover:bg-lime-400/10">
+                              <Button variant="outline" size="sm" className="h-8 border-[#b08d3e]/30 text-xs text-[#b08d3e] hover:bg-[#b08d3e]/10">
                                 <CalendarDays className="h-3.5 w-3.5 mr-1" />
                                 Interactive Calendar
                               </Button>
@@ -1376,7 +1331,7 @@ export default function AdminPage() {
                         </div>
                       ))}
                     {calendar.posts.length === 0 && (
-                      <div className="text-sm text-slate-400 rounded-lg border border-dashed border-slate-800 p-6 text-center">
+                      <div className="text-sm text-[#6b6b6b] rounded-lg border border-dashed border-[#d9d4c9] p-6 text-center">
                         No posts for this user.
                       </div>
                     )}
@@ -1384,7 +1339,7 @@ export default function AdminPage() {
                 </div>
               ))}
               {calendars.length === 0 && (
-                <div className="text-sm text-slate-400 rounded-xl border border-dashed border-slate-800 p-6 text-center">
+                <div className="text-sm text-[#6b6b6b] rounded-xl border border-dashed border-[#d9d4c9] p-6 text-center">
                   No calendar data yet.
                 </div>
               )}
@@ -1407,24 +1362,24 @@ function StatCard({
   hint?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow">
+    <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/60 p-4 shadow">
       <div className="flex items-center justify-between">
-        <div className="rounded-xl bg-slate-800/60 p-2 text-lime-200 border border-lime-300/40">
+        <div className="rounded-xl bg-[#e6e1d8]/60 p-2 text-lime-700 border border-lime-500/40">
           {icon}
         </div>
-        <p className="text-xl font-semibold text-white">{value}</p>
+        <p className="text-xl font-semibold text-[#14110c]">{value}</p>
       </div>
-      <p className="text-sm text-slate-300 mt-2">{label}</p>
-      {hint && <p className="text-xs text-slate-500">{hint}</p>}
+      <p className="text-sm text-[#14110c] mt-2">{label}</p>
+      {hint && <p className="text-xs text-[#6b6b6b]">{hint}</p>}
     </div>
   );
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-950/30 px-3 py-2">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-sm font-semibold text-white">{value}</p>
+    <div className="rounded-lg border border-[#d9d4c9] bg-[#faf8f3] px-3 py-2">
+      <p className="text-xs text-[#6b6b6b]">{label}</p>
+      <p className="text-sm font-semibold text-[#14110c]">{value}</p>
     </div>
   );
 }
@@ -1434,21 +1389,23 @@ function StatusBadge({ status, small }: { status: string; small?: boolean }) {
   const styles =
     normalized === "active" ||
     normalized === "scheduled" ||
-    normalized === "posted"
-      ? "bg-lime-300/20 text-lime-200 border-lime-300/40"
+    normalized === "posted" ||
+    normalized === "completed" ||
+    normalized === "payment_completed"
+      ? "bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/30"
       : normalized === "failed" ||
           normalized === "canceled" ||
           normalized === "past_due"
-        ? "bg-red-300/10 text-red-200 border-red-300/30"
-        : "bg-slate-800 text-slate-200 border-slate-700";
+        ? "bg-red-900/10 text-red-900 border-red-900/30"
+        : "bg-[#e6e1d8] text-[#14110c] border-[#d9d4c9]";
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2 ${
-        small ? "py-0.5 text-[10px]" : "py-1 text-[11px]"
-      } font-semibold ${styles}`}
+      className={`inline-flex items-center rounded-full border px-3 ${
+        small ? "py-0.5 text-[9px]" : "py-1 text-[10px]"
+      } uppercase font-black tracking-[0.18em] ${styles}`}
     >
-      {status.toLowerCase().replace(/_/g, " ")}
+      {status.replace(/_/g, " ")}
     </span>
   );
 }

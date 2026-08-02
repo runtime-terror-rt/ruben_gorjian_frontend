@@ -393,7 +393,7 @@ function CalendarOnboardingInner() {
                 size="sm"
                 onClick={handleManualRefresh}
                 disabled={refreshing}
-                className="text-slate-400 hover:text-white gap-2"
+                className="text-[#6b6b6b] hover:text-white gap-2"
               >
                 <RefreshCw className={clsx("h-3.5 w-3.5", refreshing && "animate-spin")} />
                 Refresh
@@ -454,7 +454,7 @@ function CalendarOnboardingInner() {
                             </span>
                             <span className={clsx(
                               "text-[10px] block",
-                              isConnected ? "text-lime-400" : "text-slate-400"
+                              isConnected ? "text-lime-400" : "text-[#6b6b6b]"
                             )}>
                               {isConnected ? "Connected successfully" : "Not connected yet"}
                             </span>
@@ -545,7 +545,7 @@ function CalendarOnboardingInner() {
                     Reduce last-minute posting
                   </option>
                 </Select>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-[#6b6b6b] mt-1">
                   This answer does not affect execution
                 </p>
               </div>
@@ -556,7 +556,7 @@ function CalendarOnboardingInner() {
                 type="button"
                 onClick={(e: any) => handleSubmit(e)}
                 disabled={submitting}
-                className="bg-lime-400 text-slate-900 hover:bg-lime-300 font-bold px-8 rounded-xl"
+                className="bg-lime-400 text-[#14110c] hover:bg-lime-300 font-bold px-8 rounded-xl"
               >
                 {submitting ? "Saving..." : "Complete Setup"}
               </Button>

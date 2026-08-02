@@ -467,11 +467,11 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "SCHEDULED":
-        return <Badge variant="outline" className="text-blue-400">Scheduled</Badge>;
+        return <Badge variant="outline" className="text-blue-600">Scheduled</Badge>;
       case "POSTED":
         return <Badge variant="outline" className="text-green-400">Posted</Badge>;
       case "FAILED":
-        return <Badge variant="outline" className="text-red-400">Failed</Badge>;
+        return <Badge variant="outline" className="text-red-600">Failed</Badge>;
       case "PUBLISHING":
         return <Badge variant="outline" className="text-yellow-400">Publishing</Badge>;
       default:
@@ -502,9 +502,9 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
           <div className="space-y-2">
             <Label>Connected Accounts</Label>
             {platformsQuery.isLoading ? (
-              <p className="text-sm text-slate-400">Loading platforms...</p>
+              <p className="text-sm text-[#6b6b6b]">Loading platforms...</p>
             ) : platforms.length === 0 ? (
-              <p className="text-sm text-red-400">User has no connected platforms</p>
+              <p className="text-sm text-red-600">User has no connected platforms</p>
             ) : (
               <div className="space-y-2">
                 {platforms.map((platform) => {
@@ -514,10 +514,10 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                       key={platform.id}
                       className={`flex items-center gap-3 rounded-md border px-3 py-2 text-sm transition-all ${
                         platform.isExpired
-                          ? "border-slate-700 text-slate-500 cursor-not-allowed"
+                          ? "border-[#d9d4c9] text-slate-500 cursor-not-allowed"
                           : isSelected
-                            ? "border-lime-500 bg-slate-800 text-slate-200"
-                            : "border-slate-700 text-slate-300 hover:border-slate-600"
+                            ? "border-lime-500 bg-[#e6e1d8] text-[#14110c]"
+                            : "border-[#d9d4c9] text-[#14110c] hover:border-[#d9d4c9]"
                       }`}
                     >
                       <Checkbox
@@ -532,7 +532,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                         {platform.displayName || platform.externalAccountId}
                       </span>
                       {platform.isExpired && (
-                        <Badge variant="outline" className="text-red-400">
+                        <Badge variant="outline" className="text-red-600">
                           Token Expired
                         </Badge>
                       )}
@@ -544,9 +544,9 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
           </div>
 
           {/* Caption */}
-          <div className="space-y-3 rounded-md border border-slate-700 p-4">
+          <div className="space-y-3 rounded-md border border-[#d9d4c9] p-4">
             <div className="flex items-center gap-2">
-              <FileSpreadsheet className="h-4 w-4 text-slate-300" />
+              <FileSpreadsheet className="h-4 w-4 text-[#14110c]" />
               <Label htmlFor="google-sheet-link">Import From Google Sheet</Label>
             </div>
             <div className="flex flex-col gap-2 md:flex-row">
@@ -565,30 +565,30 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                 {importGoogleSheetMutation.isPending ? "Importing..." : "Import From Google Sheet"}
               </Button>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#6b6b6b]">
               One-time pull only. No live sync. Expected columns: ImageSKU, Product SKU Link, PostID, Caption1, Caption2, Caption3, Hashtags, Notes.
             </p>
             {importGoogleSheetMutation.isPending && (
-              <p className="text-xs text-slate-300">Importing sheet, please wait...</p>
+              <p className="text-xs text-[#14110c]">Importing sheet, please wait...</p>
             )}
             {importFeedback && (
-              <p className="text-xs text-lime-400">{importFeedback}</p>
+              <p className="text-xs text-[#b08d3e]">{importFeedback}</p>
             )}
             {importError && (
-              <p className="text-xs text-red-400">{importError}</p>
+              <p className="text-xs text-red-600">{importError}</p>
             )}
 
             {importedRows.length > 0 && (
-              <div className="space-y-3 rounded-md border border-slate-700 bg-slate-900/40 p-3">
+              <div className="space-y-3 rounded-md border border-[#d9d4c9] bg-[#ffffff] p-3">
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-[#14110c]">
                     Imported rows: {importedRows.length}
                   </p>
                   <div className="flex items-center gap-2">
-                    <Label htmlFor="imported-row-select" className="text-xs text-slate-400">Row</Label>
+                    <Label htmlFor="imported-row-select" className="text-xs text-[#6b6b6b]">Row</Label>
                     <select
                       id="imported-row-select"
-                      className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-sm"
+                      className="rounded-md border border-[#d9d4c9] bg-[#ffffff] px-2 py-1 text-sm"
                       value={selectedImportedRowIndex}
                       onChange={(e) => setSelectedImportedRowIndex(Number(e.target.value))}
                     >
@@ -603,14 +603,14 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
 
                 {importedRows[selectedImportedRowIndex] && (
                   <div className="space-y-3">
-                    <div className="grid gap-2 text-xs text-slate-300 md:grid-cols-2">
-                      <p><span className="text-slate-400">ImageSKU:</span> {importedRows[selectedImportedRowIndex].imageSku || "—"}</p>
-                      <p><span className="text-slate-400">PostID:</span> {importedRows[selectedImportedRowIndex].postId || "—"}</p>
+                    <div className="grid gap-2 text-xs text-[#14110c] md:grid-cols-2">
+                      <p><span className="text-[#6b6b6b]">ImageSKU:</span> {importedRows[selectedImportedRowIndex].imageSku || "—"}</p>
+                      <p><span className="text-[#6b6b6b]">PostID:</span> {importedRows[selectedImportedRowIndex].postId || "—"}</p>
                       <p className="md:col-span-2">
-                        <span className="text-slate-400">Product SKU Link:</span> {importedRows[selectedImportedRowIndex].productSkuLink || "—"}
+                        <span className="text-[#6b6b6b]">Product SKU Link:</span> {importedRows[selectedImportedRowIndex].productSkuLink || "—"}
                       </p>
                       <p className="md:col-span-2">
-                        <span className="text-slate-400">Notes:</span> {importedRows[selectedImportedRowIndex].notes || "—"}
+                        <span className="text-[#6b6b6b]">Notes:</span> {importedRows[selectedImportedRowIndex].notes || "—"}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -668,7 +668,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
               className="resize-none"
               maxLength={2200}
             />
-            <p className="text-xs text-slate-400">{caption.length} / 2200 characters</p>
+            <p className="text-xs text-[#6b6b6b]">{caption.length} / 2200 characters</p>
           </div>
 
           {/* Hashtags */}
@@ -680,16 +680,16 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
               value={hashtags}
               onChange={(e) => setHashtags(e.target.value)}
             />
-            <p className="text-xs text-slate-400">Separate with spaces or commas</p>
+            <p className="text-xs text-[#6b6b6b]">Separate with spaces or commas</p>
           </div>
 
           {/* USER MEDIA MULTI-SELECT DROPDOWN */}
           <div className="space-y-2">
             <Label>User Media Library (multi-select)</Label>
             {userMediaQuery.isLoading ? (
-              <p className="text-sm text-slate-400">Loading user media...</p>
+              <p className="text-sm text-[#6b6b6b]">Loading user media...</p>
             ) : userMediaQuery.isError ? (
-              <p className="text-sm text-red-400">Error loading media: {userMediaQuery.error?.message || "Unknown error"}</p>
+              <p className="text-sm text-red-600">Error loading media: {userMediaQuery.error?.message || "Unknown error"}</p>
             ) : (
               <>
                 <MultiSelect
@@ -702,12 +702,12 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                   disabled={userMedia.length === 0}
                 />
                 {selectedUserMediaIds.length > 0 && (
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#6b6b6b]">
                     {selectedUserMediaIds.length} file(s) selected from user library
                   </p>
                 )}
                 {userMedia.length === 0 && !userMediaQuery.isLoading && (
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#6b6b6b]">
                     This user has no uploaded media yet. You can upload media below.
                   </p>
                 )}
@@ -749,8 +749,8 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
             {uploadingFiles.length > 0 && (
               <div className="space-y-2">
                 {uploadingFiles.map((filename) => (
-                  <div key={filename} className="flex items-center gap-2 text-sm text-slate-400">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-700 border-t-lime-400"></div>
+                  <div key={filename} className="flex items-center gap-2 text-sm text-[#6b6b6b]">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#d9d4c9] border-t-lime-400"></div>
                     <span>Uploading {filename}...</span>
                   </div>
                 ))}
@@ -759,7 +759,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
 
             {/* Show admin-uploaded media */}
             {adminMediaQuery.isLoading ? (
-              <p className="text-sm text-slate-400">Loading admin uploads...</p>
+              <p className="text-sm text-[#6b6b6b]">Loading admin uploads...</p>
             ) : adminMedia.filter((m) => adminUploadedMediaIds.includes(m.id)).length > 0 ? (
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                 {adminMedia
@@ -784,7 +784,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-[#e6e1d8] flex items-center justify-center">
                           <ImageIcon className="w-8 h-8 text-slate-600" />
                         </div>
                       )}
@@ -793,18 +793,18 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                         className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 rounded-full p-1 transition-colors"
                         title="Delete media"
                       >
-                        <Trash2 className="w-3 h-3 text-white" />
+                        <Trash2 className="w-3 h-3 text-[#14110c]" />
                       </button>
                       {asset.type === "VIDEO" && (
-                        <div className="absolute bottom-1 left-1 bg-slate-900/80 rounded px-1 py-0.5">
-                          <span className="text-xs text-white">VIDEO</span>
+                        <div className="absolute bottom-1 left-1 bg-[#ffffff]/80 rounded px-1 py-0.5">
+                          <span className="text-xs text-[#14110c]">VIDEO</span>
                         </div>
                       )}
                     </div>
                   ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-400">No admin uploads yet. Upload media to attach to this post.</p>
+              <p className="text-sm text-[#6b6b6b]">No admin uploads yet. Upload media to attach to this post.</p>
             )}
           </div>
 
@@ -816,8 +816,8 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                 onClick={() => setPublishMode("NOW")}
                 className={`flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all ${
                   publishMode === "NOW"
-                    ? "bg-lime-600 text-slate-900"
-                    : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                    ? "bg-lime-600 text-[#14110c]"
+                    : "bg-[#e6e1d8] text-[#14110c] hover:bg-slate-600"
                 }`}
               >
                 <Clock className="w-4 h-4 inline mr-2" />
@@ -827,8 +827,8 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                 onClick={() => setPublishMode("SCHEDULE")}
                 className={`flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all ${
                   publishMode === "SCHEDULE"
-                    ? "bg-lime-600 text-slate-900"
-                    : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                    ? "bg-lime-600 text-[#14110c]"
+                    : "bg-[#e6e1d8] text-[#14110c] hover:bg-slate-600"
                 }`}
               >
                 <Calendar className="w-4 h-4 inline mr-2" />
@@ -842,7 +842,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
             <div className="space-y-2">
               <Label htmlFor="scheduledFor">
                 Scheduled Date & Time *{" "}
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-xs font-normal text-[#6b6b6b]">
                   ({Intl.DateTimeFormat().resolvedOptions().timeZone})
                 </span>
               </Label>
@@ -858,7 +858,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                   const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
                   const utcTime = dayjs.tz(scheduledFor, browserTz).utc();
                   return (
-                    <p className="text-xs text-amber-400">
+                    <p className="text-xs text-amber-700">
                       🕐 Will fire at: <strong>{utcTime.format("MMM D, HH:mm [UTC]")}</strong>
                       {" "}(= local {dayjs.tz(scheduledFor, browserTz).format("h:mm A")})
                     </p>
@@ -879,7 +879,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
               rows={2}
               maxLength={500}
             />
-            <p className="text-xs text-slate-400">{reason.length} / 500 characters</p>
+            <p className="text-xs text-[#6b6b6b]">{reason.length} / 500 characters</p>
           </div>
 
           {/* Submit Button */}
@@ -904,9 +904,9 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
         </CardHeader>
         <CardContent>
           {adminPostsQuery.isLoading ? (
-            <p className="text-sm text-slate-400">Loading posts...</p>
+            <p className="text-sm text-[#6b6b6b]">Loading posts...</p>
           ) : adminPosts.length === 0 ? (
-            <p className="text-sm text-slate-400">No admin posts yet</p>
+            <p className="text-sm text-[#6b6b6b]">No admin posts yet</p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
@@ -950,7 +950,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="max-w-xs truncate text-sm text-slate-400">
+                        <div className="max-w-xs truncate text-sm text-[#6b6b6b]">
                           {post.adminReason || "—"}
                         </div>
                       </TableCell>
@@ -995,13 +995,13 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
             </div>
             <div>
               <strong>Caption:</strong>
-              <div className="mt-1 p-2 bg-slate-800 rounded text-slate-300 max-h-24 overflow-y-auto">
+              <div className="mt-1 p-2 bg-[#e6e1d8] rounded text-[#14110c] max-h-24 overflow-y-auto">
                 {caption}
               </div>
             </div>
             <div>
               <strong>Reason:</strong>
-              <div className="mt-1 p-2 bg-slate-800 rounded text-slate-300">{reason}</div>
+              <div className="mt-1 p-2 bg-[#e6e1d8] rounded text-[#14110c]">{reason}</div>
             </div>
           </div>
           <DialogFooter>

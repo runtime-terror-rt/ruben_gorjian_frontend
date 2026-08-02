@@ -297,7 +297,7 @@ export default function SessionSchedulePage() {
         );
       case "PENDING":
         return (
-          <Badge className="bg-amber-400/10 text-amber-400 border-amber-400/20 animate-pulse">
+          <Badge className="bg-amber-500/10 text-amber-700 border-amber-500/20 animate-pulse">
             Pending
           </Badge>
         );
@@ -310,7 +310,7 @@ export default function SessionSchedulePage() {
 
       default:
         return (
-          <Badge variant="outline" className="text-slate-500 border-slate-800">
+          <Badge variant="outline" className="text-[#6b6b6b] border-[#d9d4c9]">
             {status}
           </Badge>
         );
@@ -320,13 +320,13 @@ export default function SessionSchedulePage() {
   const getSessionTypeBadge = (type: string) => {
     if (type === "PHOTO_SESSION") {
       return (
-        <Badge className="bg-lime-400/10 text-lime-400 border-lime-400/20 gap-1">
+        <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20 gap-1">
           <Camera className="h-3 w-3" /> Photo
         </Badge>
       );
     }
     return (
-      <Badge className="bg-indigo-400/10 text-indigo-400 border-indigo-400/20 gap-1">
+      <Badge className="bg-indigo-600/10 text-indigo-600 border-indigo-500/20 gap-1">
         <Video className="h-3 w-3" /> Video
       </Badge>
     );
@@ -390,15 +390,15 @@ export default function SessionSchedulePage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-[#14110c]">
             Session Schedule Management
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#6b6b6b]">
             Manage all professional photoshoot and video sessions.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-1">
+          <div className="flex items-center bg-[#ffffff] border border-[#d9d4c9] rounded-lg p-1">
             <Button
               variant="ghost"
               size="sm"
@@ -406,8 +406,8 @@ export default function SessionSchedulePage() {
               className={cn(
                 "h-7 px-3 text-[10px] font-bold uppercase tracking-wider transition-all",
                 view === "calendar"
-                  ? "bg-slate-800 text-white shadow-sm"
-                  : "text-slate-500 hover:text-slate-300",
+                  ? "bg-[#e6e1d8] text-[#14110c] shadow-sm"
+                  : "text-[#6b6b6b] hover:text-[#14110c]",
               )}
             >
               <LayoutGrid className="h-3 w-3 mr-1.5" />
@@ -420,8 +420,8 @@ export default function SessionSchedulePage() {
               className={cn(
                 "h-7 px-3 text-[10px] font-bold uppercase tracking-wider transition-all",
                 view === "table"
-                  ? "bg-slate-800 text-white shadow-sm"
-                  : "text-slate-500 hover:text-slate-300",
+                  ? "bg-[#e6e1d8] text-[#14110c] shadow-sm"
+                  : "text-[#6b6b6b] hover:text-[#14110c]",
               )}
             >
               <List className="h-3 w-3 mr-1.5" />
@@ -433,7 +433,7 @@ export default function SessionSchedulePage() {
             size="sm"
             onClick={() => fetchSessions()}
             disabled={loading}
-            className="border-slate-700 hover:bg-slate-800 text-slate-300 h-9"
+            className="border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c] h-9"
           >
             <RefreshCcw
               className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
@@ -452,17 +452,17 @@ export default function SessionSchedulePage() {
       />
 
       {view === "calendar" ? (
-        <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm overflow-hidden">
-          <CardHeader className="py-4 px-6 border-b border-slate-800 flex flex-row items-center justify-between">
+        <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm overflow-hidden">
+          <CardHeader className="py-4 px-6 border-b border-[#d9d4c9] flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <CalendarDays className="h-5 w-5 text-lime-400" />
+              <CalendarDays className="h-5 w-5 text-[#b08d3e]" />
               {currentMonth.format("MMMM YYYY")}
             </CardTitle>
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-slate-400 hover:text-white"
+                className="h-8 w-8 text-[#6b6b6b] hover:text-[#14110c]"
                 onClick={() =>
                   setCurrentMonth(currentMonth.subtract(1, "month"))
                 }
@@ -472,7 +472,7 @@ export default function SessionSchedulePage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs text-slate-400 hover:text-white font-bold uppercase tracking-tighter"
+                className="text-xs text-[#6b6b6b] hover:text-[#14110c] font-bold uppercase tracking-tighter"
                 onClick={() => setCurrentMonth(dayjs())}
               >
                 Today
@@ -480,7 +480,7 @@ export default function SessionSchedulePage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-slate-400 hover:text-white"
+                className="h-8 w-8 text-[#6b6b6b] hover:text-[#14110c]"
                 onClick={() => setCurrentMonth(currentMonth.add(1, "month"))}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -488,11 +488,11 @@ export default function SessionSchedulePage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="grid grid-cols-7 border-b border-slate-800">
+            <div className="grid grid-cols-7 border-b border-[#d9d4c9]">
               {daysOfWeek.map((day) => (
                 <div
                   key={day}
-                  className="py-2 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-950/30"
+                  className="py-2 text-center text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] bg-[#faf8f3]"
                 >
                   {day}
                 </div>
@@ -507,9 +507,9 @@ export default function SessionSchedulePage() {
                   <div
                     key={idx}
                     className={cn(
-                      "min-h-[100px] p-2 border-r border-b border-slate-800/50 transition-colors",
+                      "min-h-[100px] p-2 border-r border-b border-[#d9d4c9]/50 transition-colors",
                       dateObj.month !== "current"
-                        ? "bg-slate-900/20 opacity-30"
+                        ? "bg-[#ffffff]/20 opacity-30"
                         : "bg-transparent",
                       idx % 7 === 6 && "border-r-0",
                     )}
@@ -519,8 +519,8 @@ export default function SessionSchedulePage() {
                         className={cn(
                           "inline-flex items-center justify-center h-6 w-6 rounded-full font-bold",
                           isToday
-                            ? "bg-lime-400 text-slate-950"
-                            : "text-slate-400",
+                            ? "bg-[#b08d3e] text-[#14110c]"
+                            : "text-[#6b6b6b]",
                         )}
                       >
                         {dateObj.day}
@@ -534,8 +534,8 @@ export default function SessionSchedulePage() {
                           className={cn(
                             "w-full text-left px-1.5 py-1 rounded text-[10px] font-semibold truncate transition-all hover:translate-x-0.5",
                             s.scheduleType === "PHOTO_SESSION"
-                              ? "bg-lime-400/10 text-lime-400 hover:bg-lime-400/20"
-                              : "bg-indigo-400/10 text-indigo-400 hover:bg-indigo-400/20",
+                              ? "bg-[#b08d3e]/10 text-[#8a6d28] hover:bg-[#b08d3e]/20"
+                              : "bg-indigo-600/10 text-indigo-600 hover:bg-indigo-600/20",
                             (s.status.toUpperCase() === "COMPLETED" ||
                               s.status.toUpperCase() === "COMPLETE") &&
                               "opacity-50 grayscale",
@@ -550,7 +550,7 @@ export default function SessionSchedulePage() {
                       {daySessions.length > 3 && (
                         <button
                           onClick={() => setSelectedDay(dateObj.date)}
-                          className="text-[10px] text-slate-400 hover:text-white font-bold pl-1 pt-1 cursor-pointer hover:underline text-left"
+                          className="text-[10px] text-[#6b6b6b] hover:text-[#14110c] font-bold pl-1 pt-1 cursor-pointer hover:underline text-left"
                         >
                           + {daySessions.length - 3} more
                         </button>
@@ -563,17 +563,17 @@ export default function SessionSchedulePage() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-          <CardHeader className="pb-3 border-b border-slate-800">
+        <Card className="border-[#d9d4c9] bg-[#ffffff] backdrop-blur-sm">
+          <CardHeader className="pb-3 border-b border-[#d9d4c9]">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Calendar className="h-5 w-5 text-lime-400" />
+              <Calendar className="h-5 w-5 text-[#b08d3e]" />
               All Scheduled Sessions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
-              <TableHeader className="bg-slate-950/50">
-                <TableRow className="border-slate-800 hover:bg-transparent">
+              <TableHeader className="bg-[#faf8f3]">
+                <TableRow className="border-[#d9d4c9] hover:bg-transparent">
                   <TableHead>Type</TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Client</TableHead>
@@ -586,8 +586,8 @@ export default function SessionSchedulePage() {
                 {loading && sessions.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-48 text-center">
-                      <div className="flex flex-col items-center gap-2 text-slate-500">
-                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-lime-400 border-t-transparent" />
+                      <div className="flex flex-col items-center gap-2 text-[#6b6b6b]">
+                        <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#b08d3e] border-t-transparent" />
                         Loading sessions...
                       </div>
                     </TableCell>
@@ -596,7 +596,7 @@ export default function SessionSchedulePage() {
                   <TableRow>
                     <TableCell
                       colSpan={6}
-                      className="h-48 text-center text-slate-500"
+                      className="h-48 text-center text-[#6b6b6b]"
                     >
                       No sessions found.
                     </TableCell>
@@ -605,20 +605,20 @@ export default function SessionSchedulePage() {
                   currentItems.map((s) => (
                     <TableRow
                       key={s.id}
-                      className="border-slate-800 hover:bg-slate-800/30 transition-colors group"
+                      className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group"
                     >
                       <TableCell>
                         {getSessionTypeBadge(s.scheduleType)}
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-slate-200">
+                          <span className="text-sm font-medium text-[#14110c]">
                             {s.session?.title ||
                               s.sessionTitle ||
                               "Untitled Session"}
                           </span>
                           {(s.session?.notes || s.sessionNotes) && (
-                            <span className="text-[10px] text-slate-500 line-clamp-1 italic">
+                            <span className="text-[10px] text-[#6b6b6b] line-clamp-1 italic">
                               Notes: {s.session?.notes || s.sessionNotes}
                             </span>
                           )}
@@ -626,14 +626,14 @@ export default function SessionSchedulePage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium text-slate-200">
+                          <span className="text-sm font-medium text-[#14110c]">
                             {s.owner?.fullName ||
                               s.owner?.name ||
                               s.user?.fullName ||
                               s.user?.name ||
                               "Unknown"}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-[#6b6b6b]">
                             {s.owner?.email || s.user?.email}
                           </span>
                         </div>
@@ -641,13 +641,13 @@ export default function SessionSchedulePage() {
                       <TableCell>{getStatusBadge(s.status)}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <div className="text-sm font-medium text-slate-200">
+                          <div className="text-sm font-medium text-[#14110c]">
                             {dayjs(s.scheduledAt).format("MMM D, YYYY")}
                           </div>
-                          <div className="text-xs text-slate-400 flex items-center gap-1">
+                          <div className="text-xs text-[#6b6b6b] flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {dayjs(s.scheduledAt).format("h:mm A")}
-                            <span className="text-slate-500 ml-1">
+                            <span className="text-[#6b6b6b] ml-1">
                               {timezoneAbbr}
                             </span>
                           </div>
@@ -660,12 +660,12 @@ export default function SessionSchedulePage() {
                               variant="outline"
                               size="sm"
                               className={cn(
-                                "h-8 border-slate-700 bg-slate-900/50 flex items-center gap-1 px-3 transition-colors",
+                                "h-8 border-[#d9d4c9] bg-[#ffffff] flex items-center gap-1 px-3 transition-colors",
                                 s.status.toUpperCase() === "COMPLETED" ||
                                   s.status.toUpperCase() === "POSTED" ||
                                   s.status.toUpperCase() === "COMPLETE"
-                                  ? "text-green-500 hover:bg-slate-800 hover:text-green-400"
-                                  : "text-slate-300 hover:bg-slate-800 hover:text-white",
+                                  ? "text-green-500 hover:bg-[#e6e1d8] hover:text-green-400"
+                                  : "text-[#14110c] hover:bg-[#e6e1d8] hover:text-[#14110c]",
                               )}
                             >
                               Action <ChevronDown className="h-3 w-3" />
@@ -674,11 +674,11 @@ export default function SessionSchedulePage() {
 
                           <DropdownMenuContent
                             align="end"
-                            className="bg-slate-900 border-slate-800 text-slate-300"
+                            className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c]"
                           >
                             {s.status.toUpperCase() !== "COMPLETED" && (
                               <DropdownMenuItem
-                                className="hover:bg-slate-800 focus:bg-slate-800 cursor-pointer text-emerald-400"
+                                className="hover:bg-[#e6e1d8] focus:bg-[#e6e1d8] cursor-pointer text-emerald-700"
                                 onClick={() => updateStatus(s.id, "COMPLETED")}
                               >
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -697,8 +697,8 @@ export default function SessionSchedulePage() {
           </CardContent>
 
           {totalCount > 0 && (
-            <div className="flex items-center justify-between p-4 border-t border-slate-800 bg-slate-950/20">
-              <div className="text-xs text-slate-500 font-medium">
+            <div className="flex items-center justify-between p-4 border-t border-[#d9d4c9] bg-[#faf8f3]">
+              <div className="text-xs text-[#6b6b6b] font-medium">
                 Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalCount)} to {Math.min(currentPage * itemsPerPage, totalCount)} of {totalCount} sessions
               </div>
               <div className="flex items-center gap-2">
@@ -707,11 +707,11 @@ export default function SessionSchedulePage() {
                   size="sm"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage <= 1}
-                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                  className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <span className="text-xs text-slate-400 px-2">
+                <span className="text-xs text-[#6b6b6b] px-2">
                   Page {currentPage} of {totalPages}
                 </span>
                 <Button
@@ -721,7 +721,7 @@ export default function SessionSchedulePage() {
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage >= totalPages}
-                  className="bg-slate-900 border-slate-800 h-8 px-2"
+                  className="bg-[#ffffff] border-[#d9d4c9] h-8 px-2"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -736,10 +736,10 @@ export default function SessionSchedulePage() {
         open={!!selectedDay}
         onOpenChange={(o) => !o && setSelectedDay(null)}
       >
-        <DialogContent className="max-w-md bg-[#0b0e14] border-slate-800/60 p-0 overflow-hidden shadow-2xl">
-          <DialogHeader className="p-6 pb-4 border-b border-slate-800/40">
+        <DialogContent className="max-w-md bg-[#0b0e14] border-[#d9d4c9]/60 p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-6 pb-4 border-b border-[#d9d4c9]/40">
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl font-bold text-white font-sora">
+              <DialogTitle className="text-xl font-bold text-[#14110c] font-sora">
                 Sessions on {selectedDay?.format("MMMM D, YYYY")}
               </DialogTitle>
             </div>
@@ -748,12 +748,12 @@ export default function SessionSchedulePage() {
             {selectedDay && getSessionsForDay(selectedDay).map((s) => (
               <div 
                 key={s.id} 
-                className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-3 hover:bg-slate-800/40 transition-colors"
+                className="bg-[#ffffff] border border-[#d9d4c9]/60 rounded-2xl p-4 flex flex-col gap-3 hover:bg-[#e6e1d8]/40 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {getSessionTypeBadge(s.scheduleType)}
-                    <span className="text-sm font-bold text-slate-200">
+                    <span className="text-sm font-bold text-[#14110c]">
                       {s.session?.title || s.sessionTitle || "Untitled Session"}
                     </span>
                   </div>
@@ -762,18 +762,18 @@ export default function SessionSchedulePage() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] flex items-center gap-1">
                       <Clock className="h-3 w-3" /> Time
                     </span>
-                    <span className="text-xs font-semibold text-slate-300">
-                      {dayjs(s.scheduledAt).format("h:mm A")} <span className="text-[10px] text-slate-500">{timezoneAbbr}</span>
+                    <span className="text-xs font-semibold text-[#14110c]">
+                      {dayjs(s.scheduledAt).format("h:mm A")} <span className="text-[10px] text-[#6b6b6b]">{timezoneAbbr}</span>
                     </span>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] flex items-center gap-1">
                       <User className="h-3 w-3" /> Client
                     </span>
-                    <span className="text-xs font-semibold text-slate-300 truncate">
+                    <span className="text-xs font-semibold text-[#14110c] truncate">
                       {s.owner?.fullName || s.owner?.name || s.user?.fullName || s.user?.name || "Unknown"}
                     </span>
                   </div>
@@ -782,7 +782,7 @@ export default function SessionSchedulePage() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="w-full mt-2 h-8 text-xs bg-slate-950/50 border-slate-700 hover:bg-slate-800 hover:text-white transition-colors"
+                  className="w-full mt-2 h-8 text-xs bg-[#faf8f3] border-[#d9d4c9] hover:bg-[#e6e1d8] hover:text-[#14110c] transition-colors"
                   onClick={() => {
                     setSelectedSession(s);
                     setSelectedDay(null);
@@ -793,7 +793,7 @@ export default function SessionSchedulePage() {
               </div>
             ))}
             {selectedDay && getSessionsForDay(selectedDay).length === 0 && (
-              <div className="text-center text-slate-500 py-8 text-sm">
+              <div className="text-center text-[#6b6b6b] py-8 text-sm">
                 No sessions found for this day.
               </div>
             )}
@@ -806,11 +806,11 @@ export default function SessionSchedulePage() {
         open={!!selectedSession}
         onOpenChange={(o) => !o && setSelectedSession(null)}
       >
-        <DialogContent className="max-w-md bg-[#0a0d14] border-slate-800/60 p-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] sm:rounded-3xl">
+        <DialogContent className="max-w-md bg-[#0a0d14] border-[#d9d4c9]/60 p-0 overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] sm:rounded-3xl">
           {/* Header Area */}
-          <div className="relative h-36 w-full overflow-hidden bg-slate-900/50">
+          <div className="relative h-36 w-full overflow-hidden bg-[#ffffff]">
              {/* Abstract background blobs for premium feel */}
-             <div className="absolute top-[-50%] left-[-20%] h-48 w-48 rounded-full bg-lime-500/10 blur-[50px]" />
+             <div className="absolute top-[-50%] left-[-20%] h-48 w-48 rounded-full bg-[#b08d3e]/10 blur-[50px]" />
              <div className="absolute bottom-[-50%] right-[-20%] h-48 w-48 rounded-full bg-indigo-500/10 blur-[50px]" />
              
              <div className="absolute top-5 right-5 z-10">
@@ -822,8 +822,8 @@ export default function SessionSchedulePage() {
                   className={cn(
                     "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-lg backdrop-blur-md",
                     selectedSession?.scheduleType === "PHOTO_SESSION"
-                      ? "bg-lime-400/20 border-lime-400/30 text-lime-400 shadow-lime-500/10"
-                      : "bg-indigo-400/20 border-indigo-400/30 text-indigo-400 shadow-indigo-500/10",
+                      ? "bg-[#b08d3e]/20 border-[#b08d3e]/30 text-[#b08d3e] shadow-lime-500/10"
+                      : "bg-indigo-600/20 border-indigo-500/30 text-indigo-600 shadow-indigo-500/10",
                   )}
                 >
                   {selectedSession?.scheduleType === "PHOTO_SESSION" ? (
@@ -833,12 +833,12 @@ export default function SessionSchedulePage() {
                   )}
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-white tracking-tight">
+                  <h4 className="text-xl font-bold text-[#14110c] tracking-tight">
                     {selectedSession?.session?.title ||
                       selectedSession?.sessionTitle ||
                       "Untitled Session"}
                   </h4>
-                  <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-0.5">
+                  <p className="text-[10px] text-[#6b6b6b] uppercase font-black tracking-widest mt-0.5">
                     {selectedSession?.scheduleType.replace("_", " ")}
                   </p>
                 </div>
@@ -850,23 +850,23 @@ export default function SessionSchedulePage() {
               
               {/* Timing Grid */}
               <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-slate-900/60">
-                    <div className="flex items-center gap-1.5 text-slate-500 mb-0.5">
+                  <div className="bg-[#ffffff] border border-[#d9d4c9]/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-[#ffffff]/60">
+                    <div className="flex items-center gap-1.5 text-[#6b6b6b] mb-0.5">
                        <CalendarDays className="h-3.5 w-3.5" />
                        <span className="text-[10px] font-black uppercase tracking-widest">Date</span>
                     </div>
-                    <p className="text-sm font-bold text-slate-200">
+                    <p className="text-sm font-bold text-[#14110c]">
                       {dayjs(selectedSession.scheduledAt).format("MMM D, YYYY")}
                     </p>
                   </div>
-                  <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-slate-900/60">
-                    <div className="flex items-center gap-1.5 text-slate-500 mb-0.5">
+                  <div className="bg-[#ffffff] border border-[#d9d4c9]/60 rounded-2xl p-4 flex flex-col gap-1.5 transition-all hover:bg-[#ffffff]/60">
+                    <div className="flex items-center gap-1.5 text-[#6b6b6b] mb-0.5">
                        <Clock className="h-3.5 w-3.5" />
                        <span className="text-[10px] font-black uppercase tracking-widest">Time</span>
                     </div>
-                    <p className="text-sm font-bold text-slate-200">
+                    <p className="text-sm font-bold text-[#14110c]">
                       {dayjs(selectedSession.scheduledAt).format("h:mm A")}
-                      <span className="text-slate-500 ml-1.5 text-[10px]">
+                      <span className="text-[#6b6b6b] ml-1.5 text-[10px]">
                         {timezoneAbbr}
                       </span>
                     </p>
@@ -874,20 +874,20 @@ export default function SessionSchedulePage() {
               </div>
 
               {/* Client Info */}
-              <div className="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4 flex items-center justify-between transition-all hover:bg-slate-900/60">
+              <div className="bg-[#ffffff] border border-[#d9d4c9]/60 rounded-2xl p-4 flex items-center justify-between transition-all hover:bg-[#ffffff]/60">
                   <div className="flex items-center gap-3.5">
-                    <div className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 ring-4 ring-slate-900/50">
+                    <div className="h-10 w-10 rounded-full bg-[#e6e1d8] flex items-center justify-center text-[#6b6b6b] ring-4 ring-[#14110c]/50">
                       <User className="h-5 w-5" />
                     </div>
                     <div className="flex flex-col">
-                      <p className="text-sm font-bold text-white">
+                      <p className="text-sm font-bold text-[#14110c]">
                         {selectedSession.owner?.fullName ||
                           selectedSession.owner?.name ||
                           selectedSession.user?.fullName ||
                           selectedSession.user?.name ||
                           "Unknown Client"}
                       </p>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
+                      <div className="flex items-center gap-1.5 text-xs text-[#6b6b6b] mt-0.5">
                         <Mail className="h-3 w-3" />
                         {selectedSession.owner?.email ||
                           selectedSession.user?.email}
@@ -899,12 +899,12 @@ export default function SessionSchedulePage() {
               {/* Notes */}
               {(selectedSession.session?.notes ||
                 selectedSession.sessionNotes) && (
-                <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 relative overflow-hidden">
+                <div className="bg-[#ffffff]/20 border border-[#d9d4c9]/40 rounded-2xl p-4 relative overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500/30" />
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 flex items-center gap-1.5">
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b] mb-2 flex items-center gap-1.5">
                     <List className="h-3.5 w-3.5" /> Session Notes
                   </h5>
-                  <p className="text-sm text-slate-300 leading-relaxed italic">
+                  <p className="text-sm text-[#14110c] leading-relaxed italic">
                     {selectedSession.session?.notes ||
                       selectedSession.sessionNotes}
                   </p>
@@ -915,33 +915,33 @@ export default function SessionSchedulePage() {
               {((selectedSession.assets && selectedSession.assets.length > 0) || 
                 (selectedSession.media && selectedSession.media.length > 0) || 
                 (selectedSession.uploadedAssetIds && selectedSession.uploadedAssetIds.length > 0)) && (
-                <div className="bg-slate-900/20 border border-slate-800/40 rounded-2xl p-4 relative overflow-hidden">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-lime-500/30" />
-                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 flex items-center gap-1.5">
+                <div className="bg-[#ffffff]/20 border border-[#d9d4c9]/40 rounded-2xl p-4 relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#b08d3e]/30" />
+                  <h5 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6b6b6b] mb-3 flex items-center gap-1.5">
                     <Camera className="h-3.5 w-3.5" /> Attached Media
                   </h5>
                   <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1">
                     {selectedSession.media && selectedSession.media.length > 0 ? (
                       selectedSession.media.map((m, i) => (
-                        <div key={m.id || i} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
-                          <div className="aspect-square bg-slate-900">
+                        <div key={m.id || i} className="group relative bg-[#e6e1d8]/40 rounded-xl border border-[#d9d4c9]/50 overflow-hidden transition-all hover:border-[#b08d3e]/50">
+                          <div className="aspect-square bg-[#ffffff]">
                             {m.mediaType === "IMAGE" || m.mimeType?.startsWith('image/') ? (
                               <img src={m.url} alt="Media" className="h-full w-full object-cover transition-transform group-hover:scale-110" />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
-                                <Video className="h-6 w-6 text-slate-500" />
+                                <Video className="h-6 w-6 text-[#6b6b6b]" />
                               </div>
                             )}
                           </div>
-                          <div className="p-2 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm">
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
+                          <div className="p-2 flex items-center justify-between bg-[#ffffff]/80 backdrop-blur-sm">
+                            <span className="text-[9px] text-[#6b6b6b] font-bold uppercase tracking-widest truncate">
                               {m.mediaType || (m.mimeType?.startsWith('video/') ? "VIDEO" : "IMAGE")}
                             </span>
                             <a 
                               href={m.url} 
                               target="_blank" 
                               rel="noreferrer" 
-                              className="text-[9px] font-black text-lime-400 uppercase tracking-widest hover:text-lime-300"
+                              className="text-[9px] font-black text-[#b08d3e] uppercase tracking-widest hover:text-[#8a6d28]"
                             >
                               View
                             </a>
@@ -955,25 +955,25 @@ export default function SessionSchedulePage() {
                         const isVideo = url?.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/);
 
                         return (
-                          <div key={i} className="group relative bg-slate-800/40 rounded-xl border border-slate-700/50 overflow-hidden transition-all hover:border-lime-400/50">
-                            <div className="aspect-square bg-slate-900">
+                          <div key={i} className="group relative bg-[#e6e1d8]/40 rounded-xl border border-[#d9d4c9]/50 overflow-hidden transition-all hover:border-[#b08d3e]/50">
+                            <div className="aspect-square bg-[#ffffff]">
                               {isVideo ? (
                                 <div className="h-full w-full flex items-center justify-center">
-                                  <Video className="h-6 w-6 text-slate-400" />
+                                  <Video className="h-6 w-6 text-[#6b6b6b]" />
                                 </div>
                               ) : (
                                 <img src={url} alt={name} className="h-full w-full object-cover transition-transform group-hover:scale-110" />
                               )}
                             </div>
-                            <div className="p-2 flex items-center justify-between bg-slate-900/80 backdrop-blur-sm">
-                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
+                            <div className="p-2 flex items-center justify-between bg-[#ffffff]/80 backdrop-blur-sm">
+                              <span className="text-[9px] text-[#6b6b6b] font-bold uppercase tracking-widest truncate">
                                 {isVideo ? "VIDEO" : "IMAGE"}
                               </span>
                               <a 
                                 href={url} 
                                 target="_blank" 
                                 rel="noreferrer" 
-                                className="text-[9px] font-black text-lime-400 uppercase tracking-widest hover:text-lime-300"
+                                className="text-[9px] font-black text-[#b08d3e] uppercase tracking-widest hover:text-[#8a6d28]"
                               >
                                 View
                               </a>
@@ -983,8 +983,8 @@ export default function SessionSchedulePage() {
                       })
                     ) : (
                       selectedSession.uploadedAssetIds?.map((assetId, i) => (
-                        <div key={assetId || i} className="flex flex-col gap-1 text-xs bg-slate-800/40 p-2 rounded-lg border border-slate-700/50">
-                          <span className="text-slate-300 font-medium truncate" title={assetId}>
+                        <div key={assetId || i} className="flex flex-col gap-1 text-xs bg-[#e6e1d8]/40 p-2 rounded-lg border border-[#d9d4c9]/50">
+                          <span className="text-[#14110c] font-medium truncate" title={assetId}>
                             Asset ID: {assetId}
                           </span>
                         </div>
@@ -1003,7 +1003,7 @@ export default function SessionSchedulePage() {
                         updateStatus(selectedSession.id, "COMPLETED");
                         setSelectedSession(null);
                       }}
-                      className="flex-1 h-12 rounded-xl bg-gradient-to-r from-lime-500 to-emerald-600 hover:from-lime-400 hover:to-emerald-500 text-white shadow-lg shadow-lime-500/20 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all"
+                      className="flex-1 h-12 rounded-xl bg-gradient-to-r from-lime-500 to-emerald-600 hover:from-lime-400 hover:to-emerald-500 text-[#14110c] shadow-lg shadow-lime-500/20 text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all"
                     >
                       <CheckCircle2 className="h-4 w-4 mr-1.5 sm:mr-2" />
                       Complete
