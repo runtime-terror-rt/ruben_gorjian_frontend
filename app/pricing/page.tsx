@@ -50,85 +50,16 @@ const FooterSecondary = dynamicImport(
 
 type BillingCycle = "monthly" | "yearly";
 
+import { COMPARISON_ROWS } from "@/lib/pricing-comparison";
+
 const PLAN_SUBTITLES: Record<PlanKey, string> = {
-  "FMP-20": "Complete done-for-you posting",
-  "FMP-35": "More content. Broader reach.",
-  "FM-70": "Your dedicated digital marketing team",
+  "ESSENTIALS": "A polished, consistent presence for a single-store brand.",
+  "SIGNATURE": "A weekly rhythm for brands ready to show up consistently.",
 };
 
 const PLAN_BADGES: Partial<Record<PlanKey, string>> = {
-  "FMP-35": "Most Popular",
+  "SIGNATURE": "Most Popular",
 };
-
-const MATRIX_ROWS: Array<{
-  label: string;
-  values: Record<PlanKey, CellValue>;
-}> = [
-  {
-    label: "Posts per month",
-    values: {
-      "FMP-20": "Up to 12",
-      "FMP-35": "Up to 16",
-      "FM-70": "Up to 20",
-    },
-  },
-  {
-    label: "Who publishes",
-    values: {
-      "FMP-20": "admin",
-      "FMP-35": "admin",
-      "FM-70": "admin",
-    },
-  },
-  {
-    label: "Platforms included",
-    values: {
-      "FMP-20": "1 (+$5/mo per extra)",
-      "FMP-35": "2 (Instagram & Facebook)",
-      "FM-70": "3 (Instagram, Facebook & TikTok)",
-    },
-  },
-  {
-    label: "Content calendar",
-    values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
-  },
-  {
-    label: "Caption + hashtag writing",
-    values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
-  },
-  {
-    label: "Creative direction",
-    values: {
-      "FMP-20": "admin",
-      "FMP-35": "admin",
-      "FM-70": "admin",
-    },
-  },
-  {
-    label: "Pro Photo Shoot",
-    values: {
-      "FMP-20": "Every 3 months",
-      "FMP-35": "Every 2 months",
-      "FM-70": "Every month",
-    },
-  },
-  {
-    label: "Revisions",
-    values: {
-      "FMP-20": "1",
-      "FMP-35": "1",
-      "FM-70": "2",
-    },
-  },
-];
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -391,7 +322,7 @@ function PricingPageContent() {
         <section className="px-4 pt-10">
           <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-3">
             {plans.map(({ key, plan, displayPrice, billingNote }) => {
-              const isHighlighted = key === "FMP-35";
+              const isHighlighted = key === "SIGNATURE";
               return (
                 <article
                   key={key}
@@ -479,14 +410,14 @@ function PricingPageContent() {
                     </tr>
                   </thead>
                   <tbody>
-                    {MATRIX_ROWS.map((row) => (
-                      <tr key={row.label} className="border-b border-[#eef0f5]">
+                    {COMPARISON_ROWS.map((row) => (
+                      <tr key={row.category} className="border-b border-[#eef0f5]">
                         <td className="py-3 pr-4 text-sm font-medium">
-                          {row.label}
+                          {row.category}
                         </td>
                         {PLAN_KEYS.map((planKey) => (
                           <td
-                            key={`${row.label}-${planKey}`}
+                            key={`${row.category}-${planKey}`}
                             className="py-3 px-3 text-sm text-[#3f4352]"
                           >
                             <MatrixCell value={row.values[planKey]} />
