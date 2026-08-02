@@ -49,130 +49,47 @@ export interface PlanCategoryDefinition {
 
 const regularFullPlans: PlanDefinition[] = [
   {
-    name: "Full Management",
-    priceLabel: "$395/mo",
-    priceStandard: 395,
-    priceFounder: 276.5,
+    name: "Essentials",
+    priceLabel: "$397/mo",
+    priceStandard: 397,
+    priceFounder: 397,
     features: [
-      {
-        label: "We handle all posting",
-        tooltip:
-          "Done-For-You Posting. Talexia handles all scheduling and publishing across your connected platform.",
-      },
-      {
-        label: "Up to 12 posts/month",
-        tooltip:
-          "Standard Posting Volume. Structured plan supporting up to 12 posts per month using your refreshed visual content.",
-      },
-      {
-        label: "Pro Photo Shoot (Every 3 months) 1 Hr Session",
-        tooltip:
-          "Efficiency Production. A professional photo session conducted every 3 months to refresh your visual library. This is a streamlined, 60-minute session.",
-      },
-      {
-        label: "We write captions & hashtags",
-        tooltip:
-          "Strategic Al Copywriting. Includes professionally written captions and optimized hashtags tailored to your brand voice and positioning.",
-      },
-      {
-        label: "1 platform included (+$5/mo per extra)",
-        tooltip: "",
-      },
-      {
-        label: "Video add-ons available",
-        tooltip:
-          "Video Add-On: Professional vertical reel production available as an add-on. Video Starting from $495/hr; pricing and scope depend on session requirements.",
-      },
+      { label: "12 luxury-enhanced visuals produced monthly" },
+      { label: "Produced from your existing website or catalog photography" },
+      { label: "Professional captions written in your brand voice" },
+      { label: "Hashtag research per fine jewelry conventions" },
+      { label: "Publishing to 2 platforms (choose: Instagram, Facebook, or LinkedIn)" },
+      { label: "Monthly content calendar" },
+      { label: "48-hour factual error correction window" },
+      { label: "Brand Brief authorization model — no per-post approvals required" },
     ],
-    ctaLabel: "Choose Plan",
+    ctaLabel: "Subscribe to Essentials",
     isFeatured: false,
     trialDays: 0,
-    lookupKey: "FMP-20",
+    lookupKey: "ESSENTIALS",
     requiresPayment: true,
   },
   {
-    name: "Full Management Plus",
-    priceLabel: "$495/mo",
-    priceStandard: 495,
-    priceFounder: 346.5,
+    name: "Signature",
+    priceLabel: "$597/mo",
+    priceStandard: 597,
+    priceFounder: 597,
     features: [
-      {
-        label: "We handle all posting",
-        tooltip:
-          "Done-For-You Posting.Talexia handles all scheduling and publishing across your connected platform.",
-      },
-      {
-        label: "Up to 16 posts/month",
-        tooltip:
-          "High Posting Volume. Managed publishing for up to 16 posts per month across selected platforms.",
-      },
-      {
-        label: "2 platforms included (Instagram & Facebook)",
-        tooltip: "Dual-Platform Coverage. Full publishing and scheduling across 2 social platforms (Instagram & Facebook).",
-      },
-      {
-        label: "Pro Photo Shoot (Every 2 months) 1.5 Hr Session",
-        tooltip:
-          "Increased Production Frequency.Professional photo sessions every 2 months to maintain higher posting volume and visual freshness.",
-      },
-      {
-        label: "We write captions & hashtags",
-        tooltip:
-          "Strategic Copywriting:Professionally written captions and optimized hashtags aligned with your brand positioning.",
-      },
-      {
-        label: "Video add-ons available",
-        tooltip:
-          "Video Add-On:Professional vertical reel production available as an add-on. Video Starting from $495/hr; pricing and scope depend on session requirements.",
-      },
+      { label: "24 luxury-enhanced visuals produced monthly" },
+      { label: "Full image preparation — send us anything, even phone photos" },
+      { label: "Professional captions & hashtag research" },
+      { label: "Publishing to 3 platforms (Instagram, Facebook, LinkedIn)" },
+      { label: "Monthly content plan preview" },
+      { label: "Seasonal editorial planning (engagement season, holidays)" },
+      { label: "Micro-animation on select visuals" },
+      { label: "48-hour factual error correction window" },
+      { label: "Brand Brief authorization model — no per-post approvals required" },
     ],
-    ctaLabel: "Choose Plan",
+    ctaLabel: "Subscribe to Signature",
     isFeatured: true,
     positioningTag: "Most popular",
     trialDays: 0,
-    lookupKey: "FMP-35",
-    requiresPayment: true,
-  },
-  {
-    name: "Full Management Premium",
-    priceLabel: "$949/mo",
-    priceStandard: 949,
-    priceFounder: 664.3,
-    features: [
-      {
-        label: "We handle all posting",
-        tooltip:
-          "Done-For-You Posting. Talexia handles all scheduling and publishing across your connected platform.",
-      },
-      {
-        label: "Up to 20 posts/month",
-        tooltip:
-          "Maximum Posting Volume. Strategic management and publishing for up to 20 posts per month.",
-      },
-      {
-        label: "3 platforms included (Instagram, Facebook & TikTok)",
-        tooltip: "Multi-Platform Dominance. Full publishing and scheduling across 3 social platforms: Instagram, Facebook, and TikTok.",
-      },
-      {
-        label: "Video: 1 Full Reel + 3 Micro-Reels (Reels/TikToks)",
-        tooltip:
-          'Hybrid Video Package. Includes 1 Cinematic Edited Reel plus 3 "Story Loops" (Micro-Reels) designed for daily engagement.Starting from $495/hr; pricing and scope depend on session requirements.',
-      },
-      {
-        label: "Pro Photo Shoot (Every month) 3 Hrs Session",
-        tooltip:
-          "Monthly Production Elite. Professional on-site production every month to support ongoing creative output and seasonal menu changes.",
-      },
-      {
-        label: "We write captions & hashtags",
-        tooltip:
-          "Maximum Posting Volume. Strategic management and publishing for up to 20 posts per month.",
-      },
-    ],
-    ctaLabel: "Choose Plan",
-    isFeatured: false,
-    trialDays: 0,
-    lookupKey: "FM-70",
+    lookupKey: "SIGNATURE",
     requiresPayment: true,
   },
 ];

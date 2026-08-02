@@ -33,15 +33,15 @@ import { apiGet, apiPost } from "@/lib/api";
 import { PLAN_KEYS, type PlanKey } from "@/lib/pricing-comparison";
 import { getPlanByLookupKey } from "@/lib/pricing-catalog";
 import { cn } from "@/lib/utils";
+import "@/app/(updatednewhomepage)/plan/plan.css";
 
 const PLAN_SUBTITLES: Record<PlanKey, string> = {
-  "FMP-20": "Complete done-for-you posting",
-  "FMP-35": "More content. Broader reach.",
-  "FM-70": "Your dedicated digital marketing team",
+  "ESSENTIALS": "A polished, consistent presence for a single-store brand.",
+  "SIGNATURE": "A weekly rhythm for brands ready to show up consistently.",
 };
 
 const PLAN_BADGES: Partial<Record<PlanKey, string>> = {
-  "FMP-35": "Most Popular",
+  "SIGNATURE": "Most Popular",
 };
 
 const PLANS_COLLAPSED_STORAGE_KEY = "talexia-billing-plans-collapsed";
@@ -623,151 +623,174 @@ export default function BillingPage() {
             </div>
           )}
           {plansExpanded && (
-            <div className="grid gap-4 max-w-7xl mx-auto sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-              {allPlans
-                .filter((p) => p.category === "FULL_MANAGEMENT") // Only show main management plans
-                .map((catalogPlan) => {
-                  const planKey = catalogPlan.code as PlanKey;
-                  const isCurrent = plan?.code === planKey;
-                  
-                  // Use the cents from the API response
-                  const priceCents = catalogPlan.priceStandardCents;
-                  
-                  // If the price in cents is very high (e.g. > 100000), it's already a yearly price
-                  const isAlreadyYearlyPrice = priceCents > 100000;
-                  
-                  let displayPrice: number;
-                  let totalYearlyPrice: number;
+            <div className="talexia-wrapper">
+            <div className={`plans-cards ${billingCycle === 'yearly' ? 'plans-annual' : ''}`} style={{ marginTop: 0 }}>
+              {/* ESSENTIALS */}
+              <div className={cn("plan-card", plan?.code === "ESSENTIALS" && "border-[#b08d3e]/50 bg-[#b08d3e]/5")}>
+                <div className="min-h-[28px] mb-2">
+                  {plan?.code === "ESSENTIALS" && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
+                      <Check className="h-3 w-3" />
+                      Current plan
+                    </span>
+                  )}
+                </div>
+                <div className="plan-name">Essentials</div>
+                <div className="plan-tagline">A polished, consistent presence for a single-store brand.</div>
+                <div className="plan-price">
+                  <span className="cur">$</span>
+                  <span className="amt">{billingCycle === 'yearly' ? '4,288' : '397'}</span>
+                  <span className="per per-monthly">/ month</span>
+                  <span className="per per-annual">/ year</span>
+                </div>
+                <div className="plan-annual-saving">
+                  <strong>Save $476</strong> a year &mdash; that&rsquo;s $357/mo, one month effectively free.
+                </div>
+                <div className="plan-volume">12 feed posts monthly &middot; 2 platforms</div>
+                <div className="plan-divider"></div>
+                <p className="plan-desc">
+                  Twelve editorial-grade visuals produced monthly, captioned in your brand voice, and published to two of your connected platforms on a weekly rhythm. Brand voice locked from day one.
+                </p>
 
-                  if (billingCycle === "yearly") {
-                    if (isAlreadyYearlyPrice) {
-                      // It's already the discounted yearly price
-                      // $9110.40 / 12 = $759.20
-                      displayPrice = Math.round(priceCents / 1200);
-                      totalYearlyPrice = priceCents / 100;
-                    } else {
-                      // Apply 20% discount to the monthly price
-                      const monthlyPrice = priceCents / 100;
-                      const discountedMonthly = Math.round(monthlyPrice * 0.8);
-                      displayPrice = discountedMonthly;
-                      totalYearlyPrice = discountedMonthly * 12;
-                    }
-                  } else {
-                    // Monthly view
-                    if (isAlreadyYearlyPrice) {
-                      // Calculate original monthly price from discounted yearly price
-                      // $9110.40 / 0.8 / 12 = $949
-                      displayPrice = Math.round((priceCents / 0.8) / 1200);
-                      totalYearlyPrice = priceCents / 100;
-                    } else {
-                      displayPrice = priceCents / 100;
-                      totalYearlyPrice = Math.round(displayPrice * 12 * 0.8);
-                    }
-                  }
+                <div className="plan-section-label">What's included</div>
+                <ul className="plan-feat">
+                  <li>12 luxury-enhanced visuals produced monthly</li>
+                  <li>Produced from your existing website or catalog photography</li>
+                  <li>Professional captions written in your brand voice</li>
+                  <li>Hashtag research per fine jewelry conventions</li>
+                  <li>Publishing to 2 platforms (choose: Instagram, Facebook, or LinkedIn)</li>
+                  <li>Monthly content calendar</li>
+                  <li>48-hour factual error correction window</li>
+                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                </ul>
 
-                  const billingNote = billingCycle === "yearly"
-                    ? `Billed annually (${formatPlanPrice(totalYearlyPrice)}/year)`
-                    : "Per month";
+                <div className="plan-fee plan-monthly-fee">
+                  <strong>No onboarding fee.</strong> First month is $397. Billed monthly thereafter.
+                </div>
+                <p style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: '12px', lineHeight: 1.5, color: '#8a857a', margin: '12px 0 0' }}>
+                  Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.
+                </p>
 
-                  return (
-                    <article
-                      key={planKey}
-                    className={cn(
-                      "rounded-2xl border p-5 shadow-sm transition",
-                      isCurrent
-                        ? "border-[#b08d3e]/50 bg-[#b08d3e]/10"
-                        : "border-[#d9d4c9] bg-[#ffffff]/60 hover:border-[#d9d4c9]",
-                    )}
-                  >
-                    <div className="min-h-[52px]">
-                      {isCurrent ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
-                          <Check className="h-3 w-3" />
-                          Current plan
-                        </span>
-                      ) : PLAN_BADGES[planKey] ? (
-                        <span className="inline-flex rounded-full bg-[#e6e1d8] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#14110c]">
-                          {PLAN_BADGES[planKey]}
-                        </span>
-                      ) : null}
-                    </div>
-                    <h2 className="mt-3 text-lg font-semibold text-[#14110c]">
-                      {catalogPlan?.name ?? planKey}
-                    </h2>
-                    <p className="mt-2 text-sm text-[#6b6b6b]">
-                      {PLAN_SUBTITLES[planKey]}
-                    </p>
-                    <p className="mt-5 text-4xl font-semibold leading-none text-[#14110c]">
-                      {formatPlanPrice(displayPrice)}
-                    </p>
-                    <p className="mt-2 text-xs text-[#6b6b6b]">{billingNote}</p>
+                <div className="plan-cta">
+                  {plan?.code === "ESSENTIALS" ? (
+                    <button
+                      className="btn btn-outline w-full"
+                      disabled={portalLoading}
+                      onClick={async () => {
+                        setPortalLoading(true);
+                        setPortalError(null);
+                        try {
+                          const url = await getCustomerPortalUrl();
+                          if (url) window.location.href = url;
+                          else setPortalError("Unable to open billing portal.");
+                        } finally {
+                          setPortalLoading(false);
+                        }
+                      }}
+                    >
+                      {portalLoading ? "Loading..." : "Manage Subscription"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-outline w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout("ESSENTIALS")}
+                    >
+                      {checkoutLoading === "ESSENTIALS"
+                        ? "Loading..."
+                        : billingCycle === 'yearly' ? 'Subscribe annually — $4,288/yr' : 'Subscribe to Essentials'}
+                    </button>
+                  )}
+                  <div className="plan-annual-terms">
+                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                  </div>
+                </div>
+              </div>
 
-                    {isCurrent ? (
-                      <Button
-                        className="mt-5 w-full rounded-full bg-[#b08d3e] hover:bg-[#b08d3e] text-[#14110c]"
-                        disabled={portalLoading}
-                        onClick={async () => {
-                          setPortalLoading(true);
-                          setPortalError(null);
-                          try {
-                            const url = await getCustomerPortalUrl();
-                            if (url) window.location.href = url;
-                            else
-                              setPortalError("Unable to open billing portal.");
-                          } finally {
-                            setPortalLoading(false);
-                          }
-                        }}
-                      >
-                        {portalLoading ? "Loading..." : "Manage Subscription"}
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        className="mt-5 w-full rounded-full bg-[#b08d3e] text-black hover:bg-[#b08d3e] font-bold"
-                        disabled={checkoutLoading !== null}
-                        onClick={() => startCheckout(planKey)}
-                      >
-                        {checkoutLoading === planKey
-                          ? "Loading..."
-                          : (getPlanByLookupKey(planKey)?.ctaLabel ?? "Choose Plan")}
-                      </Button>
-                    )}
+              {/* SIGNATURE */}
+              <div className={cn("plan-card feature", plan?.code === "SIGNATURE" && "border-[#b08d3e]/50 bg-[#b08d3e]/5")}>
+                <div className="min-h-[28px] mb-2 flex items-center justify-between">
+                  <div className="plan-badge" style={{ position: 'relative', top: 0, left: 0, transform: 'none', display: 'inline-block' }}>Most popular</div>
+                  {plan?.code === "SIGNATURE" && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
+                      <Check className="h-3 w-3" />
+                      Current plan
+                    </span>
+                  )}
+                </div>
+                <div className="plan-name">Signature</div>
+                <div className="plan-tagline">A weekly rhythm for brands ready to show up consistently.</div>
+                <div className="plan-price">
+                  <span className="cur">$</span>
+                  <span className="amt">{billingCycle === 'yearly' ? '6,448' : '597'}</span>
+                  <span className="per per-monthly">/ month</span>
+                  <span className="per per-annual">/ year</span>
+                </div>
+                <div className="plan-annual-saving">
+                  <strong>Save $716</strong> a year &mdash; that&rsquo;s $537/mo, one month effectively free.
+                </div>
+                <div className="plan-volume">24 feed posts monthly &middot; 3 platforms</div>
+                <div className="plan-divider"></div>
+                <p className="plan-desc">
+                  Twenty-four editorial visuals monthly, published across all three platforms, planned around the fine jewelry editorial calendar and completely off your plate.
+                </p>
 
-                    {/* Features from catalog as fallback */}
-                    {getPlanByLookupKey(planKey)?.features && (
-                      <ul className="mt-5 space-y-2 text-left">
-                        {getPlanByLookupKey(planKey)?.features.map((feature, idx) => {
-                          const label = typeof feature === "string" ? feature : feature.label;
-                          const tooltip = typeof feature === "string" ? null : feature.tooltip;
-                          return (
-                            <li
-                              key={label + String(idx)}
-                              {...(tooltip
-                                ? {
-                                    "data-tooltip-id": `pricing-tooltip-billing-${planKey}`,
-                                    "data-tooltip-content": tooltip,
-                                  }
-                                : {})}
-                              className="flex items-start gap-2 text-sm text-[#14110c]"
-                            >
-                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#4a5dff]" />
-                              <span>{label}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                    <Tooltip
-                      id={`pricing-tooltip-billing-${planKey}`}
-                      className="!bg-[#ffffff] max-w-xs !text-[#14110c] !border !border-[#d9d4c9] !rounded-xl !p-3 !text-xs !shadow-2xl !opacity-100 z-50"
-                      noArrow={false}
-                    />
-                  </article>
+                <div className="plan-section-label">What's included</div>
+                <ul className="plan-feat">
+                  <li>24 luxury-enhanced visuals produced monthly</li>
+                  <li>Full image preparation &mdash; send us anything, even phone photos</li>
+                  <li>Professional captions &amp; hashtag research</li>
+                  <li>Publishing to 3 platforms (Instagram, Facebook, LinkedIn)</li>
+                  <li>Monthly content plan preview</li>
+                  <li>Seasonal editorial planning (engagement season, holidays)</li>
+                  <li>Micro-animation on select visuals</li>
+                  <li>48-hour factual error correction window</li>
+                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                </ul>
 
+                <div className="plan-fee plan-monthly-fee">
+                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $694 ($597 + $97). Billed $597 monthly thereafter.
+                </div>
+                <div className="plan-fee plan-annual-fee">
+                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $6,545 ($6,448 annual + $97).
+                </div>
 
-                );
-              })}
+                <div className="plan-cta">
+                  {plan?.code === "SIGNATURE" ? (
+                    <button
+                      className="btn btn-dark w-full"
+                      disabled={portalLoading}
+                      onClick={async () => {
+                        setPortalLoading(true);
+                        setPortalError(null);
+                        try {
+                          const url = await getCustomerPortalUrl();
+                          if (url) window.location.href = url;
+                          else setPortalError("Unable to open billing portal.");
+                        } finally {
+                          setPortalLoading(false);
+                        }
+                      }}
+                    >
+                      {portalLoading ? "Loading..." : "Manage Subscription"}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-dark w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout("SIGNATURE")}
+                    >
+                      {checkoutLoading === "SIGNATURE"
+                        ? "Loading..."
+                        : billingCycle === 'yearly' ? 'Subscribe annually — $6,448/yr' : 'Subscribe to Signature'}
+                    </button>
+                  )}
+                  <div className="plan-annual-terms">
+                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                  </div>
+                </div>
+              </div>
+            </div>
             </div>
           )}
         </CardContent>

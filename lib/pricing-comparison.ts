@@ -4,19 +4,17 @@
  * Calendar Only and Visual Calendar plans removed.
  */
 
-export const PLAN_KEYS = ["FMP-20", "FMP-35", "FM-70"] as const;
+export const PLAN_KEYS = ["ESSENTIALS", "SIGNATURE"] as const;
 export type PlanKey = (typeof PLAN_KEYS)[number];
 
 export const PLAN_NAMES: Record<PlanKey, string> = {
-  "FMP-20": "Full Mgmt",
-  "FMP-35": "Full Mgmt Plus",
-  "FM-70": "Full Mgmt Premium",
+  "ESSENTIALS": "Essentials",
+  "SIGNATURE": "Signature",
 };
 
 export const MONTHLY_PRICES: Record<PlanKey, number> = {
-  "FMP-20": 395,
-  "FMP-35": 495,
-  "FM-70": 949,
+  "ESSENTIALS": 397,
+  "SIGNATURE": 597,
 };
 
 /** Cell value: "yes" = ✓, "no" = ✗, "client" = Client (blue), "admin" = ◇ Talexia, or custom text */
@@ -31,144 +29,67 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     category: "Plan Type",
     values: {
-      "FMP-20": "Full Mgmt",
-      "FMP-35": "Full Mgmt Plus",
-      "FM-70": "Full Mgmt Premium",
+      "ESSENTIALS": "Essentials",
+      "SIGNATURE": "Signature",
     },
   },
   {
     category: "Monthly Price",
     values: {
-      "FMP-20": "$395",
-      "FMP-35": "$495",
-      "FM-70": "$949",
+      "ESSENTIALS": "$397",
+      "SIGNATURE": "$597",
     },
   },
   {
     category: "Description",
     values: {
-      "FMP-20":
-        "Quarterly professional photography + fully managed posting. Talexia creates visuals, writes captions, and schedules posts for you.",
-      "FMP-35":
-        "Professional photo session every 2 months + higher posting volume. Talexia manages visuals, captions, and publishing across multiple platforms.",
-      "FM-70":
-        "Monthly on-site professional production with priority creative direction. Talexia handles visuals, strategy, captions, and execution.",
+      "ESSENTIALS": "Twelve editorial-grade visuals produced monthly, published to two connected platforms.",
+      "SIGNATURE": "Twenty-four editorial visuals monthly, published across all three platforms.",
     },
   },
   {
-    category: "Best for",
+    category: "Monthly feed posts",
     values: {
-      "FMP-20": "Established businesses that want consistent professional content without managing it internally.",
-      "FMP-35": "Growing restaurants with larger menus or multi-platform presence that require stronger content cadence.",
-      "FM-70": "Established operators who value high-end visuals and want an ongoing creative partner, not a vendor.",
+      "ESSENTIALS": "12",
+      "SIGNATURE": "24",
     },
   },
   {
-    category: "Posts / Month",
+    category: "Platforms covered",
     values: {
-      "FMP-20": "Up to 12",
-      "FMP-35": "Up to 16",
-      "FM-70": "Up to 20",
+      "ESSENTIALS": "2 of 3",
+      "SIGNATURE": "3 of 3",
     },
   },
   {
-    category: "Who Publishes",
-    values: {
-      "FMP-20": "admin",
-      "FMP-35": "admin",
-      "FM-70": "admin",
-    },
+    category: "Professional captions & hashtags",
+    values: { "ESSENTIALS": "yes", "SIGNATURE": "yes" },
   },
   {
-    category: "Platforms Included",
-    values: {
-      "FMP-20": "1 (+$5/mo per extra)",
-      "FMP-35": "2 (Instagram & Facebook)",
-      "FM-70": "3 (Instagram, Facebook & TikTok)",
-    },
+    category: "Monthly content calendar",
+    values: { "ESSENTIALS": "yes", "SIGNATURE": "yes" },
   },
   {
-    category: "Add'l Platforms (each)",
-    values: {
-      "FMP-20": "$5",
-      "FMP-35": "$5",
-      "FM-70": "$5",
-    },
+    category: "Monthly content plan preview",
+    values: { "ESSENTIALS": "no", "SIGNATURE": "yes" },
   },
   {
-    category: "Content Calendar",
-    values: { "FMP-20": "yes", "FMP-35": "yes", "FM-70": "yes" },
+    category: "Seasonal editorial planning",
+    values: { "ESSENTIALS": "no", "SIGNATURE": "yes" },
   },
   {
-    category: "Scheduling and Posting",
-    values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
+    category: "Micro-animation on select visuals",
+    values: { "ESSENTIALS": "no", "SIGNATURE": "yes" },
   },
   {
-    category: "Captions",
-    values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
+    category: "Image preparation (phone photos)",
+    values: { "ESSENTIALS": "no", "SIGNATURE": "yes" },
   },
   {
-    category: "Hashtags",
+    category: "One-time onboarding fee",
     values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
-  },
-  {
-    category: "Pro Photo Shoot",
-    values: {
-      "FMP-20": "Every 3 months",
-      "FMP-35": "Every 2 months",
-      "FM-70": "Every month",
-    },
-  },
-  {
-    category: "Visual Visit Duration",
-    values: {
-      "FMP-20": "1 hr",
-      "FMP-35": "1.5 hrs",
-      "FM-70": "2 hrs",
-    },
-  },
-  {
-    category: "PRO Photography",
-    values: {
-      "FMP-20": "yes",
-      "FMP-35": "yes",
-      "FM-70": "yes",
-    },
-  },
-  {
-    category: "PRO Videography (1 vertical · 15-20s · 1 dish)",
-    values: {
-      "FMP-20": "$495 + 1 Hr",
-      "FMP-35": "$495 + 1 Hr",
-      "FM-70": "$495 + 1 Hr",
-    },
-  },
-  {
-    category: "Creative Direction",
-    values: {
-      "FMP-20": "admin",
-      "FMP-35": "admin",
-      "FM-70": "admin",
-    },
-  },
-  {
-    category: "Revisions",
-    values: {
-      "FMP-20": "1",
-      "FMP-35": "1",
-      "FM-70": "2",
+      "ESSENTIALS": "None",
+      "SIGNATURE": "$97",
     },
   },
 ];
