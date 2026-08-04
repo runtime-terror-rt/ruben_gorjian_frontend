@@ -589,13 +589,13 @@ export default function DashboardPage() {
                   className="flex items-start justify-between gap-3 rounded-lg border border-[#d9d4c9] bg-[#ffffff] p-3 hover:bg-[#e6e1d8]/40 transition"
                 >
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="h-4 w-4 mt-1 text-yellow-400" />
+                    <AlertTriangle className="h-4 w-4 mt-1 text-amber-600" />
                     <div>
                       <p className="text-sm text-[#14110c]">{a.message}</p>
                       <span className="text-xs text-[#6b6b6b]">{a.code}</span>
                     </div>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                  <span className="text-xs px-2 py-1 rounded bg-amber-500/10 text-amber-700 border border-amber-500/20">
                     {a.type}
                   </span>
                 </div>

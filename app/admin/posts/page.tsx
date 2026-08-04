@@ -636,36 +636,36 @@ export default function AdminPostsPage() {
     switch (status) {
       case "POSTED":
         return (
-          <Badge className="w-fit bg-[#14110c] text-white border-transparent font-medium hover:bg-[#14110c]/90">
+          <Badge variant="outline" className="w-fit bg-emerald-500/10 text-emerald-700 border-emerald-500/20 font-medium shadow-sm">
             Published
           </Badge>
         );
       case "SCHEDULED":
         return (
-          <Badge className="w-fit bg-[#b08d3e]/15 text-[#8a6d28] border-[#b08d3e]/30 font-medium">
+          <Badge variant="outline" className="w-fit bg-[#b08d3e]/10 text-[#8a6d28] border-[#b08d3e]/20 font-medium shadow-sm">
             Scheduled
           </Badge>
         );
       case "DRAFT":
         return (
-          <Badge className="w-fit bg-[#e6e1d8] text-[#6b6b6b] border-[#d9d4c9] font-medium">
+          <Badge variant="outline" className="w-fit bg-slate-100 text-slate-600 border-slate-200 font-medium shadow-sm">
             Draft
           </Badge>
         );
       case "FAILED":
         return (
-          <Badge className="w-fit bg-rose-500/10 text-rose-700 border-rose-500/20 font-medium">
+          <Badge variant="outline" className="w-fit bg-rose-500/10 text-rose-700 border-rose-500/20 font-medium shadow-sm">
             Failed
           </Badge>
         );
       case "PUBLISHING":
         return (
-          <Badge className="w-fit bg-[#b08d3e] text-[#14110c] border-transparent font-medium animate-pulse">
+          <Badge variant="outline" className="w-fit bg-amber-500/10 text-amber-700 border-amber-500/20 font-medium animate-pulse shadow-sm">
             Publishing
           </Badge>
         );
       default:
-        return <Badge variant="outline" className="w-fit font-medium text-[#6b6b6b] border-[#d9d4c9]">{status}</Badge>;
+        return <Badge variant="outline" className="w-fit font-medium text-[#6b6b6b] border-[#d9d4c9] shadow-sm">{status}</Badge>;
     }
   };
 
@@ -785,15 +785,15 @@ export default function AdminPostsPage() {
                       </TableCell>
                       <TableCell>
                         {post.scheduleType === "PHOTO_SESSION" ? (
-                          <Badge className="bg-[#b08d3e]/10 text-[#b08d3e] border-[#b08d3e]/20 gap-1">
+                          <Badge variant="outline" className="bg-[#b08d3e]/10 text-[#8a6d28] border-[#b08d3e]/20 gap-1 shadow-sm">
                             <Calendar className="h-3 w-3" /> Photo
                           </Badge>
                         ) : post.scheduleType === "VIDEO_SESSION" ? (
-                          <Badge className="bg-indigo-600/10 text-indigo-600 border-indigo-500/20 gap-1">
+                          <Badge variant="outline" className="bg-indigo-500/10 text-indigo-700 border-indigo-500/20 gap-1 shadow-sm">
                             <Clock className="h-3 w-3" /> Video
                           </Badge>
                         ) : (
-                          <Badge className="bg-[#e6e1d8] text-[#6b6b6b] border-[#d9d4c9] gap-1">
+                          <Badge variant="outline" className="bg-[#faf8f3] text-[#14110c] border-[#d9d4c9] gap-1 shadow-sm">
                             <FileText className="h-3 w-3" /> Post
                           </Badge>
                         )}

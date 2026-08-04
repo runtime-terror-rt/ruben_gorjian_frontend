@@ -473,7 +473,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
       case "FAILED":
         return <Badge variant="outline" className="text-red-600">Failed</Badge>;
       case "PUBLISHING":
-        return <Badge variant="outline" className="text-yellow-400">Publishing</Badge>;
+        return <Badge variant="outline" className="text-amber-700">Publishing</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -494,7 +494,7 @@ export function AdminPostComposer({ userId, userName, userEmail }: AdminPostComp
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span>Post as {userName || userEmail}</span>
-            <Badge variant="outline" className="text-yellow-500">Admin Posting</Badge>
+            <Badge variant="outline" className="text-amber-700">Admin Posting</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
