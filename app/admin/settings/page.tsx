@@ -567,8 +567,9 @@ export default function AdminSettingsPage() {
                 <div className="pt-2">
                   <Button
                     type="submit"
+                    variant="ghost"
                     disabled={changePasswordMutation.isPending}
-                    className="bg-[#ffffff] hover:bg-[#e6e1d8] text-[#14110c] font-black px-10 h-11 rounded-xl transition-all"
+                    className="bg-[#e6e1d8] hover:bg-[#d9d4c9] text-[#14110c] hover:text-[#14110c] font-black px-10 h-11 rounded-xl transition-all"
                   >
                     {changePasswordMutation.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />

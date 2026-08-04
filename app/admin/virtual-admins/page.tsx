@@ -348,10 +348,10 @@ export default function AdminManagementPage() {
           <Badge
             variant="outline"
             className={cn(
-              "font-bold tracking-wider",
+              "font-bold tracking-wider shadow-sm",
               role === "SUPER_ADMIN"
-                ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
-                : "bg-sky-500/20 text-sky-300 border-sky-500/40",
+                ? "bg-[#b08d3e]/10 text-[#8a6d28] border-[#b08d3e]/20"
+                : "bg-slate-100 text-slate-700 border-slate-200",
             )}
           >
             {role.replace("_", " ")}

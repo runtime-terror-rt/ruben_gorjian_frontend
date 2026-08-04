@@ -303,7 +303,7 @@ export default function SessionSchedulePage() {
         );
       case "SCHEDULED":
         return (
-          <Badge className="bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
+          <Badge className="bg-amber-500/10 text-amber-700 border-amber-500/20">
             Pending
           </Badge>
         );

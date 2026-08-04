@@ -260,11 +260,22 @@ export default function AdminSubscriptionsPage() {
     {
       accessorKey: "priceType",
       header: "Type",
-      cell: ({ row }) => (
-        <Badge variant={row.original.priceType === "FOUNDER" ? "secondary" : "outline"} className="text-[10px] h-5 border-[#d9d4c9] bg-[#e6e1d8]/50 text-black">
-          {row.original.priceType}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const isFounder = row.original.priceType === "FOUNDER";
+        return (
+          <Badge 
+            variant="outline" 
+            className={cn(
+              "text-[10px] h-5 font-bold tracking-wider shadow-sm",
+              isFounder 
+                ? "bg-[#b08d3e]/10 text-[#8a6d28] border-[#b08d3e]/20" 
+                : "bg-[#faf8f3] text-[#14110c] border-[#d9d4c9]"
+            )}
+          >
+            {row.original.priceType}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "platformLimit",
