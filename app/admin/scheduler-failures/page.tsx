@@ -61,14 +61,14 @@ export default function SchedulerFailuresPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const queryParams = new URLSearchParams({
         page: page.toString(),
         pageSize: pageSize.toString(),
       });
 
       const data = await apiGet<any>(`/api/scheduler/failure-tickets?${queryParams.toString()}`);
-      
+
       const items = data.items || [];
       const meta = data.meta;
 
@@ -235,7 +235,7 @@ export default function SchedulerFailuresPage() {
                         </div>
                       </TableCell>
                       <TableCell className="max-w-md">
-                        <div 
+                        <div
                           className="text-sm text-[#14110c] line-clamp-2 leading-relaxed"
                           title={ticket.failureReason}
                         >
@@ -249,7 +249,7 @@ export default function SchedulerFailuresPage() {
                         <div className="flex flex-col gap-1">
                           <div className="text-sm font-medium text-[#14110c] flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5 text-[#6b6b6b]" />
-                            {dayjs(ticket.createdAt ).format("MMM D, YYYY")}
+                            {dayjs(ticket.createdAt).format("MMM D, YYYY")}
                           </div>
                           {/* <div className="text-xs text-[#6b6b6b] ml-5">
                             {dayjs(ticket.createdAt ).format("h:mm A")}

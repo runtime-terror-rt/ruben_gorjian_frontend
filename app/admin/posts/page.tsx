@@ -715,7 +715,7 @@ export default function AdminPostsPage() {
                 <TableHead className="w-[80px]">Media</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Caption / Title</TableHead>
-                <TableHead>Author</TableHead>
+                <TableHead>Company Name</TableHead>
                 <TableHead>Platform</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Scheduled For</TableHead>

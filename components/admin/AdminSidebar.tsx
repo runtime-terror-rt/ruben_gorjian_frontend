@@ -100,12 +100,12 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: AlertCircle,
         permission: "SCHEDULE_MANAGE",
       },
-      {
-        label: "Session Schedule",
-        href: "/admin/session-schedule",
-        icon: Calendar,
-        permission: "SCHEDULE_MANAGE",
-      },
+      // {
+      //   label: "Session Schedule",
+      //   href: "/admin/session-schedule",
+      //   icon: Calendar,
+      //   permission: "SCHEDULE_MANAGE",
+      // },
       // {
       //   label: "Media",
       //   href: "/admin/media",
