@@ -39,8 +39,10 @@ export default function BrandBriefPage() {
         }
       }
 
-      // Map new jewelry fields to the expected backend payload structure
+      // Map both old and new schema fields to ensure the backend validation passes 
+      // regardless of whether it's looking for the legacy or the updated fields.
       const mappedPayload = {
+        // NEW SCHEMA FIELDS
         brandName: payload.brand_name || "",
         primaryLocation: payload.location || "",
         industryCategory: payload.category || payload.business_type || "",
@@ -64,7 +66,45 @@ export default function BrandBriefPage() {
         authOnBehalfOf: payload.brand_name || "",
         authSubmissionDate: new Date().toISOString(),
         authTalexiaPlan: payload.planCode || session?.subscription?.planCategory || "Active Plan",
-        authIHaveReadAndAgree: payload.authorization_confirmed === "on" || true
+        authIHaveReadAndAgree: payload.authorization_confirmed === "on" || true,
+
+        // OLD SCHEMA FIELDS (Hybrid Backend Requirements)
+        planCode: payload.planCode || "CUS_DEFAULT",
+        restaurantName: payload.brand_name || "",
+        location: payload.location || "",
+        businessType: payload.business_type || "",
+        cuisineType: payload.category || "Jewelry",
+        dietaryCertifications: [], 
+        websiteUrl: payload.website || "",
+        instagramHandle: payload.website || "", 
+        facebookPageUrl: payload.website || "",
+        tiktokHandle: payload.website || "",
+        onlineOrderingUrl: payload.website || "",
+        foodDescription: payload.brand_story || "",
+        uniqueSellingPoint: payload.aesthetic ? (Array.isArray(payload.aesthetic) ? payload.aesthetic.join(", ") : payload.aesthetic) : "",
+        customerReviews: payload.admire || "",
+        forbiddenPhrases: payload.avoid || "",
+        preferredPhrases: payload.taglines || "",
+        captionSample1: payload.sample_captions || "",
+        captionSample2: "",
+        captionSample3: "",
+        toneAndVoice: Array.isArray(payload.voice) ? payload.voice : (payload.voice ? [payload.voice] : []),
+        captionTargeting: payload.targeting || "",
+        language: payload.language === 'other' ? (payload.language_other || 'Other') : (payload.language || 'English'),
+        signatureDishes: Array.isArray(payload.products) ? payload.products : (payload.products ? [payload.products] : []),
+        signatureDishDetails: (payload.collections || "") + " " + (payload.materials || ""),
+        excludedItems: payload.sensitive || "",
+        upcomingPromotions: payload.seasonal || "",
+        hashtagStyle: payload.hashtag_style || "",
+        confirmMinDishes: "Confirmed",
+        actionShotsPossible: Array.isArray(payload.posting_days) ? payload.posting_days : (payload.posting_days ? [payload.posting_days] : []),
+        preferredShootTime: Array.isArray(payload.posting_windows) ? payload.posting_windows.join(", ") : (payload.posting_windows || ""),
+        physicalConstraints: payload.staging || "",
+        specialNotes: (payload.birthstone_notes || "") + " " + (payload.posting_notes || ""),
+        clientName: payload.signed_as || payload.contact_primary_name || "",
+        restaurantNameAuth: payload.brand_name || "",
+        submissionDate: new Date().toISOString().split("T")[0],
+        talexiaPlan: payload.planCode || "Active Plan"
       };
 
       const res = await apiPost('/api/brand-brief', mappedPayload) as any;
