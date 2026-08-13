@@ -79,7 +79,7 @@ export default function BrandBriefPage() {
         talexiaPlan: "Active Plan"
       };
 
-      const res = await apiPost('/api/brand-brief', mappedPayload);
+      const res = await apiPost('/api/brand-brief', mappedPayload) as any;
       if (res.success || res.status === 'success') {
         await updateSession({ brandBriefCompleted: true });
         router.push('/dashboard');
