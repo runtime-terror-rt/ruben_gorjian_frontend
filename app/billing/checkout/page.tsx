@@ -1,24 +1,15 @@
 "use client";
 
+import "@/app/(updatednewhomepage)/newhome/newhome.css";
+import "./checkout.css";
 import { Suspense, useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, CreditCard, Tag, Plus, Minus, ShieldCheck, ArrowLeft, Loader2, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Check, CreditCard, Tag, ShieldCheck, ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { getPlanByLookupKey } from "@/lib/pricing-catalog";
 import { PLAN_NAMES, MONTHLY_PRICES, type PlanKey } from "@/lib/pricing-comparison";
 import { apiGet, apiPost } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useSessionContext } from "@/context/SessionContext";
-
-// Pricing data for addons matching screenshot
-const ADDON_PRICES = {
-  platform: 5, // $5 per extra platform
-};
 
 const TAX_RATE = 0.08625; // 8.625% based on backend example
 
@@ -48,14 +39,7 @@ function CheckoutContent() {
   // State
   const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{ name?: string, price?: number } | null>(null);
   const [couponCode, setCouponCode] = useState("");
-  const [addonPlatformQty, setAddonPlatformQty] = useState(0);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isCouponApplied, setIsCouponApplied] = useState(false);
-  const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
-  const [platformLimitError, setPlatformLimitError] = useState<string | null>(null);
 
   // Fetch enterprise plan details from API
   useEffect(() => {
@@ -125,38 +109,6 @@ function CheckoutContent() {
     }
   }, [planCode, appliedCoupon]);
 
-  // Platform Limits based on user request
-  const platformLimit = useMemo(() => {
-    if (isEnterprise) return 3;
-    if (planCode === "FMP-20") return 3;
-    if (planCode === "FMP-35") return 2;
-    if (planCode === "FM-70") return 1;
-    return 3; // Default
-  }, [isEnterprise, planCode]);
-
-  // Ensure addonPlatformQty doesn't exceed limit if plan changes
-  useEffect(() => {
-    if (addonPlatformQty > platformLimit) {
-      setAddonPlatformQty(platformLimit);
-    }
-  }, [platformLimit, addonPlatformQty]);
-
-  const handleAddPlatform = () => {
-    if (addonPlatformQty < platformLimit) {
-      setAddonPlatformQty(addonPlatformQty + 1);
-      setPlatformLimitError(null);
-    } else {
-      setPlatformLimitError(`Maximum limit of ${platformLimit} additional ${platformLimit === 1 ? 'platform' : 'platforms'} reached for the ${isEnterprise ? 'Enterprise' : PLAN_NAMES[planCode as PlanKey]} plan.`);
-
-      // Auto-clear error after 3 seconds
-      setTimeout(() => setPlatformLimitError(null), 3000);
-    }
-  };
-
-  const handleRemovePlatform = () => {
-    setAddonPlatformQty(Math.max(0, addonPlatformQty - 1));
-    setPlatformLimitError(null);
-  };
 
   // Calculation Logic (aligned with screenshot and backend founder pricing)
   const calculation = useMemo(() => {
@@ -185,7 +137,7 @@ function CheckoutContent() {
     const cycleMultiplier = billingCycle === "yearly" ? 12 : 1;
 
     const planPrice = basePrice * discountMultiplier * cycleMultiplier * founderMultiplier;
-    const platformPrice = (addonPlatformQty * ADDON_PRICES.platform) * cycleMultiplier;
+    const platformPrice = 0;
 
     const subtotal = planPrice + platformPrice;
 
@@ -216,7 +168,7 @@ function CheckoutContent() {
       isFounder,
       isActuallyApplicable: true // Defaulting to true as available coupons are now fetched from a specific endpoint
     };
-  }, [planCode, billingCycle, addonPlatformQty, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
+  }, [planCode, billingCycle, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
 
   const handleApplyCoupon = (codeToApply?: string) => {
     const code = (codeToApply || couponCode).trim().toUpperCase();
@@ -230,6 +182,10 @@ function CheckoutContent() {
     const coupon = availableCoupons.find(c => c.code === code);
 
     if (coupon) {
+      if (coupon.code === "1MFREE" && billingCycle === "yearly") {
+        setError("The 1MFREE coupon cannot be applied to the yearly billing cycle.");
+        return;
+      }
       // Check if applicable plans exist and if the current plan is included
       const isApplicable = !coupon.applicablePlans || coupon.applicablePlans.includes(planCode as any);
 
@@ -293,7 +249,6 @@ function CheckoutContent() {
         planCode,
         billingCycle,
         termsAccepted,
-        addonPlatformQty,
         couponCode: isCouponApplied ? couponCode : undefined,
         successUrl: `${origin}/billing/success`,
         cancelUrl: `${origin}/billing/checkout?plan=${planCode}&cycle=${billingCycle}`,
@@ -319,352 +274,254 @@ function CheckoutContent() {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto py-10">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-6 gap-2 text-[#6b6b6b] hover:text-white"
-        onClick={() => router.back()}
-      >
-        <ArrowLeft className="h-4 w-4" /> Back
-      </Button>
+    <div className="talexia-wrapper">
+      <div className="checkout-wrapper">
+        <div className="container">
+          <button
+            className="checkout-back-btn"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Plans
+          </button>
 
-      <div className="grid gap-8 lg:grid-cols-5">
-        {/* Left Column: Configuration */}
-        <div className="lg:col-span-3 space-y-6">
-          <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-xl text-white">Complete your subscription</CardTitle>
-              <CardDescription className="text-[#6b6b6b]">
-                Customize your plan and review your order details.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Plan Summary */}
-              <div className="flex flex-col gap-4 rounded-xl border border-lime-400/20 bg-lime-400/5 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-lime-400 p-2 text-[#14110c]">
-                      <ShieldCheck className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">
-                          {isEnterprise
-                            ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
-                            : PLAN_NAMES[planCode as PlanKey]}
-                        </h3>
-                        {calculation.isFounder && (
-                          <div className="flex items-center gap-1 bg-lime-400/20 text-lime-400 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
-                            <Sparkles className="h-2.5 w-2.5" /> Founder
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs text-[#6b6b6b] capitalize">{billingCycle} billing</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    {isEnterprise && calculation.planPrice === 0 ? (
-                      <p className="text-lg font-bold text-white">Custom Pricing</p>
-                    ) : (
-                      <p className="text-lg font-bold text-white">
-                        ${(calculation.planPrice / (calculation.isYearly ? 12 : 1)).toFixed(2)}
-                        <span className="text-xs font-normal text-[#6b6b6b]">/mo</span>
-                      </p>
-                    )}
-                  </div>
+          <div className="checkout-grid">
+            {/* Left Column: Configuration */}
+            <div>
+              <div className="checkout-card">
+                <div className="checkout-card-header">
+                  <h1 className="checkout-card-title">Complete your subscription</h1>
+                  <p className="checkout-card-desc">Customize your plan and review your order details.</p>
                 </div>
-
-                <Separator className="bg-lime-400/10" />
-
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-300">Billing Cycle</span>
-                  <div className="flex p-0.5 bg-slate-950 rounded-lg border border-slate-800">
-                    <button
-                      onClick={() => setBillingCycle("monthly")}
-                      className={cn(
-                        "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all",
-                        billingCycle === "monthly"
-                          ? "bg-lime-500 text-[#14110c] shadow-sm"
-                          : "text-[#6b6b6b] hover:text-white"
-                      )}
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      onClick={() => setBillingCycle("yearly")}
-                      className={cn(
-                        "px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all flex items-center gap-1.5",
-                        billingCycle === "yearly"
-                          ? "bg-lime-500 text-[#14110c] shadow-sm"
-                          : "text-[#6b6b6b] hover:text-white"
-                      )}
-                    >
-                      Yearly
-                      <span className={cn(
-                        "px-1 py-0.5 rounded-[4px] text-[8px] border",
-                        billingCycle === "yearly" ? "bg-slate-950 border-slate-800 text-lime-400" : "bg-lime-400 text-[#14110c] border-transparent"
-                      )}>
-                        -20%
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Addons Section */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#6b6b6b]">Optional Add-ons</h3>
-
-                <div className="grid gap-4">
-                  <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-5 space-y-4 transition hover:border-slate-700">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <Label className="text-white font-semibold text-base">Additional Platforms</Label>
-                        <p className="text-xs text-[#6b6b6b]">Connect more social accounts to your plan (Max: {platformLimit})</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold text-lime-400">+${ADDON_PRICES.platform.toFixed(2)}</span>
-                        <span className="text-[10px] text-[#6b6b6b] block">per platform/mo</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-800">
-                      <div className="flex items-center gap-4">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white"
-                          onClick={handleRemovePlatform}
-                          disabled={addonPlatformQty <= 0}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <div className="flex flex-col items-center min-w-[40px]">
-                          <span className="text-xl font-black text-white">{addonPlatformQty}</span>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-10 w-10 rounded-full border-slate-700 bg-slate-800/50 hover:bg-slate-700 text-white transition-all active:scale-95"
-                          onClick={handleAddPlatform}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="text-xs font-medium text-[#6b6b6b] uppercase tracking-wider">Subtotal</span>
-                        <p className="text-lg font-bold text-white">${(addonPlatformQty * ADDON_PRICES.platform).toFixed(2)}</p>
-                      </div>
-                    </div>
-
-                    {platformLimitError && (
-                      <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-[11px] text-red-400 animate-in slide-in-from-top-2 duration-300">
-                        <ShieldCheck className="h-3.5 w-3.5" />
-                        <span>{platformLimitError}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Coupon Section */}
-              <div className="space-y-4">
-                <Label className="text-sm font-semibold uppercase tracking-wider text-[#6b6b6b]">Discount Coupon</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Tag className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6b6b6b]" />
-                    <Input
-                      placeholder="Enter code (e.g. SUMMER26)"
-                      className="border-slate-800 bg-slate-950 pl-10 text-white focus:ring-lime-400"
-                      value={couponCode}
-                      onChange={(e) => {
-                        setCouponCode(e.target.value.toUpperCase());
-                        if (error) setError(null); // Clear error when typing
-                      }}
-                      disabled={isCouponApplied}
-                    />
-                  </div>
-                  <Button
-                    variant={isCouponApplied ? "outline" : "secondary"}
-                    className={cn(isCouponApplied ? "border-lime-500/50 text-lime-400" : "")}
-                    onClick={() => isCouponApplied ? handleRemoveCoupon() : handleApplyCoupon()}
-                  >
-                    {isCouponApplied ? "Remove" : "Apply"}
-                  </Button>
-                </div>
-
-                {isCouponApplied && appliedCoupon && (
-                  <div className="flex items-center gap-2 rounded-lg border border-lime-400/20 bg-lime-400/5 p-3 text-xs text-lime-400 animate-in fade-in slide-in-from-top-1">
-                    <Check className="h-4 w-4" />
-                    <div>
-                      <span className="font-bold">{appliedCoupon.code}</span> applied: {appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `$${appliedCoupon.discountValue} off`} successfully
-                    </div>
-                  </div>
-                )}
-                {error && (
-                  <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-400 animate-in shake-in-1">
-                    <ShieldCheck className="h-4 w-4" />
-                    <span>{error}</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex items-start space-x-3 p-2">
-            <Checkbox
-              id="terms"
-              className="mt-1 border-slate-700 data-[state=checked]:bg-lime-500"
-              checked={termsAccepted}
-              onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-            />
-            <Label htmlFor="terms" className="text-xs leading-relaxed text-[#6b6b6b]">
-              I agree to the <a href="/terms-conditions" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Terms of Service</a> and <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:underline">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
-            </Label>
-          </div>
-        </div>
-
-        {/* Right Column: Order Summary */}
-        <div className="lg:col-span-2">
-          <Card className="sticky top-24 border-slate-800 bg-slate-900/80 shadow-2xl backdrop-blur-md overflow-hidden">
-            <CardHeader className="bg-slate-800/20">
-              <CardTitle className="text-lg text-white">Order Summary</CardTitle>
-              {calculation.isFounder && (
-                <CardDescription className="text-lime-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" /> Exclusive Founder Discount Applied
-                </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent className="pt-6 space-y-6">
-              <div className="space-y-4 text-sm">
-                {/* Main Plan */}
-                <div className="flex justify-between items-start text-slate-300">
-                  <div className="flex flex-col">
-                    <span className="font-medium text-white">
+                
+                {/* Plan Summary */}
+                <div className="checkout-plan-summary">
+                  <div className="checkout-plan-title-row">
+                    <div className="checkout-plan-name">
                       {isEnterprise
                         ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
                         : PLAN_NAMES[planCode as PlanKey]}
-                    </span>
-                    <span className="text-[10px] text-[#6b6b6b] font-medium">Qty 1, Billed {billingCycle}</span>
-                  </div>
-                  <div className="text-right">
-                    {isEnterprise && calculation.planPrice === 0 ? (
-                      <span className="text-white font-medium">Custom</span>
-                    ) : (
-                      <>
-                        <span className={cn("text-white font-medium", calculation.isFounder && "block")}>
-                          ${calculation.planPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                        {calculation.isFounder && (
-                          <span className="text-[9px] text-[#6b6b6b] line-through block">
-                            ${(calculation.planPrice / 0.7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Addons */}
-                {addonPlatformQty > 0 && (
-                  <div className="flex justify-between items-start text-slate-300">
-                    <div className="flex flex-col">
-                      <span>Additional Platform</span>
-                      <span className="text-[10px] text-[#6b6b6b] font-medium">Qty {addonPlatformQty}, ${ADDON_PRICES.platform.toFixed(2)} each</span>
+                      {calculation.isFounder && (
+                        <span className="checkout-founder-tag">Founder</span>
+                      )}
                     </div>
-                    <span className="text-white font-medium">${calculation.platformPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <div className="checkout-plan-price">
+                      {isEnterprise && calculation.planPrice === 0 ? (
+                        "Custom"
+                      ) : (
+                        <>
+                          ${(calculation.planPrice / (calculation.isYearly ? 12 : 1)).toFixed(2)}
+                          <span>/mo</span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                )}
+                  
+                  <div className="checkout-divider"></div>
 
-
-
-                <Separator className="bg-slate-800/60" />
-
-                {/* Subtotal */}
-                <div className="flex justify-between text-white font-semibold">
-                  <span>Subtotal</span>
-                  <span>${calculation.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <div className="checkout-billing-row">
+                    <span className="checkout-billing-label">Billing Cycle</span>
+                    <div className="checkout-billing-toggle">
+                      <button
+                        onClick={() => setBillingCycle("monthly")}
+                        className={`checkout-billing-btn ${billingCycle === "monthly" ? "active" : ""}`}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (appliedCoupon?.code === "1MFREE" || couponCode === "1MFREE") {
+                            setError("The 1MFREE coupon cannot be used with the yearly billing cycle.");
+                            return;
+                          }
+                          setBillingCycle("yearly");
+                        }}
+                        className={`checkout-billing-btn ${billingCycle === "yearly" ? "active" : ""}`}
+                      >
+                        Yearly
+                        <span className="checkout-annual-tag">-20%</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Coupon */}
-                {isCouponApplied && (
-                  <div className="flex justify-between items-center bg-lime-400/5 p-3 rounded-lg border border-lime-400/10">
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-1.5 text-lime-400 font-semibold">
-                        <Tag className="h-3 w-3" />
-                        <span>Talexia Coupon {appliedCoupon?.code || couponCode}</span>
+
+
+                {/* Coupon Section */}
+                <div style={{ marginBottom: '30px' }}>
+                  <span className="checkout-section-title">Discount Coupon</span>
+                  <div className="checkout-coupon-row">
+                    <div className="checkout-input-wrap">
+                      <Tag className="checkout-input-icon h-4 w-4" />
+                      <input
+                        placeholder="Enter code (e.g. SUMMER26)"
+                        className="checkout-input"
+                        value={couponCode}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value.toUpperCase());
+                          if (error) setError(null);
+                        }}
+                        disabled={isCouponApplied}
+                      />
+                    </div>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => isCouponApplied ? handleRemoveCoupon() : handleApplyCoupon()}
+                    >
+                      {isCouponApplied ? "Remove" : "Apply"}
+                    </button>
+                  </div>
+
+                  {isCouponApplied && appliedCoupon && (
+                    <div className="checkout-msg checkout-msg-success">
+                      <Check className="h-4 w-4" />
+                      <div>
+                        <strong>{appliedCoupon.code}</strong> applied: {appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `$${appliedCoupon.discountValue} off`} successfully
                       </div>
-                      <span className="text-[10px] text-[#6b6b6b] font-medium">
-                        {appliedCoupon?.discountType === 'percentage' 
-                          ? `${appliedCoupon.discountValue}% off` 
-                          : `$${appliedCoupon?.discountValue} off`} 
-                        for this period
-                      </span>
                     </div>
-                    <span className="text-lime-400 font-bold">- ${calculation.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                )}
+                  )}
+                  {error && (
+                    <div className="checkout-msg checkout-msg-error">
+                      <ShieldCheck className="h-4 w-4" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+                </div>
 
-                {/* Tax */}
-                <div className="flex justify-between text-[#6b6b6b]">
-                  <span>Sales tax (8.625%)</span>
-                  <span className="text-white font-medium">${calculation.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                {/* Terms Checkbox */}
+                <div className="checkout-terms">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    className="checkout-checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                  />
+                  <label htmlFor="terms" className="checkout-terms-label">
+                    I agree to the <a href="/terms-conditions" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
+                  </label>
                 </div>
               </div>
+            </div>
 
-              <Separator className="bg-slate-800" />
+            {/* Right Column: Order Summary */}
+            <div>
+              <div className="checkout-summary-card">
+                <div className="checkout-summary-header">
+                  <h2 className="checkout-summary-title">Order Summary</h2>
+                  {calculation.isFounder && (
+                    <div className="checkout-summary-founder">
+                      <Sparkles className="h-3 w-3" /> Exclusive Founder Discount Applied
+                    </div>
+                  )}
+                </div>
+                
+                <div className="checkout-summary-content">
+                  <div className="checkout-summary-row">
+                    <div>
+                      <div className="checkout-summary-item">
+                        {isEnterprise
+                          ? (searchParams.get("name") || enterprisePlanDetails?.name || "Enterprise Plan")
+                          : PLAN_NAMES[planCode as PlanKey]}
+                      </div>
+                      <span className="checkout-summary-sub">Qty 1, Billed {billingCycle}</span>
+                    </div>
+                    <div className="checkout-summary-val">
+                      {isEnterprise && calculation.planPrice === 0 ? (
+                        "Custom"
+                      ) : (
+                        <>
+                          ${calculation.planPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {calculation.isFounder && (
+                            <span className="checkout-summary-strike">
+                              ${(calculation.planPrice / 0.7).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-              {/* Final Total */}
-              <div className="flex justify-between items-end">
-                <span className="text-white font-bold text-lg mb-1">Total due today</span>
-                <div className="text-right">
-                  <p className="text-4xl font-black text-white">
-                    {isEnterprise && calculation.total === 0 ? (
-                      <span className="text-lg text-slate-300">Calculated at Checkout</span>
+                  <div className="checkout-divider"></div>
+
+                  <div className="checkout-summary-row">
+                    <div className="checkout-summary-item" style={{ fontSize: '15px' }}>Subtotal</div>
+                    <div className="checkout-summary-val" style={{ fontSize: '15px' }}>
+                      ${calculation.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+
+                  {isCouponApplied && (
+                    <div className="checkout-summary-coupon">
+                      <div className="checkout-summary-row" style={{ marginBottom: 0 }}>
+                        <div>
+                          <div className="checkout-summary-item">
+                            <Tag className="h-3.5 w-3.5" />
+                            Talexia Coupon {appliedCoupon?.code || couponCode}
+                          </div>
+                          <span className="checkout-summary-sub" style={{ color: '#8a857a' }}>
+                            {appliedCoupon?.discountType === 'percentage' 
+                              ? `${appliedCoupon.discountValue}% off` 
+                              : `$${appliedCoupon?.discountValue} off`} 
+                            for this period
+                          </span>
+                        </div>
+                        <div className="checkout-summary-val">
+                          - ${calculation.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="checkout-summary-row">
+                    <div className="checkout-summary-item" style={{ fontSize: '14px', color: '#6b6b6b' }}>Sales tax (8.625%)</div>
+                    <div className="checkout-summary-val" style={{ fontSize: '14px' }}>
+                      ${calculation.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+
+                  <div className="checkout-total-row">
+                    <div className="checkout-total-label">Total due today</div>
+                    <div className="checkout-total-val">
+                      {isEnterprise && calculation.total === 0 ? (
+                        <span style={{ fontSize: '18px', color: '#6b6b6b' }}>Calculated at Checkout</span>
+                      ) : (
+                        <>
+                          <span>US</span>
+                          ${calculation.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="checkout-summary-footer">
+                  <button
+                    className="btn btn-dark checkout-full-width-btn"
+                    style={{ padding: '20px' }}
+                    disabled={loading}
+                    onClick={handleCheckout}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Processing...
+                      </>
                     ) : (
                       <>
-                        <span className="text-sm font-normal text-[#6b6b6b] mr-1">US</span>
-                        ${calculation.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        <CreditCard className="mr-2 h-5 w-5" />
+                        Secure Checkout
                       </>
                     )}
-                  </p>
+                  </button>
+
+                  <div className="checkout-secure-note">
+                    <ShieldCheck className="h-4 w-4" style={{ color: '#8a6d28' }} />
+                    SECURE SSL ENCRYPTED CHECKOUT
+                  </div>
                 </div>
               </div>
-            </CardContent>
-
-            <CardContent className="pt-2 pb-6">
-              <Button
-                className="w-full rounded-full bg-lime-500 py-7 text-base font-black text-[#14110c] hover:bg-lime-400 shadow-[0_0_30px_rgba(132,204,22,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98]"
-                disabled={loading}
-                onClick={handleCheckout}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-6 w-6" />
-                    Secure Checkout
-                  </>
-                )}
-              </Button>
-
-              <div className="mt-6 flex flex-col items-center gap-4 border-t border-slate-800/80 pt-6">
-                <div className="flex items-center justify-center gap-6 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-5" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-5" />
-                </div>
-                <p className="text-[10px] text-[#6b6b6b] flex items-center gap-1.5 font-medium tracking-wide">
-                  <ShieldCheck className="h-4 w-4 text-lime-500" /> SECURE SSL ENCRYPTED CHECKOUT
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -673,15 +530,13 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
-      <Suspense fallback={
-        <div className="flex h-screen flex-col items-center justify-center gap-4">
-          <Loader2 className="h-12 w-12 animate-spin text-lime-400" />
-          <p className="text-[#6b6b6b] animate-pulse font-medium">Securing your session...</p>
-        </div>
-      }>
-        <CheckoutContent />
-      </Suspense>
-    </div>
+    <Suspense fallback={
+      <div className="talexia-wrapper" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#faf8f3' }}>
+        <Loader2 className="h-10 w-10 animate-spin" style={{ color: '#c9a44c', marginBottom: '16px' }} />
+        <p style={{ fontFamily: 'Georgia, serif', color: '#6b6b6b', fontStyle: 'italic' }}>Securing your session...</p>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
