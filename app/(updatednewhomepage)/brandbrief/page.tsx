@@ -1,11 +1,98 @@
-
 "use client";
 import React, { useState } from 'react';
 import './brandbrief.css';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSessionContext } from '@/context/SessionContext';
+import { apiPost } from '@/lib/api';
+import { Loader2 } from 'lucide-react';
 
 export default function BrandBriefPage() {
   const [showBirthstoneDetail, setShowBirthstoneDetail] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [brandName, setBrandName] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
+  const router = useRouter();
+  const { updateSession, session } = useSessionContext();
+
+  React.useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+      const payload: Record<string, any> = {};
+
+      for (const [key, value] of formData.entries()) {
+        if (key.endsWith('[]')) {
+          const cleanKey = key.slice(0, -2);
+          if (!payload[cleanKey]) {
+            payload[cleanKey] = [];
+          }
+          payload[cleanKey].push(value);
+        } else {
+          payload[key] = value;
+        }
+      }
+
+      // Map new jewelry fields to the expected old backend payload structure
+      const mappedPayload = {
+        planCode: payload.planCode || "CUS_DEFAULT",
+        restaurantName: payload.brand_name || "",
+        location: payload.location || "",
+        businessType: payload.business_type || "",
+        cuisineType: payload.category || "Jewelry",
+        dietaryCertifications: [], 
+        websiteUrl: payload.website || "",
+        instagramHandle: payload.website || "", 
+        facebookPageUrl: payload.website || "",
+        tiktokHandle: payload.website || "",
+        onlineOrderingUrl: payload.website || "",
+        foodDescription: payload.brand_story || "",
+        uniqueSellingPoint: payload.aesthetic ? payload.aesthetic.join(", ") : "",
+        customerReviews: payload.admire || "",
+        forbiddenPhrases: payload.avoid || "",
+        preferredPhrases: payload.taglines || "",
+        captionSample1: payload.sample_captions || "",
+        captionSample2: "",
+        captionSample3: "",
+        toneAndVoice: payload.voice || [],
+        captionTargeting: payload.audience || "",
+        language: payload.language === 'other' ? (payload.language_other || 'Other') : (payload.language || 'English'),
+        signatureDishes: payload.products || [],
+        signatureDishDetails: (payload.collections || "") + " " + (payload.materials || ""),
+        excludedItems: payload.sensitive || "",
+        upcomingPromotions: payload.seasonal || "",
+        hashtagStyle: payload.hashtag_style || "",
+        confirmMinDishes: "Confirmed",
+        actionShotsPossible: payload.posting_days || [],
+        preferredShootTime: payload.posting_windows ? payload.posting_windows.join(", ") : "",
+        physicalConstraints: payload.staging || "",
+        specialNotes: (payload.birthstone_notes || "") + " " + (payload.posting_notes || ""),
+        clientName: payload.signed_as || payload.contact_primary_name || "",
+        restaurantNameAuth: payload.brand_name || "",
+        submissionDate: new Date().toISOString().split("T")[0],
+        talexiaPlan: "Active Plan"
+      };
+
+      const res = await apiPost('/api/brand-brief', mappedPayload);
+      if (res.success || res.status === 'success') {
+        await updateSession({ brandBriefCompleted: true });
+        router.push('/dashboard');
+      } else {
+        alert('Failed to submit brand brief. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="brandbrief-wrapper">
@@ -58,7 +145,7 @@ export default function BrandBriefPage() {
   </aside>
 
   {/* FORM CONTENT */}
-  <div className="form-content">
+  <form className="form-content" onSubmit={handleSubmit}>
 
     {/* ==================== SECTION I ==================== */}
     <section className="form-section" id="s1">
@@ -71,7 +158,7 @@ export default function BrandBriefPage() {
       <div className="field">
         <label className="field-label">Brand name <span className="req">◆</span></label>
         <p className="field-hint">The name your customers know you by — as it should appear in captions and hashtags.</p>
-        <input type="text" className="field-input" name="brand_name" placeholder="Your brand name as it appears in captions" required />
+        <input type="text" className="field-input" name="brand_name" placeholder="Your brand name as it appears in captions" required value={brandName} onChange={(e) => setBrandName(e.target.value)} />
       </div>
 
       <div className="field">
@@ -749,19 +836,19 @@ export default function BrandBriefPage() {
           <div className="auth-sig-field">
             <label className="field-label">On behalf of brand</label>
             <div className="auto-populated">
-              [Brand name from Section I] <em>— auto-populated</em>
+              {brandName || "[Brand name from Section I]"} <em>— auto-populated</em>
             </div>
           </div>
           <div className="auth-sig-field">
             <label className="field-label">Submission date</label>
             <div className="auto-populated">
-              July 10, 2026 <em>— auto-populated at submission</em>
+              {currentDate || "Loading date..."} <em>— auto-populated at submission</em>
             </div>
           </div>
           <div className="auth-sig-field">
             <label className="field-label">Talexia plan</label>
             <div className="auto-populated">
-              [Plan from Stripe] <em>— auto-populated</em>
+              {session?.subscription?.planCategory || session?.subscription?.planCode || "Active Plan"} <em>— auto-populated</em>
             </div>
           </div>
         </div>
@@ -776,14 +863,22 @@ export default function BrandBriefPage() {
 
       <div className="submit-block">
         <button type="button" className="btn-save">Save &amp; continue later</button>
-        <button type="submit" className="btn-submit">Submit Brand Brief</button>
+        <button type="submit" className="btn-submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <Loader2 className="h-4 w-4 animate-spin" /> Submitting...
+            </span>
+          ) : (
+            "Submit Brand Brief"
+          )}
+        </button>
         <p className="submit-note">
           On submission, a copy of this Brief will be emailed to you and to Talexia. Your Google Drive folder will be shared within one business day.
         </p>
       </div>
     </section>
 
-  </div>
+  </form>
 </div>
 
 {/* ==================== FOOTER ==================== */}

@@ -195,35 +195,9 @@ function BillingSuccessContent() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {(() => {
-            const planCode = session?.subscription?.planCode || session?.pendingPlanCode;
-            const planCategory = session?.subscription?.planCategory;
-            const isEnterprise =
-              planCode?.toUpperCase().startsWith("ENT") ||
-              planCategory?.toUpperCase() === "ENTERPRISE" ||
-              planCategory?.toUpperCase() === "BRAND_BRIEF" ||
-              planCategory?.toUpperCase() === "BRAND_BRIF";
+            const isCompleted = session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted || session?.onboardingCompleted;
 
-            if (isEnterprise) {
-              // Enterprise: show Dashboard only when brandBriefCompleted, else show Brand Brief onboarding
-              return (session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted) ? (
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <Link
-                  href="/onboarding/brand-brief"
-                  className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Start Onboarding
-                </Link>
-              );
-            }
-
-            // Non-enterprise
-            return session?.onboardingCompleted ? (
+            return isCompleted ? (
               <Link
                 href="/dashboard"
                 className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
@@ -232,7 +206,7 @@ function BillingSuccessContent() {
               </Link>
             ) : (
               <Link
-                href="/onboarding"
+                href="/brandbrief"
                 className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Start Onboarding
