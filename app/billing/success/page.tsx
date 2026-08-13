@@ -109,12 +109,13 @@ function BillingSuccessContent() {
   }, [session, checking]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="max-w-lg w-full rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center shadow-xl">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#faf8f3', color: '#14110c', fontFamily: "'Helvetica Neue', Arial, sans-serif" }}>
+      <div className="max-w-lg w-full text-center p-10" style={{ backgroundColor: '#fff', border: '1px solid #e8dcbe', borderRadius: '4px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
         <div className="mb-6">
-          <div className="mx-auto w-16 h-16 rounded-full bg-lime-400/10 border-2 border-lime-400 flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-6" style={{ backgroundColor: '#f6efdd', border: '1px solid #e8dcbe' }}>
             <svg
-              className="w-8 h-8 text-lime-400"
+              className="w-8 h-8"
+              style={{ color: '#8a6d28' }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -122,15 +123,15 @@ function BillingSuccessContent() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d="M5 13l4 4L19 7"
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-white">
-            Payment Successful!
+          <h1 className="text-3xl mb-3" style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: '#14110c' }}>
+            Payment Successful
           </h1>
-          <p className="mt-3 text-sm text-slate-300">
+          <p className="text-sm" style={{ color: '#6b6b6b', lineHeight: 1.6 }}>
             {checking
               ? "Activating your subscription..."
               : session?.subscription?.status === "ACTIVE" ||
@@ -139,75 +140,69 @@ function BillingSuccessContent() {
                 : "Your payment was successful. Your subscription will be activated shortly."}
           </p>
           {checking && (
-            <div className="mt-4 flex flex-col items-center justify-center gap-2">
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs text-[#6b6b6b]">Processing...</span>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-5 w-5 border-2 rounded-full animate-spin" style={{ borderColor: '#e8dcbe', borderTopColor: '#8a6d28' }} />
+                <span className="text-sm" style={{ color: '#8a857a' }}>Processing...</span>
               </div>
               {!syncing && retriesRef.current >= 2 && (
-                <Button
+                <button
                   onClick={syncSubscription}
-                  size="sm"
-                  variant="outline"
-                  className="mt-2 text-xs"
+                  className="mt-3 text-xs px-4 py-2"
+                  style={{ border: '1px solid #e8dcbe', borderRadius: '4px', color: '#8a6d28', backgroundColor: 'transparent', cursor: 'pointer', transition: 'all 0.2s' }}
                 >
                   Sync Subscription Status
-                </Button>
+                </button>
               )}
             </div>
           )}
           {syncing && (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-[#6b6b6b]">
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <div className="h-5 w-5 border-2 rounded-full animate-spin" style={{ borderColor: '#e8dcbe', borderTopColor: '#8a6d28' }} />
+              <span className="text-sm" style={{ color: '#8a857a' }}>
                 Syncing with Stripe...
               </span>
             </div>
           )}
         </div>
 
-        <div className="bg-slate-800/50 rounded-lg p-4 mb-6 text-left">
-          <p className="text-xs font-semibold text-lime-400 uppercase tracking-wide mb-2">
+        <div className="text-left p-6 mb-8 mt-8" style={{ backgroundColor: '#faf8f3', border: '1px solid #e8dcbe', borderRadius: '4px' }}>
+          <p className="text-xs uppercase tracking-widest mb-4" style={{ color: '#8a6d28', fontWeight: 600, letterSpacing: '1.5px' }}>
             Next Steps
           </p>
-          <ol className="space-y-2 text-sm text-slate-300">
-            <li className="flex items-start gap-2">
-              <span className="text-lime-400 font-semibold">1.</span>
-              <span>
-                Connect your social media accounts (Instagram, Facebook,
-                TikTok)
-              </span>
+          <ol className="space-y-4 text-sm" style={{ color: '#14110c', lineHeight: 1.5 }}>
+            <li className="flex items-start gap-3">
+              <span style={{ color: '#8a6d28', fontWeight: 600 }}>01.</span>
+              <span>Complete your Brand Brief authorization</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-lime-400 font-semibold">2.</span>
-              <span>
-                Upload your content or let our AI create visuals for you
-              </span>
+            <li className="flex items-start gap-3">
+              <span style={{ color: '#8a6d28', fontWeight: 600 }}>02.</span>
+              <span>Connect your social media channels securely</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-lime-400 font-semibold">3.</span>
-              <span>
-                Schedule your posts and watch your social presence grow
-              </span>
+            <li className="flex items-start gap-3">
+              <span style={{ color: '#8a6d28', fontWeight: 600 }}>03.</span>
+              <span>Our editorial team begins content production</span>
             </li>
           </ol>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex justify-center">
           {(() => {
             const isCompleted = session?.brandBriefCompleted || session?.brandBriefOnboardingCompleted || session?.onboardingCompleted;
 
             return isCompleted ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full inline-flex items-center justify-center px-8 py-4 text-sm transition-colors"
+                style={{ backgroundColor: '#14110c', color: '#faf8f3', borderRadius: '4px', fontWeight: 600, letterSpacing: '0.5px' }}
               >
                 Go to Dashboard
               </Link>
             ) : (
               <Link
                 href="/brandbrief"
-                className="inline-flex items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-base font-bold text-[#14110c] hover:bg-lime-400 shadow-[0_0_20px_rgba(132,204,22,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full inline-flex items-center justify-center px-8 py-4 text-sm transition-colors"
+                style={{ backgroundColor: '#14110c', color: '#faf8f3', borderRadius: '4px', fontWeight: 600, letterSpacing: '0.5px' }}
               >
                 Start Onboarding
               </Link>
@@ -223,11 +218,11 @@ export default function BillingSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-          <div className="max-w-lg w-full rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center shadow-xl">
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-4 w-4 border-2 border-lime-400 border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-[#6b6b6b]">Loading...</span>
+        <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#faf8f3' }}>
+          <div className="max-w-lg w-full text-center">
+            <div className="flex items-center justify-center gap-3">
+              <div className="h-6 w-6 border-2 rounded-full animate-spin" style={{ borderColor: '#e8dcbe', borderTopColor: '#8a6d28' }} />
+              <span className="text-sm" style={{ color: '#6b6b6b' }}>Securing your session...</span>
             </div>
           </div>
         </div>
