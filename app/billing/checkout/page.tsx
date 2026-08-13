@@ -137,7 +137,7 @@ function CheckoutContent() {
     const isFounder = session?.isFounder || session?.subscription?.priceType === "founder";
     const founderMultiplier = isFounder ? 0.7 : 1;
 
-    const discountMultiplier = billingCycle === "yearly" ? 0.8 : 1;
+    const discountMultiplier = billingCycle === "yearly" ? 0.9 : 1;
     const cycleMultiplier = billingCycle === "yearly" ? 12 : 1;
 
     const planPrice = basePrice * discountMultiplier * cycleMultiplier * founderMultiplier;
