@@ -40,6 +40,10 @@ function CheckoutContent() {
   const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{ name?: string, price?: number } | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   // Fetch enterprise plan details from API
   useEffect(() => {
@@ -142,7 +146,7 @@ function CheckoutContent() {
     const subtotal = planPrice + platformPrice;
 
     let discount = 0;
-    if (isCouponApplied && appliedCoupon) {
+    if (appliedCoupon) {
       const val = appliedCoupon.discountValue;
       const type = appliedCoupon.discountType;
 
@@ -168,7 +172,7 @@ function CheckoutContent() {
       isFounder,
       isActuallyApplicable: true // Defaulting to true as available coupons are now fetched from a specific endpoint
     };
-  }, [planCode, billingCycle, isCouponApplied, appliedCoupon, session, enterprisePlanDetails]);
+  }, [planCode, billingCycle, appliedCoupon, session, enterprisePlanDetails]);
 
   const handleApplyCoupon = (codeToApply?: string) => {
     const code = (codeToApply || couponCode).trim().toUpperCase();
@@ -194,7 +198,6 @@ function CheckoutContent() {
         return;
       }
       setAppliedCoupon(coupon);
-      setIsCouponApplied(true);
     } else {
       const fallbacks: Record<string, Coupon> = {
         "SUMMER26": {
@@ -218,7 +221,6 @@ function CheckoutContent() {
       if (fallbacks[code]) {
         const fb = fallbacks[code];
         setAppliedCoupon(fb);
-        setIsCouponApplied(true);
         setCouponCode(fb.code);
         return;
       }
@@ -229,7 +231,6 @@ function CheckoutContent() {
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    setIsCouponApplied(false);
     setCouponCode("");
     setError(null);
   };
@@ -249,7 +250,7 @@ function CheckoutContent() {
         planCode,
         billingCycle,
         termsAccepted,
-        couponCode: isCouponApplied ? couponCode : undefined,
+        couponCode: appliedCoupon ? couponCode : undefined,
         successUrl: `${origin}/billing/success`,
         cancelUrl: `${origin}/billing/checkout?plan=${planCode}&cycle=${billingCycle}`,
       });
@@ -360,18 +361,18 @@ function CheckoutContent() {
                           setCouponCode(e.target.value.toUpperCase());
                           if (error) setError(null);
                         }}
-                        disabled={isCouponApplied}
+                        disabled={!!appliedCoupon}
                       />
                     </div>
                     <button
                       className="btn btn-outline"
-                      onClick={() => isCouponApplied ? handleRemoveCoupon() : handleApplyCoupon()}
+                      onClick={() => appliedCoupon ? handleRemoveCoupon() : handleApplyCoupon()}
                     >
-                      {isCouponApplied ? "Remove" : "Apply"}
+                      {appliedCoupon ? "Remove" : "Apply"}
                     </button>
                   </div>
 
-                  {isCouponApplied && appliedCoupon && (
+                  {appliedCoupon && (
                     <div className="checkout-msg checkout-msg-success">
                       <Check className="h-4 w-4" />
                       <div>
@@ -450,7 +451,7 @@ function CheckoutContent() {
                     </div>
                   </div>
 
-                  {isCouponApplied && (
+                  {appliedCoupon && (
                     <div className="checkout-summary-coupon">
                       <div className="checkout-summary-row" style={{ marginBottom: 0 }}>
                         <div>
