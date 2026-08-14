@@ -3,7 +3,7 @@ import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function GET() {
   try {
-    const res = await fetch(`${getBackendUrl()}/api/billing/plans`, {
+    const res = await fetch(`${getBackendUrl()}/api/billing/history`, {
       headers: await getBackendHeaders(),
       credentials: "include",
     });
