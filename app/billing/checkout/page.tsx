@@ -39,8 +39,6 @@ function CheckoutContent() {
   // State
   const [enterprisePlanDetails, setEnterprisePlanDetails] = useState<{ name?: string, price?: number } | null>(null);
   const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
-  const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -87,33 +85,6 @@ function CheckoutContent() {
     fetchPlanDetails();
   }, [isEnterprise, planCode, session]);
 
-  // Fetch coupons on mount
-  useEffect(() => {
-    const fetchCoupons = async () => {
-      try {
-        const res = await apiGet<{ coupons: Coupon[] }>("/api/billing/coupons");
-        if (res && res.coupons) {
-          setAvailableCoupons(res.coupons);
-        }
-      } catch (err: any) {
-        // Log error but don't show to user as coupons are optional
-        console.warn("Failed to fetch coupons (likely unauthorized for enterprise users)", err.message);
-        // Ensure availableCoupons remains an empty array
-        setAvailableCoupons([]);
-      }
-    };
-    fetchCoupons();
-  }, []);
-
-  // Re-validate coupon if plan changes
-  useEffect(() => {
-    if (appliedCoupon && appliedCoupon.applicablePlans && !appliedCoupon.applicablePlans.includes(planCode as any)) {
-      handleRemoveCoupon();
-      setError(`The coupon was removed as it is not applicable to the ${PLAN_NAMES[planCode as PlanKey]} plan.`);
-    }
-  }, [planCode, appliedCoupon]);
-
-
   // Calculation Logic (aligned with screenshot and backend founder pricing)
   const calculation = useMemo(() => {
     let basePrice = 0;
@@ -145,73 +116,32 @@ function CheckoutContent() {
 
     const subtotal = planPrice + platformPrice;
 
-    let discount = 0;
-    if (appliedCoupon) {
-      const val = appliedCoupon.discountValue;
-      const type = appliedCoupon.discountType;
-
-      if (type === 'percentage') {
-        discount = subtotal * (val / 100);
-      } else if (type === 'fixed') {
-        discount = val * cycleMultiplier;
-      }
-    }
-
-    const discountedSubtotal = subtotal - discount;
-    const tax = Math.max(0, discountedSubtotal * TAX_RATE);
-    const total = discountedSubtotal + tax;
+    const tax = Math.max(0, subtotal * TAX_RATE);
+    const total = subtotal + tax;
 
     return {
       planPrice,
       platformPrice,
       subtotal,
-      discount,
+      discount: 0,
       tax,
       total,
       isYearly: billingCycle === "yearly",
       isFounder,
       isActuallyApplicable: true // Defaulting to true as available coupons are now fetched from a specific endpoint
     };
-  }, [planCode, billingCycle, appliedCoupon, session, enterprisePlanDetails]);
+  }, [planCode, billingCycle, session, enterprisePlanDetails]);
 
-  const handleApplyCoupon = (codeToApply?: string) => {
-    const code = (codeToApply || couponCode).trim().toUpperCase();
-    if (!code) return;
-
-    // Reset everything first to ensure clean state
-    handleRemoveCoupon();
-    setCouponCode(code); // Keep the code in the input
-    setError(null);
-
-    const coupon = availableCoupons.find(c => c.code === code);
-
-    if (coupon) {
-      if (coupon.code === "1MFREE" && billingCycle === "yearly") {
-        setError("The 1MFREE coupon cannot be applied to the yearly billing cycle.");
-        return;
-      }
-      // Check if applicable plans exist and if the current plan is included
-      const isApplicable = !coupon.applicablePlans || coupon.applicablePlans.includes(planCode as any);
-
-      if (!isApplicable && !isEnterprise) {
-        setError(`This coupon is not applicable to the ${PLAN_NAMES[planCode as PlanKey] || "Enterprise"} plan.`);
-        return;
-      }
-      setAppliedCoupon(coupon);
-    } else {
-      setError("Invalid coupon code.");
-    }
-  };
-
-  const handleRemoveCoupon = () => {
-    setAppliedCoupon(null);
-    setCouponCode("");
-    setError(null);
-  };
+  // Coupons are now applied directly during checkout
 
   const handleCheckout = async () => {
     if (!termsAccepted) {
       setError("Please accept the terms and conditions to proceed.");
+      return;
+    }
+
+    if (couponCode.trim().toUpperCase() === "1MFREE" && billingCycle === "yearly") {
+      setError("The 1MFREE coupon cannot be used with the yearly billing cycle.");
       return;
     }
 
@@ -224,7 +154,7 @@ function CheckoutContent() {
         planCode,
         billingCycle,
         termsAccepted,
-        couponCode: appliedCoupon ? couponCode : undefined,
+        couponCode: couponCode ? couponCode.trim() : undefined,
         successUrl: `${origin}/billing/success`,
         cancelUrl: `${origin}/billing/checkout?plan=${planCode}&cycle=${billingCycle}`,
       });
@@ -234,12 +164,6 @@ function CheckoutContent() {
       } else {
         const errorMsg = res.error || "Failed to initiate checkout. Please try again.";
         setError(errorMsg);
-
-        // If the error is specifically about the coupon, remove it to stop calculating the discount
-        if (errorMsg.toLowerCase().includes("coupon") || errorMsg.toLowerCase().includes("applicable")) {
-          handleRemoveCoupon();
-          setCouponCode(""); // Completely clear it so they have to re-type
-        }
       }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
@@ -304,7 +228,7 @@ function CheckoutContent() {
                       </button>
                       <button
                         onClick={() => {
-                          if (appliedCoupon?.code === "1MFREE" || couponCode === "1MFREE") {
+                          if (couponCode.trim().toUpperCase() === "1MFREE") {
                             setError("The 1MFREE coupon cannot be used with the yearly billing cycle.");
                             return;
                           }
@@ -325,35 +249,22 @@ function CheckoutContent() {
                 <div style={{ marginBottom: '30px' }}>
                   <span className="checkout-section-title">Discount Coupon</span>
                   <div className="checkout-coupon-row">
-                    <div className="checkout-input-wrap">
-                      <Tag className="checkout-input-icon h-4 w-4" />
-                      <input
-                        placeholder="Enter code (e.g. SUMMER26)"
-                        className="checkout-input"
-                        value={couponCode}
-                        onChange={(e) => {
-                          setCouponCode(e.target.value.toUpperCase());
-                          if (error) setError(null);
-                        }}
-                        disabled={!!appliedCoupon}
-                      />
-                    </div>
-                    <button
-                      className="btn btn-outline"
-                      onClick={() => appliedCoupon ? handleRemoveCoupon() : handleApplyCoupon()}
-                    >
-                      {appliedCoupon ? "Remove" : "Apply"}
-                    </button>
-                  </div>
-
-                  {appliedCoupon && (
-                    <div className="checkout-msg checkout-msg-success">
-                      <Check className="h-4 w-4" />
-                      <div>
-                        <strong>{appliedCoupon.code}</strong> applied: {appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `$${appliedCoupon.discountValue} off`} successfully
+                    <div className="checkout-coupon-input-group" style={{ display: 'flex', gap: '10px' }}>
+                      <div className="checkout-coupon-input-wrapper" style={{ flex: 1 }}>
+                        <Tag className="checkout-coupon-icon h-4 w-4" />
+                        <input
+                          type="text"
+                          placeholder="Coupon Code"
+                          className="checkout-input"
+                          value={couponCode}
+                          onChange={(e) => {
+                            setCouponCode(e.target.value.toUpperCase());
+                            if (error) setError(null);
+                          }}
+                        />
                       </div>
                     </div>
-                  )}
+                  </div>
                   {error && (
                     <div className="checkout-msg checkout-msg-error">
                       <ShieldCheck className="h-4 w-4" />
@@ -424,28 +335,6 @@ function CheckoutContent() {
                       ${calculation.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
-
-                  {appliedCoupon && (
-                    <div className="checkout-summary-coupon">
-                      <div className="checkout-summary-row" style={{ marginBottom: 0 }}>
-                        <div>
-                          <div className="checkout-summary-item">
-                            <Tag className="h-3.5 w-3.5" />
-                            Talexia Coupon {appliedCoupon?.code || couponCode}
-                          </div>
-                          <span className="checkout-summary-sub" style={{ color: '#8a857a' }}>
-                            {appliedCoupon?.discountType === 'percentage' 
-                              ? `${appliedCoupon.discountValue}% off` 
-                              : `$${appliedCoupon?.discountValue} off`} 
-                            for this period
-                          </span>
-                        </div>
-                        <div className="checkout-summary-val">
-                          - ${calculation.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   <div className="checkout-summary-row">
                     <div className="checkout-summary-item" style={{ fontSize: '14px', color: '#6b6b6b' }}>Sales tax (8.625%)</div>
