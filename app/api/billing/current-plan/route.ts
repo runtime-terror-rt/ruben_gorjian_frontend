@@ -1,29 +1,27 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { getBackendUrl } from "@/lib/server-backend";
+import { getBackendUrl, getBackendHeaders } from "@/lib/server-backend";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
-    
-    const res = await fetch(`${getBackendUrl()}/billing/current-plan`, {
-      headers: {
-        "ngrok-skip-browser-warning": "true",
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-      },
+    const res = await fetch(`${getBackendUrl()}/api/billing/current-plan`, {
+      headers: await getBackendHeaders(),
       credentials: "include",
     });
-    
+
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      return NextResponse.json(errorData, { status: res.status });
+      return NextResponse.json(
+        { error: "Failed to fetch billing data" },
+        { status: res.status }
+      );
     }
-    
+
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (err) {
-    console.error("Billing current-plan proxy error", err);
-    return NextResponse.json({ error: "Unable to load plan details" }, { status: 500 });
+  } catch (err: any) {
+    console.error("Fetch billing data error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

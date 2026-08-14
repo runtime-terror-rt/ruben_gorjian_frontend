@@ -4,7 +4,6 @@ import { buildBrandBriefPdf, BrandBriefPdfInput } from "@/lib/brand-brief-pdf";
 
 export async function GET() {
   try {
-    // Fetch the brand brief details for the current user
     const res = await fetch(`${getBackendUrl()}/api/brand-brief/me`, {
       headers: await getBackendHeaders(),
       credentials: "include",
@@ -15,65 +14,70 @@ export async function GET() {
     }
 
     const json = await res.json();
-    // /api/brand-brief/me returns { success: true, items: [...] }
     const data = json.items?.[0];
 
     if (!data) {
       return NextResponse.json({ error: "No brand brief found for your account" }, { status: 404 });
     }
 
-    // Map the API data to the PDF input format
     const pdfInput: BrandBriefPdfInput = {
-      id: data.id || data._id,
-      planCode: data.proposal?.planCode || data.planCode || "N/A",
-      planName: data.proposal?.planName || data.planName || "Enterprise Plan",
-      submittedByName: data.clientName || "User",
-      submittedByEmail: data.proposal?.email || "N/A",
-      restaurantName: data.restaurantName || "Unnamed Restaurant",
-      location: data.location || "N/A",
-      businessType: data.businessType || "N/A",
-      cuisineType: data.cuisineType || "N/A",
-      dietaryCertifications: Array.isArray(data.dietaryCertifications) ? data.dietaryCertifications : [],
-      websiteUrl: data.websiteUrl,
-      instagramHandle: data.instagramHandle || "N/A",
-      facebookPageUrl: data.facebookPageUrl,
-      tiktokHandle: data.tiktokHandle,
-      onlineOrderingUrl: data.onlineOrderingUrl,
-      foodDescription: data.foodDescription || "N/A",
-      uniqueSellingPoint: data.uniqueSellingPoint || "N/A",
-      customerReviews: data.customerReviews || "N/A",
-      forbiddenPhrases: data.forbiddenPhrases,
-      preferredPhrases: data.preferredPhrases,
-      captionSample1: data.captionSample1 || "N/A",
-      captionSample2: data.captionSample2 || "N/A",
-      captionSample3: data.captionSample3 || "N/A",
-      toneAndVoice: Array.isArray(data.toneAndVoice) ? data.toneAndVoice : [],
-      captionTargeting: data.captionTargeting || "N/A",
-      language: data.language || "N/A",
-      signatureDishes: Array.isArray(data.signatureDishes) ? data.signatureDishes : [],
-      signatureDishDetails: data.signatureDishDetails || "N/A",
-      excludedItems: data.excludedItems,
-      upcomingPromotions: data.upcomingPromotions,
-      hashtagStyle: data.hashtagStyle || "N/A",
-      confirmMinDishes: data.confirmMinDishes || "N/A",
-      actionShotsPossible: data.actionShotsPossible,
-      preferredShootTime: data.preferredShootTime,
-      physicalConstraints: data.physicalConstraints,
-      specialNotes: data.specialNotes,
-      clientName: data.clientName || "N/A",
-      restaurantNameAuth: data.restaurantNameAuth || data.restaurantName || "N/A",
-      submissionDate: data.submissionDate || new Date().toISOString(),
-      talexiaPlan: data.talexiaPlan || "N/A",
+      id: data.id || data._id || "-",
+      planCode: data.proposal?.planCode || data.planCode || "-",
+      planName: data.proposal?.planName || data.planName || "Active Plan",
+      submittedByName: data.clientName || data.authSignedAs || "User",
+      submittedByEmail: data.proposal?.email || "-",
       createdAt: data.createdAt || new Date().toISOString(),
+
+      brandName: data.brandName || data.restaurantName || "-",
+      businessType: data.businessType || "-",
+      primaryLocation: data.primaryLocation || data.location || "-",
+      websiteUrl: data.websiteUrl || "-",
+      industryCategory: data.industryCategory || data.cuisineType || "-",
+
+      brandStory: data.brandStory || data.foodDescription || "-",
+      brandVoiceDescriptors: Array.isArray(data.brandVoiceDescriptors) ? data.brandVoiceDescriptors : (Array.isArray(data.toneAndVoice) ? data.toneAndVoice : []),
+      targetAudience: data.targetAudience || "-",
+      preferredPhrases: data.preferredPhrases || "-",
+      customerReviews: data.customerReviews || "-",
+      forbiddenPhrases: data.forbiddenPhrases || "-",
+
+      aestheticDirection: data.aestheticDirection ? (Array.isArray(data.aestheticDirection) ? data.aestheticDirection.join(", ") : data.aestheticDirection) : (data.uniqueSellingPoint || "-"),
+      physicalConstraints: data.physicalConstraints || data.staging || "-",
+
+      productFocus: data.productFocus ? (Array.isArray(data.productFocus) ? data.productFocus.join(", ") : data.productFocus) : (Array.isArray(data.signatureDishes) ? data.signatureDishes.join(", ") : "-"),
+      signatureDishDetails: data.signatureDishDetails || "-",
+      materialsCertifications: data.materialsCertifications || data.materials || "-",
+      upcomingPromotions: data.upcomingPromotions || "-",
+      birthstoneTheming: data.birthstoneTheming || "-",
+
+      sampleCaptions: data.sampleCaptions || data.captionSample1 || "-",
+      captionTargeting: data.captionTargeting || "-",
+      language: data.language || "-",
+      hashtagStyle: data.hashtagStyle || "-",
+      excludedItems: data.excludedItems || "-",
+
+      platforms: Array.isArray(data.platforms) ? data.platforms : [],
+      timezone: data.timezone || "-",
+      preferredPostingDays: data.preferredPostingDays ? (Array.isArray(data.preferredPostingDays) ? data.preferredPostingDays.join(", ") : data.preferredPostingDays) : (data.actionShotsPossible || "-"),
+      preferredTimeWindows: data.preferredTimeWindows ? (Array.isArray(data.preferredTimeWindows) ? data.preferredTimeWindows.join(", ") : data.preferredTimeWindows) : (data.preferredShootTime || "-"),
+      specialNotes: data.specialNotes || "-",
+
+      googleDriveEmails: data.googleDriveEmails || "-",
+
+      primaryContactName: data.primaryContactName || data.clientName || "-",
+      primaryContactEmail: data.primaryContactEmail || "-",
+      preferredCommunication: data.preferredCommunication || "-",
+
+      authSignedAs: data.authSignedAs || data.clientName || "-",
+      authOnBehalfOf: data.authOnBehalfOf || data.restaurantNameAuth || "-",
+      authSubmissionDate: data.authSubmissionDate || data.submissionDate || new Date().toISOString(),
+      authTalexiaPlan: data.authTalexiaPlan || data.talexiaPlan || "-",
+      authIHaveReadAndAgree: data.authIHaveReadAndAgree || true
     };
 
-    // Generate the PDF buffer
     const pdfBuffer = await buildBrandBriefPdf(pdfInput);
+    const safeRestaurantName = (pdfInput.brandName || "brand-brief").replace(/\s+/g, "-").toLowerCase();
 
-    // Safe filename generation
-    const safeRestaurantName = (data.restaurantName || "brand-brief").replace(/\s+/g, '-').toLowerCase();
-
-    // Return the PDF response
     return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",

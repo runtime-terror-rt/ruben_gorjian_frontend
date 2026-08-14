@@ -82,14 +82,38 @@ export default function SettingsPage() {
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief" | "full-management" | "security">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief" | "full-management" | "security" | "billing">("profile");
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const renderVal = (val: any) => {
+    if (val === undefined || val === null || val === "" || val === "N/A") return "-";
+    if (Array.isArray(val)) return val.length ? val.join(", ") : "-";
+    return val;
+  };
 
   const brandBriefQuery = useQuery({
     queryKey: ["my-brand-brief"],
     queryFn: () => apiGet<{ success: boolean; items: any[] }>("/api/brand-brief/me"),
     enabled: activeTab === "brand-brief",
+  });
+
+  const billingPlansQuery = useQuery({
+    queryKey: ["billing-plans"],
+    queryFn: () => apiGet<any>("/api/billing/plans"),
+    enabled: activeTab === "billing",
+  });
+
+  const currentPlanQuery = useQuery({
+    queryKey: ["billing-current-plan"],
+    queryFn: () => apiGet<any>("/api/billing/current-plan"),
+    enabled: activeTab === "billing",
+  });
+
+  const billingHistoryQuery = useQuery({
+    queryKey: ["billing-history"],
+    queryFn: () => apiGet<any>("/api/billing/history"),
+    enabled: activeTab === "billing",
   });
 
   const brief = brandBriefQuery.data?.items?.[0];
@@ -387,6 +411,18 @@ export default function SettingsPage() {
           </button>
         )}
         <button
+          onClick={() => setActiveTab("billing")}
+          className={cn(
+            "px-6 py-3 text-sm font-medium transition-colors relative",
+            activeTab === "billing" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
+          )}
+        >
+          Billing
+          {activeTab === "billing" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
+          )}
+        </button>
+        <button
           onClick={() => setActiveTab("security")}
           className={cn(
             "px-6 py-3 text-sm font-medium transition-colors relative",
@@ -633,7 +669,7 @@ export default function SettingsPage() {
             </Card>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="text-lg font-semibold text-[#14110c]">Submission Overview</h2>
                 <Button
                   onClick={handleDownloadPdf}
@@ -650,45 +686,68 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
-                <DetailCard title="01. Brand Identity" items={[
-                  { label: "Restaurant Name", value: brief.restaurantName },
-                  { label: "Location", value: brief.location },
-                  { label: "Business Type", value: brief.businessType },
-                  { label: "Cuisine Type", value: brief.cuisineType },
-                  { label: "Dietary Certifications", value: brief.dietaryCertifications?.join(", ") },
-                  { label: "Talexia Plan", value: brief.talexiaPlan },
+                <DetailCard title="I. The basics" items={[
+                  { label: "Brand Name", value: renderVal(brief.brandName || brief.restaurantName) },
+                  { label: "Business Type", value: renderVal(brief.businessType) },
+                  { label: "Primary Location", value: renderVal(brief.primaryLocation || brief.location) },
+                  { label: "Website URL", value: renderVal(brief.websiteUrl) },
+                  { label: "Industry Category", value: renderVal(brief.industryCategory || brief.cuisineType) },
                 ]} />
 
-                <DetailCard title="02. Online Presence" items={[
-                  { label: "Website URL", value: brief.websiteUrl },
-                  { label: "Instagram Handle", value: brief.instagramHandle },
-                  { label: "Facebook Page URL", value: brief.facebookPageUrl },
-                  { label: "TikTok Handle", value: brief.tiktokHandle },
-                  { label: "Online Ordering URL", value: brief.onlineOrderingUrl },
+                <DetailCard title="II. About your brand" items={[
+                  { label: "Brand Story", value: renderVal(brief.brandStory || brief.foodDescription) },
+                  { label: "Brand Voice", value: renderVal(brief.brandVoiceDescriptors || brief.toneAndVoice) },
+                  { label: "Target Audience", value: renderVal(brief.targetAudience) },
+                  { label: "Taglines", value: renderVal(brief.preferredPhrases) },
+                  { label: "Admired Brands", value: renderVal(brief.customerReviews) },
+                  { label: "What to Avoid", value: renderVal(brief.forbiddenPhrases) },
                 ]} />
 
-                <DetailCard title="03. Brand Voice" items={[
-                  { label: "Food Description", value: brief.foodDescription },
-                  { label: "Unique Selling Point", value: brief.uniqueSellingPoint },
-                  { label: "Customer Reviews", value: brief.customerReviews },
-                  { label: "Tone & Voice", value: brief.toneAndVoice?.join(", ") },
-                  { label: "Caption Targeting", value: brief.captionTargeting },
-                  { label: "Language", value: brief.language },
+                <DetailCard title="III. Your aesthetic" items={[
+                  { label: "Aesthetic Direction", value: renderVal(brief.aestheticDirection || brief.uniqueSellingPoint) },
+                  { label: "Staging Preferences", value: renderVal(brief.physicalConstraints || brief.staging) },
                 ]} />
 
-                <DetailCard title="04. Menu & Content" items={[
-                  { label: "Signature Dishes", value: brief.signatureDishes?.join(", ") },
-                  { label: "Signature Dish Details", value: brief.signatureDishDetails },
-                  { label: "Excluded Items", value: brief.excludedItems },
-                  { label: "Upcoming Promotions", value: brief.upcomingPromotions },
-                  { label: "Hashtag Style", value: brief.hashtagStyle },
+                <DetailCard title="IV. Your product" items={[
+                  { label: "Product Focus", value: renderVal(brief.productFocus || brief.signatureDishes) },
+                  { label: "Signature Collections", value: renderVal(brief.signatureDishDetails) },
+                  { label: "Materials & Certifications", value: renderVal(brief.materialsCertifications || brief.materials) },
+                  { label: "Seasonal / Promotions", value: renderVal(brief.upcomingPromotions) },
+                  { label: "Birthstone Theming", value: renderVal(brief.birthstoneTheming) },
                 ]} />
 
-                <DetailCard title="05. Shoot & Extras" items={[
-                  { label: "Confirm Min Dishes", value: brief.confirmMinDishes },
-                  { label: "Action Shots Possible", value: brief.actionShotsPossible },
-                  { label: "Preferred Shoot Time", value: brief.preferredShootTime },
-                  { label: "Special Notes", value: brief.specialNotes },
+                <DetailCard title="V. Captions & voice" items={[
+                  { label: "Sample Captions", value: renderVal(brief.sampleCaptions || brief.captionSample1) },
+                  { label: "Caption Targeting", value: renderVal(brief.captionTargeting) },
+                  { label: "Language", value: renderVal(brief.language) },
+                  { label: "Hashtag Style", value: renderVal(brief.hashtagStyle) },
+                  { label: "Sensitive Topics", value: renderVal(brief.excludedItems) },
+                ]} />
+
+                <DetailCard title="VI. Publishing" items={[
+                  { label: "Platforms", value: renderVal(brief.platforms) },
+                  { label: "Timezone", value: renderVal(brief.timezone) },
+                  { label: "Posting Days", value: renderVal(brief.preferredPostingDays || brief.actionShotsPossible) },
+                  { label: "Posting Windows", value: renderVal(brief.preferredTimeWindows || brief.preferredShootTime) },
+                  { label: "Posting Notes", value: renderVal(brief.specialNotes) },
+                ]} />
+
+                <DetailCard title="VII. Catalog & source" items={[
+                  { label: "Drive Share Emails", value: renderVal(brief.googleDriveEmails) },
+                ]} />
+
+                <DetailCard title="VIII. Operational" items={[
+                  { label: "Primary Contact Name", value: renderVal(brief.primaryContactName || brief.clientName) },
+                  { label: "Primary Contact Email", value: renderVal(brief.primaryContactEmail) },
+                  { label: "Preferred Communication", value: renderVal(brief.preferredCommunication) },
+                ]} />
+
+                <DetailCard title="IX. Authorization" items={[
+                  { label: "Signed As", value: renderVal(brief.authSignedAs || brief.clientName) },
+                  { label: "On Behalf Of", value: renderVal(brief.authOnBehalfOf || brief.restaurantNameAuth) },
+                  { label: "Submission Date", value: renderVal(brief.authSubmissionDate || brief.submissionDate) },
+                  { label: "Talexia Plan", value: renderVal(brief.authTalexiaPlan || brief.talexiaPlan) },
+                  { label: "Terms Agreed", value: brief.authIHaveReadAndAgree ? "Yes" : "-" },
                 ]} />
 
                 <Card className="border-[#d9d4c9] bg-[#ffffff]">
@@ -911,6 +970,122 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+      )}
+
+      {activeTab === "billing" && (
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-[#14110c]">Current Plan</h2>
+            {currentPlanQuery.isLoading ? (
+              <p className="text-sm text-[#6b6b6b]">Loading current plan...</p>
+            ) : currentPlanQuery.isError ? (
+              <p className="text-sm text-red-500">Failed to load current plan.</p>
+            ) : (
+              <Card className="border-[#d9d4c9] bg-[#ffffff]">
+                <CardHeader>
+                  <CardTitle className="text-xl text-[#14110c]">
+                    {currentPlanQuery.data?.name || currentPlanQuery.data?.planName || currentPlanQuery.data?.data?.name || currentPlanQuery.data?.data?.planName || "Unknown Plan"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-[#6b6b6b]">
+                    Status: <span className="font-semibold text-[#14110c] capitalize">{currentPlanQuery.data?.status || currentPlanQuery.data?.data?.status || "Active"}</span>
+                  </p>
+                  {(currentPlanQuery.data?.price || currentPlanQuery.data?.data?.price) && (
+                    <p className="text-sm text-[#6b6b6b]">
+                      Price: <span className="font-semibold text-[#14110c]">{currentPlanQuery.data?.price || currentPlanQuery.data?.data?.price}</span>
+                    </p>
+                  )}
+                  {(currentPlanQuery.data?.nextBillingDate || currentPlanQuery.data?.data?.nextBillingDate) && (
+                    <p className="text-sm text-[#6b6b6b]">
+                      Next Billing Date: <span className="font-semibold text-[#14110c]">{new Date(currentPlanQuery.data?.nextBillingDate || currentPlanQuery.data?.data?.nextBillingDate).toLocaleDateString()}</span>
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-[#14110c]">Billing History</h2>
+            {billingHistoryQuery.isLoading ? (
+              <p className="text-sm text-[#6b6b6b]">Loading history...</p>
+            ) : billingHistoryQuery.isError ? (
+              <p className="text-sm text-red-500">Failed to load billing history.</p>
+            ) : (
+              <Card className="border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm text-[#14110c]">
+                    <thead className="bg-[#f8f7f5] text-xs uppercase text-[#6b6b6b] border-b border-[#d9d4c9]">
+                      <tr>
+                        <th className="px-6 py-4 font-medium">Date</th>
+                        <th className="px-6 py-4 font-medium">Description</th>
+                        <th className="px-6 py-4 font-medium">Amount</th>
+                        <th className="px-6 py-4 font-medium">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#d9d4c9]">
+                      {(billingHistoryQuery.data?.items || billingHistoryQuery.data?.data || Array.isArray(billingHistoryQuery.data) ? billingHistoryQuery.data : [])?.length > 0 ? (
+                        (billingHistoryQuery.data?.items || billingHistoryQuery.data?.data || Array.isArray(billingHistoryQuery.data) ? billingHistoryQuery.data : []).map((item: any, i: number) => (
+                          <tr key={i} className="hover:bg-[#f8f7f5]/50 transition-colors">
+                            <td className="px-6 py-4">{new Date(item.date || item.createdAt).toLocaleDateString()}</td>
+                            <td className="px-6 py-4">{item.description || item.planName || "Subscription"}</td>
+                            <td className="px-6 py-4">{item.amount ? `$${item.amount}` : "-"}</td>
+                            <td className="px-6 py-4 capitalize">{item.status || "Paid"}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="px-6 py-8 text-center text-[#6b6b6b]">
+                            No billing history found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-[#14110c]">Available Plans</h2>
+            {billingPlansQuery.isLoading ? (
+              <p className="text-sm text-[#6b6b6b]">Loading plans...</p>
+            ) : billingPlansQuery.isError ? (
+              <p className="text-sm text-red-500">Failed to load available plans.</p>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {(billingPlansQuery.data?.items || billingPlansQuery.data?.data || (Array.isArray(billingPlansQuery.data) ? billingPlansQuery.data : [])).map((plan: any, i: number) => (
+                  <Card key={i} className="border-[#d9d4c9] bg-[#ffffff] flex flex-col">
+                    <CardHeader>
+                      <CardTitle className="text-[#14110c] text-xl">{plan.name || plan.planName}</CardTitle>
+                      {plan.price && <p className="text-2xl font-bold text-[#b08d3e] mt-2">{typeof plan.price === 'number' ? `$${plan.price}` : plan.price}<span className="text-sm font-normal text-[#6b6b6b]">/mo</span></p>}
+                    </CardHeader>
+                    <CardContent className="flex-grow space-y-4">
+                      {plan.description && <p className="text-sm text-[#6b6b6b]">{plan.description}</p>}
+                      {plan.features && Array.isArray(plan.features) && (
+                        <ul className="space-y-2 text-sm text-[#14110c]">
+                          {plan.features.map((f: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#b08d3e] shrink-0" />
+                              <span>{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+                {(!(billingPlansQuery.data?.items || billingPlansQuery.data?.data || (Array.isArray(billingPlansQuery.data) ? billingPlansQuery.data : []))?.length) && (
+                  <p className="text-sm text-[#6b6b6b] col-span-full">No available plans found.</p>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
       )}
     </div>

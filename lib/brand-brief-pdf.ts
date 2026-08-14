@@ -6,42 +6,53 @@ export type BrandBriefPdfInput = {
   planName: string;
   submittedByName: string;
   submittedByEmail: string;
-  restaurantName: string;
-  location: string;
+  createdAt: Date | string;
+
+  brandName: string;
   businessType: string;
-  cuisineType: string;
-  dietaryCertifications: string[];
-  websiteUrl?: string | null;
-  instagramHandle: string;
-  facebookPageUrl?: string | null;
-  tiktokHandle?: string | null;
-  onlineOrderingUrl?: string | null;
-  foodDescription: string;
-  uniqueSellingPoint: string;
+  primaryLocation: string;
+  websiteUrl: string;
+  industryCategory: string;
+
+  brandStory: string;
+  brandVoiceDescriptors: string[];
+  targetAudience: string;
+  preferredPhrases: string;
   customerReviews: string;
-  forbiddenPhrases?: string | null;
-  preferredPhrases?: string | null;
-  captionSample1: string;
-  captionSample2: string;
-  captionSample3: string;
-  toneAndVoice: string[];
+  forbiddenPhrases: string;
+
+  aestheticDirection: string;
+  physicalConstraints: string;
+
+  productFocus: string;
+  signatureDishDetails: string;
+  materialsCertifications: string;
+  upcomingPromotions: string;
+  birthstoneTheming: string;
+
+  sampleCaptions: string;
   captionTargeting: string;
   language: string;
-  signatureDishes: string[];
-  signatureDishDetails: string;
-  excludedItems?: string | null;
-  upcomingPromotions?: string | null;
   hashtagStyle: string;
-  confirmMinDishes: string;
-  actionShotsPossible?: string | null;
-  preferredShootTime?: string | null;
-  physicalConstraints?: string | null;
-  specialNotes?: string | null;
-  clientName: string;
-  restaurantNameAuth: string;
-  submissionDate: Date | string;
-  talexiaPlan: string;
-  createdAt: Date | string;
+  excludedItems: string;
+
+  platforms: string[];
+  timezone: string;
+  preferredPostingDays: string;
+  preferredTimeWindows: string;
+  specialNotes: string;
+
+  googleDriveEmails: string;
+
+  primaryContactName: string;
+  primaryContactEmail: string;
+  preferredCommunication: string;
+
+  authSignedAs: string;
+  authOnBehalfOf: string;
+  authSubmissionDate: Date | string;
+  authTalexiaPlan: string;
+  authIHaveReadAndAgree: boolean;
 };
 
 type TableRow = {
@@ -69,11 +80,11 @@ function formatLongDate(date: Date | string): string {
 }
 
 function valueOrNA(value?: string | null): string {
-  return value?.trim() ? value.trim() : "N/A";
+  return value?.trim() ? value.trim() : "-";
 }
 
 function formatList(values?: string[] | null): string {
-  return values && values.length ? values.join(", ") : "N/A";
+  return values && values.length ? values.join(", ") : "-";
 }
 
 function drawSectionTitle(doc: PDFKit.PDFDocument, title: string) {
@@ -89,7 +100,7 @@ function drawSectionTitle(doc: PDFKit.PDFDocument, title: string) {
 
 function drawTableRow(doc: PDFKit.PDFDocument, row: TableRow, index: number) {
   const rowY = doc.y;
-  const valueText = String(row.value || "N/A");
+  const valueText = String(row.value || "-");
   
   let valueHeight = 0;
   try {
@@ -99,7 +110,7 @@ function drawTableRow(doc: PDFKit.PDFDocument, row: TableRow, index: number) {
     });
   } catch (e) {
     console.error("Error calculating string height:", e);
-    valueHeight = 20; // Fallback height
+    valueHeight = 20;
   }
 
   const rowHeight = Math.max(ROW_MIN_HEIGHT, valueHeight + CELL_PADDING * 2);
@@ -147,8 +158,6 @@ function drawSummaryBlock(doc: PDFKit.PDFDocument, input: BrandBriefPdfInput) {
     { label: "Plan", value: `${input.planName} (${input.planCode})` },
     { label: "Submitted By", value: `${input.submittedByName} <${input.submittedByEmail}>` },
     { label: "Created At", value: formatLongDate(input.createdAt) },
-    { label: "Submission Date", value: formatDate(input.submissionDate) },
-    { label: "Talexia Plan", value: input.talexiaPlan },
   ]);
 }
 
@@ -168,67 +177,77 @@ export async function buildBrandBriefPdf(input: BrandBriefPdfInput): Promise<Buf
 
     drawSummaryBlock(doc, input);
 
-    drawSectionTitle(doc, "01. Brand Identity");
+    drawSectionTitle(doc, "I. The basics");
     drawTable(doc, [
-      { label: "Restaurant Name", value: input.restaurantName },
-      { label: "Location", value: input.location },
-      { label: "Business Type", value: input.businessType },
-      { label: "Cuisine Type", value: input.cuisineType },
-      { label: "Dietary Certifications", value: formatList(input.dietaryCertifications) },
-    ]);
-
-    drawSectionTitle(doc, "02. Online Presence");
-    drawTable(doc, [
+      { label: "Brand Name", value: valueOrNA(input.brandName) },
+      { label: "Business Type", value: valueOrNA(input.businessType) },
+      { label: "Primary Location", value: valueOrNA(input.primaryLocation) },
       { label: "Website URL", value: valueOrNA(input.websiteUrl) },
-      { label: "Instagram Handle", value: input.instagramHandle },
-      { label: "Facebook Page URL", value: valueOrNA(input.facebookPageUrl) },
-      { label: "TikTok Handle", value: valueOrNA(input.tiktokHandle) },
-      { label: "Online Ordering URL", value: valueOrNA(input.onlineOrderingUrl) },
+      { label: "Industry Category", value: valueOrNA(input.industryCategory) },
     ]);
 
-    drawSectionTitle(doc, "03. Brand Voice");
+    drawSectionTitle(doc, "II. About your brand");
     drawTable(doc, [
-      { label: "Food Description", value: input.foodDescription },
-      { label: "Unique Selling Point", value: input.uniqueSellingPoint },
-      { label: "Customer Reviews", value: input.customerReviews },
-      { label: "Forbidden Phrases", value: valueOrNA(input.forbiddenPhrases) },
-      { label: "Preferred Phrases", value: valueOrNA(input.preferredPhrases) },
-      { label: "Tone And Voice", value: formatList(input.toneAndVoice) },
-      { label: "Caption Targeting", value: input.captionTargeting },
-      { label: "Language", value: input.language },
+      { label: "Brand Story", value: valueOrNA(input.brandStory) },
+      { label: "Brand Voice", value: formatList(input.brandVoiceDescriptors) },
+      { label: "Target Audience", value: valueOrNA(input.targetAudience) },
+      { label: "Taglines", value: valueOrNA(input.preferredPhrases) },
+      { label: "Admired Brands", value: valueOrNA(input.customerReviews) },
+      { label: "What to Avoid", value: valueOrNA(input.forbiddenPhrases) },
     ]);
 
-    drawSectionTitle(doc, "04. Menu & Content Priorities");
+    drawSectionTitle(doc, "III. Your aesthetic");
     drawTable(doc, [
-      { label: "Signature Dishes", value: formatList(input.signatureDishes) },
-      { label: "Signature Dish Details", value: input.signatureDishDetails },
-      { label: "Excluded Items", value: valueOrNA(input.excludedItems) },
-      { label: "Upcoming Promotions", value: valueOrNA(input.upcomingPromotions) },
-      { label: "Hashtag Style", value: input.hashtagStyle },
+      { label: "Aesthetic Direction", value: valueOrNA(input.aestheticDirection) },
+      { label: "Staging Preferences", value: valueOrNA(input.physicalConstraints) },
     ]);
 
-    drawSectionTitle(doc, "05. Shoot Preparation");
+    drawSectionTitle(doc, "IV. Your product");
     drawTable(doc, [
-      { label: "Confirm Min Dishes", value: input.confirmMinDishes },
-      { label: "Action Shots Possible", value: valueOrNA(input.actionShotsPossible) },
-      { label: "Preferred Shoot Time", value: valueOrNA(input.preferredShootTime) },
-      { label: "Physical Constraints", value: valueOrNA(input.physicalConstraints) },
+      { label: "Product Focus", value: valueOrNA(input.productFocus) },
+      { label: "Signature Collections", value: valueOrNA(input.signatureDishDetails) },
+      { label: "Materials & Certs", value: valueOrNA(input.materialsCertifications) },
+      { label: "Seasonal / Promotions", value: valueOrNA(input.upcomingPromotions) },
+      { label: "Birthstone Theming", value: valueOrNA(input.birthstoneTheming) },
     ]);
 
-    drawSectionTitle(doc, "06. Sample Captions");
+    drawSectionTitle(doc, "V. Captions & voice");
     drawTable(doc, [
-      { label: "Sample Caption 1", value: input.captionSample1 },
-      { label: "Sample Caption 2", value: input.captionSample2 },
-      { label: "Sample Caption 3", value: input.captionSample3 },
-      { label: "Special Notes", value: valueOrNA(input.specialNotes) },
+      { label: "Sample Captions", value: valueOrNA(input.sampleCaptions) },
+      { label: "Caption Targeting", value: valueOrNA(input.captionTargeting) },
+      { label: "Language", value: valueOrNA(input.language) },
+      { label: "Hashtag Style", value: valueOrNA(input.hashtagStyle) },
+      { label: "Sensitive Topics", value: valueOrNA(input.excludedItems) },
     ]);
 
-    drawSectionTitle(doc, "07. Brand Publishing Authorization");
+    drawSectionTitle(doc, "VI. Publishing");
     drawTable(doc, [
-      { label: "Client Name", value: input.clientName },
-      { label: "Restaurant Name (Authorization)", value: input.restaurantNameAuth },
-      { label: "Submission Date", value: formatDate(input.submissionDate) },
-      { label: "Talexia Plan", value: input.talexiaPlan },
+      { label: "Platforms", value: formatList(input.platforms) },
+      { label: "Timezone", value: valueOrNA(input.timezone) },
+      { label: "Posting Days", value: valueOrNA(input.preferredPostingDays) },
+      { label: "Posting Windows", value: valueOrNA(input.preferredTimeWindows) },
+      { label: "Posting Notes", value: valueOrNA(input.specialNotes) },
+    ]);
+
+    drawSectionTitle(doc, "VII. Catalog & source");
+    drawTable(doc, [
+      { label: "Drive Share Emails", value: valueOrNA(input.googleDriveEmails) },
+    ]);
+
+    drawSectionTitle(doc, "VIII. Operational");
+    drawTable(doc, [
+      { label: "Primary Contact Name", value: valueOrNA(input.primaryContactName) },
+      { label: "Primary Contact Email", value: valueOrNA(input.primaryContactEmail) },
+      { label: "Preferred Comm", value: valueOrNA(input.preferredCommunication) },
+    ]);
+
+    drawSectionTitle(doc, "IX. Authorization");
+    drawTable(doc, [
+      { label: "Signed As", value: valueOrNA(input.authSignedAs) },
+      { label: "On Behalf Of", value: valueOrNA(input.authOnBehalfOf) },
+      { label: "Submission Date", value: formatDate(input.authSubmissionDate) },
+      { label: "Talexia Plan", value: valueOrNA(input.authTalexiaPlan) },
+      { label: "Terms Agreed", value: input.authIHaveReadAndAgree ? "Yes" : "-" },
     ]);
 
     doc.end();

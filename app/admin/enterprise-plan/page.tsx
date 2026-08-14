@@ -275,6 +275,12 @@ function formatAmount(amount: number, currency: string) {
   }).format(amount);
 }
 
+const renderVal = (val: any) => {
+  if (val === undefined || val === null || val === "" || val === "N/A") return "—";
+  if (Array.isArray(val)) return val.length ? val.join(", ") : "—";
+  return val;
+};
+
 // --- Main Component ---
 
 export default function EnterprisePlanPage() {
@@ -428,7 +434,7 @@ export default function EnterprisePlanPage() {
     enabled: !!selectedBbId && isBbDetailsOpen,
   });
 
-  const details = bbDetailsQuery.data?.data || bbDetailsQuery.data?.item;
+  const details: any = bbDetailsQuery.data?.data || bbDetailsQuery.data?.item;
 
   // Mutations
   const createInviteMutation = useMutation({
@@ -1040,21 +1046,21 @@ export default function EnterprisePlanPage() {
                       </TableRow>
                     ))
                   ) : brandBriefsQuery.data?.data?.items?.length ? (
-                    brandBriefsQuery.data.data.items.map((bb) => (
+                    brandBriefsQuery.data.data.items.map((bb: any) => (
                       <TableRow key={bb.id} className="border-[#d9d4c9] hover:bg-[#e6e1d8]/30 transition-colors group">
                         <TableCell className="py-6 px-6">
                           <div className="flex flex-col">
-                            <span className="font-bold text-[#14110c] tracking-tight">{bb.restaurantName}</span>
-                            <span className="text-[10px] text-[#b08d3e] font-bold uppercase tracking-wider">{bb.proposal?.planName || "Enterprise"}</span>
+                            <span className="font-bold text-[#14110c] tracking-tight">{bb.brandName || bb.restaurantName || "—"}</span>
+                            <span className="text-[10px] text-[#b08d3e] font-bold uppercase tracking-wider">{bb.talexiaPlan || bb.proposal?.planName || "Enterprise"}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm placeholder:text-[#6b6b6b] placeholder:font-normal">{bb.location}</TableCell>
-                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm placeholder:text-[#6b6b6b] placeholder:font-normal">{bb.businessType}</TableCell>
-                        <TableCell className="py-6 px-6 text-center text-[#6b6b6b] text-xs">{formatDate(bb.submissionDate)}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm">{bb.primaryLocation || bb.location || "—"}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#14110c] text-sm capitalize">{bb.businessType || "—"}</TableCell>
+                        <TableCell className="py-6 px-6 text-center text-[#6b6b6b] text-xs">{formatDate(bb.authSubmissionDate || bb.submissionDate || bb.createdAt)}</TableCell>
                         <TableCell className="py-6 px-6 text-center">
-                          <div className="flex flex-col">
-                            <span className="text-[#14110c] font-medium text-sm placeholder:text-[#6b6b6b] placeholder:font-normal">{bb.user.name}</span>
-                            <span className="text-[10px] text-[#6b6b6b] font-mono">{bb.user.email}</span>
+                          <div className="flex flex-col items-center justify-center">
+                            <span className="text-[#14110c] font-medium text-sm">{bb.primaryContactName || bb.clientName || bb.user?.name || "—"}</span>
+                            <span className="text-[10px] text-[#6b6b6b] font-mono">{bb.primaryContactEmail || bb.user?.email || "—"}</span>
                           </div>
                         </TableCell>
                         <TableCell className="py-6 px-6 text-center">
@@ -1969,94 +1975,98 @@ export default function EnterprisePlanPage() {
                 {/* Section Generator */}
                 {[
                   {
-                    title: "01 Identity & Presence",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "I. The basics",
                     fields: [
-                      { label: "Restaurant Name", value: details.restaurantName },
-                      { label: "Location", value: details.location },
-                      { label: "Business Type", value: details.businessType },
-                      { label: "Cuisine Type", value: details.cuisineType },
-                      { label: "Website", value: details.websiteUrl, isLink: true },
-                      { label: "Instagram", value: details.instagramHandle, isLink: true },
-                      { label: "Dietary Certs", value: details.dietaryCertifications?.join(", ") },
+                      { label: "Brand Name", value: renderVal(details.brandName || details.restaurantName) },
+                      { label: "Business Type", value: renderVal(details.businessType) },
+                      { label: "Primary Location", value: renderVal(details.primaryLocation || details.location) },
+                      { label: "Website URL", value: renderVal(details.websiteUrl) },
+                      { label: "Industry Category", value: renderVal(details.industryCategory || details.cuisineType) },
                     ]
                   },
                   {
-                    title: "02 Social Media Handles",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "II. About your brand",
                     fields: [
-                      { label: "Facebook", value: details.facebookPageUrl, isLink: true },
-                      { label: "TikTok", value: details.tiktokHandle, isLink: true },
-                      { label: "Online Ordering", value: details.onlineOrderingUrl, isLink: true },
+                      { label: "Brand Story / Vibe", value: renderVal(details.brandStory || details.foodDescription) },
+                      { label: "Brand Voice", value: renderVal(details.brandVoiceDescriptors?.length ? details.brandVoiceDescriptors : details.toneAndVoice) },
+                      { label: "Target Audience", value: renderVal(details.targetAudience) },
+                      { label: "Preferred Phrases / Taglines", value: renderVal(details.preferredPhrases) },
+                      { label: "Admired Brands", value: renderVal(details.customerReviews) },
+                      { label: "What to Avoid", value: renderVal(details.forbiddenPhrases) },
                     ]
                   },
                   {
-                    title: "03 Brand Voice & Content",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "III. Your aesthetic",
                     fields: [
-                      { label: "Tone & Voice", value: details.toneAndVoice?.join(" | ") },
-                      { label: "Targeting", value: details.captionTargeting },
-                      { label: "Language", value: details.language },
-                      { label: "Hashtag Style", value: details.hashtagStyle },
-                      { label: "Unique Selling Point", value: details.uniqueSellingPoint },
+                      { label: "Aesthetic Direction", value: renderVal(details.aestheticDirection || details.uniqueSellingPoint) },
+                      { label: "Staging Preferences", value: renderVal(details.physicalConstraints || details.staging) },
                     ]
                   },
                   {
-                    title: "04 Messaging & Samples",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "IV. Your product",
                     fields: [
-                      { label: "Forbidden Phrases", value: details.forbiddenPhrases },
-                      { label: "Preferred Phrases", value: details.preferredPhrases },
-                      { label: "Sample Caption 1", value: details.captionSample1 },
-                      { label: "Sample Caption 2", value: details.captionSample2 },
-                      { label: "Sample Caption 3", value: details.captionSample3 },
+                      { label: "Product Focus", value: renderVal(details.productFocus || details.signatureDishes) },
+                      { label: "Signature Collections / Dishes", value: renderVal(details.signatureDishDetails) },
+                      { label: "Materials & Certifications", value: renderVal(details.materialsCertifications || details.materials) },
+                      { label: "Seasonal / Promotions", value: renderVal(details.upcomingPromotions) },
+                      { label: "Birthstone Theming", value: renderVal(details.birthstoneTheming) },
                     ]
                   },
                   {
-                    title: "05 Operations & Production",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "V. Captions & voice",
                     fields: [
-                      { label: "Signature Dishes", value: details.signatureDishes?.join(", ") },
-                      { label: "Dish Details", value: details.signatureDishDetails },
-                      { label: "Excluded Items", value: details.excludedItems },
-                      { label: "Upcoming Promos", value: details.upcomingPromotions },
-                      { label: "Shoot Frequency", value: details.confirmMinDishes },
-                      { label: "Action Shots Possible", value: details.actionShotsPossible },
-                      { label: "Preferred Shoot Time", value: details.preferredShootTime },
+                      { label: "Sample Captions", value: renderVal(details.sampleCaptions || details.captionSample1) },
+                      { label: "Caption Targeting", value: renderVal(details.captionTargeting) },
+                      { label: "Language", value: renderVal(details.language) },
+                      { label: "Hashtag Style", value: renderVal(details.hashtagStyle) },
+                      { label: "Sensitive Topics", value: renderVal(details.excludedItems) },
                     ]
                   },
                   {
-                    title: "06 Admin & Authorization",
-                    color: "text-[#b08d3e]",
-                    bg: "bg-[#b08d3e]/10",
+                    title: "VI. Publishing",
                     fields: [
-                      { label: "Client Name (Auth)", value: details.clientName },
-                      { label: "Talexia Plan", value: details.talexiaPlan },
-                      { label: "Authorization Date", value: formatDate(details.submissionDate) },
+                      { label: "Platforms", value: renderVal(details.platforms) },
+                      { label: "Timezone", value: renderVal(details.timezone) },
+                      { label: "Posting Days", value: renderVal(details.preferredPostingDays || details.actionShotsPossible) },
+                      { label: "Posting Windows", value: renderVal(details.preferredTimeWindows || details.preferredShootTime) },
+                      { label: "Posting Notes", value: renderVal(details.specialNotes) },
+                    ]
+                  },
+                  {
+                    title: "VII. Catalog & source",
+                    fields: [
+                      { label: "Google Drive Share Emails", value: renderVal(details.googleDriveEmails) },
+                    ]
+                  },
+                  {
+                    title: "VIII. Operational",
+                    fields: [
+                      { label: "Primary Contact Name", value: renderVal(details.primaryContactName || details.clientName) },
+                      { label: "Primary Contact Email", value: renderVal(details.primaryContactEmail) },
+                      { label: "Preferred Comm Method", value: renderVal(details.preferredCommunication) },
+                    ]
+                  },
+                  {
+                    title: "IX. Authorization",
+                    fields: [
+                      { label: "Signed As", value: renderVal(details.authSignedAs || details.clientName) },
+                      { label: "On Behalf Of", value: renderVal(details.authOnBehalfOf || details.restaurantNameAuth) },
+                      { label: "Submission Date", value: renderVal(details.authSubmissionDate || details.submissionDate) },
+                      { label: "Talexia Plan", value: renderVal(details.authTalexiaPlan || details.talexiaPlan) },
+                      { label: "Terms Agreed", value: renderVal(details.authIHaveReadAndAgree ? "Yes" : "No") },
                     ]
                   },
                 ].map((section, idx) => (
                   <div key={idx} className="space-y-4">
-                    <h4 className={cn("text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-3", section.color)}>
-                      <span className={cn("h-6 w-6 rounded-lg flex items-center justify-center text-[10px] border border-[#d9d4c9]", section.bg)}>{idx + 1}</span>
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-3 text-[#b08d3e]">
+                      <span className="h-6 w-6 rounded-lg flex items-center justify-center text-[10px] border border-[#d9d4c9] bg-[#b08d3e]/10">{idx + 1}</span>
                       {section.title}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {section.fields.map((field, fIdx) => (
                         <div key={fIdx} className="space-y-1 bg-[#ffffff] shadow-sm border border-[#d9d4c9] p-4 rounded-2xl">
                           <p className="text-[10px] font-bold text-[#6b6b6b] uppercase tracking-widest">{field.label}</p>
-                          {field.isLink && field.value ? (
-                            <a href={field.value} target="_blank" rel="noreferrer" className="text-sm font-bold text-[#b08d3e] hover:underline break-all">
-                              {field.value}
-                            </a>
-                          ) : (
-                            <p className="text-sm font-medium text-[#14110c] leading-relaxed">{field.value || "—"}</p>
-                          )}
+                          <p className="text-sm font-medium text-[#14110c] leading-relaxed">{field.value}</p>
                         </div>
                       ))}
                     </div>

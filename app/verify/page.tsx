@@ -12,7 +12,7 @@ function VerifyPageInner() {
   const { session, refresh, loading: sessionLoading } = useSessionContext();
 
   // Get returnTo from query, or check sessionStorage (from signup), or use default
-  let returnTo = getReturnToFromQuery(searchParams, "/pricing");
+  let returnTo = getReturnToFromQuery(searchParams, "/plan");
   if (returnTo === "/dashboard" && typeof window !== "undefined") {
     const stored = sessionStorage.getItem("signup_return_to");
     if (stored) {
@@ -202,33 +202,39 @@ function VerifyPageInner() {
       // Case 4: User has no plan → redirect to pricing
       if (!planCategoryToUse && !planCodeToUse) {
         console.log("[Verify] No plan found, redirecting to pricing");
-        window.location.href = "/pricing";
+        window.location.href = "/plan";
         return;
       }
 
       // Case 5: Fallback - route to pricing page
       console.log("[Verify] Fallback: routing to pricing page");
-      window.location.href = "/pricing";
+      window.location.href = "/plan";
     }
 
     routeAfterVerification();
   }, [verified, sessionLoading, session, searchParams]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="max-w-lg w-full rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center shadow-xl">
-        <h1 className="text-2xl font-semibold text-white">Verify your email</h1>
-        <p className="mt-3 text-sm text-slate-300">{message}</p>
+    <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Decorative ambient background elements */}
+      <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-[#b08d3e]/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-[#b08d3e]/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-lg w-full rounded-[2rem] border border-[#d9d4c9] bg-[#ffffff]/80 backdrop-blur-xl p-10 text-center shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] relative z-10">
+        <h1 className="text-3xl font-black text-[#14110c] uppercase tracking-tighter">Verify your email</h1>
+        <p className="mt-4 text-sm font-medium text-[#6b6b6b]">{message}</p>
+        
         {status === "error" && (
-          <div className="mt-6 space-y-3">
+          <div className="mt-8 space-y-6">
             <a
               href="/login"
-              className="inline-flex items-center justify-center rounded-full bg-lime-400 px-5 py-2 text-sm font-semibold text-[#14110c] shadow hover:bg-lime-300"
+              className="inline-flex items-center justify-center w-full rounded-xl bg-[#b08d3e] px-8 py-4 text-[11px] font-black uppercase tracking-[0.18em] text-[#14110c] shadow-[0_10px_20px_rgba(176,141,62,0.2)] hover:bg-[#d9b45c] hover:scale-[1.02] active:scale-95 transition-all duration-300"
             >
               Back to login
             </a>
-            <div className="space-y-2 text-left">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+            
+            <div className="space-y-4 text-left bg-[#faf8f3]/50 p-6 rounded-2xl border border-[#d9d4c9]">
+              <label className="text-[10px] font-black uppercase tracking-widest text-[#6b6b6b] ml-1">
                 Resend verification email
               </label>
               <input
@@ -236,7 +242,7 @@ function VerifyPageInner() {
                 value={emailForResend}
                 onChange={(e) => setEmailForResend(e.target.value)}
                 placeholder="you@company.com"
-                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none ring-lime-400/40 focus:border-lime-400 focus:ring-2"
+                className="w-full rounded-xl border border-[#d9d4c9] bg-[#ffffff] px-5 py-4 text-sm font-bold text-[#14110c] placeholder:text-[#6b6b6b] placeholder:font-normal outline-none focus:border-[#b08d3e]/50 focus:ring-4 focus:ring-[#b08d3e]/10 transition-all"
               />
               <button
                 onClick={async () => {
@@ -261,12 +267,12 @@ function VerifyPageInner() {
                     setResendMessage("Unable to resend verification email.");
                   }
                 }}
-                className="w-full inline-flex items-center justify-center rounded-full border border-slate-700 px-5 py-2 text-sm font-semibold text-slate-100 hover:bg-slate-800/70"
+                className="w-full inline-flex items-center justify-center rounded-xl border border-[#d9d4c9] bg-[#ffffff] px-5 py-4 text-[11px] font-black uppercase tracking-[0.18em] text-[#14110c] hover:bg-[#e6e1d8] hover:border-[#b08d3e]/30 transition-all hover:scale-[1.02] active:scale-95"
               >
-                Resend
+                Resend Email
               </button>
               {resendMessage && (
-                <p className="text-xs text-slate-300">{resendMessage}</p>
+                <p className="text-[11px] font-bold text-[#b08d3e] text-center mt-2">{resendMessage}</p>
               )}
             </div>
           </div>
@@ -280,8 +286,13 @@ export default function VerifyPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
-          Loading...
+        <div className="min-h-screen bg-[#faf8f3] flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-[#b08d3e]/10 blur-[120px] rounded-full pointer-events-none" />
+          <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-[#b08d3e]/10 blur-[120px] rounded-full pointer-events-none" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="h-12 w-12 border-[4px] border-[#e6e1d8] border-t-[#b08d3e] rounded-full animate-spin mb-6" />
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#6b6b6b]">Authenticating...</p>
+          </div>
         </div>
       }
     >

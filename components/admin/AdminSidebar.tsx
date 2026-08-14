@@ -106,14 +106,7 @@ export const NAV_SECTIONS: NavSection[] = [
       //   icon: Calendar,
       //   permission: "SCHEDULE_MANAGE",
       // },
-      // {
-      //   label: "Media",
-      //   href: "/admin/media",
-      //   icon: ImageIcon,
-      //   permission: "POST_MANAGE",
       // },
-
-
       // {
       //   label: "Submissions",
       //   href: "/admin/submissions",
