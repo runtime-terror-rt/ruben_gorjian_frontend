@@ -249,20 +249,18 @@ function CheckoutContent() {
                 <div style={{ marginBottom: '30px' }}>
                   <span className="checkout-section-title">Discount Coupon</span>
                   <div className="checkout-coupon-row">
-                    <div className="checkout-coupon-input-group" style={{ display: 'flex', gap: '10px' }}>
-                      <div className="checkout-coupon-input-wrapper" style={{ flex: 1 }}>
-                        <Tag className="checkout-coupon-icon h-4 w-4" />
-                        <input
-                          type="text"
-                          placeholder="Coupon Code"
-                          className="checkout-input"
-                          value={couponCode}
-                          onChange={(e) => {
-                            setCouponCode(e.target.value.toUpperCase());
-                            if (error) setError(null);
-                          }}
-                        />
-                      </div>
+                    <div className="checkout-input-wrap" style={{ flex: 1 }}>
+                      <Tag className="checkout-input-icon h-4 w-4" />
+                      <input
+                        type="text"
+                        placeholder="Coupon Code"
+                        className="checkout-input"
+                        value={couponCode}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value.toUpperCase());
+                          if (error) setError(null);
+                        }}
+                      />
                     </div>
                   </div>
                   {error && (

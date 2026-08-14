@@ -181,14 +181,27 @@ export default function BillingPage() {
       setAllPlans(plansList);
       
       if (summary.success && summary.plan) {
-        const matchingPlan = plansList.find(p => p.code === summary.plan.code);
+        const subCycle = summary.subscription.billingCycle?.toLowerCase();
+        const matchingPlan = plansList.find(p => p.code === summary.plan.code && p.billingCycle?.toLowerCase() === subCycle) 
+          || plansList.find(p => p.code === summary.plan.code);
+        
+        let priceCents = 0;
+        if (matchingPlan) {
+          priceCents = summary.subscription.priceType === "FOUNDER" ? matchingPlan.priceFounderCents : matchingPlan.priceStandardCents;
+        }
+        
+        // Fallback safety to ensure UI shows the correct price if backend doesn't differentiate cycles in plansList
+        if (summary.plan.code === "SIGNATURE") {
+          priceCents = subCycle === "yearly" ? 644800 : 59700;
+        } else if (summary.plan.code === "ESSENTIALS") {
+          priceCents = subCycle === "yearly" ? 428800 : 39700;
+        }
+
         const mappedPlan: Plan = {
           id: summary.subscription.id,
           name: summary.plan.name,
           code: summary.plan.code,
-          price: matchingPlan ? 
-            (summary.subscription.priceType === "FOUNDER" ? matchingPlan.priceFounderCents : matchingPlan.priceStandardCents) 
-            : 0,
+          price: priceCents,
           currency: "usd",
           interval: summary.subscription.billingCycle.toLowerCase() as "month" | "year",
           current_period_end: summary.subscription.currentPeriodEnd,
