@@ -199,32 +199,6 @@ function CheckoutContent() {
       }
       setAppliedCoupon(coupon);
     } else {
-      const fallbacks: Record<string, Coupon> = {
-        "SUMMER26": {
-          id: "fallback-summer26",
-          code: "SUMMER26",
-          discountType: "percentage",
-          discountValue: 15,
-          description: "Summer sale - 15% off",
-          expiresAt: "2027-12-31T23:59:59.000Z"
-        },
-        "FIXED36": {
-          id: "fallback-fixed36",
-          code: "FIXED36",
-          discountType: "fixed",
-          discountValue: 36,
-          description: "Summer sale - fixed 36 off",
-          expiresAt: "2027-12-31T23:59:59.000Z"
-        }
-      };
-
-      if (fallbacks[code]) {
-        const fb = fallbacks[code];
-        setAppliedCoupon(fb);
-        setCouponCode(fb.code);
-        return;
-      }
-
       setError("Invalid coupon code.");
     }
   };
