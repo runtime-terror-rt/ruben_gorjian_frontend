@@ -19,9 +19,8 @@ export type OnboardingRoute =
 export function getOnboardingRouteForPlanCategory(
   planCategory: PlanCategory | string | null | undefined
 ): OnboardingRoute | null {
-  // All plans now use brand-brief onboarding
-  return "/onboarding/brand-brief";
-
+  // All plans now use the new brand-brief page
+  return "/brandbrief" as any;
   /* 
   if (!planCategory) return null;
 

@@ -204,7 +204,7 @@ function BillingSuccessContent() {
                 className="w-full inline-flex items-center justify-center px-8 py-4 text-sm transition-colors"
                 style={{ backgroundColor: '#14110c', color: '#faf8f3', borderRadius: '4px', fontWeight: 600, letterSpacing: '0.5px' }}
               >
-                Start Onboarding
+                Start Brand Brief
               </Link>
             );
           })()}
