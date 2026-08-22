@@ -56,15 +56,30 @@ export default function ClientSelectionModal({
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     if (isOpen) {
-      fetchClients(1);
+      timeoutId = setTimeout(() => {
+        fetchClients(1);
+      }, 300);
     }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [isOpen, searchQuery]);
 
   const fetchClients = async (page: number = 1) => {
     try {
       setLoading(true);
-      const data = await apiGet<any>(`/api/scheduler/clients?page=${page}&pageSize=10`);
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        pageSize: "10",
+      });
+      if (searchQuery) {
+        queryParams.append("search", searchQuery);
+      }
+      const data = await apiGet<any>(`/api/scheduler/clients?${queryParams.toString()}`);
       console.log(data, 'data')
       // Robustly extract items from various possible response structures
       let items = [];
