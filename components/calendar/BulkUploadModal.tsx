@@ -14,7 +14,6 @@ import {
   FileText,
   CheckCircle2,
   AlertCircle,
-  ImageIcon,
   Image as ImageIconLucide,
   CalendarIcon,
   ChevronRight,
@@ -94,6 +93,7 @@ export function BulkUploadModal({
   const [previewData, setPreviewData] = useState<any>(null);
   const [posts, setPosts] = useState<ParsedPost[]>([]);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -104,20 +104,13 @@ export function BulkUploadModal({
     setPreviewData(null);
     setPosts([]);
     setSelectedImages([]);
+    setConfirmError(null);
     setLoading(false);
   };
 
   const handleClose = () => {
     resetState();
     onClose();
-  };
-
-  // Build a default ISO datetime 7 days from now at noon
-  const getDefaultScheduledAt = (index: number): string => {
-    const d = new Date();
-    d.setDate(d.getDate() + 7 + index);
-    d.setHours(12, 0, 0, 0);
-    return d.toISOString();
   };
 
   const getDefaultDate = (index: number): string => {
@@ -139,6 +132,7 @@ export function BulkUploadModal({
 
     try {
       setLoading(true);
+      setConfirmError(null);
       const formData = new FormData();
       formData.append("userId", userId);
       formData.append("file", file);
@@ -211,20 +205,17 @@ export function BulkUploadModal({
     (p) => !p.errors || p.errors.length === 0 || isOnlyDateError(p.errors)
   );
 
-  const checkSchedules = () => {
+  const checkSchedules = (currentTime: number) => {
     for (const p of schedulablePosts) {
       if (!p.assignedDate || !p.assignedTime) return { valid: false, message: "Please set a date and time for all posts." };
       const dateTimeStr = `${p.assignedDate}T${p.assignedTime}:00`;
       const scheduledAt = new Date(dateTimeStr);
-      if (scheduledAt.getTime() <= Date.now()) {
+      if (scheduledAt.getTime() <= currentTime) {
         return { valid: false, message: `Post #${p.rowNumber} is scheduled in the past. Please select a future time.` };
       }
     }
     return { valid: true, message: "" };
   };
-
-  const scheduleValidation = checkSchedules();
-  const hasValidSchedules = scheduleValidation.valid;
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setSelectedImages(Array.from(e.target.files));
@@ -235,6 +226,7 @@ export function BulkUploadModal({
 
     try {
       setLoading(true);
+      setConfirmError(null);
 
       // 1. Upload Images
       let uploadedAssets: any[] = [];
@@ -299,8 +291,27 @@ export function BulkUploadModal({
         throw new Error(errData?.message || errData?.error || "Failed to confirm bulk schedule");
       }
 
+      const confirmData = await confirmRes.json().catch(() => null);
+      const errorCount = Number(confirmData?.errorCount || 0);
+      const successCount = Number(confirmData?.successCount || 0);
+
+      if (errorCount > 0) {
+        const firstError = confirmData?.errors?.[0]?.error;
+        const summary = `${successCount} post${successCount === 1 ? "" : "s"} scheduled; ${errorCount} could not be scheduled.${
+          firstError ? ` ${firstError}` : ""
+        }`;
+        setConfirmError(summary);
+        toast({
+          title: successCount > 0 ? "Bulk schedule partially completed" : "No posts were scheduled",
+          description: summary,
+          variant: "destructive",
+        });
+        if (successCount > 0) await onSuccess();
+        return;
+      }
+
       toast({ title: "Success! 🎉", description: "All posts have been scheduled successfully." });
-      onSuccess();
+      await onSuccess();
       handleClose();
     } catch (err: any) {
       toast({
@@ -460,7 +471,7 @@ export function BulkUploadModal({
                       >
                         {/* Row info */}
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs text-[#6b6b6b] font-mono w-6 text-right">#{post.rowNumber}</span>
+                          <span className="text-xs text-[#6b6b6b] font-mono w-6 text-right">#{i + 1}</span>
                           {hasError ? (
                             <AlertCircle className="h-4 w-4 text-red-400 shrink-0" />
                           ) : (
@@ -524,6 +535,12 @@ export function BulkUploadModal({
           {/* STEP 3: Upload Images */}
           {step === 3 && previewData && (
             <div className="space-y-5">
+              {confirmError && (
+                <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{confirmError}</span>
+                </div>
+              )}
               {previewData.expectedImages && previewData.expectedImages.length > 0 ? (
                 <>
                   <div className="bg-white border border-[#d9d4c9] rounded-xl p-5">
@@ -631,7 +648,8 @@ export function BulkUploadModal({
             {step === 2 && (
               <Button
                 onClick={() => {
-                  if (!hasValidSchedules) {
+                  const scheduleValidation = checkSchedules(Date.now());
+                  if (!scheduleValidation.valid) {
                     toast({ title: "Invalid schedule", description: scheduleValidation.message, variant: "destructive" });
                     return;
                   }

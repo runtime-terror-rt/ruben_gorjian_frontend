@@ -1093,21 +1093,21 @@ export default function EnhancedCalendar({
             </Button>
 
             <Button
-              variant="outline"
-              onClick={() => setBulkUploadModalOpen(true)}
-              className="border-[#d9d4c9] hover:bg-[#e6e1d8] text-[#14110c] hidden sm:flex"
-            >
-              <UploadCloud className="h-4 w-4 mr-2" />
-              Bulk Upload CSV
-            </Button>
-
-            <Button
               onClick={() => handleAddPost()}
               className="bg-[#b08d3e] hover:bg-[#b08d3e] text-black flex-1 sm:flex-initial"
             >
               <Plus className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Create Post</span>
               <span className="sm:hidden">New</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setBulkUploadModalOpen(true)}
+              className="hidden !border-[#d9d4c9] !bg-[#e6e1d8] !text-[#14110c] hover:!bg-[#e6e1d8] sm:flex"
+            >
+              <UploadCloud className="mr-2 h-4 w-4" />
+              Bulk Upload CSV
             </Button>
           </div>
         </div>
