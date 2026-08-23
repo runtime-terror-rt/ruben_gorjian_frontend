@@ -4,7 +4,7 @@
 /* skipped * { box-sizing: border-box; margin: 0; padding: 0; } */
 /* skipped html { scroll-behavior: smooth; scroll-padding-top: 80px; } */
 .talexia-wrapper {
-  font-family: Georgia, 'Cormorant Garamond', serif;
+  font-family: Georgia, "Cormorant Garamond", serif;
   color: #14110c;
   background: #faf8f3;
   line-height: 1.65;
@@ -22,7 +22,7 @@
 }
 
 .talexia-wrapper .page-eyebrow {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   letter-spacing: 3.5px;
   text-transform: uppercase;
@@ -109,7 +109,7 @@
 }
 
 .talexia-wrapper .section-eyebrow {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 3.5px;
   text-transform: uppercase;
@@ -175,7 +175,7 @@
 }
 
 .talexia-wrapper .scope-chip {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10.5px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -210,7 +210,7 @@
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
 .talexia-wrapper .billing-label {
@@ -269,7 +269,7 @@
 }
 
 .talexia-wrapper .billing-annual-note {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px;
   color: #8a6d28;
   letter-spacing: 0.3px;
@@ -313,7 +313,7 @@
 }
 
 .talexia-wrapper .plan-annual-saving {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px;
   letter-spacing: 0.3px;
   color: #7a6220;
@@ -331,7 +331,7 @@
 }
 
 .talexia-wrapper .plan-annual-terms {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   color: #8a857a;
   line-height: 1.5;
@@ -339,7 +339,7 @@
 }
 
 .talexia-wrapper .plan-always-terms {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   color: #8a857a;
   line-height: 1.5;
@@ -376,7 +376,7 @@
   right: 24px;
   background: #b08d3e;
   color: #fff;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 9.5px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
@@ -424,12 +424,12 @@
 .talexia-wrapper .plan-price .per {
   font-size: 14px;
   color: #6b6b6b;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   margin-left: 4px;
 }
 
 .talexia-wrapper .plan-volume {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   letter-spacing: 1.5px;
   color: #8a6d28;
@@ -445,7 +445,7 @@
 }
 
 .talexia-wrapper .plan-desc {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13.5px;
   line-height: 1.7;
   color: #4a4a4a;
@@ -453,7 +453,7 @@
 }
 
 .talexia-wrapper .plan-section-label {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -468,7 +468,7 @@
 }
 
 .talexia-wrapper .plan-feat li {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   line-height: 1.55;
   padding: 8px 0 8px 20px;
@@ -493,7 +493,7 @@
 }
 
 .talexia-wrapper .plan-fee {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px;
   color: #6b6b6b;
   padding: 12px 14px;
@@ -516,7 +516,7 @@
 .talexia-wrapper .btn {
   display: inline-block;
   text-decoration: none;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11.5px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -594,7 +594,7 @@
 
 .talexia-wrapper .comp-row.header {
   background: #f6f1e6;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -609,7 +609,7 @@
 .talexia-wrapper .comp-cell {
   padding: 16px 22px;
   border-right: 1px solid #ece7dc;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13.5px;
   line-height: 1.55;
   color: #1a1a1a;
@@ -695,7 +695,7 @@
   bottom: 16px;
   left: 18px;
   right: 18px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 9.5px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
@@ -709,7 +709,7 @@
 }
 
 .talexia-wrapper .atelier-eyebrow {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 3.5px;
   text-transform: uppercase;
@@ -748,7 +748,7 @@
 }
 
 .talexia-wrapper .atelier-feat li {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   padding: 8px 0 8px 20px;
   color: rgba(255, 255, 255, 0.82);
@@ -782,7 +782,7 @@
 }
 
 .talexia-wrapper .atelier-pricing-label {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 2px;
   color: #c9a44c;
@@ -803,7 +803,7 @@
   background: #c9a44c;
   color: #14110c;
   padding: 15px 28px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11.5px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -864,7 +864,7 @@
 }
 
 .talexia-wrapper .billing-desc {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   line-height: 1.65;
   color: #6b6b6b;
@@ -923,7 +923,7 @@
 }
 
 .talexia-wrapper .faq-ref-arrow {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -939,7 +939,7 @@
 }
 
 .talexia-wrapper .faq-cta a {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -1033,7 +1033,7 @@
 }
 
 .talexia-wrapper .footer-col h4 {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -1051,7 +1051,7 @@
 }
 
 .talexia-wrapper .footer-col a {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
@@ -1070,7 +1070,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11.5px;
   color: rgba(255, 255, 255, 0.4);
 }
