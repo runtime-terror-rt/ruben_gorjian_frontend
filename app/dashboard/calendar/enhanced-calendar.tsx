@@ -27,6 +27,7 @@ import {
   List,
   X,
   LayoutList,
+  UploadCloud,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import clsx from "clsx";
@@ -35,6 +36,7 @@ import { CalendarItem } from "@/components/calendar/calendar-item";
 import { useDrop } from "react-dnd";
 import PostModal from "./post-modal";
 import PostDetailsModal from "./post-details-modal";
+import { BulkUploadModal } from "@/components/calendar/BulkUploadModal";
 
 dayjs.extend(isoWeek);
 dayjs.extend(isSameOrAfter);
@@ -736,12 +738,15 @@ export default function EnhancedCalendar({
     movePost,
     publishPost,
     deletePost,
+    targetUserId,
+    refreshData,
     // Explicitly destructure timezone as userTimezone to be used in children
     timezone: userTimezone,
   } = useCalendar();
   const { session } = useSessionContext();
   const isAdmin = session?.role === "ADMIN" || session?.role === "SUPER_ADMIN";
   const [modalOpen, setModalOpen] = useState(false);
+  const [bulkUploadModalOpen, setBulkUploadModalOpen] = useState(false);
   const [modalDate, setModalDate] = useState<Dayjs | null>(null);
   const [editingPost, setEditingPost] = useState<{
     id: string;
@@ -1095,6 +1100,15 @@ export default function EnhancedCalendar({
               <span className="hidden sm:inline">Create Post</span>
               <span className="sm:hidden">New</span>
             </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setBulkUploadModalOpen(true)}
+              className="hidden !border-[#d9d4c9] !bg-[#e6e1d8] !text-[#14110c] hover:!bg-[#e6e1d8] sm:flex"
+            >
+              <UploadCloud className="mr-2 h-4 w-4" />
+              Bulk Upload CSV
+            </Button>
           </div>
         </div>
 
@@ -1221,6 +1235,13 @@ export default function EnhancedCalendar({
           onDelete={useCalendar().deletePost}
           posts={posts}
           loading={loading}
+        />
+
+        <BulkUploadModal
+          isOpen={bulkUploadModalOpen}
+          onClose={() => setBulkUploadModalOpen(false)}
+          userId={targetUserId}
+          onSuccess={() => refreshData()}
         />
       </div>
     </DndProvider>

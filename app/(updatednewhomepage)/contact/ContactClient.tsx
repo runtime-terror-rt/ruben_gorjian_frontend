@@ -26,7 +26,7 @@ export default function ContactClient() {
     if (!formRef.current) return;
 
     const formData = new FormData(formRef.current);
-    
+
     // Basic client-side validation
     const required = ['company', 'fullname', 'email', 'subject', 'message'];
     for (const field of required) {
@@ -42,27 +42,67 @@ export default function ContactClient() {
       return;
     }
 
-    const token = formData.get('cf-turnstile-response');
-    if (!token) {
-      setStatus({ type: 'error', msg: 'Please complete the verification, then send again.' });
-      return;
+    // Only enforce Turnstile when the site key is configured
+    const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (turnstileSiteKey && turnstileSiteKey !== 'YOUR_TURNSTILE_SITE_KEY') {
+      const token = formData.get('cf-turnstile-response');
+      if (!token) {
+        setStatus({ type: 'error', msg: 'Please complete the verification, then send again.' });
+        return;
+      }
     }
 
+    // Send the honeypot to the backend, matching the legacy contact form.
+    // Reporting success here would skip the API request entirely.
+    const honeypot = formData.get('website_url')?.toString().trim() || '';
     setIsSubmitting(true);
     setStatus(null);
 
+    // Map form fields to backend payload
+    const payload = {
+      fullName: formData.get('fullname')?.toString().trim() || '',
+      businessName: formData.get('company')?.toString().trim() || '',
+      email,
+      websiteOrHandle: '',
+      interests: ['full-management'],
+      postsPerMonth: '100',
+      message: `Subject: ${formData.get('subject')?.toString().trim() || ''}\n\n${formData.get('message')?.toString().trim() || ''}`,
+      source: 'contact-page',
+      honeypot,
+    };
+
     try {
-      // Simulated delay since there is no backend connection right now
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use the same-origin route so the browser is not blocked by the
+      // external API's CORS policy. The route forwards this to Talexia's API.
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const rawText = await response.text().catch(() => '');
+        let errMessage = 'Unable to submit contact form. Please try again.';
+        try {
+          const errorBody = JSON.parse(rawText);
+          errMessage = errorBody?.error || errorBody?.message || errMessage;
+        } catch {
+          if (rawText) errMessage = rawText;
+        }
+        console.error(`[contact] backend error ${response.status}:`, errMessage);
+        setStatus({ type: 'error', msg: errMessage });
+        return;
+      }
 
       formRef.current.reset();
       // Reset turnstile
       if (window.turnstile) {
-        try { window.turnstile.reset(); } catch (err) {}
+        try { window.turnstile.reset(); } catch {}
       }
       setStatus({ type: 'success', msg: "Thank you — your message has been sent. We'll reply personally, usually within two business days." });
     } catch (err) {
-      setStatus({ type: 'error', msg: 'Something went wrong sending your message. Please try again in a moment.' });
+      console.error('[contact] fetch failed:', err);
+      setStatus({ type: 'error', msg: 'Unable to send message right now. Please try again later.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -140,10 +180,12 @@ export default function ContactClient() {
                 <input type="text" id="website_url" name="website_url" tabIndex={-1} autoComplete="off" />
               </div>
 
-              {/* Cloudflare Turnstile widget */}
-              <div className="turnstile-wrap">
-                <div className="cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "YOUR_TURNSTILE_SITE_KEY"} data-theme="light"></div>
-              </div>
+              {/* Cloudflare Turnstile widget — only rendered when site key is configured */}
+              {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== 'YOUR_TURNSTILE_SITE_KEY' && (
+                <div className="turnstile-wrap">
+                  <div className="cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} data-theme="light"></div>
+                </div>
+              )}
 
               <button type="submit" className="form-submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Sending…' : 'Send message'}

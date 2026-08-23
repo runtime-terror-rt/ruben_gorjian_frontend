@@ -13,11 +13,50 @@ export default function BrandBriefPage() {
   const [brandName, setBrandName] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const router = useRouter();
-  const { updateSession, session } = useSessionContext();
+  const { updateSession, session, loading } = useSessionContext();
 
   React.useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
   }, []);
+
+  // Strict Security Guard: Redirect based on conditions
+  React.useEffect(() => {
+    if (loading) return;
+    
+    if (!session) {
+      router.push("/login?returnTo=/brandbrief");
+      return;
+    }
+
+    if (session.brandBriefCompleted || session.brandBriefOnboardingCompleted) {
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    const subscriptionStatus = session.subscription?.status;
+    const pendingPlanCode = session.pendingPlanCode;
+    const role = session.role;
+
+    if (role === "ADMIN" || role === "SUPER_ADMIN") {
+      router.push("/admin");
+      return;
+    }
+
+    if (
+      subscriptionStatus === "INCOMPLETE" ||
+      (pendingPlanCode &&
+        subscriptionStatus !== "ACTIVE" &&
+        subscriptionStatus !== "TRIALING")
+    ) {
+      router.push("/onboarding");
+      return;
+    }
+
+    if (!session.subscription && !pendingPlanCode) {
+      router.push("/pricing");
+      return;
+    }
+  }, [session, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -121,6 +160,33 @@ export default function BrandBriefPage() {
       setIsSubmitting(false);
     }
   };
+
+  // ==================== STRICT RENDER BLOCKING ====================
+  // If loading session data, show a spinner (no UI leak)
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#fdfaf5]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#b08d3e]" />
+      </div>
+    );
+  }
+
+  // If no session, wait for redirect
+  if (!session) return null;
+
+  // Evaluate business rules for rendering
+  const subscriptionStatus = session.subscription?.status;
+  const pendingPlanCode = session.pendingPlanCode;
+  
+  const isPaid = 
+    (session.subscription && subscriptionStatus !== "INCOMPLETE") ||
+    (pendingPlanCode && (subscriptionStatus === "ACTIVE" || subscriptionStatus === "TRIALING"));
+
+  // If not paid, wait for redirect
+  if (!isPaid && !session.brandBriefCompleted && session.role !== "ADMIN" && session.role !== "SUPER_ADMIN") {
+    return null;
+  }
+  // ================================================================
 
   return (
     <div className="brandbrief-wrapper">

@@ -17,6 +17,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import {
   FaFacebook as Facebook,
   FaInstagram as Instagram,
+  FaLinkedinIn as Linkedin,
 } from "react-icons/fa";
 import { SiTiktok as Tiktok } from "react-icons/si";
 import { PlatformUpsellModal } from "@/components/dashboard/PlatformUpsellModal";
@@ -33,7 +34,7 @@ interface PlanInfo {
 
 interface SocialAccount {
   id: string;
-  platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK";
+  platform: "INSTAGRAM" | "FACEBOOK" | "TIKTOK" | "LINKEDIN";
   displayName?: string | null;
   externalAccountId?: string | null;
   createdAt?: string;
@@ -200,6 +201,8 @@ function SocialPageInner() {
         credentials: "include",
         body: JSON.stringify({
           platform: platform.toLowerCase(),
+          redirectUrl: `${window.location.origin}/social/callback`,
+          showCalendar: false,
           timestamp: Date.now(), // Add timestamp to prevent caching
         }),
       });
@@ -324,6 +327,7 @@ function SocialPageInner() {
   const facebookAccount = accounts.find((acc) => acc.platform === "FACEBOOK");
   const instagramAccount = accounts.find((acc) => acc.platform === "INSTAGRAM");
   const tiktokAccount = accounts.find((acc) => acc.platform === "TIKTOK");
+  const linkedinAccount = accounts.find((acc) => acc.platform === "LINKEDIN");
 
   if (loading) {
     return (
@@ -599,9 +603,78 @@ function SocialPageInner() {
             )}
           </CardContent>
         </Card>
+
+        <Card
+          className={`transition-all duration-200 ${linkedinAccount ? "border-[#b08d3e]/40 bg-white shadow-sm" : "border-[#d9d4c9] bg-[#ffffff]/60"}`}
+        >
+          <CardHeader className="pb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-xl bg-[#0A66C2] text-white shadow-sm">
+                <Linkedin className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-[#14110c]">LinkedIn</CardTitle>
+              </div>
+              {linkedinAccount && (
+                <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
+                  ● Connected
+                </span>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {linkedinAccount ? (
+              <div className="space-y-4">
+                <div className="p-3 rounded-lg bg-[#faf8f3] border border-[#d9d4c9]">
+                  <p className="text-sm font-medium text-[#14110c]">
+                    @
+                    {linkedinAccount.displayName ||
+                      linkedinAccount.externalAccountId ||
+                      "linkedin-account"}
+                  </p>
+                  <p className="text-xs text-[#b08d3e]">
+                    Connected{" "}
+                    {linkedinAccount.createdAt
+                      ? new Date(linkedinAccount.createdAt).toLocaleDateString()
+                      : "just now"}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => disconnectAccount(linkedinAccount.id)}
+                  className="w-full !bg-[#d9d4c9] !border-[#b08d3e] hover:!bg-[#d9d4c9] hover:!border-[#b08d3e]"
+                >
+                  <Unlink className="h-4 w-4 mr-2" />
+                  Disconnect
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {connectErrors.LINKEDIN && (
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-600">
+                    {connectErrors.LINKEDIN}
+                  </div>
+                )}
+                <p className="text-sm text-[#6b6b6b]">
+                  Connect LinkedIn to schedule and publish posts
+                </p>
+                <Button
+                  onClick={() => connectPlatform("LINKEDIN")}
+                  disabled={connectingPlatform === "LINKEDIN"}
+                  className={`w-full ${primaryButtonClass}`}
+                >
+                  {connectingPlatform === "LINKEDIN"
+                    ? "Connecting..."
+                    : "Connect LinkedIn"}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {(facebookAccount || instagramAccount || tiktokAccount) && (
+      {(facebookAccount || instagramAccount || tiktokAccount || linkedinAccount) && (
         <Card className="border-[#d9d4c9] bg-[#ffffff]/60">
           <CardHeader>
             <CardTitle className="text-[#14110c]">Connected Accounts</CardTitle>
@@ -685,6 +758,32 @@ function SocialPageInner() {
                     variant="outline"
                     size="icon-sm"
                     onClick={() => disconnectAccount(tiktokAccount.id)}
+                  >
+                    <Unlink className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
+              {linkedinAccount && (
+                <div className="flex items-center justify-between p-3 border border-[#b08d3e]/30 rounded-lg bg-white">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-1.5 rounded-lg bg-[#0A66C2] text-white">
+                      <Linkedin className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[#14110c]">
+                        @
+                        {linkedinAccount.displayName ||
+                          linkedinAccount.externalAccountId ||
+                          "linkedin-account"}
+                      </p>
+                      <p className="text-xs text-[#b08d3e]">LinkedIn</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => disconnectAccount(linkedinAccount.id)}
                   >
                     <Unlink className="h-4 w-4" />
                   </Button>

@@ -9,6 +9,7 @@ interface ContactPayload {
   postsPerMonth?: string;
   message?: string | null;
   source?: string;
+  honeypot?: string;
 }
 
 export async function POST(req: Request) {
@@ -23,13 +24,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const backendBase = process.env.BACKEND_API_URL;
-    if (!backendBase) {
-      return NextResponse.json(
-        { error: "Backend API is not configured." },
-        { status: 500 }
-      );
-    }
+    const backendBase = process.env.BACKEND_API_URL || "https://api.talexia.us";
 
     const payload = {
       fullName,
@@ -40,10 +35,11 @@ export async function POST(req: Request) {
       postsPerMonth: postsPerMonth || "100",
       message: message || "",
       source: body.source || "landing",
+      honeypot: body.honeypot || "",
     };
 
     const response = await fetch(
-      `${backendBase.replace(/\/$/, "")}/api/contact`,
+      `${backendBase.replace(/\/$/, "")}/api/contact/submit-inquiry`,
       {
         method: "POST",
         headers: {
