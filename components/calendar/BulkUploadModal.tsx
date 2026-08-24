@@ -587,12 +587,31 @@ export function BulkUploadModal({
                     />
 
                     {selectedImages.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {selectedImages.map((f, i) => (
-                          <span key={i} className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-200 font-medium">
-                            <CheckCircle2 className="h-3 w-3" />
-                            {f.name}
-                          </span>
+                          <div key={i} className="group relative flex flex-col border border-emerald-200 rounded-xl bg-emerald-50/30 p-2 overflow-hidden transition-all hover:border-emerald-300 hover:shadow-sm">
+                            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden mb-2 border border-emerald-100 bg-white flex items-center justify-center">
+                              {f.type.startsWith("image/") ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={URL.createObjectURL(f)}
+                                  alt={f.name}
+                                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                />
+                              ) : (
+                                <div className="flex flex-col items-center justify-center">
+                                  <ImageIconLucide className="h-8 w-8 text-emerald-200 mb-1" />
+                                  <span className="text-[9px] text-emerald-600 font-medium uppercase tracking-wider">Video</span>
+                                </div>
+                              )}
+                              <div className="absolute top-1.5 right-1.5 bg-white rounded-full shadow-sm">
+                                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                              </div>
+                            </div>
+                            <span className="text-xs text-emerald-800 font-medium truncate w-full text-center px-1" title={f.name}>
+                              {f.name}
+                            </span>
+                          </div>
                         ))}
                       </div>
                     )}

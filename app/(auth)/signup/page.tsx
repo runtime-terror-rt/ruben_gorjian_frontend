@@ -41,11 +41,11 @@ function SignupPageInner() {
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
+    // Honeypot — bots fill this; real users never see it
+    const websiteUrl = String(form.get("websiteUrl") || "");
 
     // Strictly get plan from query params to avoid auto-selecting stale localStorage plans
     const pendingPlanCode = searchParams.get("plan");
-
-
 
     // If no plan selected, redirect to pricing
     if (!pendingPlanCode) {
@@ -66,6 +66,7 @@ function SignupPageInner() {
           email,
           password,
           pendingPlanCode,
+          websiteUrl,
         }),
       });
       const body = await res.json();
@@ -155,6 +156,18 @@ function SignupPageInner() {
                 )}
               </button>
             </div>
+          </div>
+
+          {/* Honeypot: hidden from real users; bots often fill it */}
+          <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
+            <label htmlFor="websiteUrl">Do not fill this field</label>
+            <input
+              type="text"
+              id="websiteUrl"
+              name="websiteUrl"
+              tabIndex={-1}
+              autoComplete="off"
+            />
           </div>
 
           <button
