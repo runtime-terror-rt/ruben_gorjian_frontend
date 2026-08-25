@@ -721,8 +721,10 @@ function ListView({
 
 export default function EnhancedCalendar({
   clientEmail,
+  isAdminView = false,
 }: {
   clientEmail?: string;
+  isAdminView?: boolean;
 }) {
   const {
     display,
@@ -740,7 +742,6 @@ export default function EnhancedCalendar({
     deletePost,
     targetUserId,
     refreshData,
-    // Explicitly destructure timezone as userTimezone to be used in children
     timezone: userTimezone,
   } = useCalendar();
   const { session } = useSessionContext();
@@ -986,7 +987,7 @@ export default function EnhancedCalendar({
           </div>
           <div className="mt-2 pt-2 border-t border-amber-500/20">
             <p className="text-[10px] text-amber-700/70 font-sans italic">
-              Tip: If "Current Time (Locked)" doesn't match your wall clock,
+              Tip: If \"Current Time (Locked)\" doesn't match your wall clock,
               check your Business Settings.
             </p>
           </div>
@@ -1101,14 +1102,16 @@ export default function EnhancedCalendar({
               <span className="sm:hidden">New</span>
             </Button>
 
-            <Button
-              variant="outline"
-              onClick={() => setBulkUploadModalOpen(true)}
-              className="hidden !border-[#d9d4c9] !bg-[#e6e1d8] !text-[#14110c] hover:!bg-[#e6e1d8] sm:flex"
-            >
-              <UploadCloud className="mr-2 h-4 w-4" />
-              Bulk Upload CSV
-            </Button>
+            {isAdminView && (
+              <Button
+                variant="outline"
+                onClick={() => setBulkUploadModalOpen(true)}
+                className="hidden !border-[#d9d4c9] !bg-[#e6e1d8] !text-[#14110c] hover:!bg-[#e6e1d8] sm:flex"
+              >
+                <UploadCloud className="mr-2 h-4 w-4" />
+                Bulk Upload CSV
+              </Button>
+            )}
           </div>
         </div>
 
@@ -1237,12 +1240,14 @@ export default function EnhancedCalendar({
           loading={loading}
         />
 
-        <BulkUploadModal
-          isOpen={bulkUploadModalOpen}
-          onClose={() => setBulkUploadModalOpen(false)}
-          userId={targetUserId}
-          onSuccess={() => refreshData()}
-        />
+        {isAdminView && (
+          <BulkUploadModal
+            isOpen={bulkUploadModalOpen}
+            onClose={() => setBulkUploadModalOpen(false)}
+            userId={targetUserId}
+            onSuccess={() => refreshData()}
+          />
+        )}
       </div>
     </DndProvider>
   );
