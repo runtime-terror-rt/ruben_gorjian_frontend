@@ -240,50 +240,54 @@ export default function DashboardPage() {
         <div className="rounded-xl bg-[#ffffff] border border-[#d9d4c9] p-6 text-[#14110c]">
           <div className="flex justify-between items-center mb-4">
             <span className="text-xs bg-[#b08d3e]/10 text-[#8a6d28] border border-[#b08d3e]/30 px-2 py-1 rounded font-medium">
-              {subscription?.status ?? "ACTIVE"} PLAN
+              {overview?.plan?.status ?? "ACTIVE"} PLAN
             </span>
             <span className="text-xs text-[#6b6b6b]">
-              {subscription?.billingCycle ?? "MONTHLY"}
+              {overview?.plan?.billingCycle ?? "MONTHLY"}
             </span>
           </div>
 
-          <h2 className="text-2xl font-bold mb-2">
-            {subscription?.name ?? "N/A"}
+          <h2 className="text-2xl font-bold mb-2 capitalize">
+            {overview?.plan?.planCode?.toLowerCase() ?? "N/A"}
           </h2>
           <p className="text-xs text-[#6b6b6b] mb-6">
-            CODE: {subscription?.planCode ?? "N/A"}
+            CODE: {overview?.plan?.planCode ?? "N/A"}
           </p>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-[#6b6b6b] text-xs">SUBSCRIPTION PERIOD</p>
+              <p className="text-[#6b6b6b] text-xs uppercase">Subscription Period</p>
               <p className="font-semibold">
-                {subscription?.currentPeriodStart ? dayjs.utc(subscription.currentPeriodStart).format("M/D/YYYY") : "N/A"}{" "}
+                {overview?.usage?.periodStart ? dayjs.utc(overview.usage.periodStart).format("M/D/YYYY") : "N/A"}{" "}
                 -{" "}
-                {subscription?.currentPeriodEnd ? dayjs.utc(subscription.currentPeriodEnd).format("M/D/YYYY") : "N/A"}
+                {overview?.usage?.periodEnd ? dayjs.utc(overview.usage.periodEnd).format("M/D/YYYY") : "N/A"}
               </p>
             </div>
 
             <div>
-              <p className="text-[#6b6b6b] text-xs">PAYMENT</p>
-              <p className="font-semibold">{subscription?.billingCycle ?? "MONTHLY"}</p>
+              <p className="text-[#6b6b6b] text-xs uppercase">Payment</p>
+              <p className="font-semibold">{overview?.plan?.billingCycle ?? "MONTHLY"}</p>
             </div>
           </div>
 
           {/* FEATURES */}
-          {/* this is test */}
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
-              value={subscription?.platformLimit ?? 0}
+              value={overview?.plan?.platformLimit ?? 0}
             />
-            <FeatureBox label="Posts" value={subscription?.basePostQuota ?? 0} />
-            <FeatureBox label="Video" value={subscription?.videoAddonEnabled ? "Enabled" : "Disabled"} />
+            <FeatureBox label="Post Quota" value={overview?.plan?.postQuota ?? 0} />
             <FeatureBox
-              label="Video Session Hours"
-              value={subscription?.videoSessionHours ?? 0}
+              label="Price Type"
+              value={
+                overview?.plan?.priceType
+                  ? overview.plan.priceType.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
+                  : "N/A"
+              }
             />
-            <FeatureBox label="Days Left" value={subscription?.daysLeft ?? 0} />
+            <FeatureBox label="Post Limit Type" value={overview?.plan?.postLimitType ?? "N/A"} />
+            <FeatureBox label="Visual Quota" value={overview?.plan?.visualQuota ?? 0} />
+            <FeatureBox label="Days Left" value={overview?.plan?.daysLeft ?? 0} />
           </div>
         </div>
 

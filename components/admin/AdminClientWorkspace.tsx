@@ -149,6 +149,7 @@ export default function AdminClientWorkspace() {
 
       {/* Main Workspace Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        {/*
         <TabsList className="bg-[#f6f1e6] border border-[#d9d4c9] p-1.5 rounded-2xl h-auto">
           <TabsTrigger value="calendar" className="rounded-xl px-6 py-2.5 text-[13.5px] font-semibold text-[#6b6b6b] data-[state=active]:bg-[#b08d3e] data-[state=active]:text-[#14110c] transition-all">
             <CalendarIcon className="h-4 w-4 mr-2" />
@@ -159,14 +160,16 @@ export default function AdminClientWorkspace() {
             Book Session
           </TabsTrigger>
         </TabsList>
+        */}
 
         <TabsContent value="calendar" className="space-y-6 outline-none">
           <CalendarProvider targetUserId={selectedClient.id} clientEmail={selectedClient.email}>
             <div className="rounded-2xl border border-[#d9d4c9] bg-[#ffffff]/20 backdrop-blur-sm p-6">
-              <EnhancedCalendar clientEmail={selectedClient.email} />
+              <EnhancedCalendar clientEmail={selectedClient.email} isAdminView={true} />
             </div>
           </CalendarProvider>
         </TabsContent>
+        {/*
         <TabsContent value="sessions" className="space-y-8 outline-none">
           <div className="grid grid-cols-1 gap-8">
             <div className="w-full" ref={composerRef}>
@@ -201,6 +204,7 @@ export default function AdminClientWorkspace() {
             </div>
           </div>
         </TabsContent>
+        */}
       </Tabs>
 
       <ClientSelectionModal
