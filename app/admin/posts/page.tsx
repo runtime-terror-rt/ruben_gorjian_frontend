@@ -277,38 +277,17 @@ export default function AdminPostsPage() {
     if (!postToBeDeleted) return;
 
     try {
-      // The user wants 'Delete' to count as 'Failed' in their dashboard
-      // and then disappear from the calendar grid.
-      // So instead of hard DELETE, we PATCH status to FAILED first, then we could delete or just let it be.
-      // But to satisfy the "failed count" requirement, it must have status FAILED.
-
       const res = await fetch(`/api/scheduler/posts/${postToBeDeleted}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: "DELETE",
         credentials: "include",
-        body: JSON.stringify({
-          data: JSON.stringify({
-            status: "FAILED",
-            failureReason: "Rejected by Administrator",
-            adminReason: "Rejected by Administrator",
-          }),
-        }),
       });
 
       if (res.ok) {
-        toast({
-          title: "Success",
-          description: "Post rejected and marked as Failed",
-        });
+        toast({ title: "Success", description: "Post deleted successfully" });
         fetchPosts();
       } else {
-        // Fallback to delete if PATCH fails or if backend doesn't support status update via PATCH
-        await fetch(`/api/scheduler/posts/${postToBeDeleted}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
-        toast({ title: "Success", description: "Post removed from system" });
-        fetchPosts();
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to delete post");
       }
     } catch (err: any) {
       toast({

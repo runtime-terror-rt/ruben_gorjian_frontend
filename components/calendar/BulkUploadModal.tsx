@@ -18,6 +18,7 @@ import {
   CalendarIcon,
   ChevronRight,
   ArrowLeft,
+  X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -43,11 +44,12 @@ interface ParsedPost {
 }
 
 // Stepper component
-function Stepper({ currentStep }: { currentStep: 1 | 2 | 3 }) {
+function Stepper({ currentStep }: { currentStep: 1 | 2 | 3 | 4 }) {
   const steps = [
     { label: "Upload CSV", num: 1 },
     { label: "Review & Schedule", num: 2 },
     { label: "Upload Images", num: 3 },
+    { label: "Final Edit & Confirm", num: 4 },
   ];
   return (
     <div className="flex items-center gap-0 px-6 pt-5 pb-1">
@@ -88,11 +90,12 @@ export function BulkUploadModal({
   userId,
   onSuccess,
 }: BulkUploadModalProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [loading, setLoading] = useState(false);
   const [previewData, setPreviewData] = useState<any>(null);
   const [posts, setPosts] = useState<ParsedPost[]>([]);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [uploadedAssetsData, setUploadedAssetsData] = useState<any[]>([]);
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -104,6 +107,7 @@ export function BulkUploadModal({
     setPreviewData(null);
     setPosts([]);
     setSelectedImages([]);
+    setUploadedAssetsData([]);
     setConfirmError(null);
     setLoading(false);
   };
@@ -186,9 +190,12 @@ export function BulkUploadModal({
     }
   };
 
-  const updatePostSchedule = (index: number, field: "assignedDate" | "assignedTime", value: string) => {
+  const updatePostField = (index: number, field: keyof ParsedPost, value: any) => {
     setPosts((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
   };
+
+  const normalizeMediaMatch = (value: string) =>
+    value ? value.trim().toLowerCase().replace(/\.[a-z0-9]+$/i, "") : "";
 
   // "Missing Date or Time" is a fixable error — user provides dates via pickers
   const DATE_ERROR_KEYWORDS = ["missing date", "missing time", "date or time", "date", "time"];
@@ -218,10 +225,37 @@ export function BulkUploadModal({
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setSelectedImages(Array.from(e.target.files));
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      const expectedNames = previewData?.expectedImages?.map(normalizeMediaMatch) || [];
+      
+      const validFiles = files.filter(f => expectedNames.includes(normalizeMediaMatch(f.name)));
+      
+      if (validFiles.length < files.length) {
+        setConfirmError("Some selected files are not in the required images list and were ignored.");
+      } else {
+        setConfirmError(null);
+      }
+
+      setSelectedImages((prev) => {
+        const newFiles = [...prev];
+        validFiles.forEach(file => {
+          const exists = newFiles.some(f => normalizeMediaMatch(f.name) === normalizeMediaMatch(file.name));
+          if (!exists) newFiles.push(file);
+        });
+        return newFiles;
+      });
+      
+      // Reset input so the same file can be selected again if removed
+      if (e.target) e.target.value = "";
+    }
   };
 
-  const handleConfirm = async () => {
+  const removeSelectedImage = (index: number) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUploadImages = async () => {
     if (!userId || !previewData) return;
 
     try {
@@ -248,12 +282,57 @@ export function BulkUploadModal({
         const uploadData = await uploadRes.json();
         uploadedAssets = Array.isArray(uploadData)
           ? uploadData
-          : uploadData.data || uploadData.assets || [];
+          : uploadData.media || uploadData.data || uploadData.assets || [];
+        
+        // Also capture nameToId if the backend provides it for bulletproof mapping
+        if (uploadData.nameToId) {
+          (uploadedAssets as any).nameToId = uploadData.nameToId;
+        }
       }
+      
+      setUploadedAssetsData(uploadedAssets);
+      setStep(4);
+    } catch (err: any) {
+      toast({
+        title: "Upload Failed",
+        description: err.message || "An error occurred during image upload.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const allAssetIds = uploadedAssets
-        .map((asset: any) => (typeof asset === "string" ? asset : asset.id || asset._id))
-        .filter(Boolean);
+  const handleConfirm = async () => {
+    if (!userId || !previewData) return;
+
+    try {
+      setLoading(true);
+      setConfirmError(null);
+
+      const uploadedAssets = uploadedAssetsData;
+      const backendNameToId = (uploadedAssets as any).nameToId;
+
+      // Map original filename to the uploaded asset ID
+      const assetMap = new Map<string, string>();
+      
+      if (backendNameToId) {
+        // Use the highly reliable map provided by the backend
+        Object.entries(backendNameToId).forEach(([name, id]) => {
+          if (typeof id === "string") {
+            assetMap.set(normalizeMediaMatch(name), id);
+          }
+        });
+      } else {
+        // Fallback to manual mapping
+        uploadedAssets.forEach((asset: any, index: number) => {
+          const id = typeof asset === "string" ? asset : (asset.id || asset._id);
+          const name = asset.originalFileName || asset.originalName || asset.filename || asset.name || (selectedImages[index] ? selectedImages[index].name : null);
+          if (id && name) {
+            assetMap.set(normalizeMediaMatch(name), id);
+          }
+        });
+      }
 
       // Build valid ISO datetimes from the user-assigned date + time
       // Include ALL posts user can fix (skip only hard non-date errors)
@@ -261,11 +340,19 @@ export function BulkUploadModal({
         const dateTimeStr = `${post.assignedDate}T${post.assignedTime}:00`;
         const scheduledAt = new Date(dateTimeStr).toISOString();
 
+        const postAssetIds = [];
+        if (post.imageFilename) {
+          const matchingId = assetMap.get(normalizeMediaMatch(post.imageFilename));
+          if (matchingId) {
+            postAssetIds.push(matchingId);
+          }
+        }
+
         return {
           caption: post.caption,
           hashtags: post.hashtags || [],
           scheduledAt,
-          assetIds: allAssetIds,
+          assetIds: postAssetIds,
           imageFilename: post.imageFilename,
         };
       });
@@ -296,17 +383,20 @@ export function BulkUploadModal({
       const successCount = Number(confirmData?.successCount || 0);
 
       if (errorCount > 0) {
-        const firstError = confirmData?.errors?.[0]?.error;
-        const summary = `${successCount} post${successCount === 1 ? "" : "s"} scheduled; ${errorCount} could not be scheduled.${
-          firstError ? ` ${firstError}` : ""
-        }`;
-        setConfirmError(summary);
+        const firstError = confirmData?.errors?.[0]?.error || "Unknown error";
+        const summary = `${successCount} post(s) scheduled successfully. ${errorCount} failed.`;
+        
+        setConfirmError(`${summary} Reason: ${firstError}`);
+        
         toast({
-          title: successCount > 0 ? "Bulk schedule partially completed" : "No posts were scheduled",
-          description: summary,
+          title: successCount > 0 ? "Partially Scheduled" : "Scheduling Failed",
+          description: `Reason: ${firstError}`,
           variant: "destructive",
         });
-        if (successCount > 0) await onSuccess();
+        
+        if (successCount > 0) {
+          await onSuccess();
+        }
         return;
       }
 
@@ -509,7 +599,7 @@ export function BulkUploadModal({
                                 type="date"
                                 value={post.assignedDate || ""}
                                 min={new Date().toISOString().slice(0, 10)}
-                                onChange={(e) => updatePostSchedule(i, "assignedDate", e.target.value)}
+                                onChange={(e) => updatePostField(i, "assignedDate", e.target.value)}
                                 className="text-xs border border-[#d9d4c9] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-[#b08d3e] focus:ring-1 focus:ring-[#b08d3e]/20 w-36"
                               />
                             </div>
@@ -518,7 +608,7 @@ export function BulkUploadModal({
                               <input
                                 type="time"
                                 value={post.assignedTime || ""}
-                                onChange={(e) => updatePostSchedule(i, "assignedTime", e.target.value)}
+                                onChange={(e) => updatePostField(i, "assignedTime", e.target.value)}
                                 className="text-xs border border-[#d9d4c9] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-[#b08d3e] focus:ring-1 focus:ring-[#b08d3e]/20 w-24"
                               />
                             </div>
@@ -551,7 +641,7 @@ export function BulkUploadModal({
                     <div className="flex flex-wrap gap-2 mb-5">
                       {previewData.expectedImages.map((img: string, i: number) => {
                         const isUploaded = selectedImages.some(
-                          (f) => f.name.toLowerCase() === img.toLowerCase()
+                          (f) => normalizeMediaMatch(f.name) === normalizeMediaMatch(img)
                         );
                         return (
                           <span
@@ -604,9 +694,16 @@ export function BulkUploadModal({
                                   <span className="text-[9px] text-emerald-600 font-medium uppercase tracking-wider">Video</span>
                                 </div>
                               )}
-                              <div className="absolute top-1.5 right-1.5 bg-white rounded-full shadow-sm">
-                                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeSelectedImage(i);
+                                }}
+                                className="absolute top-1.5 right-1.5 bg-white/90 hover:bg-red-50 hover:text-red-600 rounded-full shadow-sm p-1 transition-colors z-10"
+                                title="Remove image"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
                             </div>
                             <span className="text-xs text-emerald-800 font-medium truncate w-full text-center px-1" title={f.name}>
                               {f.name}
@@ -637,6 +734,100 @@ export function BulkUploadModal({
               )}
             </div>
           )}
+
+          {/* STEP 4: Final Review & Confirm */}
+          {step === 4 && previewData && (
+            <div className="space-y-5">
+              {confirmError && (
+                <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{confirmError}</span>
+                </div>
+              )}
+              
+              <div className="bg-white border border-[#d9d4c9] rounded-xl overflow-hidden">
+                <div className="bg-[#f6f1e6] px-4 py-3 border-b border-[#d9d4c9]">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-[#14110c]">Final Edit & Confirm ({schedulablePosts.length} posts)</h3>
+                  </div>
+                </div>
+                <div className="max-h-[360px] overflow-y-auto divide-y divide-[#d9d4c9]/50 p-2">
+                  {schedulablePosts.map((post, i) => {
+                    const dateTimeStr = `${post.assignedDate}T${post.assignedTime}:00`;
+                    
+                    // Match image if available to show preview
+                    const uploadedImageFile = post.imageFilename 
+                      ? selectedImages.find(f => normalizeMediaMatch(f.name) === normalizeMediaMatch(post.imageFilename!))
+                      : null;
+                      
+                    let previewUrl = null;
+                    let isVideo = false;
+                    
+                    if (uploadedImageFile) {
+                      previewUrl = URL.createObjectURL(uploadedImageFile);
+                      isVideo = !uploadedImageFile.type.startsWith("image/");
+                    } else if (post.imageFilename) {
+                      // Fallback to backend data
+                      const matchedAsset = uploadedAssetsData.find(a => 
+                        normalizeMediaMatch(a.originalFileName || "") === normalizeMediaMatch(post.imageFilename!) ||
+                        normalizeMediaMatch(a.originalName || "") === normalizeMediaMatch(post.imageFilename!)
+                      );
+                      if (matchedAsset && matchedAsset.previewUrl) {
+                        previewUrl = matchedAsset.previewUrl;
+                        isVideo = matchedAsset.type === "VIDEO" || matchedAsset.mediaType === "VIDEO";
+                      }
+                    }
+
+                    return (
+                      <div key={i} className="p-3 flex gap-4">
+                        {previewUrl ? (
+                          <div className="shrink-0 w-20 h-20 bg-[#f6f1e6] rounded-lg overflow-hidden border border-[#d9d4c9]">
+                            {!isVideo ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={previewUrl} alt="preview" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center">
+                                <ImageIconLucide className="h-6 w-6 text-[#b08d3e] mb-1" />
+                                <span className="text-[8px] font-bold">VIDEO</span>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="shrink-0 w-20 h-20 bg-[#f6f1e6] rounded-lg overflow-hidden border border-[#d9d4c9] flex items-center justify-center">
+                             <ImageIconLucide className="h-6 w-6 text-[#6b6b6b]/50" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0 flex flex-col gap-2 justify-center">
+                          <textarea
+                            value={post.caption || ""}
+                            onChange={(e) => updatePostField(i, "caption", e.target.value)}
+                            rows={2}
+                            placeholder="Caption..."
+                            className="text-xs border border-[#d9d4c9] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-[#b08d3e] focus:ring-1 focus:ring-[#b08d3e]/20 w-full resize-y"
+                          />
+                          <input
+                            type="text"
+                            value={post.hashtags?.join(" ") || ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const tags = val.split(/[\s,]+/).map(t => t.trim()).filter(Boolean);
+                              updatePostField(i, "hashtags", tags);
+                            }}
+                            placeholder="#hashtags"
+                            className="text-xs border border-[#d9d4c9] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-[#b08d3e] focus:ring-1 focus:ring-[#b08d3e]/20 w-full"
+                          />
+                          <div className="flex items-center gap-2 text-xs text-[#6b6b6b] mt-1">
+                            <CalendarIcon className="h-3 w-3" />
+                            {new Date(dateTimeStr).toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -645,7 +836,7 @@ export function BulkUploadModal({
             {step > 1 && (
               <Button
                 variant="outline"
-                onClick={() => setStep((s) => (s === 3 ? 2 : 1) as 1 | 2 | 3)}
+                onClick={() => setStep((s) => (s === 4 ? 3 : s === 3 ? 2 : 1) as 1 | 2 | 3 | 4)}
                 disabled={loading}
                 className="border-[#d9d4c9] text-[#6b6b6b] hover:bg-[#f6f1e6]"
               >
@@ -682,6 +873,18 @@ export function BulkUploadModal({
             )}
 
             {step === 3 && (
+              <Button
+                onClick={handleUploadImages}
+                disabled={loading}
+                className="bg-[#b08d3e] hover:bg-[#9a7a35] text-black font-semibold"
+              >
+                {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                {!loading && <UploadCloud className="h-4 w-4 mr-2" />}
+                {loading ? "Uploading..." : "Upload Media"}
+              </Button>
+            )}
+
+            {step === 4 && (
               <Button
                 onClick={handleConfirm}
                 disabled={loading}

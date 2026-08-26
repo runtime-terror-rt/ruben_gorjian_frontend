@@ -274,20 +274,24 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 gap-3 mt-6 text-xs">
             <FeatureBox
               label="Platform Limit"
-              value={overview?.plan?.platformLimit ?? 0}
+              value={subscription?.thisPlanPlatformLimit ?? overview?.plan?.platformLimit ?? 0}
             />
-            <FeatureBox label="Post Quota" value={overview?.plan?.postQuota ?? 0} />
-            <FeatureBox
-              label="Price Type"
-              value={
-                overview?.plan?.priceType
-                  ? overview.plan.priceType.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
-                  : "N/A"
-              }
+            <FeatureBox 
+              label="Post Limit" 
+              value={subscription?.basePostQuota ?? overview?.plan?.postQuota ?? 0} 
             />
-            <FeatureBox label="Post Limit Type" value={overview?.plan?.postLimitType ?? "N/A"} />
-            <FeatureBox label="Visual Quota" value={overview?.plan?.visualQuota ?? 0} />
-            <FeatureBox label="Days Left" value={overview?.plan?.daysLeft ?? 0} />
+            <FeatureBox 
+              label="Used Posts" 
+              value={subscription?.usedPosts ?? 0} 
+            />
+            <FeatureBox 
+              label="Remaining Posts" 
+              value={subscription?.remainingPosts ?? 0} 
+            />
+            <FeatureBox 
+              label="Days Left" 
+              value={subscription?.daysLeft ?? overview?.plan?.daysLeft ?? 0} 
+            />
           </div>
         </div>
 
