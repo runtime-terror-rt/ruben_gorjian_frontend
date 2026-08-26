@@ -33,7 +33,7 @@ import {
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, Filter } from "lucide-react";
+import { BookOpen, Loader2, MoreHorizontal, Pencil, Plus, Power, PowerOff, Trash2, Filter, AlertTriangle } from "lucide-react";
 import { AdminPagination } from "@/components/admin/AdminPagination";
 
 type FaqPageType = "FAQ_PAGE" | "PRICING_PAGE";
@@ -254,6 +254,18 @@ export default function AdminFaqPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
+        <div className="rounded-full bg-amber-500/10 p-1.5 mt-0.5">
+          <AlertTriangle className="h-4 w-4 text-amber-600" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-amber-700">Notice: FAQ Workflow Pending</p>
+          <p className="text-xs text-amber-700/80 mt-1 leading-relaxed">
+            The FAQ management method—Admin Panel or direct HTML—has not been finalized yet. For now, the Admin Panel functionality remains active, but changes made here will not appear on the Live Website until the final approach is decided.
+          </p>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-[#14110c]">FAQ Management</h1>

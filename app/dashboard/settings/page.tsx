@@ -82,7 +82,7 @@ export default function SettingsPage() {
   const [showConfirmPw, setShowConfirmPw] = useState(false);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief" | "full-management" | "security" | "billing">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "brand-brief" | "full-management" | "security">("profile");
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -98,23 +98,7 @@ export default function SettingsPage() {
     enabled: activeTab === "brand-brief",
   });
 
-  const billingPlansQuery = useQuery({
-    queryKey: ["billing-plans"],
-    queryFn: () => apiGet<any>("/api/billing/plans"),
-    enabled: activeTab === "billing",
-  });
 
-  const currentPlanQuery = useQuery({
-    queryKey: ["billing-current-plan"],
-    queryFn: () => apiGet<any>("/api/billing/current-plan"),
-    enabled: activeTab === "billing",
-  });
-
-  const billingHistoryQuery = useQuery({
-    queryKey: ["billing-history"],
-    queryFn: () => apiGet<any>("/api/billing/history"),
-    enabled: activeTab === "billing",
-  });
 
   const brief = brandBriefQuery.data?.items?.[0];
 
@@ -410,18 +394,7 @@ export default function SettingsPage() {
             )}
           </button>
         )}
-        <button
-          onClick={() => setActiveTab("billing")}
-          className={cn(
-            "px-6 py-3 text-sm font-medium transition-colors relative",
-            activeTab === "billing" ? "text-[#b08d3e]" : "text-[#6b6b6b] hover:text-[#14110c]"
-          )}
-        >
-          Billing
-          {activeTab === "billing" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#b08d3e]" />
-          )}
-        </button>
+
         <button
           onClick={() => setActiveTab("security")}
           className={cn(
@@ -973,121 +946,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {activeTab === "billing" && (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#14110c]">Current Plan</h2>
-            {currentPlanQuery.isLoading ? (
-              <p className="text-sm text-[#6b6b6b]">Loading current plan...</p>
-            ) : currentPlanQuery.isError ? (
-              <p className="text-sm text-red-500">Failed to load current plan.</p>
-            ) : (
-              <Card className="border-[#d9d4c9] bg-[#ffffff]">
-                <CardHeader>
-                  <CardTitle className="text-xl text-[#14110c]">
-                    {currentPlanQuery.data?.name || currentPlanQuery.data?.planName || currentPlanQuery.data?.data?.name || currentPlanQuery.data?.data?.planName || "Unknown Plan"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-sm text-[#6b6b6b]">
-                    Status: <span className="font-semibold text-[#14110c] capitalize">{currentPlanQuery.data?.status || currentPlanQuery.data?.data?.status || "Active"}</span>
-                  </p>
-                  {(currentPlanQuery.data?.price || currentPlanQuery.data?.data?.price) && (
-                    <p className="text-sm text-[#6b6b6b]">
-                      Price: <span className="font-semibold text-[#14110c]">{currentPlanQuery.data?.price || currentPlanQuery.data?.data?.price}</span>
-                    </p>
-                  )}
-                  {(currentPlanQuery.data?.nextBillingDate || currentPlanQuery.data?.data?.nextBillingDate) && (
-                    <p className="text-sm text-[#6b6b6b]">
-                      Next Billing Date: <span className="font-semibold text-[#14110c]">{new Date(currentPlanQuery.data?.nextBillingDate || currentPlanQuery.data?.data?.nextBillingDate).toLocaleDateString()}</span>
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
 
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#14110c]">Billing History</h2>
-            {billingHistoryQuery.isLoading ? (
-              <p className="text-sm text-[#6b6b6b]">Loading history...</p>
-            ) : billingHistoryQuery.isError ? (
-              <p className="text-sm text-red-500">Failed to load billing history.</p>
-            ) : (
-              <Card className="border-[#d9d4c9] bg-[#ffffff] overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-[#14110c]">
-                    <thead className="bg-[#f8f7f5] text-xs uppercase text-[#6b6b6b] border-b border-[#d9d4c9]">
-                      <tr>
-                        <th className="px-6 py-4 font-medium">Date</th>
-                        <th className="px-6 py-4 font-medium">Description</th>
-                        <th className="px-6 py-4 font-medium">Amount</th>
-                        <th className="px-6 py-4 font-medium">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#d9d4c9]">
-                      {(billingHistoryQuery.data?.items || billingHistoryQuery.data?.data || Array.isArray(billingHistoryQuery.data) ? billingHistoryQuery.data : [])?.length > 0 ? (
-                        (billingHistoryQuery.data?.items || billingHistoryQuery.data?.data || Array.isArray(billingHistoryQuery.data) ? billingHistoryQuery.data : []).map((item: any, i: number) => (
-                          <tr key={i} className="hover:bg-[#f8f7f5]/50 transition-colors">
-                            <td className="px-6 py-4">{new Date(item.date || item.createdAt).toLocaleDateString()}</td>
-                            <td className="px-6 py-4">{item.description || item.planName || "Subscription"}</td>
-                            <td className="px-6 py-4">{item.amount ? `$${item.amount}` : "-"}</td>
-                            <td className="px-6 py-4 capitalize">{item.status || "Paid"}</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={4} className="px-6 py-8 text-center text-[#6b6b6b]">
-                            No billing history found.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-[#14110c]">Available Plans</h2>
-            {billingPlansQuery.isLoading ? (
-              <p className="text-sm text-[#6b6b6b]">Loading plans...</p>
-            ) : billingPlansQuery.isError ? (
-              <p className="text-sm text-red-500">Failed to load available plans.</p>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {(billingPlansQuery.data?.items || billingPlansQuery.data?.data || (Array.isArray(billingPlansQuery.data) ? billingPlansQuery.data : [])).map((plan: any, i: number) => (
-                  <Card key={i} className="border-[#d9d4c9] bg-[#ffffff] flex flex-col">
-                    <CardHeader>
-                      <CardTitle className="text-[#14110c] text-xl">{plan.name || plan.planName}</CardTitle>
-                      {plan.price && <p className="text-2xl font-bold text-[#b08d3e] mt-2">{typeof plan.price === 'number' ? `$${plan.price}` : plan.price}<span className="text-sm font-normal text-[#6b6b6b]">/mo</span></p>}
-                    </CardHeader>
-                    <CardContent className="flex-grow space-y-4">
-                      {plan.description && <p className="text-sm text-[#6b6b6b]">{plan.description}</p>}
-                      {plan.features && Array.isArray(plan.features) && (
-                        <ul className="space-y-2 text-sm text-[#14110c]">
-                          {plan.features.map((f: string, idx: number) => (
-                            <li key={idx} className="flex items-start gap-2">
-                              <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#b08d3e] shrink-0" />
-                              <span>{f}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-                {(!(billingPlansQuery.data?.items || billingPlansQuery.data?.data || (Array.isArray(billingPlansQuery.data) ? billingPlansQuery.data : []))?.length) && (
-                  <p className="text-sm text-[#6b6b6b] col-span-full">No available plans found.</p>
-                )}
-              </div>
-            )}
-          </div>
-
-        </div>
-      )}
     </div>
   );
 }

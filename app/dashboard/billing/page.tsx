@@ -479,7 +479,7 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[#d9d4c9]/50">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4 border-t border-[#d9d4c9]/50">
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Status</p>
                   <div className="flex items-center gap-1.5">
@@ -500,12 +500,7 @@ export default function BillingPage() {
                     {currentPlanDisplay?.renewsAt ?? "—"}
                   </p>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Platforms</p>
-                  <p className="text-sm font-semibold text-[#14110c]">
-                    {plan.platformLimit ?? 4} included
-                  </p>
-                </div>
+
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-[#6b6b6b] font-bold mb-1">Billing</p>
                   <p className="text-sm font-semibold text-[#14110c] capitalize">
@@ -809,73 +804,7 @@ export default function BillingPage() {
         </CardContent>
       </Card>
 
-      {!noPlan && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Plan Limits</CardTitle>
-            <p className="text-xs text-[#6b6b6b]">
-              {/* Your plan includes these features */}
-            </p>
-          </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-3">
-            <PlanDetail
-              label="Platforms"
-              value={
-                (plan?.platformLimit ?? 4) > 0
-                  ? `${plan?.platformLimit ?? 4} platform${(plan?.platformLimit ?? 4) > 1 ? "s" : ""}`
-                  : "—"
-              }
-            />
-            <PlanDetail
-              label="Visuals/month"
-              value={plan?.visualQuota ? `${plan.visualQuota}` : "Unlimited"}
-            />
-            <PlanDetail
-              label="Posts/month"
-              value={
-                plan?.postQuota
-                  ? `${plan.postQuota}${postLimitType === "SOFT" ? " (soft limit)" : ""}`
-                  : "Unlimited"
-              }
-            />
-          </CardContent>
-        </Card>
-      )}
 
-      {!noPlan && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Usage This Month</CardTitle>
-            <p className="text-xs text-[#6b6b6b]">
-              {/* Track your monthly usage */}
-            </p>
-          </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-2">
-            <PlanDetail
-              label="Posts"
-              value={
-                usage.postsLimit > 0
-                  ? `${usage.postsUsed} / ${usage.postsLimit}${
-                      usage.postsUsed >= usage.postsLimit
-                        ? postLimitType === "SOFT"
-                          ? " (Soft limit exceeded)"
-                          : " (Limit reached)"
-                        : ""
-                    }`
-                  : "Unlimited"
-              }
-            />
-            <PlanDetail
-              label="Visuals"
-              value={
-                usage.visualsLimit > 0
-                  ? `${usage.visualsUsed} / ${usage.visualsLimit}${usage.visualsUsed >= usage.visualsLimit ? " (Limit reached)" : ""}`
-                  : "Unlimited"
-              }
-            />
-          </CardContent>
-        </Card>
-      )}
 
       <Card>
         <CardHeader className="flex items-center justify-between">
