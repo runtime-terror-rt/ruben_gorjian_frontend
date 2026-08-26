@@ -26,6 +26,7 @@ const PLATFORMS = [
   { label: "Instagram", value: "instagram" },
   { label: "Facebook", value: "facebook" },
   { label: "TikTok", value: "tiktok" },
+  { label: "LinkedIn", value: "linkedin" },
 ];
 
 const POST_STATUSES = [
