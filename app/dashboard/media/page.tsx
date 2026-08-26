@@ -99,16 +99,18 @@ export default function MediaLibraryPage() {
   const handleDownload = async (url: string, fileName: string, id: string) => {
     try {
       setDownloadingId(id);
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+      
+      const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(fileName || 'download')}`;
+      
       const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = fileName || "download";
+      a.href = proxyUrl;
+      // We do not need a.download here since the Content-Disposition header handles it
       document.body.appendChild(a);
       a.click();
       a.remove();
-      window.URL.revokeObjectURL(blobUrl);
+      
+      // We simulate a small delay for the UI loading state since the download starts immediately
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (err) {
       console.error("Download failed:", err);
     } finally {

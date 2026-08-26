@@ -160,9 +160,9 @@ export const CalendarItem = memo<CalendarItemProps>(
         ref={canDrag ? dragElementRef : null}
         className={clsx(
           "w-full flex rounded-[10px] overflow-hidden group relative cursor-pointer",
-          "bg-slate-800/70 hover:bg-slate-800/90 transition-colors",
+          "bg-[#ffffff] hover:bg-[#faf8f3] transition-colors",
           display === "list" ? "min-h-[76px]" : "h-14",
-          "border border-slate-700/50 shadow-sm",
+          "border border-[#d9d4c9] shadow-sm",
           isBeforeNow && "opacity-60 grayscale",
           !canDrag && "cursor-default",
         )}
@@ -205,7 +205,7 @@ export const CalendarItem = memo<CalendarItemProps>(
                 className={clsx(
                   "flex items-center justify-center",
                   display === "list" ? "w-14 h-14 rounded-[8px]" : "w-10 h-10 rounded-[6px]",
-                  isMissingContent ? "bg-amber-500/20 border border-amber-500/50" : "bg-slate-700"
+                  isMissingContent ? "bg-amber-500/20 border border-amber-500/50" : "bg-[#f6f1e6]"
                 )}
                 title={isMissingContent ? "Missing content" : undefined}
               >
@@ -227,7 +227,7 @@ export const CalendarItem = memo<CalendarItemProps>(
                   return (
                     <div
                       key={platform}
-                      className="w-[10px] h-[10px] rounded-[4px] bg-slate-900 border border-slate-600 flex items-center justify-center"
+                      className="w-[10px] h-[10px] rounded-[4px] bg-[#ffffff] border border-[#d9d4c9] flex items-center justify-center"
                     >
                       <Icon
                         className={clsx("h-2 w-2", platformColors[platform])}
@@ -236,7 +236,7 @@ export const CalendarItem = memo<CalendarItemProps>(
                   );
                 })}
                 {platforms.length > 2 && (
-                  <div className="w-[10px] h-[10px] rounded-[4px] bg-slate-700 text-[8px] flex items-center justify-center">
+                  <div className="w-[10px] h-[10px] rounded-[4px] bg-[#f6f1e6] text-[#6b6b6b] text-[8px] flex items-center justify-center font-medium">
                     +{platforms.length - 2}
                   </div>
                 )}
@@ -247,11 +247,11 @@ export const CalendarItem = memo<CalendarItemProps>(
           {/* Caption preview for list view */}
           {display === "list" ? (
             <div className="flex-1 min-w-0 pr-2">
-              <p className="text-[13px] text-slate-200 font-medium line-clamp-2 leading-relaxed">
+              <p className="text-[13px] text-[#14110c] font-medium line-clamp-2 leading-relaxed">
                 {post.caption && post.caption.trim() !== "" ? (
                   post.caption
                 ) : (
-                  <span className="text-slate-500 italic font-normal">No caption</span>
+                  <span className="text-[#6b6b6b] italic font-normal">No caption</span>
                 )}
               </p>
             </div>
@@ -260,15 +260,15 @@ export const CalendarItem = memo<CalendarItemProps>(
           {/* Date & Time display */}
           {display === "list" ? (
             <div className="w-40 flex flex-col items-center justify-center shrink-0">
-              <span className="text-[13px] font-bold text-slate-200 tabular-nums tracking-wide">
+              <span className="text-[13px] font-bold text-[#14110c] tabular-nums tracking-wide">
                 {formattedDate}
               </span>
-              <span className="text-[11px] text-slate-400 tabular-nums mt-0.5">
+              <span className="text-[11px] text-[#6b6b6b] tabular-nums mt-0.5">
                 {formattedTime}
               </span>
             </div>
           ) : (
-            <span className="text-[11px] text-slate-400 tabular-nums shrink-0 flex items-center">
+            <span className="text-[11px] text-[#6b6b6b] tabular-nums shrink-0 flex items-center">
               {post.status === "DRAFT" ? "Draft " : ""}
               {userTimezone
                 ? dayjs(post.scheduledFor).tz(userTimezone).format("hh:mm A")
@@ -297,13 +297,13 @@ export const CalendarItem = memo<CalendarItemProps>(
                 platforms.map((platform) => {
                   const Icon = platformIcons[platform];
                   return (
-                    <div key={platform} title={platform} className="p-1.5 bg-slate-800 rounded-full">
+                    <div key={platform} title={platform} className="p-1.5 bg-[#f6f1e6] rounded-full border border-[#d9d4c9]">
                       <Icon className={clsx("h-4 w-4", platformColors[platform])} />
                     </div>
                   );
                 })
               ) : (
-                <span className="text-xs text-slate-500">-</span>
+                <span className="text-xs text-[#6b6b6b]">-</span>
               )}
             </div>
           )}
@@ -335,10 +335,10 @@ export const CalendarItem = memo<CalendarItemProps>(
                   e.stopPropagation();
                   onEdit();
                 }}
-                className="p-2 rounded-md hover:bg-slate-600/50 transition-colors"
+                className="p-2 rounded-md hover:bg-[#e6e1d8] transition-colors text-[#6b6b6b] hover:text-[#14110c]"
                 title="Edit post"
               >
-                <Edit2 className="h-4 w-4 text-slate-300 hover:text-white" />
+                <Edit2 className="h-4 w-4" />
               </button>
             )}
             {isAdmin && onPublish && post.status !== "POSTED" && (

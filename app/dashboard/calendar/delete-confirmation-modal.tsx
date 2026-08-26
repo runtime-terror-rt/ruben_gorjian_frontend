@@ -92,7 +92,7 @@ export default function DeleteConfirmationModal({
               variant="destructive"
               onClick={handleConfirm}
               disabled={isDeleting}
-              className="flex-1 bg-rose-600 hover:bg-rose-500 text-[#14110c] font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] order-1 sm:order-2 transition-all hover:scale-105 active:scale-95 border-none"
+              className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-black h-14 rounded-2xl shadow-[0_15px_30px_rgba(225,29,72,0.3)] order-1 sm:order-2 transition-all hover:scale-105 active:scale-95 border-none"
             >
               {isDeleting ? (
                 <div className="flex items-center gap-2">
