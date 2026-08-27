@@ -757,10 +757,10 @@ export default function BillingPage() {
                 </ul>
 
                 <div className="plan-fee plan-monthly-fee">
-                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $694 ($597 + $97). Billed $597 monthly thereafter.
+                  <strong>No onboarding fee.</strong> First month is $597. Billed monthly thereafter.
                 </div>
                 <div className="plan-fee plan-annual-fee">
-                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $6,545 ($6,448 annual + $97).
+                  <strong>No onboarding fee.</strong> First invoice is $6,448.
                 </div>
 
                 <div className="plan-cta">

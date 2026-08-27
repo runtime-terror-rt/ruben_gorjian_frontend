@@ -1,9 +1,11 @@
 import React from 'react';
+import { TERMS_VERSION } from '@/lib/constants';
 import './terms.css';
 
 export const metadata = {
   title: 'Service Policy & Terms of Service — Talexia',
-  description: "Talexia's Service Policy and Terms of Service. Version 1.5, effective July 2026."
+  description: `Talexia's Service Policy and Terms of Service. Version ${TERMS_VERSION}, effective July 2026.`,
+  alternates: { canonical: 'https://talexia.us/terms' }
 };
 
 export default function ServicePolicyPage() {
@@ -14,7 +16,7 @@ export default function ServicePolicyPage() {
         <div className="rule-ornament center"></div>
         <div className="page-eyebrow">Legal</div>
         <h1 className="page-title">Service Policy <em>&</em> Terms of Service</h1>
-        <div className="page-meta">Version 1.0 <span>·</span> Effective July 10, 2026</div>
+        <div className="page-meta">Version {TERMS_VERSION} <span>·</span> Effective July 10, 2026</div>
       </div>
 
       {/* PREAMBLE */}
@@ -98,7 +100,7 @@ export default function ServicePolicyPage() {
             <li><strong>Signature — $597 per month, or $6,448 per year.</strong> Twenty-four luxury-enhanced visuals, professional captions and scheduling, published to three platforms, monthly content plan, seasonal editorial planning. The annual rate reflects a 10% discount versus twelve monthly payments.</li>
             <li><strong>Atelier — pricing by consultation.</strong> Bespoke visual work for signature pieces and custom collections, structured individually per engagement, minimum three-month term.</li>
           </ul>
-          <p>Signature includes a one-time onboarding fee of $97 applied to the first invoice. Essentials does not include an onboarding fee. Plan pricing and deliverable volumes are subject to change on future subscriptions; existing subscriptions retain their original terms until cancellation or upgrade.</p>
+          <p>Neither Signature nor Essentials include an onboarding fee. Plan pricing and deliverable volumes are subject to change on future subscriptions; existing subscriptions retain their original terms until cancellation or upgrade.</p>
         </div>
       </div>
 
@@ -376,7 +378,7 @@ export default function ServicePolicyPage() {
         <div className="clause-num">9.1</div>
         <div className="clause-title">Billing terms</div>
         <div className="clause-body">
-          <p>Plans are billed either monthly or annually through Stripe, according to the billing cycle the Client selects at checkout. Monthly plans are charged on the anniversary of the Client's first successful charge. Annual plans are charged in full at the time of purchase and once per year thereafter on the purchase anniversary. The one-time Signature onboarding fee of $97 is applied to the first invoice regardless of billing cycle.</p>
+          <p>Plans are billed either monthly or annually through Stripe, according to the billing cycle the Client selects at checkout. Monthly plans are charged on the anniversary of the Client's first successful charge. Annual plans are charged in full at the time of purchase and once per year thereafter on the purchase anniversary.</p>
           <p>Payment is due in advance of the applicable subscription period. Failed payments will result in production pause. Publishing may continue on a best-effort basis for content already produced in the current cycle; new production will not begin until payment is successfully processed.</p>
         </div>
       </div>
@@ -445,7 +447,7 @@ export default function ServicePolicyPage() {
         <div className="clause-title">Promotional first-month offer</div>
         <div className="clause-body">
           <p>Talexia may offer a complimentary first month through a promotional code (for example, "1MFREE") applied at checkout. Where such an offer applies, the following terms govern it.</p>
-          <p>A valid payment method is required to begin, even though the first month is complimentary. The promotional code discounts the first month's charge to zero; the subscription then continues automatically into the second month, which is billed at the plan's normal rate (monthly or annual, as selected). The one-time Signature onboarding fee, where applicable, is not waived by the promotional code.</p>
+          <p>A valid payment method is required to begin, even though the first month is complimentary. The promotional code discounts the first month's charge to zero; the subscription then continues automatically into the second month, which is billed at the plan's normal rate (monthly or annual, as selected).</p>
           <p>The Client may cancel at any time before the complimentary first month ends, directly from the billing section of their account. A Client who cancels before the first month ends is not charged. If the Client does not cancel before the first month ends, billing proceeds automatically as described above.</p>
           <p>The complimentary first month is limited to one per business. Eligibility is determined by Talexia and may be limited by business, by email domain, or by a stated expiry date. Talexia may modify or withdraw any promotional offer at any time; withdrawal does not affect a promotional month already validly commenced. Once a paid period begins following a promotional first month, standard billing, cancellation, and refund terms in this Section apply.</p>
         </div>
@@ -569,7 +571,7 @@ export default function ServicePolicyPage() {
       {/* VERSION FOOTER */}
       <div className="version-footer">
         <h4>Document reference</h4>
-        <p>Talexia Service Policy &amp; Terms of Service — Version 1.5 — Effective July 10, 2026</p>
+        <p>Talexia Service Policy &amp; Terms of Service — Version {TERMS_VERSION} — Effective July 10, 2026</p>
         <p style={{ marginTop: '8px' }}>For questions about any clause in this document, contact <a href="mailto:office@talexia.us">office@talexia.us</a> before subscribing.</p>
       </div>
     </>

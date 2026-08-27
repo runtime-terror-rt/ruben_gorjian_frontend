@@ -97,6 +97,18 @@ function NavbarInner() {
     setUserMenuOpen(false);
   };
 
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    if (window.location.pathname === '/') {
+      e.preventDefault();
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        window.history.pushState(null, '', '/#' + id);
+      }
+      closeMobileMenu();
+    }
+  };
+
   return (
     <>
       <nav className="nav">
@@ -104,27 +116,14 @@ function NavbarInner() {
           Talexia
         </Link>
         <div className="nav-links">
-          <Link href="/#work">Work</Link>
-          <Link href="/#process">Process</Link>
+          <Link href="/#work" onClick={(e) => handleScroll(e, 'work')}>Work</Link>
+          <Link href="/#process" onClick={(e) => handleScroll(e, 'process')}>Process</Link>
           <Link href="/plan">Plans</Link>
-          <Link href="/case-studies">Case Studies</Link>
-          <Link href="/#atelier">Atelier</Link>
+          <Link href="/#atelier" onClick={(e) => handleScroll(e, 'atelier')}>Atelier</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/contact">Contact</Link>
 
-          {loading ? (
-            <div
-              style={{
-                visibility: "hidden",
-                display: "flex",
-                gap: "1.5rem",
-                alignItems: "center",
-              }}
-            >
-              <span className="nav-signin">Sign In</span>
-              <span className="nav-cta">Book a Call</span>
-            </div>
-          ) : isAuthed ? (
+          {isAuthed && !loading ? (
             <div className="nav-profile-wrapper" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen((prev) => !prev)}
@@ -224,14 +223,14 @@ function NavbarInner() {
             <Link
               href="/#work"
               className="nav-mobile-link"
-              onClick={closeMobileMenu}
+              onClick={(e) => handleScroll(e, 'work')}
             >
               Work
             </Link>
             <Link
               href="/#process"
               className="nav-mobile-link"
-              onClick={closeMobileMenu}
+              onClick={(e) => handleScroll(e, 'process')}
             >
               Process
             </Link>
@@ -243,16 +242,9 @@ function NavbarInner() {
               Plans
             </Link>
             <Link
-              href="/case-studies"
-              className="nav-mobile-link"
-              onClick={closeMobileMenu}
-            >
-              Case Studies
-            </Link>
-            <Link
               href="/#atelier"
               className="nav-mobile-link"
-              onClick={closeMobileMenu}
+              onClick={(e) => handleScroll(e, 'atelier')}
             >
               Atelier
             </Link>

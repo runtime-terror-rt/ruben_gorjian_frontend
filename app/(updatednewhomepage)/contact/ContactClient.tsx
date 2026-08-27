@@ -4,7 +4,7 @@ import Script from 'next/script';
 import Navbar from '@/components/newhome/Navbar';
 import Footer from '@/components/newhome/Footer';
 import Link from 'next/link';
-import '../newhome/newhome.css';
+import '@/app/page.css';
 import './contact.css';
 
 // Declare turnstile for TypeScript

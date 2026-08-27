@@ -23,6 +23,31 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/pricing', destination: '/plan', permanent: true },
+      { source: '/execution-case-studies', destination: '/', permanent: true },
+      { source: '/terms-conditions', destination: '/terms', permanent: true },
+      { source: '/refund-policy', destination: '/terms', permanent: true },
+      { source: '/privacy-policy', destination: '/privacy', permanent: true },
+      { source: '/cookie-policy', destination: '/privacy', permanent: true },
+      { source: '/data-usage', destination: '/privacy', permanent: true },
+      { source: '/api-data-disclosure', destination: '/privacy', permanent: true },
+      { source: '/content-disclaimer', destination: '/privacy', permanent: true },
+      { source: '/newhome', destination: '/', permanent: true },
+      { source: '/newhome/faq', destination: '/faq', permanent: true },
+      { source: '/newhome/contact', destination: '/contact', permanent: true },
+      { source: '/newhome/case-studies', destination: '/', permanent: true },
+      { source: '/features', destination: '/', permanent: true },
+      { source: '/about', destination: '/', permanent: true },
+      { source: '/services', destination: '/', permanent: true },
+      { source: '/blog', destination: '/', permanent: true },
+      { source: '/careers', destination: '/', permanent: true },
+      { source: '/home', destination: '/', permanent: true },
+      { source: '/index', destination: '/', permanent: true },
+      { source: '/index.html', destination: '/', permanent: true },
+    ]
+  },
 };
 
 export default nextConfig;

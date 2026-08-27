@@ -1,6 +1,6 @@
 "use client";
 
-import "@/app/(updatednewhomepage)/newhome/newhome.css";
+import "@/app/page.css";
 import "./checkout.css";
 import { Suspense, useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,6 +10,7 @@ import { PLAN_NAMES, MONTHLY_PRICES, type PlanKey } from "@/lib/pricing-comparis
 import { apiGet, apiPost } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useSessionContext } from "@/context/SessionContext";
+import { TERMS_VERSION } from "@/lib/constants";
 
 const TAX_RATE = 0.08625; // 8.625% based on backend example
 
@@ -154,6 +155,7 @@ function CheckoutContent() {
         planCode,
         billingCycle,
         termsAccepted,
+        termsVersion: TERMS_VERSION,
         couponCode: couponCode ? couponCode.trim() : undefined,
         successUrl: `${origin}/billing/success`,
         cancelUrl: `${origin}/billing/checkout?plan=${planCode}&cycle=${billingCycle}`,
@@ -281,7 +283,7 @@ function CheckoutContent() {
                     onChange={(e) => setTermsAccepted(e.target.checked)}
                   />
                   <label htmlFor="terms" className="checkout-terms-label">
-                    I agree to the <a href="/terms-conditions" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
+                    I agree to the <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. Subscriptions automatically renew at the end of each billing period.
                   </label>
                 </div>
               </div>

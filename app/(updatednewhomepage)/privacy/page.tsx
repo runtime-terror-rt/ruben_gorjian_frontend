@@ -3,7 +3,8 @@ import './privacy.css';
 
 export const metadata = {
   title: 'Privacy Policy — Talexia',
-  description: "Talexia's Privacy Policy. Version 1.1, effective July 2026."
+  description: "Talexia's Privacy Policy. Version 1.1, effective July 2026.",
+  alternates: { canonical: 'https://talexia.us/privacy' }
 };
 
 export default function PrivacyPolicyPage() {
@@ -59,7 +60,7 @@ export default function PrivacyPolicyPage() {
               <div className="clause-num">1.1</div>
               <div className="clause-title">Data controller</div>
               <div className="clause-body">
-                <p>Talexia, operating at <a href="/newhome">talexia.us</a>, is the data controller for information collected through its website, its subscription service, and its production operations. In this document, &quot;Talexia,&quot; &quot;we,&quot; and &quot;our&quot; refer to Talexia; &quot;you&quot; and &quot;your&quot; refer to any person whose information Talexia processes.</p>
+                <p>Talexia, operating at <a href="/">talexia.us</a>, is the data controller for information collected through its website, its subscription service, and its production operations. In this document, &quot;Talexia,&quot; &quot;we,&quot; and &quot;our&quot; refer to Talexia; &quot;you&quot; and &quot;your&quot; refer to any person whose information Talexia processes.</p>
                 <p>For questions about this policy or the information Talexia holds about you, contact <a href="mailto:office@talexia.us">office@talexia.us</a>.</p>
               </div>
             </div>

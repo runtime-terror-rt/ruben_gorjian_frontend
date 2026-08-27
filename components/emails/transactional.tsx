@@ -32,7 +32,7 @@ export const WaitlistEmail: React.FC<Readonly<WaitlistEmailProps>> = ({
     <Body style={main}>
       <Preview>New contact list</Preview>
       <Container style={container}>
-        <Heading style={h1}>New Talexia.ai contact submission</Heading>
+        <Heading style={h1}>New Talexia contact submission</Heading>
         <Text style={text}>Name: {name}</Text>
         <Text style={text}>Business: {business}</Text>
         <Text style={text}>Email: {email}</Text>

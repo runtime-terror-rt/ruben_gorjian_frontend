@@ -661,7 +661,7 @@ export default function AdminManagementPage() {
                     </Label>
                     <Input
                       type="email"
-                      placeholder="email@talexia.ai"
+                      placeholder="email@talexia.us"
                       className="bg-[#ffffff] border-[#d9d4c9] text-[#14110c] rounded-xl h-11 focus:ring-[#b08d3e]"
                       value={formData.email}
                       onChange={(e) =>

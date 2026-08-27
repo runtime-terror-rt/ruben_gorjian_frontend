@@ -1,5 +1,5 @@
 import React from 'react';
-import '@/app/(updatednewhomepage)/newhome/newhome.css';
+import './page.css';
 import Navbar from '@/components/newhome/Navbar';
 import HeroIvoryEditorial from '@/components/newhome/HeroIvoryEditorial';
 import WhatWeDo from '@/components/newhome/WhatWeDo';
@@ -16,7 +16,8 @@ import Footer from '@/components/newhome/Footer';
 
 export const metadata = {
   title: 'Talexia — Editorial Visual Production for Fine Jewelry',
-  description: 'Editorial-grade feed content for fine jewelry brands. Produced, published, and held to a luxury standard.'
+  description: 'Editorial-grade feed content for fine jewelry brands. Produced, published, and held to a luxury standard.',
+  alternates: { canonical: 'https://talexia.us/' }
 };
 
 export default function HomePage() {

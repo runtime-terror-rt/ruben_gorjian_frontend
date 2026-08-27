@@ -167,7 +167,7 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
                   {session?.name || "Admin"}
                 </div>
                 <div className="text-xs text-[#6b6b6b]">
-                  {session?.email || "admin@talexia.ai"}
+                  {session?.email || "admin@talexia.us"}
                 </div>
               </div>
             </button>
@@ -179,7 +179,7 @@ export function AdminHeader({ onMenuClick, isCollapsed }: AdminHeaderProps) {
                   {session?.name || "Admin User"}
                 </span>
                 <span className="text-xs text-[#6b6b6b] whitespace-nowrap">
-                  {session?.email || "admin@talexia.ai"}
+                  {session?.email || "admin@talexia.us"}
                 </span>
               </div>
             </DropdownMenuLabel>
