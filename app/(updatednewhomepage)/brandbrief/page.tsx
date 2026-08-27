@@ -7,6 +7,9 @@ import { useSessionContext } from '@/context/SessionContext';
 import { apiPost } from '@/lib/api';
 import { Loader2 } from 'lucide-react';
 
+
+
+
 export default function BrandBriefPage() {
   const [showBirthstoneDetail, setShowBirthstoneDetail] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -194,7 +197,7 @@ export default function BrandBriefPage() {
 
 {/* ==================== NAVIGATION ==================== */}
 <nav className="nav">
-  <Link href="/newhome" className="nav-brand">
+  <Link href="/" className="nav-brand">
   Talexia
   </Link>
   <div className="nav-status">Onboarding <span className="dot">·</span> Brand Brief</div>
@@ -915,7 +918,7 @@ export default function BrandBriefPage() {
           <li>I understand that stylistic preferences are not grounds for revision or regeneration — those are governed by this Brief and by future Brief updates.</li>
           <li>I understand that verifiable factual errors in published content must be reported within 48 hours of publication and will be corrected in the next scheduled content cycle.</li>
           <li>I understand that significant brand changes must be submitted as an updated Brand Brief to take effect the following month.</li>
-          <li>I confirm that I have read and accepted Talexia's <a href="terms.html" style={{'color': '#8a6d28'}}>Service Policy</a> and <a href="privacy.html" style={{'color': '#8a6d28'}}>Privacy Policy</a>.</li>
+          <li>I confirm that I have read and accepted Talexia's <a href="/terms" style={{'color': '#8a6d28'}}>Service Policy</a> and <a href="/privacy" style={{'color': '#8a6d28'}}>Privacy Policy</a>.</li>
         </ul>
 
         <p className="auth-emphasis">
@@ -979,7 +982,7 @@ export default function BrandBriefPage() {
 <footer>
   <div className="footer-inner">
     <div className="footer-brand">Talexia<span className="dot">.</span>us</div>
-    <div className="footer-note">Onboarding · Brand Brief · Questions? <a href="mailto:hello@talexia.us">hello@talexia.us</a></div>
+    <div className="footer-note">Onboarding · Brand Brief · Questions? <a href="mailto:office@talexia.us">office@talexia.us</a></div>
   </div>
 </footer>
 

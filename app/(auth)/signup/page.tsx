@@ -6,6 +6,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { GoogleLoginButton } from "@/components/google-login-button";
 import { getReturnToFromQuery } from "@/lib/return-to";
 
+
+
+
 function SignupPageInner() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

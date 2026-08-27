@@ -14,9 +14,9 @@ import ErrorBoundary from "@/components/error-boundary";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Talexia : Restaurant Social Media & Food Photography",
+  title: "Talexia",
   description:
-    "Talexia turns your photos into high-impact visuals, plans your calendar, and generates strategic captions and hashtags.",
+    "Editorial visual production for fine jewelry brands.",
 };
 
 export default function RootLayout({

@@ -157,10 +157,10 @@ export default function PlanPage() {
               </ul>
 
               <div className="plan-fee plan-monthly-fee">
-                <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $694 ($597 + $97). Billed $597 monthly thereafter.
+                <strong>No onboarding fee.</strong> First month is $597. Billed monthly thereafter.
               </div>
               <div className="plan-fee plan-annual-fee">
-                <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $6,545 ($6,448 annual + $97).
+                <strong>No onboarding fee.</strong> First invoice is $6,448.
               </div>
 
               <div className="plan-cta">
@@ -243,7 +243,7 @@ export default function PlanPage() {
             <div className="comp-row">
               <div className="comp-cell label">One-time onboarding fee</div>
               <div className="comp-cell center">None</div>
-              <div className="comp-cell center feature-bg">$97</div>
+              <div className="comp-cell center feature-bg">None</div>
             </div>
 
             <div className="comp-row">
@@ -281,7 +281,7 @@ export default function PlanPage() {
                 <div className="atelier-pricing-label">Pricing</div>
                 <div className="atelier-pricing-value">By consultation</div>
               </div>
-              <Link href="/newhome#consultation" className="atelier-btn">Enquire about Atelier</Link>
+              <Link href="/#consultation" className="atelier-btn">Enquire about Atelier</Link>
             </div>
           </div>
         </div>

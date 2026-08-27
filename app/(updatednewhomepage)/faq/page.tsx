@@ -3,11 +3,12 @@ import './faq.css';
 import Navbar from '@/components/newhome/Navbar';
 import Footer from '@/components/newhome/Footer';
 import Link from 'next/link';
-import '../newhome/newhome.css';
+import '@/app/page.css';
 
 export const metadata = {
   title: 'Frequently Asked Questions — Talexia',
-  description: 'Everything you need to know about Talexia\'s editorial visual production for fine jewelry brands.'
+  description: 'Everything you need to know about Talexia\'s editorial visual production for fine jewelry brands.',
+  alternates: { canonical: 'https://talexia.us/faq' }
 };
 
 export default function FAQPage() {
@@ -331,8 +332,7 @@ export default function FAQPage() {
             <div className="faq-item">
               <h3 className="faq-q"><span className="faq-q-mark">Q.</span> Is there an onboarding fee?</h3>
               <div className="faq-a">
-                <p>Signature includes a one-time onboarding fee of $97, applied to your first invoice. This covers the Brand Brief development, catalog setup, and brand voice training work.</p>
-                <p>Essentials does not have an onboarding fee.</p>
+                <p>No. Neither the Essentials nor the Signature plan have an onboarding fee.</p>
               </div>
             </div>
 
