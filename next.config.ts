@@ -48,6 +48,28 @@ const nextConfig: NextConfig = {
       { source: '/index.html', destination: '/', permanent: true },
     ]
   },
+  async headers() {
+    return [
+      {
+        source: '/signup',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        source: '/brandbrief',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+    ]
+  },
 };
 
 export default nextConfig;
