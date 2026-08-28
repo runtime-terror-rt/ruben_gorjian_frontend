@@ -117,7 +117,7 @@ function NavbarInner() {
         </Link>
         <div className="nav-links">
           <Link href="/#work" onClick={(e) => handleScroll(e, 'work')}>Work</Link>
-          <Link href="/#process" onClick={(e) => handleScroll(e, 'process')}>Process</Link>
+          <Link href="/process">Process</Link>
           <Link href="/plan">Plans</Link>
           <Link href="/#atelier" onClick={(e) => handleScroll(e, 'atelier')}>Atelier</Link>
           <Link href="/faq">FAQ</Link>
@@ -228,9 +228,9 @@ function NavbarInner() {
               Work
             </Link>
             <Link
-              href="/#process"
+              href="/process"
               className="nav-mobile-link"
-              onClick={(e) => handleScroll(e, 'process')}
+              onClick={closeMobileMenu}
             >
               Process
             </Link>
