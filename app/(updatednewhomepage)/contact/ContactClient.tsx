@@ -180,14 +180,16 @@ export default function ContactClient() {
                 <input type="text" id="website_url" name="website_url" tabIndex={-1} autoComplete="off" />
               </div>
 
-              {/* Cloudflare Turnstile widget — only rendered when site key is configured */}
-              {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== 'YOUR_TURNSTILE_SITE_KEY' && (
-                <div className="turnstile-wrap">
-                  <div className="cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} data-theme="light"></div>
-                </div>
-              )}
+              {/* Cloudflare Turnstile widget. Replace data-sitekey with your real site key. */}
+              {/* <div className="turnstile-wrap">
+                <div
+                  className="cf-turnstile"
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "YOUR_TURNSTILE_SITE_KEY"}
+                  data-theme="light"
+                ></div>
+              </div> */}
 
-              <button type="submit" className="form-submit" disabled={isSubmitting}>
+              <button type="submit" className="form-submit" id="submitBtn" disabled={isSubmitting}>
                 {isSubmitting ? 'Sending…' : 'Send message'}
               </button>
 

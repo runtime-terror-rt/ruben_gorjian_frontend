@@ -29,16 +29,21 @@
 .talexia-wrapper .page-meta span { color: #b08d3e; margin: 0 8px; }
 
 /* ==================== RULE ORNAMENT ==================== */
+.talexia-wrapper .rule-ornament,
 .talexia-wrapper .rule-ornament-center {
   width: 60px; height: 1px; background: #b08d3e; position: relative;
   margin: 0 auto 24px;
 }
+.talexia-wrapper .rule-ornament::before,
+.talexia-wrapper .rule-ornament::after,
 .talexia-wrapper .rule-ornament-center::before,
 .talexia-wrapper .rule-ornament-center::after {
   content: ""; position: absolute; top: 50%; width: 5px; height: 5px;
   background: #b08d3e; transform: translateY(-50%) rotate(45deg);
 }
+.talexia-wrapper .rule-ornament::before,
 .talexia-wrapper .rule-ornament-center::before { left: -12px; }
+.talexia-wrapper .rule-ornament::after,
 .talexia-wrapper .rule-ornament-center::after { right: -12px; }
 
 /* ==================== PREAMBLE ==================== */

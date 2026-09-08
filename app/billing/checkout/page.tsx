@@ -193,7 +193,7 @@ function CheckoutContent() {
                   <h1 className="checkout-card-title">Complete your subscription</h1>
                   <p className="checkout-card-desc">Customize your plan and review your order details.</p>
                 </div>
-                
+
                 {/* Plan Summary */}
                 <div className="checkout-plan-summary">
                   <div className="checkout-plan-title-row">
@@ -216,7 +216,7 @@ function CheckoutContent() {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="checkout-divider"></div>
 
                   <div className="checkout-billing-row">
@@ -300,7 +300,7 @@ function CheckoutContent() {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="checkout-summary-content">
                   <div className="checkout-summary-row">
                     <div>

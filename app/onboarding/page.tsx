@@ -195,7 +195,7 @@ function OnboardingRouterContent() {
       // Route to plan-specific onboarding using canonical mapping
       const { getOnboardingRouteForPlanCategory } =
         await import("@/lib/onboarding-routes");
-      
+
       const onboardingRoute = getOnboardingRouteForPlanCategory(planCategory);
 
       if (onboardingRoute) {

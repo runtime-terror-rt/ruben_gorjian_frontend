@@ -16,7 +16,7 @@ export default function ServicePolicyPage() {
         <div className="rule-ornament center"></div>
         <div className="page-eyebrow">Legal</div>
         <h1 className="page-title">Service Policy <em>&</em> Terms of Service</h1>
-        <div className="page-meta">Version {TERMS_VERSION} <span>·</span> Effective July 10, 2026</div>
+        <div className="page-meta">Version {TERMS_VERSION} <span>·</span> Effective July 30, 2026</div>
       </div>
 
       {/* PREAMBLE */}
@@ -571,7 +571,7 @@ export default function ServicePolicyPage() {
       {/* VERSION FOOTER */}
       <div className="version-footer">
         <h4>Document reference</h4>
-        <p>Talexia Service Policy &amp; Terms of Service — Version {TERMS_VERSION} — Effective July 10, 2026</p>
+        <p>Talexia Service Policy &amp; Terms of Service — Version {TERMS_VERSION} — Effective July 30, 2026</p>
         <p style={{ marginTop: '8px' }}>For questions about any clause in this document, contact <a href="mailto:office@talexia.us">office@talexia.us</a> before subscribing.</p>
       </div>
     </>

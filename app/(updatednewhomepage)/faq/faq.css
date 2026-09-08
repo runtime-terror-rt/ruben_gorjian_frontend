@@ -151,6 +151,36 @@
   letter-spacing: 0.5px;
 }
 
+/* ==================== CLOSING CTA ==================== */
+.talexia-wrapper .closing-cta {
+  background: linear-gradient(180deg, #faf8f3 0%, #f6f1e6 100%);
+  padding: 100px 40px;
+  text-align: center;
+  border-top: 1px solid #e6e1d8;
+}
+.talexia-wrapper .closing-title {
+  font-family: Georgia, serif; font-weight: 400;
+  font-size: 40px; line-height: 1.2;
+  color: #14110c; margin-bottom: 18px;
+  max-width: 620px; margin-left: auto; margin-right: auto;
+}
+.talexia-wrapper .closing-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .closing-sub {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 18px; color: #6b6b6b;
+  max-width: 520px; margin: 0 auto 36px;
+  line-height: 1.55;
+}
+.talexia-wrapper .btn {
+  display: inline-block; text-decoration: none;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 16px 34px; font-weight: 600;
+  border-radius: 2px; transition: all 0.2s;
+}
+.talexia-wrapper .btn-dark { background: #14110c; color: #fff; }
+.talexia-wrapper .btn-dark:hover { background: #b08d3e; color: #fff; }
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 900px) {
   .talexia-wrapper .page-header { padding: 60px 20px 50px; }
@@ -176,4 +206,6 @@
   .talexia-wrapper .cat-header-title { font-size: 26px; }
   .talexia-wrapper .faq-q { font-size: 17px; }
   .talexia-wrapper .faq-a { font-size: 14px; padding-left: 22px; }
+  .talexia-wrapper .closing-title { font-size: 28px; }
+  .talexia-wrapper .closing-cta { padding: 70px 20px; }
 }

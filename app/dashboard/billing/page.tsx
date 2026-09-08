@@ -635,50 +635,69 @@ export default function BillingPage() {
             <div className={`plans-cards ${billingCycle === 'yearly' ? 'plans-annual' : ''}`} style={{ marginTop: 0 }}>
               {/* ESSENTIALS */}
               <div className={cn("plan-card", plan?.code === "ESSENTIALS" && "border-[#b08d3e]/50 bg-[#b08d3e]/5")}>
-                <div className="min-h-[28px] mb-2">
-                  {plan?.code === "ESSENTIALS" && (
+                {plan?.code === "ESSENTIALS" && (
+                  <div className="min-h-[28px] mb-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#b08d3e]/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8a6d28]">
                       <Check className="h-3 w-3" />
                       Current plan
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
                 <div className="plan-name">Essentials</div>
-                <div className="plan-tagline">A polished, consistent presence for a single-store brand.</div>
+                <div className="plan-tagline">
+                  A polished, consistent presence for a single-store brand.
+                </div>
                 <div className="plan-price">
                   <span className="cur">$</span>
-                  <span className="amt">{billingCycle === 'yearly' ? '4,288' : '397'}</span>
+                  <span className="amt" data-monthly={397} data-annual="4,288">
+                    {billingCycle === 'yearly' ? '4,288' : '397'}
+                  </span>
                   <span className="per per-monthly">/ month</span>
                   <span className="per per-annual">/ year</span>
                 </div>
                 <div className="plan-annual-saving">
-                  <strong>Save $476</strong> a year &mdash; that&rsquo;s $357/mo, one month effectively free.
+                  <strong>Save $476</strong> a year — that’s $357/mo, more than a
+                  month free.
                 </div>
-                <div className="plan-volume">12 feed posts monthly &middot; 2 platforms</div>
-                <div className="plan-divider"></div>
+                <div className="plan-volume">12 feed posts monthly · 2 platforms</div>
+                <div className="plan-divider" />
                 <p className="plan-desc">
-                  Twelve editorial-grade visuals produced monthly, captioned in your brand voice, and published to two of your connected platforms on a weekly rhythm. Brand voice locked from day one.
+                  Twelve editorial-grade visuals produced monthly, captioned in your
+                  brand voice, and published to two of your connected platforms on a
+                  weekly rhythm. Brand voice locked from day one.
                 </p>
-
                 <div className="plan-section-label">What's included</div>
                 <ul className="plan-feat">
                   <li>12 luxury-enhanced visuals produced monthly</li>
                   <li>Produced from your existing website or catalog photography</li>
                   <li>Professional captions written in your brand voice</li>
                   <li>Hashtag research per fine jewelry conventions</li>
-                  <li>Publishing to 2 platforms (choose: Instagram, Facebook, or LinkedIn)</li>
+                  <li>
+                    Publishing to 2 platforms (choose: Instagram, Facebook, or
+                    LinkedIn)
+                  </li>
                   <li>Monthly content calendar</li>
                   <li>48-hour factual error correction window</li>
-                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                  <li>
+                    Brand Brief authorization model — no per-post approvals required
+                  </li>
                 </ul>
-
                 <div className="plan-fee plan-monthly-fee">
-                  <strong>No onboarding fee.</strong> First month is $397. Billed monthly thereafter.
+                  <strong>No onboarding fee.</strong> First month is $397. Billed
+                  monthly thereafter.
                 </div>
-                <p style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: '12px', lineHeight: 1.5, color: '#8a857a', margin: '12px 0 0' }}>
-                  Best for brands with existing product photography. Working mainly from phone photos? Signature includes full image preparation.
+                <p
+                  style={{
+                    fontFamily: '"Helvetica Neue", Arial, sans-serif',
+                    fontSize: 12,
+                    lineHeight: "1.5",
+                    color: "#8a857a",
+                    margin: "12px 0 0"
+                  }}
+                >
+                  Best for brands with existing product photography. Working mainly
+                  from phone photos? Signature includes full image preparation.
                 </p>
-
                 <div className="plan-cta">
                   {plan?.code === "ESSENTIALS" ? (
                     <button
@@ -710,7 +729,10 @@ export default function BillingPage() {
                     </button>
                   )}
                   <div className="plan-annual-terms">
-                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                    Annual plans are paid in full today and are{" "}
+                    <strong>non-refundable</strong>, except as described in our
+                    Service Policy. Auto-renews yearly; we’ll remind you 30 days
+                    before renewal.
                   </div>
                 </div>
               </div>
@@ -727,42 +749,46 @@ export default function BillingPage() {
                   )}
                 </div>
                 <div className="plan-name">Signature</div>
-                <div className="plan-tagline">A weekly rhythm for brands ready to show up consistently.</div>
+                <div className="plan-tagline">
+                  A weekly rhythm for brands ready to show up consistently.
+                </div>
                 <div className="plan-price">
                   <span className="cur">$</span>
-                  <span className="amt">{billingCycle === 'yearly' ? '6,448' : '597'}</span>
+                  <span className="amt" data-monthly={597} data-annual="6,448">
+                    {billingCycle === 'yearly' ? '6,448' : '597'}
+                  </span>
                   <span className="per per-monthly">/ month</span>
                   <span className="per per-annual">/ year</span>
                 </div>
                 <div className="plan-annual-saving">
-                  <strong>Save $716</strong> a year &mdash; that&rsquo;s $537/mo, one month effectively free.
+                  <strong>Save $716</strong> a year — that’s $537/mo, more than a
+                  month free.
                 </div>
-                <div className="plan-volume">24 feed posts monthly &middot; 3 platforms</div>
-                <div className="plan-divider"></div>
+                <div className="plan-volume">24 feed posts monthly · 3 platforms</div>
+                <div className="plan-divider" />
                 <p className="plan-desc">
-                  Twenty-four editorial visuals monthly, published across all three platforms, planned around the fine jewelry editorial calendar and completely off your plate.
+                  Twenty-four editorial visuals monthly, published across all three
+                  platforms, planned around the fine jewelry editorial calendar and
+                  completely off your plate.
                 </p>
-
                 <div className="plan-section-label">What's included</div>
                 <ul className="plan-feat">
                   <li>24 luxury-enhanced visuals produced monthly</li>
-                  <li>Full image preparation &mdash; send us anything, even phone photos</li>
+                  <li>
+                    Full image preparation — send us anything, even phone photos
+                  </li>
                   <li>Professional captions &amp; hashtag research</li>
                   <li>Publishing to 3 platforms (Instagram, Facebook, LinkedIn)</li>
-                  <li>Monthly content plan preview</li>
                   <li>Seasonal editorial planning (engagement season, holidays)</li>
-                  <li>Micro-animation on select visuals</li>
                   <li>48-hour factual error correction window</li>
-                  <li>Brand Brief authorization model &mdash; no per-post approvals required</li>
+                  <li>
+                    Brand Brief authorization model — no per-post approvals required
+                  </li>
                 </ul>
-
                 <div className="plan-fee plan-monthly-fee">
-                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $694 ($597 + $97). Billed $597 monthly thereafter.
+                  <strong>No onboarding fee.</strong> First month is $597. Billed
+                  monthly thereafter.
                 </div>
-                <div className="plan-fee plan-annual-fee">
-                  <strong>$97 one-time onboarding fee.</strong> Covers Brand Brief development, catalog setup, and brand voice training. First invoice is $6,545 ($6,448 annual + $97).
-                </div>
-
                 <div className="plan-cta">
                   {plan?.code === "SIGNATURE" ? (
                     <button
@@ -794,7 +820,10 @@ export default function BillingPage() {
                     </button>
                   )}
                   <div className="plan-annual-terms">
-                    Annual plans are paid in full today and are <strong>non-refundable</strong>. Auto-renews yearly; we&rsquo;ll remind you 30 days before renewal.
+                    Annual plans are paid in full today and are{" "}
+                    <strong>non-refundable</strong>, except as described in our
+                    Service Policy. Auto-renews yearly; we’ll remind you 30 days
+                    before renewal.
                   </div>
                 </div>
               </div>

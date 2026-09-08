@@ -64,10 +64,6 @@
   height: 1px;
   background: #b08d3e;
   position: relative;
-  margin: 0 0 28px;
-}
-
-.talexia-wrapper .rule-ornament.center {
   margin: 0 auto 28px;
 }
 
@@ -281,9 +277,9 @@
 }
 
 /* Annual price + saving states, toggled via JS */
-.plan-price .per-annual,
-.plan-annual-saving,
-.plan-annual-terms,
+.talexia-wrapper .plan-price .per-annual,
+.talexia-wrapper .plan-annual-saving,
+.talexia-wrapper .plan-annual-terms,
 .talexia-wrapper .plan-annual-fee {
   display: none;
 }
