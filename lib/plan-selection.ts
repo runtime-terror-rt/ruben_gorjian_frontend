@@ -38,7 +38,7 @@ export function getPlanSelection(
     const selectedPlanId = useUiStore.getState().selectedPlanId;
     const selectedPlanMeta = useUiStore.getState().selectedPlanMeta;
     if (selectedPlanId) {
-      return { planCode: selectedPlanId, meta: selectedPlanMeta };
+      return { planCode: selectedPlanId.toUpperCase(), meta: selectedPlanMeta };
     }
   }
 
@@ -46,13 +46,11 @@ export function getPlanSelection(
   if (searchParams) {
     const planCode = searchParams.get("plan");
     if (planCode) {
-      if (planCode === planCode.toLowerCase()) {
-        return null;
-      }
+      const upperCode = planCode.toUpperCase();
       if (typeof window !== "undefined") {
-        useUiStore.setState({ selectedPlanId: planCode });
+        useUiStore.setState({ selectedPlanId: upperCode });
       }
-      return { planCode };
+      return { planCode: upperCode };
     }
   }
 

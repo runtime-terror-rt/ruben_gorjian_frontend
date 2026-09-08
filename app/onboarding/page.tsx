@@ -71,82 +71,14 @@ function OnboardingRouterContent() {
           subscriptionStatus !== "ACTIVE" &&
           subscriptionStatus !== "TRIALING")
       ) {
-        const planCodeToCheckout =
-          session.subscription?.planCode || pendingPlanCode;
+        const rawCode = session.subscription?.planCode || pendingPlanCode;
+        const planCodeToCheckout = rawCode?.toUpperCase();
         if (planCodeToCheckout) {
           console.log(
             "[OnboardingRouter] Payment required, redirecting to checkout:",
             planCodeToCheckout,
           );
-          // Redirect to checkout
-          const origin =
-            typeof window !== "undefined" ? window.location.origin : "";
-          fetch("/api/billing/checkout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              planCode: planCodeToCheckout,
-              successUrl: `${origin}/billing/success`,
-              cancelUrl: `${origin}/billing/cancel`,
-            }),
-            credentials: "include",
-          })
-            .then(async (res) => {
-              if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                console.error("[OnboardingRouter] Checkout API error:", {
-                  status: res.status,
-                  statusText: res.statusText,
-                  error: errorData,
-                  planCode: planCodeToCheckout,
-                });
-
-                // Show user-friendly error message
-                if (errorData.error?.includes("Plan not found")) {
-                  alert(
-                    `The plan "${planCodeToCheckout}" hasn't been set up in Stripe yet.\n\n` +
-                    `Please ask the administrator to create this plan in Stripe.\n\n` +
-                    `Redirecting you to the pricing page to select another plan.`,
-                  );
-                } else {
-                  alert(
-                    `Unable to start checkout: ${errorData.error || "Unknown error"}\n\n` +
-                    `Please try again or contact support.`,
-                  );
-                }
-
-                router.push("/pricing");
-                return null;
-              }
-              return res.json();
-            })
-            .then((data) => {
-              if (!data) return; // Already handled error above
-
-              if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl;
-              } else if (data.redirectUrl) {
-                // Some responses might have redirectUrl instead
-                window.location.href = data.redirectUrl;
-              } else {
-                console.error("[OnboardingRouter] Checkout failed:", data);
-                alert(
-                  `Checkout session created but no redirect URL provided.\n\n` +
-                  `Message: ${data.message || "Unknown error"}\n\n` +
-                  `Please try again or contact support.`,
-                );
-                router.push("/pricing");
-              }
-            })
-            .catch((err) => {
-              console.error("[OnboardingRouter] Checkout error:", err);
-              alert(
-                `Failed to connect to checkout service.\n\n` +
-                `Error: ${err.message}\n\n` +
-                `Please check your internet connection and try again.`,
-              );
-              router.push("/pricing");
-            });
+          router.push(`/billing/checkout?plan=${encodeURIComponent(planCodeToCheckout)}`);
           return;
         }
       }
