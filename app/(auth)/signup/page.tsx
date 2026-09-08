@@ -4,10 +4,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { GoogleLoginButton } from "@/components/google-login-button";
+import { useSessionContext } from "@/context/SessionContext";
 import { getReturnToFromQuery } from "@/lib/return-to";
-
-
-
 
 function SignupPageInner() {
   const [submitting, setSubmitting] = useState(false);
@@ -16,11 +14,22 @@ function SignupPageInner() {
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { session, loading } = useSessionContext();
   const returnTo = getReturnToFromQuery(searchParams, "/dashboard");
 
-  // Professional redirect with error message if no plan is selected
+  // Professional redirect with error message if no plan is selected, or redirect if logged in
   useEffect(() => {
-    const plan = searchParams.get("plan");
+    if (loading) return;
+    const plan = searchParams.get("plan")?.toUpperCase();
+    if (session) {
+      if (session.subscription?.status === "ACTIVE" || session.subscription?.status === "TRIALING") {
+        router.push("/dashboard");
+      } else {
+        router.push(`/billing/checkout?plan=${plan || "ESSENTIALS"}`);
+      }
+      return;
+    }
+
     if (!plan) {
       setError("Please select a plan to continue. Redirecting to plans...");
       const timer = setTimeout(() => {
@@ -28,7 +37,7 @@ function SignupPageInner() {
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, session, loading]);
 
   // Store returnTo in sessionStorage for after email verification
   if (typeof window !== "undefined" && returnTo !== "/dashboard") {
@@ -48,7 +57,7 @@ function SignupPageInner() {
     const websiteUrl = String(form.get("websiteUrl") || "");
 
     // Strictly get plan from query params to avoid auto-selecting stale localStorage plans
-    const pendingPlanCode = searchParams.get("plan");
+    const pendingPlanCode = searchParams.get("plan")?.toUpperCase();
 
     // If no plan selected, redirect to pricing
     if (!pendingPlanCode) {

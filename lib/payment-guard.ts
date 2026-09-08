@@ -12,7 +12,7 @@ import type { Session } from "@/context/SessionContext";
  */
 export function hasActiveSubscription(session: Session | null): boolean {
   if (!session) return false;
-  
+
   const status = session.subscription?.status;
   return status === "ACTIVE" || status === "TRIALING";
 }
@@ -22,21 +22,21 @@ export function hasActiveSubscription(session: Session | null): boolean {
  */
 export function needsPayment(session: Session | null): boolean {
   if (!session) return true;
-  
+
   const status = session.subscription?.status;
   const pendingPlanCode = session.pendingPlanCode;
-  
+
   // User needs payment if:
   // 1. Has INCOMPLETE subscription, OR
   // 2. Has pendingPlanCode but no active subscription
   if (status === "INCOMPLETE") {
     return true;
   }
-  
+
   if (pendingPlanCode) {
     return status !== "ACTIVE" && status !== "TRIALING";
   }
-  
+
   return false;
 }
 
@@ -45,7 +45,7 @@ export function needsPayment(session: Session | null): boolean {
  */
 export function getPlanCodeForPayment(session: Session | null): string | null {
   if (!session) return null;
-  
+
   return session.subscription?.planCode || session.pendingPlanCode || null;
 }
 
@@ -54,7 +54,7 @@ export function getPlanCodeForPayment(session: Session | null): string | null {
  */
 export async function redirectToCheckout(planCode: string): Promise<void> {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  
+
   try {
     const res = await fetch("/api/billing/checkout", {
       method: "POST",
@@ -66,7 +66,7 @@ export async function redirectToCheckout(planCode: string): Promise<void> {
       }),
       credentials: "include",
     });
-    
+
     const data = await res.json();
     if (data.checkoutUrl && typeof window !== "undefined") {
       window.location.href = data.checkoutUrl;
