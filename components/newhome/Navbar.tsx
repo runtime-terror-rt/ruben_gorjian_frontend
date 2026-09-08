@@ -116,10 +116,10 @@ function NavbarInner() {
           Talexia
         </Link>
         <div className="nav-links">
-          <Link href="/#work" onClick={(e) => handleScroll(e, 'work')}>Work</Link>
+          <Link href="/work">Work</Link>
           <Link href="/process">Process</Link>
           <Link href="/plan">Plans</Link>
-          <Link href="/#atelier" onClick={(e) => handleScroll(e, 'atelier')}>Atelier</Link>
+          <Link href="/atelier">Atelier</Link>
           <Link href="/faq">FAQ</Link>
           <Link href="/contact">Contact</Link>
 
@@ -221,9 +221,9 @@ function NavbarInner() {
         <div className="nav-mobile-menu">
           <div className="nav-mobile-inner">
             <Link
-              href="/#work"
+              href="/work"
               className="nav-mobile-link"
-              onClick={(e) => handleScroll(e, 'work')}
+              onClick={closeMobileMenu}
             >
               Work
             </Link>
@@ -242,9 +242,9 @@ function NavbarInner() {
               Plans
             </Link>
             <Link
-              href="/#atelier"
+              href="/atelier"
               className="nav-mobile-link"
-              onClick={(e) => handleScroll(e, 'atelier')}
+              onClick={closeMobileMenu}
             >
               Atelier
             </Link>

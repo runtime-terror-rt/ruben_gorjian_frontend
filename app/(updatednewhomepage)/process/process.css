@@ -1,0 +1,272 @@
+/* ==================== PROCESS PAGE ==================== */
+
+.talexia-wrapper .section-eyebrow {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 600; margin-bottom: 18px;
+}
+.talexia-wrapper .btn {
+  display: inline-block;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase;
+  text-decoration: none; padding: 15px 32px; border-radius: 2px;
+  transition: all 0.2s; font-weight: 500;
+}
+.talexia-wrapper .btn-dark { background: #14110c; color: #fff; border: 1px solid #14110c; }
+.talexia-wrapper .btn-dark:hover { background: #b08d3e; border-color: #b08d3e; color: #fff; }
+.talexia-wrapper .btn-outline { background: transparent; color: #14110c; border: 1px solid #c9c2b3; }
+.talexia-wrapper .btn-outline:hover { border-color: #b08d3e; color: #b08d3e; }
+
+/* ==================== HERO ==================== */
+.talexia-wrapper .proc-hero {
+  position: relative;
+  background:
+    radial-gradient(ellipse at top left, #fdfaf1 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, #f4ecdc 0%, transparent 60%),
+    #faf8f3;
+  padding: 90px 40px 56px;
+  text-align: center;
+  border-bottom: 1px solid #e6e1d8;
+}
+.talexia-wrapper .proc-hero::before {
+  content: ""; position: absolute; top: 40px; right: 70px;
+  width: 180px; height: 180px; border: 1px solid #b08d3e;
+  opacity: 0.1; border-radius: 50%; pointer-events: none;
+}
+.talexia-wrapper .proc-hero-title {
+  font-family: Georgia, serif; font-weight: 400;
+  font-size: 48px; line-height: 1.15; letter-spacing: -0.4px;
+  color: #14110c; max-width: 720px; margin: 0 auto 22px;
+}
+.talexia-wrapper .proc-hero-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .proc-hero-sub {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 19px; line-height: 1.55; color: #5a5a5a;
+  max-width: 600px; margin: 0 auto 30px;
+}
+.talexia-wrapper .hero-meta {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
+}
+.talexia-wrapper .hero-tag {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10.5px; letter-spacing: 1.6px; text-transform: uppercase;
+  color: #6a6252; border: 1px solid #ddd5c4; background: #fff;
+  padding: 7px 15px; border-radius: 100px;
+}
+
+/* ==================== INTRO BAND ==================== */
+.talexia-wrapper .intro-band { padding: 66px 40px 10px; }
+.talexia-wrapper .intro-wrap { max-width: 780px; margin: 0 auto; text-align: center; }
+.talexia-wrapper .intro-lead {
+  font-family: Georgia, serif; font-size: 25px; line-height: 1.5;
+  color: #14110c; margin-bottom: 20px;
+}
+.talexia-wrapper .intro-lead em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .intro-text {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px; line-height: 1.85; color: #4a4a4a;
+}
+
+/* ==================== PHASES ==================== */
+.talexia-wrapper .phases { padding: 60px 40px 20px; }
+.talexia-wrapper .phases-inner { max-width: 1000px; margin: 0 auto; }
+
+.talexia-wrapper .phase {
+  border-top: 1px solid #e6e1d8;
+  padding: 52px 0;
+  display: grid; grid-template-columns: 210px 1fr; gap: 48px;
+  align-items: start;
+}
+.talexia-wrapper .phase:last-child { border-bottom: 1px solid #e6e1d8; }
+
+.talexia-wrapper .phase-marker { position: sticky; top: 96px; }
+.talexia-wrapper .phase-num {
+  font-family: Georgia, serif; font-size: 44px; line-height: 1;
+  color: #e0d5bb; margin-bottom: 12px;
+}
+.talexia-wrapper .phase-when {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 600; margin-bottom: 8px;
+}
+.talexia-wrapper .phase-effort {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 13.5px; color: #8a8a8a; line-height: 1.5;
+}
+
+.talexia-wrapper .phase-title {
+  font-family: Georgia, serif; font-size: 30px; font-weight: 400;
+  color: #14110c; margin-bottom: 14px; line-height: 1.2;
+}
+.talexia-wrapper .phase-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .phase-desc {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14.5px; line-height: 1.8; color: #4a4a4a; margin-bottom: 28px;
+}
+
+.talexia-wrapper .split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.talexia-wrapper .split-col {
+  background: #fff; border: 1px solid #ece7dc; border-radius: 8px;
+  padding: 22px 24px;
+}
+.talexia-wrapper .split-col.talexia { background: #fdfbf5; border-color: #e5dcc4; }
+.talexia-wrapper .split-label {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 600; margin-bottom: 14px;
+  padding-bottom: 10px; border-bottom: 1px solid #ece7dc;
+}
+.talexia-wrapper .split-col ul { list-style: none; }
+.talexia-wrapper .split-col li {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13.5px; line-height: 1.65; color: #3d3d3d;
+  padding-left: 18px; position: relative; margin-bottom: 11px;
+}
+.talexia-wrapper .split-col li:last-child { margin-bottom: 0; }
+.talexia-wrapper .split-col li::before {
+  content: ""; position: absolute; left: 0; top: 9px;
+  width: 5px; height: 5px; border-radius: 50%; background: #d4c08a;
+}
+.talexia-wrapper .split-none {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 14.5px; color: #b08d3e;
+}
+
+/* ==================== VERIFICATION ==================== */
+.talexia-wrapper .verify {
+  background: #14110c; color: #fff;
+  padding: 78px 40px; margin-top: 60px;
+}
+.talexia-wrapper .verify-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.talexia-wrapper .verify .section-eyebrow { color: #c9a44c; }
+.talexia-wrapper .verify-title {
+  font-family: Georgia, serif; font-size: 36px; font-weight: 400;
+  line-height: 1.22; margin-bottom: 20px; color: #fff;
+}
+.talexia-wrapper .verify-title em { color: #c9a44c; font-style: italic; }
+.talexia-wrapper .verify-text {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px; line-height: 1.85; color: rgba(255,255,255,0.72);
+  max-width: 660px; margin: 0 auto 38px;
+}
+.talexia-wrapper .verify-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  text-align: left;
+}
+.talexia-wrapper .verify-item {
+  border-top: 1px solid rgba(201,164,76,0.35); padding-top: 16px;
+}
+.talexia-wrapper .verify-item h4 {
+  font-family: Georgia, serif; font-size: 17px; font-weight: 400;
+  color: #fff; margin-bottom: 8px;
+}
+.talexia-wrapper .verify-item p {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12.5px; line-height: 1.65; color: rgba(255,255,255,0.6);
+}
+
+/* ==================== CORRECTIONS ==================== */
+.talexia-wrapper .corrections { padding: 78px 40px; }
+.talexia-wrapper .corr-inner {
+  max-width: 940px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 54px; align-items: start;
+}
+.talexia-wrapper .corr-title {
+  font-family: Georgia, serif; font-size: 32px; font-weight: 400;
+  color: #14110c; line-height: 1.22; margin-bottom: 16px;
+}
+.talexia-wrapper .corr-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .corr-text {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14.5px; line-height: 1.8; color: #4a4a4a; margin-bottom: 16px;
+}
+.talexia-wrapper .corr-card {
+  background: #fff; border: 1px solid #ece7dc; border-radius: 8px; padding: 26px 28px;
+}
+.talexia-wrapper .corr-card h4 {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: #8a6d28; font-weight: 600; margin-bottom: 14px;
+}
+.talexia-wrapper .corr-card ul { list-style: none; margin-bottom: 22px; }
+.talexia-wrapper .corr-card ul:last-child { margin-bottom: 0; }
+.talexia-wrapper .corr-card li {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13.5px; line-height: 1.6; color: #3d3d3d;
+  padding-left: 20px; position: relative; margin-bottom: 9px;
+}
+.talexia-wrapper .corr-card li.yes::before {
+  content: "\2713"; position: absolute; left: 0; top: 0; color: #7c9b6d; font-size: 13px;
+}
+.talexia-wrapper .corr-card li.no::before {
+  content: "\2014"; position: absolute; left: 0; top: 0; color: #c4a9a4; font-size: 13px;
+}
+
+/* ==================== SCOPE ==================== */
+.talexia-wrapper .scope { padding: 0 40px 84px; }
+.talexia-wrapper .scope-inner {
+  max-width: 940px; margin: 0 auto;
+  background: #f4efe3; border: 1px solid #e5dcc4; border-radius: 10px;
+  padding: 44px 46px; text-align: center;
+}
+.talexia-wrapper .scope-title {
+  font-family: Georgia, serif; font-size: 26px; font-weight: 400;
+  color: #14110c; margin-bottom: 14px;
+}
+.talexia-wrapper .scope-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .scope-text {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14.5px; line-height: 1.8; color: #4a4a4a;
+  max-width: 640px; margin: 0 auto 24px;
+}
+.talexia-wrapper .scope-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; }
+.talexia-wrapper .scope-tag {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+  color: #7a7160; background: #fff; border: 1px solid #ddd5c4;
+  padding: 7px 14px; border-radius: 100px;
+}
+
+/* ==================== CTA ==================== */
+.talexia-wrapper .cta { padding: 10px 40px 100px; text-align: center; }
+.talexia-wrapper .cta-title {
+  font-family: Georgia, serif; font-size: 34px; font-weight: 400;
+  color: #14110c; margin-bottom: 16px;
+}
+.talexia-wrapper .cta-title em { color: #b08d3e; font-style: italic; }
+.talexia-wrapper .cta-text {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px; line-height: 1.75; color: #4a4a4a;
+  max-width: 520px; margin: 0 auto 30px;
+}
+.talexia-wrapper .cta-buttons { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 860px) {
+  .talexia-wrapper .proc-hero { padding: 64px 20px 40px; }
+  .talexia-wrapper .proc-hero::before { display: none; }
+  .talexia-wrapper .proc-hero-title { font-size: 33px; }
+  .talexia-wrapper .proc-hero-sub { font-size: 17px; }
+  .talexia-wrapper .intro-band { padding: 48px 20px 0; }
+  .talexia-wrapper .intro-lead { font-size: 21px; }
+  .talexia-wrapper .phases { padding: 40px 20px 10px; }
+  .talexia-wrapper .phase { grid-template-columns: 1fr; gap: 20px; padding: 40px 0; }
+  .talexia-wrapper .phase-marker { position: static; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .talexia-wrapper .phase-num { font-size: 32px; margin-bottom: 0; }
+  .talexia-wrapper .phase-when { margin-bottom: 0; }
+  .talexia-wrapper .phase-title { font-size: 25px; }
+  .talexia-wrapper .split { grid-template-columns: 1fr; gap: 16px; }
+  .talexia-wrapper .verify { padding: 56px 20px; }
+  .talexia-wrapper .verify-title { font-size: 27px; }
+  .talexia-wrapper .verify-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .talexia-wrapper .corrections { padding: 56px 20px; }
+  .talexia-wrapper .corr-inner { grid-template-columns: 1fr; gap: 32px; }
+  .talexia-wrapper .corr-title { font-size: 26px; }
+  .talexia-wrapper .scope { padding: 0 20px 60px; }
+  .talexia-wrapper .scope-inner { padding: 32px 24px; }
+  .talexia-wrapper .cta { padding: 10px 20px 70px; }
+  .talexia-wrapper .cta-title { font-size: 27px; }
+}
+@media (max-width: 520px) {
+  .talexia-wrapper .verify-grid { grid-template-columns: 1fr; }
+}

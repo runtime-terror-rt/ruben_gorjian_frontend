@@ -918,7 +918,7 @@ export default function BrandBriefPage() {
           <li>I understand that stylistic preferences are not grounds for revision or regeneration — those are governed by this Brief and by future Brief updates.</li>
           <li>I understand that verifiable factual errors in published content must be reported within 48 hours of publication and will be corrected in the next scheduled content cycle.</li>
           <li>I understand that significant brand changes must be submitted as an updated Brand Brief to take effect the following month.</li>
-          <li>I confirm that I have read and accepted Talexia's <a href="/terms" style={{'color': '#8a6d28'}}>Service Policy</a> and <a href="/privacy" style={{'color': '#8a6d28'}}>Privacy Policy</a>.</li>
+          <li>I confirm that I have read and accepted Talexia's <a href="/terms" target="_blank" rel="noopener noreferrer" style={{'color': '#8a6d28'}}>Service Policy</a> and <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{'color': '#8a6d28'}}>Privacy Policy</a>.</li>
         </ul>
 
         <p className="auth-emphasis">
